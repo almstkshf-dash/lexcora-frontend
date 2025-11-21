@@ -105,7 +105,25 @@
   },
   "caseForm": {
     "caseNumber": "Case Number",
-    "startDate": "Start Date"
+    "startDate": "Start Date",
+    "enterCaseNumber": "Enter case number",
+    "feesAndExpenses": "Fees & Expenses",
+    "enterFeesAndExpenses": "Enter fees and expenses",
+    "subject": "Subject",
+    "subjectHelper": "A short summary helps teammates understand the file quickly.",
+    "enterSubject": "Add a short subject",
+    "additionalNotes": "Additional notes",
+    "enterAdditionalNotes": "Add contextual notes for the team"
+  },
+  "forms": {
+    "validationSummaryTitle": "Please fix these fields",
+    "validationSummaryHint": "We highlighted what needs attention so you can continue.",
+    "autosaveSaving": "Saving draft…",
+    "autosaveSaved": "Draft saved",
+    "autosaveRestored": "Draft restored",
+    "autosaveIdle": "Autosave is on",
+    "lastSavedAt": "Last saved at",
+    "clearDraft": "Discard draft"
   },
   "caseToggles": {
     "isImportant": "Important",

@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import FormField from "@/components/forms/FormField"
 
 function CaseClassifications() {
   const { values, setFieldValue, errors, touched, setFieldTouched } = useFormikContext()
@@ -109,13 +110,18 @@ function CaseClassifications() {
   }
 
   return (
-    <div className="space-y-2">
+    <FormField
+      label={t('caseClassifications.selectCaseClassification')}
+      htmlFor="caseClassificationId"
+      error={errors.caseClassificationId && touched.caseClassificationId ? errors.caseClassificationId : null}
+      required
+    >
       <div className="flex items-center gap-2">
         <Select  dir={language === 'ar' ? 'rtl' : 'ltr'} value={caseClassificationId?.toString() || ''} onValueChange={(value) => {
           setFieldTouched('caseClassificationId', true)
           setFieldValue('caseClassificationId', parseInt(value))
         }}>
-          <SelectTrigger className={`w-full ${errors.caseClassificationId && touched.caseClassificationId ? 'border-red-500' : ''}`}>
+          <SelectTrigger className={`w-full ${errors.caseClassificationId && touched.caseClassificationId ? 'border-destructive' : ''}`}>
             <SelectValue placeholder={t('caseClassifications.selectCaseClassification')} />
           </SelectTrigger>
           <SelectContent>
@@ -186,10 +192,7 @@ function CaseClassifications() {
         </DialogContent>
       </Dialog>
       </div>
-      {errors.caseClassificationId && touched.caseClassificationId && (
-        <div className="text-red-500 text-sm">{errors.caseClassificationId}</div>
-      )}
-    </div>
+    </FormField>
   )
 }
 

@@ -1,4 +1,5 @@
 "use client"
+import { useEffect, useState } from "react"
 import {
   Accordion,
   AccordionContent,
@@ -22,6 +23,8 @@ import { useTranslations } from "@/hooks/useTranslations";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { toast } from 'react-toastify';
+import InlineValidationSummary from "@/components/forms/InlineValidationSummary";
+import AutosaveDraftNotice from "./AutosaveDraftNotice";
 import { FormikProvider } from "./FormikContext";
 import Sessions from "./sessions/sessions";
 import Employees from "./employees/Employees";
@@ -36,8 +39,73 @@ import Tasks from "./tasks/Tasks";
 import SaveCaseButton from "./SaveCaseButton";
 import { createCaseWithRelations } from '@/app/services/api/cases';
 import Memos from "./memos/Memos";
+
+const BASE_INITIAL_VALUES = {
+  branchId: null,
+  caseNumber: '',
+  fees: '',
+  caseTypeId: null,
+  caseClassificationId: null,
+  policeStationId: null,
+  publicProsecutionId: null,
+  courtId: null,
+  lawyerId: null,
+  secretaryId: null,
+  legalAdvisorId: null,
+  legalResearcherId: null,
+  counterCaseId: null,
+  counterCaseFileNumbers: [],
+  additionalNote: '',
+  topic: '',
+  is_important: false,
+  is_secret: false,
+  is_archived: false,
+  is_pending: false,
+  caseFiles: {
+    files: [],
+    filesNames: []
+  },
+  parties: [],
+  selectedParties: [],
+  caseDegrees: [],
+  sessions: [],
+  executions: [],
+  JudicialNotices: [],
+  petition: [],
+  litigationStages: [],
+  tasks: [],
+  memos: [],
+  employeeFiles: [],
+  courtFiles: [],
+  related_cases: [],
+};
+
+const DRAFT_STORAGE_KEY = "lexcora-add-case-draft";
 function AddCasePage() {
   const { t } = useTranslations();
+  const [initialValuesState, setInitialValuesState] = useState(BASE_INITIAL_VALUES);
+  const [restoredAt, setRestoredAt] = useState(null);
+
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(DRAFT_STORAGE_KEY);
+    if (!savedDraft) return;
+
+    try {
+      const parsedDraft = JSON.parse(savedDraft);
+      if (parsedDraft?.values) {
+        setInitialValuesState((prev) => ({
+          ...prev,
+          ...parsedDraft.values,
+        }));
+      }
+      if (parsedDraft?.savedAt) {
+        setRestoredAt(parsedDraft.savedAt);
+      }
+    } catch (error) {
+      console.warn("Unable to read saved draft", error);
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+    }
+  }, []);
 
   // Handle form submission
   const handleSubmit = async(values, { setSubmitting, setStatus, setFieldError, resetForm }) => {
@@ -89,9 +157,12 @@ function AddCasePage() {
 
       toast.dismiss(loadingToast);
       toast.success('تم انشاء قضية بنجاح');
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+      setInitialValuesState(BASE_INITIAL_VALUES);
+      setRestoredAt(null);
 
       resetForm({
-        values: initialValues,
+        values: BASE_INITIAL_VALUES,
         errors: {},
         touched: {},
         status: {
@@ -119,45 +190,6 @@ function AddCasePage() {
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const initialValues = {
-    branchId: null,
-    caseNumber: '',
-    fees: '',
-    caseTypeId: null,
-    caseClassificationId: null,
-    policeStationId: null,
-    publicProsecutionId: null,
-    courtId: null,
-    lawyerId: null,
-    secretaryId: null,
-    legalAdvisorId: null,
-    legalResearcherId: null,
-    counterCaseFileNumbers: [],
-    additionalNote: '',
-    topic: '',
-    is_important: false,
-    is_secret: false,
-    is_archived: false,
-    is_pending: false,
-    caseFiles: {
-      files: [],
-      filesNames: []
-    },
-    parties: [],
-    selectedParties: [],
-    caseDegrees: [], // Added missing caseDegrees array
-    sessions: [],
-    executions: [],
-    JudicialNotices: [],
-    petition: [],
-    litigationStages: [],
-    tasks: [],
-    memos: [],
-    employeeFiles: [],
-    courtFiles: [],
-    related_cases: [], // Related cases field
   };
 
   // Validation schema using Yup
@@ -240,7 +272,7 @@ function AddCasePage() {
   
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={initialValuesState}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
       enableReinitialize={true}
@@ -257,6 +289,20 @@ function AddCasePage() {
                   </p>
                 </div>
               )}
+
+              <AutosaveDraftNotice
+                storageKey={DRAFT_STORAGE_KEY}
+                restoredAt={restoredAt}
+                className="mb-4"
+                onClearDraft={() => setRestoredAt(null)}
+              />
+
+              <InlineValidationSummary
+                errors={errors}
+                title={t("forms.validationSummaryTitle") || "Please fix these fields"}
+                hint={t("forms.validationSummaryHint") || "Review the items below to continue."}
+                className="mb-4"
+              />
 
               <Accordion type="multiple" defaultValue={[t('addCase.basicInfo')]} className="space-y-2 md:space-y-3">
                 {accordions.map((accordion, index) => (

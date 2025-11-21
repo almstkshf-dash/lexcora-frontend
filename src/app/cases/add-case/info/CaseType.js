@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import FormField from "@/components/forms/FormField"
 
 function CaseType() {
   const { values, setFieldValue, errors, touched, setFieldTouched } = useFormikContext()
@@ -109,13 +110,18 @@ function CaseType() {
   }
 
   return (
-    <div className="space-y-2">
+    <FormField
+      label={t('caseTypes.selectCaseType')}
+      htmlFor="caseTypeId"
+      error={errors.caseTypeId && touched.caseTypeId ? errors.caseTypeId : null}
+      required
+    >
       <div className="flex items-center gap-2">
         <Select dir={language === 'ar' ? 'rtl' : 'ltr'} value={caseTypeId?.toString() || ''} onValueChange={(value) => {
           setFieldTouched('caseTypeId', true)
           setFieldValue('caseTypeId', parseInt(value))
         }}>
-          <SelectTrigger className={`w-full ${errors.caseTypeId && touched.caseTypeId ? 'border-red-500' : ''}`}>
+          <SelectTrigger className={`w-full ${errors.caseTypeId && touched.caseTypeId ? 'border-destructive' : ''}`}>
             <SelectValue placeholder={t('caseTypes.selectCaseType')} />
           </SelectTrigger>
           <SelectContent>
@@ -186,10 +192,7 @@ function CaseType() {
         </DialogContent>
       </Dialog>
       </div>
-      {errors.caseTypeId && touched.caseTypeId && (
-        <div className="text-red-500 text-sm">{errors.caseTypeId}</div>
-      )}
-    </div>
+    </FormField>
   )
 }
 

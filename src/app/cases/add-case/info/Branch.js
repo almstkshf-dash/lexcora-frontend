@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import FormField from "@/components/forms/FormField"
 
 function Branch() {
   const { values, setFieldValue, errors, touched, setFieldTouched } = useFormikContext()
@@ -86,13 +87,18 @@ function Branch() {
   }
 
   return (
-    <div className="space-y-2">
+    <FormField
+      label={t('branches.selectBranch')}
+      htmlFor="branchId"
+      error={errors.branchId && touched.branchId ? errors.branchId : null}
+      required
+    >
       <div className="flex items-center gap-2">
         <Select dir={language === 'ar' ? 'rtl' : 'ltr'} value={branchId?.toString() || ''} onValueChange={(value) => {
           setFieldTouched('branchId', true)
           setFieldValue('branchId', parseInt(value))
         }}>
-          <SelectTrigger className={`w-full ${errors.branchId && touched.branchId ? 'border-red-500' : ''}`}>
+          <SelectTrigger className={`w-full ${errors.branchId && touched.branchId ? 'border-destructive' : ''}`}>
             <SelectValue placeholder={t('branches.selectBranch')} />
           </SelectTrigger>
           <SelectContent>
@@ -163,10 +169,7 @@ function Branch() {
         </DialogContent>
       </Dialog>
       </div>
-      {errors.branchId && touched.branchId && (
-        <div className="text-red-500 text-sm">{errors.branchId}</div>
-      )}
-    </div>
+    </FormField>
   )
 }
 

@@ -16,6 +16,7 @@ import { Plus, Pencil, Trash2, Loader2, FileText, Search, ChevronLeft, ChevronRi
 import { toast } from 'react-toastify'
 import ExportButtons from '@/components/ui/export-buttons'
 import RequestModal from './components/RequestModal'
+import { Skeleton } from "@/components/ui/skeleton"
 import { getEmployeeRequests, deleteEmployeeRequest } from '@/app/services/api/employeeRequests'
 import { getRequestTypes } from './constants/requestTypes'
 import {
@@ -294,13 +295,38 @@ function RequestsPage() {
   const handleDeleteConfirm = async () => {
     if (!requestToDelete) return
 
+    const requestId = requestToDelete.id
+
+    const optimisticRemove = (current) => {
+      if (!current || !Array.isArray(current.data)) return current
+      const filtered = current.data.filter((item) => item.id !== requestId)
+      return {
+        ...current,
+        data: filtered,
+        pagination: current.pagination
+          ? { ...current.pagination, total: Math.max(0, (current.pagination.total || filtered.length)) }
+          : current.pagination
+      }
+    }
+
     try {
-      const response = await deleteEmployeeRequest(requestToDelete.id)
-      if (response.success) {
+      await mutate(
+        async (current) => {
+          await deleteEmployeeRequest(requestId)
+          return optimisticRemove(current)
+        },
+        {
+          optimisticData: optimisticRemove(requestsData),
+          rollbackOnError: true,
+          populateCache: true,
+          revalidate: false
+        }
+      )
+
+      if (requestsData?.success !== false) {
         toast.success(isArabic ? 'تم حذف الطلب بنجاح' : 'Request deleted successfully')
-        mutate()
       } else {
-        toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
+        toast.error(isArabic ? 'حدث خطأ' : 'An error occurred')
       }
     } catch (error) {
 
@@ -371,10 +397,45 @@ function RequestsPage() {
     }
   }
 
+  const renderTableSkeleton = (columns = 6, rows = 6) => (
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            {Array.from({ length: columns }).map((_, idx) => (
+              <TableHead key={idx}>
+                <Skeleton className="h-4 w-24" />
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Array.from({ length: rows }).map((_, rowIdx) => (
+            <TableRow key={rowIdx}>
+              {Array.from({ length: columns }).map((__, colIdx) => (
+                <TableCell key={colIdx}>
+                  <Skeleton className="h-4 w-full" />
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      <div className="space-y-6 p-4">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+        {renderTableSkeleton(6, 6)}
+        {renderTableSkeleton(5, 4)}
       </div>
     )
   }

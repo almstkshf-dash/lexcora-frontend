@@ -4,16 +4,15 @@ import React from 'react'
 import { FileSpreadsheet, FileText, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import * as XLSX from 'xlsx'
+import { exportTableToPDF } from '@/utils/exporters/pdfExporter'
 
 /**
  * ExportButtons Component
  * Provides Excel and PDF export functionality for cases data
- * @param {Array} data - The cases data to export
- * @param {Function} t - Translation function
- * @param {string} language - Current language (ar/en)
  */
 const ExportButtons = ({ data = [], t, language = 'ar' }) => {
   const isRTL = language === 'ar'
+  const watermarkText = 'Lexcora Cases'
 
   // Helper function to get localized text
   const getLocalizedText = (arText, enText) => {
@@ -41,13 +40,13 @@ const ExportButtons = ({ data = [], t, language = 'ar' }) => {
       [t('casesTable.caseType') || 'نوع القضية']: case_.is_secret ? '***' : getLocalizedText(case_.case_type_ar, case_.case_type_en),
       [t('casesTable.classification') || 'التصنيف']: case_.is_secret ? '***' : getLocalizedText(case_.case_classification_ar, case_.case_classification_en),
       [t('caseForm.startDate') || 'تاريخ البدء']: case_.is_secret ? '***' : formatDate(case_.start_date),
-      [t('casesTable.clientParties') || 'الموكلون']: case_.is_secret ? '***' : (case_.clientParties?.join(', ') || '-'),
-      [t('casesTable.opponentParties') || 'الخصوم']: case_.is_secret ? '***' : (case_.opponentParties?.join(', ') || '-'),
+      [t('casesTable.clientParties') || 'عملاء']: case_.is_secret ? '***' : (case_.clientParties?.join(', ') || '-'),
+      [t('casesTable.opponentParties') || 'خصوم']: case_.is_secret ? '***' : (case_.opponentParties?.join(', ') || '-'),
       [t('casesTable.status') || 'الحالة']: case_.status || '',
       [t('casesTable.sessionCount') || 'عدد الجلسات']: case_.session_count || 0,
-      [t('casesTable.lastSessionDate') || 'تاريخ آخر جلسة']: formatDate(case_.last_session_date) || '-',
+      [t('casesTable.lastSessionDate') || 'آخر جلسة']: formatDate(case_.last_session_date) || '-',
       [t('casesTable.isSecret') || 'سرية']: case_.is_secret ? (language === 'ar' ? 'نعم' : 'Yes') : (language === 'ar' ? 'لا' : 'No'),
-      [t('casesTable.isCompleted') || 'مكتملة']: case_.is_completed ? (language === 'ar' ? 'نعم' : 'Yes') : (language === 'ar' ? 'لا' : 'No'),
+      [t('casesTable.isCompleted') || 'مغلقة']: case_.is_completed ? (language === 'ar' ? 'نعم' : 'Yes') : (language === 'ar' ? 'لا' : 'No'),
     }))
   }
 
@@ -116,89 +115,31 @@ const ExportButtons = ({ data = [], t, language = 'ar' }) => {
     }
   }
 
-  // Export to PDF
+  // Export to PDF via shared helper
   const handleExportPDF = async () => {
+    const exportData = prepareExportDataForPDF()
+    if (!exportData.length) {
+      alert(language === 'ar' ? 'لا توجد بيانات للتصدير' : 'No data to export')
+      return
+    }
+
+    const columns = Object.keys(exportData[0]).map((key) => ({
+      id: key,
+      label: key
+    }))
+
     try {
-      // Import jsPDF and autoTable
-      const jsPDF = (await import('jspdf')).default
-      const autoTable = (await import('jspdf-autotable')).default
-      
-      const doc = new jsPDF({
-        orientation: 'landscape',
-        unit: 'mm',
-        format: 'a4'
+      await exportTableToPDF({
+        rows: exportData,
+        columns,
+        title: language === 'ar' ? 'تقرير القضايا' : 'Cases Report',
+        language,
+        watermarkText,
+        filename: `cases_${new Date().toISOString().split('T')[0]}.pdf`
       })
-
-      // Title (always in English for PDF to avoid font issues)
-      const title = 'Cases Report'
-      doc.setFontSize(16)
-      doc.text(title, doc.internal.pageSize.width / 2, 15, { align: 'center' })
-
-      // Prepare table data for PDF (English only)
-      const exportData = prepareExportDataForPDF()
-      
-      // Table headers
-      const headers = Object.keys(exportData[0] || {})
-      
-      // Table rows
-      const rows = exportData.map(item => Object.values(item))
-
-      // Add table using autoTable function directly
-      autoTable(doc, {
-        head: [headers],
-        body: rows,
-        startY: 25,
-        styles: {
-          fontSize: 8,
-          cellPadding: 2,
-          halign: 'left',
-        },
-        headStyles: {
-          fillColor: [41, 128, 185],
-          textColor: 255,
-          fontStyle: 'bold',
-          halign: 'center',
-        },
-        alternateRowStyles: {
-          fillColor: [245, 245, 245],
-        },
-        margin: { top: 25, right: 10, bottom: 10, left: 10 },
-      })
-
-      // Footer with date
-      const timestamp = new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-      
-      const pageCount = doc.internal.getNumberOfPages()
-      for (let i = 1; i <= pageCount; i++) {
-        doc.setPage(i)
-        doc.setFontSize(8)
-        doc.text(
-          `Export Date: ${timestamp}`,
-          10,
-          doc.internal.pageSize.height - 10
-        )
-        doc.text(
-          `Page ${i} of ${pageCount}`,
-          doc.internal.pageSize.width - 30,
-          doc.internal.pageSize.height - 10
-        )
-      }
-
-      // Generate filename
-      const fileTimestamp = new Date().toISOString().split('T')[0]
-      const filename = `cases_${fileTimestamp}.pdf`
-
-      // Save PDF
-      doc.save(filename)
     } catch (error) {
 
-      alert(language === 'ar' ? 'حدث خطأ أثناء التصدير إلى PDF' : 'Error during PDF export')
+      alert(language === 'ar' ? 'حدث خطأ أثناء تصدير PDF' : 'Error during PDF export')
     }
   }
 
@@ -210,7 +151,6 @@ const ExportButtons = ({ data = [], t, language = 'ar' }) => {
     <div className={`flex flex-wrap items-center gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
       <div className={`flex items-center gap-2 text-sm font-medium text-muted-foreground ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
         <Download className="h-4 w-4" />
-        {/* <span>{language === 'ar' ? 'تصدير الملفات:' : 'Export Files:'}</span> */}
       </div>
       
       <Button
@@ -223,7 +163,7 @@ const ExportButtons = ({ data = [], t, language = 'ar' }) => {
         <span>{language === 'ar' ? 'Excel' : 'Excel'}</span>
       </Button>
 
-      {/* <Button
+      <Button
         variant="outline"
         size="sm"
         onClick={handleExportPDF}
@@ -231,7 +171,7 @@ const ExportButtons = ({ data = [], t, language = 'ar' }) => {
       >
         <FileText className="h-4 w-4 text-red-600" />
         <span>{language === 'ar' ? 'PDF' : 'PDF'}</span>
-      </Button> */}
+      </Button>
     </div>
   )
 }

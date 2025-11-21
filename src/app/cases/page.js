@@ -43,6 +43,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Skeleton } from '@/components/ui/skeleton';
 
 const CasesPage = () => {
   const { isRTL, language } = useLanguage();
@@ -148,6 +149,32 @@ const CasesPage = () => {
       </Badge>
     );
   };
+
+  const renderSkeletonRows = (rows = 8) => (
+    <TableRow>
+      <TableCell colSpan={9}>
+        <div className="space-y-3">
+          {Array.from({ length: rows }).map((_, idx) => (
+            <div key={idx} className="grid grid-cols-9 gap-3 items-center">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <div className="flex justify-center gap-2">
+                <Skeleton className="h-8 w-8 rounded-full" />
+                <Skeleton className="h-8 w-8 rounded-full" />
+                <Skeleton className="h-8 w-8 rounded-full" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </TableCell>
+    </TableRow>
+  );
 
   // Handle search
   const handleSearch = (params) => {
@@ -333,9 +360,23 @@ const CasesPage = () => {
           </div>
 
           {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <span className={`${isRTL ? 'mr-2' : 'ml-2'}`}>{t('common.loading')}</span>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="text-center">
+                  <TableRow>
+                    <TableHead className="text-center">{t('caseForm.caseNumber')}</TableHead>
+                    <TableHead className="text-center">{t('casesTable.fileNumber')}</TableHead>
+                    <TableHead className="text-center">{t('casesTable.topic')}</TableHead>
+                    <TableHead className="text-center">{t('casesTable.court')}</TableHead>
+                    <TableHead className="text-center">{t('casesTable.caseType')}</TableHead>
+                    <TableHead className="text-center">{t('casesTable.classification')}</TableHead>
+                    <TableHead className="text-center">{t('caseForm.startDate')}</TableHead>
+                    <TableHead className="text-center">{t('casesTable.opponents')}</TableHead>
+                    <TableHead className="text-center">{t('common.actions')}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>{renderSkeletonRows(6)}</TableBody>
+              </Table>
             </div>
           ) : cases.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">

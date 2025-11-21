@@ -4,6 +4,7 @@ import React from 'react'
 import { FileSpreadsheet, FileText, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import * as XLSX from 'xlsx'
+import { exportTableToPDF } from '@/utils/exporters/pdfExporter'
 
 /**
  * Generic Export Buttons Component
@@ -14,6 +15,7 @@ import * as XLSX from 'xlsx'
  * @param {string} exportName - Base name for exported files
  * @param {string} sheetName - Name for Excel sheet
  * @param {boolean} showPDF - Whether to show PDF export button
+ * @param {string} watermarkText - Watermark text for PDF
  */
 const ExportButtons = ({ 
   data = [], 
@@ -21,7 +23,8 @@ const ExportButtons = ({
   language = 'ar', 
   exportName = 'export', 
   sheetName = 'Data',
-  showPDF = false
+  showPDF = true,
+  watermarkText = 'Lexcora'
 }) => {
   const isRTL = language === 'ar'
 
@@ -133,96 +136,32 @@ const ExportButtons = ({
     }
   }
 
-  // Export to PDF
+  // Export to PDF via shared helper
   const handleExportPDF = async () => {
+    if (!showPDF) return
+
+    const exportData = prepareExportData(true)
+    if (!exportData.length) {
+      alert(language === 'ar' ? 'لا توجد بيانات للتصدير' : 'No data to export')
+      return
+    }
+
+    const columns = Object.keys(exportData[0]).map((key) => ({
+      id: key,
+      label: key
+    }))
+
     try {
-      if (!showPDF) return
-      
-      // Import jsPDF and autoTable
-      const jsPDF = (await import('jspdf')).default
-      const autoTable = (await import('jspdf-autotable')).default
-      
-      const doc = new jsPDF({
-        orientation: 'landscape',
-        unit: 'mm',
-        format: 'a4'
+      await exportTableToPDF({
+        rows: exportData,
+        columns,
+        title: `${exportName} ${language === 'ar' ? 'تقرير' : 'Report'}`,
+        language,
+        watermarkText,
+        filename: `${exportName}_${new Date().toISOString().split('T')[0]}.pdf`
       })
-
-      // Title (always in English for PDF to avoid font issues)
-      const title = `${exportName.charAt(0).toUpperCase() + exportName.slice(1)} Report`
-      doc.setFontSize(16)
-      doc.text(title, doc.internal.pageSize.width / 2, 15, { align: 'center' })
-
-      // Prepare table data for PDF (English only)
-      const exportData = prepareExportData(true)
-      
-      if (exportData.length === 0) {
-        alert(language === 'ar' ? 'لا توجد بيانات للتصدير' : 'No data to export')
-        return
-      }
-      
-      // Table headers
-      const headers = Object.keys(exportData[0] || {})
-      
-      // Table rows
-      const rows = exportData.map(item => Object.values(item))
-
-      // Add table using autoTable function directly
-      autoTable(doc, {
-        head: [headers],
-        body: rows,
-        startY: 25,
-        styles: {
-          fontSize: 7,
-          cellPadding: 1.5,
-          halign: 'left',
-        },
-        headStyles: {
-          fillColor: [41, 128, 185],
-          textColor: 255,
-          fontStyle: 'bold',
-          halign: 'center',
-        },
-        alternateRowStyles: {
-          fillColor: [245, 245, 245],
-        },
-        margin: { top: 25, right: 10, bottom: 10, left: 10 },
-      })
-
-      // Footer with date
-      const timestamp = new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-      
-      const pageCount = doc.internal.getNumberOfPages()
-      for (let i = 1; i <= pageCount; i++) {
-        doc.setPage(i)
-        doc.setFontSize(8)
-        doc.text(
-          `Export Date: ${timestamp}`,
-          10,
-          doc.internal.pageSize.height - 10
-        )
-        doc.text(
-          `Page ${i} of ${pageCount}`,
-          doc.internal.pageSize.width - 30,
-          doc.internal.pageSize.height - 10
-        )
-      }
-
-      // Generate filename
-      const fileTimestamp = new Date().toISOString().split('T')[0]
-      const filename = `${exportName}_${fileTimestamp}.pdf`
-
-      // Save PDF
-      doc.save(filename)
     } catch (error) {
-
-      alert(language === 'ar' ? 'حدث خطأ أثناء التصدير إلى PDF' : 'Error during PDF export')
+      alert(language === 'ar' ? 'حدث خطأ أثناء تصدير PDF' : 'Error during PDF export')
     }
   }
 

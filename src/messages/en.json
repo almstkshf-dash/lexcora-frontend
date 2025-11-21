@@ -1,4 +1,11 @@
 {
   "hello": "Hello",
-  "legalAssistant": "Legal Assistant"
+  "legalAssistant": "Legal Assistant",
+  "common": {
+    "accessDeniedTitle": "Access denied",
+    "accessDeniedMessage": "You do not have permission to view this page.",
+    "goBack": "Go back",
+    "goHome": "Go home",
+    "requiredPermissions": "Required permission: {permissions}"
+  }
 }

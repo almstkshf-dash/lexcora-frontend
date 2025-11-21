@@ -23,19 +23,18 @@ const authSlice = createSlice({
       state.error = null;
     },
     loginSuccess: (state, action) => {
-      const { user, permissions } = action.payload;
+      const { user = null, permissions = [] } = action.payload || {};
       state.isAuth = true;
-      state.jobId = user.job_id;
-      state.email = user.email;
-      state.roleAr = user.role_ar;
-      state.roleEn = user.role_en;
-      state.departmentAr = user.department_ar;
-      state.departmentEn = user.department_en;
+      state.jobId = user?.job_id ?? user?.id ?? null;
+      state.email = user?.email ?? null;
+      state.roleAr = user?.role_ar ?? null;
+      state.roleEn = user?.role_en ?? null;
+      state.departmentAr = user?.department_ar ?? null;
+      state.departmentEn = user?.department_en ?? null;
       state.permissions = permissions || [];
       state.user = user;
       state.loading = false;
       state.error = null;
-      
     },
     loginFailure: (state, action) => {
       state.loading = false;

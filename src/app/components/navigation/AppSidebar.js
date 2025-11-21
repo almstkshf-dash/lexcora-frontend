@@ -28,9 +28,16 @@ const AppSidebar = ({ isMobileSidebarOpen, onMobileSidebarClose }) => {
   const { t } = useTranslations();
   const { user, roleEn, departmentEn, permissions } = useAuth();
   const userRole = useUserRole(isRTL ? 'ar' : 'en');
+  const allowAllMenu =
+    (roleEn && roleEn.toLowerCase().includes('admin')) ||
+    !permissions ||
+    permissions.length === 0;
 
   // Memoized menu items configuration with user role and department for permission-based filtering
-  const menuItems = useMemo(() => getMenuItems(t, roleEn, departmentEn, permissions), [t, roleEn, departmentEn, permissions]);
+  const menuItems = useMemo(
+    () => getMenuItems(t, roleEn, departmentEn, permissions, { allowAll: allowAllMenu }),
+    [t, roleEn, departmentEn, permissions, allowAllMenu]
+  );
 
   // Memoized callbacks
   const toggleSubmenu = useCallback((menuId) => {

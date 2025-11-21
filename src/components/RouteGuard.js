@@ -1,36 +1,51 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
+import AccessDenied from '@/components/AccessDenied';
+import { useAuth, usePermission } from '@/hooks/useAuth';
+import { getRequiredPermissionsForPath, PUBLIC_PATHS } from '@/lib/permissions';
 
-/**
- * RouteGuard component - simplified to only check authentication
- */
 export default function RouteGuard({ children }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuth, loading } = useAuth();
+  const { isAuth, loading, permissions = [], roleEn } = useAuth();
+  const { hasAnyPermission } = usePermission();
+
+  const isPublicRoute = PUBLIC_PATHS.includes(pathname);
+  const requiredPermissions = useMemo(
+    () => getRequiredPermissionsForPath(pathname),
+    [pathname]
+  );
+
+  const allowAll =
+    (roleEn && roleEn.toLowerCase().includes('admin')) ||
+    !permissions ||
+    permissions.length === 0;
 
   useEffect(() => {
-    // Wait for auth to load
-    if (loading) return;
-
-    // If not authenticated and not on login page, redirect to login
+    if (loading || isPublicRoute) return;
     if (!isAuth && pathname !== '/login') {
       router.push('/login');
-      return;
     }
-  }, [pathname, isAuth, loading, router]);
+  }, [isAuth, isPublicRoute, loading, pathname, router]);
 
-  // Show loading state while checking auth
   if (loading) {
     return null;
   }
 
-  // If not authenticated and not on login page, don't render
-  if (!isAuth && pathname !== '/login') {
+  if (!isAuth && !isPublicRoute) {
     return null;
+  }
+
+  const hasPermission =
+    allowAll ||
+    !requiredPermissions ||
+    requiredPermissions.length === 0 ||
+    hasAnyPermission(requiredPermissions);
+
+  if (!hasPermission) {
+    return <AccessDenied requiredPermissions={requiredPermissions} />;
   }
 
   return children;

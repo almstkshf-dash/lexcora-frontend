@@ -1,4 +1,11 @@
 {
   "hello": "مرحبا",
-  "legalAssistant": "المساعد القانوني"
+  "legalAssistant": "المساعد القانوني",
+  "common": {
+    "accessDeniedTitle": "تم رفض الوصول",
+    "accessDeniedMessage": "ليست لديك صلاحية لعرض هذه الصفحة.",
+    "goBack": "رجوع",
+    "goHome": "الصفحة الرئيسية",
+    "requiredPermissions": "الصلاحية المطلوبة: {permissions}"
+  }
 }

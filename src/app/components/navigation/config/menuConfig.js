@@ -23,6 +23,7 @@ import {
   Building2,
   Gauge
 } from 'lucide-react';
+import { PERMISSION_REQUIREMENTS } from '@/lib/permissions';
 
 const normalizePermission = (perm) => {
   if (!perm) return null;
@@ -34,6 +35,8 @@ const normalizePermission = (perm) => {
     perm.permission_name,
     perm.permission_en,
     perm.permission_ar,
+    perm.permission_group_name,
+    perm.permission_parent_name,
     perm.name,
     perm.code,
     perm.id,
@@ -54,6 +57,10 @@ const buildPermissionSet = (permissions = []) => {
 };
 
 const filterByPermissions = (items = [], permissionSet) => {
+  if (!permissionSet || permissionSet.size === 0) {
+    return items;
+  }
+
   return items
     .map((item) => {
       const required = item.requiredPermissions;
@@ -85,7 +92,8 @@ const filterByPermissions = (items = [], permissionSet) => {
     });
 };
 
-export const getMenuItems = (t, userRole = null, userDepartment = null, permissions = []) => {
+export const getMenuItems = (t, userRole = null, userDepartment = null, permissions = [], options = {}) => {
+  const { allowAll = false } = options;
   const permissionSet = buildPermissionSet(permissions);
 
   const menuItems = [
@@ -93,7 +101,8 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       id: '/',
       label: t('navigation.dashboard'),
       icon: LayoutDashboard,
-      type: 'link'
+      type: 'link',
+      requiredPermissions: PERMISSION_REQUIREMENTS.dashboard
     },
     {
       id: 'casesManagement',
@@ -101,10 +110,10 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       icon: Scale,
       type: 'category',
       submenu: [
-        { id: 'cases', label: t('navigation.cases'), icon: Scale },
-        { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus },
-        { id: 'cases/sessions', label: t('navigation.sessions'), icon: Calendar },
-        { id: 'cases/judicial-decisions', label: t('navigation.judicialDecisions'), icon: CheckCircle },
+        { id: 'cases', label: t('navigation.cases'), icon: Scale, requiredPermissions: PERMISSION_REQUIREMENTS.cases },
+        { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus, requiredPermissions: PERMISSION_REQUIREMENTS.addCase },
+        { id: 'cases/sessions', label: t('navigation.sessions'), icon: Calendar, requiredPermissions: PERMISSION_REQUIREMENTS.sessions },
+        { id: 'cases/judicial-decisions', label: t('navigation.judicialDecisions'), icon: CheckCircle, requiredPermissions: PERMISSION_REQUIREMENTS.judicialDecisions },
       ]
     },
     {
@@ -113,19 +122,20 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       icon: Users,
       type: 'category',
       submenu: [
-        { id: 'parties', label: t('navigation.parties'), icon: Users },
-        { id: 'potential-clients', label: t('navigation.potentialClients'), icon: UserRoundPlus },
-        { id: 'meetings', label: t('navigation.meetings'), icon: Calendar },
-        { id: 'call-logs', label: t('navigation.callLogs'), icon: Phone },
-        { id: 'goaml', label: t('navigation.goaml'), icon: Shield },
-        { id: 'client-forms', label: t('navigation.forms'), icon: FileText },
+        { id: 'parties', label: t('navigation.parties'), icon: Users, requiredPermissions: PERMISSION_REQUIREMENTS.parties },
+        { id: 'potential-clients', label: t('navigation.potentialClients'), icon: UserRoundPlus, requiredPermissions: PERMISSION_REQUIREMENTS.potentialClients },
+        { id: 'meetings', label: t('navigation.meetings'), icon: Calendar, requiredPermissions: PERMISSION_REQUIREMENTS.meetings },
+        { id: 'call-logs', label: t('navigation.callLogs'), icon: Phone, requiredPermissions: PERMISSION_REQUIREMENTS.callLogs },
+        { id: 'goaml', label: t('navigation.goaml'), icon: Shield, requiredPermissions: PERMISSION_REQUIREMENTS.goaml },
+        { id: 'client-forms', label: t('navigation.forms'), icon: FileText, requiredPermissions: PERMISSION_REQUIREMENTS.clientForms },
       ]
     },
     {
       id: 'approvals',
       label: t('navigation.approvalsCenter'),
       icon: CheckCircle,
-      type: 'link'
+      type: 'link',
+      requiredPermissions: PERMISSION_REQUIREMENTS.approvals
     },
     {
       id: 'humanResources',
@@ -133,12 +143,12 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       icon: Users,
       type: 'category',
       submenu: [
-        { id: 'hr/employees', label: t('navigation.employees'), icon: Users },
-        { id: 'hr/requests', label: t('navigation.requests'), icon: FileText },
-        { id: 'hr/assets', label: t('navigation.assets'), icon: Package },
-        { id: 'hr/forms', label: t('navigation.forms'), icon: ScrollText },
-        { id: 'hr/events', label: t('navigation.events'), icon: Calendar },
-        { id: 'hr/notifications', label: t('navigation.notifications'), icon: Bell },
+        { id: 'hr/employees', label: t('navigation.employees'), icon: Users, requiredPermissions: PERMISSION_REQUIREMENTS.hrEmployees },
+        { id: 'hr/requests', label: t('navigation.requests'), icon: FileText, requiredPermissions: PERMISSION_REQUIREMENTS.hrRequests },
+        { id: 'hr/assets', label: t('navigation.assets'), icon: Package, requiredPermissions: PERMISSION_REQUIREMENTS.hrAssets },
+        { id: 'hr/forms', label: t('navigation.forms'), icon: ScrollText, requiredPermissions: PERMISSION_REQUIREMENTS.hrForms },
+        { id: 'hr/events', label: t('navigation.events'), icon: Calendar, requiredPermissions: PERMISSION_REQUIREMENTS.hrEvents },
+        { id: 'hr/notifications', label: t('navigation.notifications'), icon: Bell, requiredPermissions: PERMISSION_REQUIREMENTS.hrNotifications },
       ]
     },
     {
@@ -147,11 +157,11 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       icon: DollarSign,
       type: 'category',
       submenu: [
-        { id: 'finance/clients', label: t('navigation.financeClients'), icon: Users },
-        { id: 'finance/invoices', label: t('navigation.invoices'), icon: List },
-        { id: 'finance/bank-accounts', label: t('navigation.bankAccounts'), icon: Banknote },
-        { id: 'finance/statistics', label: t('navigation.statistics'), icon: BarChartIcon },
-        { id: 'finance/employees', label: t('navigation.employeesStatements'), icon: Users2     },
+        { id: 'finance/clients', label: t('navigation.financeClients'), icon: Users, requiredPermissions: PERMISSION_REQUIREMENTS.financeClients },
+        { id: 'finance/invoices', label: t('navigation.invoices'), icon: List, requiredPermissions: PERMISSION_REQUIREMENTS.invoices },
+        { id: 'finance/bank-accounts', label: t('navigation.bankAccounts'), icon: Banknote, requiredPermissions: PERMISSION_REQUIREMENTS.bankAccounts },
+        { id: 'finance/statistics', label: t('navigation.statistics'), icon: BarChartIcon, requiredPermissions: PERMISSION_REQUIREMENTS.financeStatistics },
+        { id: 'finance/employees', label: t('navigation.employeesStatements'), icon: Users2, requiredPermissions: PERMISSION_REQUIREMENTS.financeEmployees     },
       ]
     },
     {
@@ -160,13 +170,17 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       icon: Settings2,
       type: 'category',
       submenu: [
-        { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette },
-        { id: 'settings/branches', label: t('navigation.branches'), icon: Building2 },
+        { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette, requiredPermissions: PERMISSION_REQUIREMENTS.settingsAppearance },
+        { id: 'settings/branches', label: t('navigation.branches'), icon: Building2, requiredPermissions: PERMISSION_REQUIREMENTS.settingsBranches },
         // { id: 'settings/performance', label: t('navigation.performance'), icon: Gauge },
-        { id: 'logs', label: t('navigation.logs'), icon: Clock },
+        { id: 'logs', label: t('navigation.logs'), icon: Clock, requiredPermissions: PERMISSION_REQUIREMENTS.logs },
       ]
     }
   ];
+
+  if (allowAll) {
+    return menuItems;
+  }
 
   return filterByPermissions(menuItems, permissionSet);
 };

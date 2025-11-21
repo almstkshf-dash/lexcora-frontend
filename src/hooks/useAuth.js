@@ -60,6 +60,8 @@ export const usePermission = (permissionName) => {
       perm.permission_name,
       perm.permission_en,
       perm.permission_ar,
+      perm.permission_group_name,
+      perm.permission_parent_name,
       perm.name,
       perm.code,
       perm.id,
@@ -82,6 +84,7 @@ export const usePermission = (permissionName) => {
 
   const checkAny = (requested) => {
     if (!requested) return true; // allow when nothing requested
+    if (permissionSet.size === 0) return true;
     const list = Array.isArray(requested) ? requested : [requested];
     return list.some((r) => {
       const normalized = normalizePermission(r);
@@ -91,6 +94,7 @@ export const usePermission = (permissionName) => {
 
   const checkAll = (requested) => {
     if (!requested) return true;
+    if (permissionSet.size === 0) return true;
     const list = Array.isArray(requested) ? requested : [requested];
     return list.every((r) => {
       const normalized = normalizePermission(r);

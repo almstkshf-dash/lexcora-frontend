@@ -65,6 +65,11 @@ export const useFinanceClients = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
+  const handlePageChange = (page) => {
+    const target = Math.max(1, Math.min(page, data?.pagination?.totalPages || 1));
+    setCurrentPage(target);
+  };
+
   return {
     // Data
     clients,
@@ -85,6 +90,7 @@ export const useFinanceClients = () => {
     currentPage,
     handleNextPage,
     handlePreviousPage,
+    handlePageChange,
     
     // Modal
     isModalOpen,

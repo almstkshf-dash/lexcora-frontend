@@ -74,7 +74,44 @@
     "error": "Something went wrong",
     "noData": "No data available",
     "actions": "Actions",
-    "user": "User"
+    "user": "User",
+    "name": "Name",
+    "balance": "Balance",
+    "phone": "Phone",
+    "nationality": "Nationality",
+    "view": "View"
+  },
+  "casesTable": {
+    "caseNumber": "Case Number",
+    "fileNumber": "File Number",
+    "topic": "Topic",
+    "court": "Court",
+    "caseType": "Case Type",
+    "classification": "Classification",
+    "clientParties": "Client Parties",
+    "opponentParties": "Opponent Parties",
+    "flags": "Flags",
+    "actions": "Actions",
+    "title": "Cases overview",
+    "totalCases": "Total cases",
+    "searchDescription": "Search for cases using various criteria",
+    "addNote": "Add Note",
+    "addSession": "Add Session",
+    "addTask": "Add Task",
+    "addExecution": "Add Execution",
+    "addPetition": "Add Petition",
+    "delete": "Delete",
+    "edit": "Edit"
+  },
+  "caseForm": {
+    "caseNumber": "Case Number",
+    "startDate": "Start Date"
+  },
+  "caseToggles": {
+    "isImportant": "Important",
+    "isSecret": "Secret",
+    "isArchived": "Archived",
+    "isPending": "Pending"
   },
   "messages": {
     "permissionsSavedSuccessfully": "Permissions saved successfully!",

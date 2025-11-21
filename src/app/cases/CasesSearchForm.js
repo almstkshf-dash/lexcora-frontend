@@ -20,6 +20,13 @@ const CasesSearchForm = ({ onSearch }) => {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
 
+  const resolveCopy = (key, fallbackAr, fallbackEn) => {
+    const val = t(key);
+    const fallback = language === 'ar' ? fallbackAr : fallbackEn;
+    if (!val || val === key || val.toLowerCase() === key.toLowerCase()) return fallback;
+    return val;
+  };
+
   // Form state
   const [fileNumber, setFileNumber] = useState('');
   const [caseNumber, setCaseNumber] = useState('');
@@ -82,10 +89,10 @@ const CasesSearchForm = ({ onSearch }) => {
       <CardHeader>
         <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <SearchIcon className="h-5 w-5" />
-          {language === 'ar' ? 'البحث في القضايا' : 'Search Cases'}
+          {resolveCopy('casesTable.title', 'البحث في القضايا', 'Search Cases')}
         </CardTitle>
         <CardDescription>
-          {language === 'ar' ? 'ابحث عن القضايا باستخدام المعايير المختلفة' : 'Search for cases using various criteria'}
+          {resolveCopy('casesTable.searchDescription', 'ابحث عن القضايا باستخدام المعايير المختلفة', 'Search for cases using various criteria')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -94,12 +101,12 @@ const CasesSearchForm = ({ onSearch }) => {
           {/* File Number Input */}
           <div className="space-y-2">
             <Label htmlFor="fileNumber" className="text-sm font-medium">
-              {language === 'ar' ? 'رقم الملف' : 'File Number'}
+              {resolveCopy('casesTable.fileNumber', 'رقم الملف', 'File Number')}
             </Label>
             <Input
               id="fileNumber"
               type="text"
-              placeholder={language === 'ar' ? 'أدخل رقم الملف' : 'Enter file number'}
+              placeholder={resolveCopy('casesTable.fileNumber', 'أدخل رقم الملف', 'Enter file number')}
               value={fileNumber}
               onChange={(e) => setFileNumber(e.target.value)}
               className={isRTL ? 'text-right' : 'text-left'}
@@ -109,12 +116,12 @@ const CasesSearchForm = ({ onSearch }) => {
           {/* Case Number Input */}
           <div className="space-y-2">
             <Label htmlFor="caseNumber" className="text-sm font-medium">
-              {language === 'ar' ? 'رقم القضية' : 'Case Number'}
+              {resolveCopy('casesTable.caseNumber', 'رقم القضية', 'Case Number')}
             </Label>
             <Input
               id="caseNumber"
               type="text"
-              placeholder={language === 'ar' ? 'أدخل رقم القضية' : 'Enter case number'}
+              placeholder={resolveCopy('casesTable.caseNumber', 'أدخل رقم القضية', 'Enter case number')}
               value={caseNumber}
               onChange={(e) => setCaseNumber(e.target.value)}
               className={isRTL ? 'text-right' : 'text-left'}

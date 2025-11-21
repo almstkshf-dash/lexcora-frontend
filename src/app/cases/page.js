@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
-import { Eye, Edit, Trash2, MoreHorizontal, FileText, Calendar, CheckSquare, Gavel, FileSearch, User, Scale, Printer, Plus } from 'lucide-react';
+import { Edit, Trash2, MoreHorizontal, FileText, Calendar, CheckSquare, Gavel, FileSearch, User, Scale, Printer, Plus } from 'lucide-react';
 import { getCases } from '@/app/services/api/cases';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -17,14 +17,7 @@ import AddMemoModal from '@/app/cases/[id]/edit/memos/AddMemoModal';
 import DeleteCaseModal from '@/app/cases/modals/DeleteCaseModal';
 import CasesSearchForm from '@/app/cases/CasesSearchForm';
 import ExportButtons from '@/app/cases/ExportButtons';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import DataTable from '@/components/DataTable';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,15 +28,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { Skeleton } from '@/components/ui/skeleton';
 
 const CasesPage = () => {
@@ -150,32 +134,6 @@ const CasesPage = () => {
       </Badge>
     );
   };
-
-  const renderSkeletonRows = (rows = 8) => (
-    <TableRow>
-      <TableCell colSpan={9}>
-        <div className="space-y-3">
-          {Array.from({ length: rows }).map((_, idx) => (
-            <div key={idx} className="grid grid-cols-9 gap-3 items-center">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <div className="flex justify-center gap-2">
-                <Skeleton className="h-8 w-8 rounded-full" />
-                <Skeleton className="h-8 w-8 rounded-full" />
-                <Skeleton className="h-8 w-8 rounded-full" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </TableCell>
-    </TableRow>
-  );
 
   // Handle search
   const handleSearch = (params) => {
@@ -320,9 +278,28 @@ const CasesPage = () => {
               }
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p>{errorMessage}</p>
-          </CardContent>
+                  <CardContent>
+          <div className="mb-4 pb-4 border-b">
+            <ExportButtons data={cases} t={t} language={language} />
+          </div>
+          <DataTable
+            data={cases}
+            columns={caseColumns}
+            rowKey="id"
+            isLoading={isLoading}
+            loadingMessage={t('common.loading')}
+            emptyMessage={t('common.noData')}
+            rowActions={renderCaseActions}
+            actionsLabel={t('casesTable.actions')}
+            dir={isRTL ? 'rtl' : 'ltr'}
+            enableColumnSearch={false}
+            pagination={{
+              page: currentPage,
+              totalPages: pagination.totalPages || 1,
+              onPageChange: handlePageChange,
+            }}
+          />
+        </CardContent>
         </Card>
       </div>
     );
@@ -346,6 +323,265 @@ const CasesPage = () => {
         {t('navigation.myTasks')}
       </Button>
     </div>
+  );
+
+  const resolveLabel = (key, fallback) => {
+    const value = t(key);
+    if (!value || value === key || value === key.toLowerCase() || value === key.toUpperCase()) {
+      return fallback;
+    }
+    return value;
+  };
+
+  const caseNumberLabel = resolveLabel(
+    'casesTable.caseNumber',
+    language === 'ar' ? 'رقم القضية' : 'Case Number'
+  );
+  const fileNumberLabel = resolveLabel(
+    'casesTable.fileNumber',
+    language === 'ar' ? 'رقم الملف' : 'File Number'
+  );
+  const topicLabel = resolveLabel('casesTable.topic', language === 'ar' ? 'الموضوع' : 'Topic');
+  const courtLabel = resolveLabel('casesTable.court', language === 'ar' ? 'المحكمة' : 'Court');
+  const caseTypeLabel = resolveLabel(
+    'casesTable.caseType',
+    language === 'ar' ? 'نوع القضية' : 'Case Type'
+  );
+  const classificationLabel = resolveLabel(
+    'casesTable.classification',
+    language === 'ar' ? 'التصنيف' : 'Classification'
+  );
+  const clientPartiesLabel = resolveLabel(
+    'casesTable.clientParties',
+    language === 'ar' ? 'الطرف الموكل' : 'Client Parties'
+  );
+  const opponentPartiesLabel = resolveLabel(
+    'casesTable.opponentParties',
+    language === 'ar' ? 'الطرف الخصم' : 'Opponent Parties'
+  );
+  const startDateLabel = resolveLabel(
+    'caseForm.startDate',
+    language === 'ar' ? 'تاريخ بدء القضية' : 'Start Date'
+  );
+
+  const caseColumns = useMemo(() => [
+    {
+      id: 'case_number',
+      header: caseNumberLabel,
+      accessor: 'case_number',
+      sortable: true,
+      searchable: true,
+      searchPlaceholder: caseNumberLabel,
+      headerClassName: 'text-center',
+      cellClassName: 'font-medium',
+    },
+    {
+      id: 'file_number',
+      header: fileNumberLabel,
+      sortable: true,
+      searchable: true,
+      searchPlaceholder: fileNumberLabel,
+      headerClassName: 'text-center',
+      accessor: (row) => maskSensitiveData(row.file_number, row.is_secret),
+    },
+    {
+      id: 'topic',
+      header: topicLabel,
+      sortable: true,
+      searchable: true,
+      searchPlaceholder: topicLabel,
+      headerClassName: 'text-center',
+      accessor: (row) => maskSensitiveData(row.topic, row.is_secret),
+    },
+    {
+      id: 'court',
+      header: courtLabel,
+      sortable: true,
+      searchable: true,
+      searchPlaceholder: courtLabel,
+      headerClassName: 'text-center',
+      accessor: (row) => maskSensitiveData(getLocalizedText(row.court_ar, row.court_en), row.is_secret),
+    },
+    {
+      id: 'case_type',
+      header: caseTypeLabel,
+      sortable: true,
+      searchable: true,
+      searchPlaceholder: caseTypeLabel,
+      headerClassName: 'text-center',
+      accessor: (row) => maskSensitiveData(getLocalizedText(row.case_type_ar, row.case_type_en), row.is_secret),
+    },
+    {
+      id: 'classification',
+      header: classificationLabel,
+      sortable: true,
+      searchable: true,
+      searchPlaceholder: classificationLabel,
+      headerClassName: 'text-center',
+      accessor: (row) =>
+        maskSensitiveData(
+          getLocalizedText(row.case_classification_ar, row.case_classification_en),
+          row.is_secret
+        ),
+    },
+    {
+      id: 'start_date',
+      header: startDateLabel,
+      sortable: true,
+      headerClassName: 'text-center',
+      accessor: (row) => maskSensitiveData(formatDate(row.start_date), row.is_secret),
+    },
+    {
+      id: 'clientParties',
+      header: clientPartiesLabel,
+      searchable: true,
+      searchPlaceholder: clientPartiesLabel,
+      headerClassName: 'text-center',
+      accessor: (row) =>
+        row.is_secret
+          ? '***'
+          : (row.clientParties || []).join(', '),
+      cell: (row) =>
+        row.is_secret ? (
+          <div className="flex items-center gap-2">
+            <User className="h-4 w-4 text-muted-foreground" />
+            <span>***</span>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            {row.clientParties?.length ? (
+              row.clientParties.map((party, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm">{party}</span>
+                </div>
+              ))
+            ) : (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <User className="h-4 w-4" />
+                <span className="text-sm">-</span>
+              </div>
+            )}
+          </div>
+        ),
+    },
+    {
+      id: 'opponentParties',
+      header: opponentPartiesLabel,
+      searchable: true,
+      searchPlaceholder: opponentPartiesLabel,
+      headerClassName: 'text-center',
+      accessor: (row) =>
+        row.is_secret
+          ? '***'
+          : (row.opponentParties || []).join(', '),
+      cell: (row) =>
+        row.is_secret ? (
+          <div className="flex items-center gap-2">
+            <User className="h-4 w-4 text-muted-foreground" />
+            <span>***</span>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            {row.opponentParties?.length ? (
+              row.opponentParties.map((party, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-red-600" />
+                  <span className="text-sm">{party}</span>
+                </div>
+              ))
+            ) : (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <User className="h-4 w-4" />
+                <span className="text-sm">-</span>
+              </div>
+            )}
+          </div>
+        ),
+    },
+    {
+      id: 'flags',
+      header: t('casesTable.flags'),
+      headerClassName: 'text-center',
+      cell: (row) => (
+        <div className="flex gap-1 flex-wrap">
+          {row.is_important === 1 && (
+            <Badge variant="destructive" className="text-xs">
+              {t('caseToggles.isImportant')}
+            </Badge>
+          )}
+          {row.is_secret === 1 && (
+            <Badge variant="outline" className="text-xs">
+              {t('caseToggles.isSecret')}
+            </Badge>
+          )}
+          {row.is_archived === 1 && (
+            <Badge variant="secondary" className="text-xs">
+              {t('caseToggles.isArchived')}
+            </Badge>
+          )}
+          {row.is_pending === 1 && (
+            <Badge variant="outline" className="text-xs bg-orange-100 text-orange-800 border-orange-300">
+              {t('caseToggles.isPending')}
+            </Badge>
+          )}
+        </div>
+      ),
+    },
+  ], [caseNumberLabel, caseTypeLabel, classificationLabel, clientPartiesLabel, courtLabel, fileNumberLabel, getLocalizedText, maskSensitiveData, opponentPartiesLabel, startDateLabel, topicLabel]);
+
+  const renderCaseActions = (case_) => (
+    <DropdownMenu dir={isRTL ? 'rtl' : 'ltr'}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align={isRTL ? 'start' : 'end'}>
+        <DropdownMenuItem onClick={() => handleEdit(case_.id)}>
+          <Edit className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.edit')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handlePrint(case_.id)}>
+          <Printer className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {language === 'ar' ? 'طباعة القضية' : 'Print Case'}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => handleAddNote(case_.id)}>
+          <FileText className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.addNote')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAddSession(case_.id)}>
+          <Calendar className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.addSession')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAddTask(case_.id)}>
+          <CheckSquare className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.addTask')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAddExecution(case_.id)}>
+          <Gavel className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.addExecution')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAddPetition(case_.id)}>
+          <FileSearch className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.addPetition')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAddCourtLevel(case_.id)}>
+          <Scale className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {language === 'ar' ? 'إضافة مرحلة قضائية' : 'Add Court Level'}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem 
+          onClick={() => handleDelete(case_)}
+          className="text-destructive focus:text-destructive"
+        >
+          <Trash2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.delete')}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 
   return (
@@ -377,294 +613,25 @@ const CasesPage = () => {
             )}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          {/* Export Buttons Section */}
+                <CardContent>
           <div className="mb-4 pb-4 border-b">
             <ExportButtons data={cases} t={t} language={language} />
           </div>
-
-          {isLoading ? (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className="text-center">
-                  <TableRow>
-                    <TableHead className="text-center">{t('caseForm.caseNumber')}</TableHead>
-                    <TableHead className="text-center">{t('casesTable.fileNumber')}</TableHead>
-                    <TableHead className="text-center">{t('casesTable.topic')}</TableHead>
-                    <TableHead className="text-center">{t('casesTable.court')}</TableHead>
-                    <TableHead className="text-center">{t('casesTable.caseType')}</TableHead>
-                    <TableHead className="text-center">{t('casesTable.classification')}</TableHead>
-                    <TableHead className="text-center">{t('caseForm.startDate')}</TableHead>
-                    <TableHead className="text-center">{t('casesTable.opponents')}</TableHead>
-                    <TableHead className="text-center">{t('common.actions')}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>{renderSkeletonRows(6)}</TableBody>
-              </Table>
-            </div>
-          ) : cases.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              {t('common.noData')}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className='text-center'>
-                  <TableRow>
-                    <TableHead className='text-center'>
-                      {t('caseForm.caseNumber')}
-                    </TableHead>
-                    <TableHead className='text-center'>
-                      {t('casesTable.fileNumber')}
-                    </TableHead>
-                    <TableHead className='text-center'>
-                      {t('casesTable.topic')}
-                    </TableHead>
-                    <TableHead className='text-center'>
-                      {t('casesTable.court')}
-                    </TableHead>
-                    <TableHead className='text-center'>
-                      {t('casesTable.caseType')}
-                    </TableHead>
-                    <TableHead className='text-center'>
-                      {t('casesTable.classification')}
-                    </TableHead>
-                    <TableHead className='text-center'>
-                      {t('caseForm.startDate')}
-                    </TableHead>
-                    <TableHead className='text-center'>
-                      {t('casesTable.clientParties')}
-                    </TableHead>
-                    <TableHead className='text-center'>
-                      {t('casesTable.opponentParties')}
-                    </TableHead>
-                    <TableHead className='text-center'>
-                      {t('casesTable.flags')}
-                    </TableHead>
-                    <TableHead className='text-center'>
-                      {t('casesTable.actions')}
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {cases.map((case_) => (
-                    <TableRow key={case_.id}>
-                      <TableCell className="font-medium">
-                        {case_.case_number}
-                      </TableCell>
-                      <TableCell>
-                        {maskSensitiveData(case_.file_number, case_.is_secret)}
-                      </TableCell>
-                      <TableCell>
-                        {maskSensitiveData(case_.topic, case_.is_secret)}
-                      </TableCell>
-                      <TableCell>
-                        {maskSensitiveData(
-                          getLocalizedText(case_.court_ar, case_.court_en),
-                          case_.is_secret
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {maskSensitiveData(
-                          getLocalizedText(case_.case_type_ar, case_.case_type_en),
-                          case_.is_secret
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {maskSensitiveData(
-                          getLocalizedText(case_.case_classification_ar, case_.case_classification_en),
-                          case_.is_secret
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {maskSensitiveData(formatDate(case_.start_date), case_.is_secret)}
-                      </TableCell>
-                      <TableCell>
-                        {case_.is_secret ? (
-                          <div className="flex items-center gap-2">
-                            <User className="h-4 w-4 text-muted-foreground" />
-                            <span>***</span>
-                          </div>
-                        ) : (
-                          <div className="space-y-1">
-                            {case_.clientParties?.map((party, index) => (
-                              <div key={index} className="flex items-center gap-2">
-                                <User className="h-4 w-4 text-blue-600" />
-                                <span className="text-sm">{party}</span>
-                              </div>
-                            )) || (
-                              <div className="flex items-center gap-2 text-muted-foreground">
-                                <User className="h-4 w-4" />
-                                <span className="text-sm">-</span>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {case_.is_secret ? (
-                          <div className="flex items-center gap-2">
-                            <User className="h-4 w-4 text-muted-foreground" />
-                            <span>***</span>
-                          </div>
-                        ) : (
-                          <div className="space-y-1">
-                            {case_.opponentParties?.map((party, index) => (
-                              <div key={index} className="flex items-center gap-2">
-                                <User className="h-4 w-4 text-red-600" />
-                                <span className="text-sm">{party}</span>
-                              </div>
-                            )) || (
-                              <div className="flex items-center gap-2 text-muted-foreground">
-                                <User className="h-4 w-4" />
-                                <span className="text-sm">-</span>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1 flex-wrap">
-                          {case_.is_important === 1 && (
-                            <Badge variant="destructive" className="text-xs">
-                              {t('caseToggles.isImportant')}
-                            </Badge>
-                          )}
-                          {case_.is_secret === 1 && (
-                            <Badge variant="outline" className="text-xs">
-                              {t('caseToggles.isSecret')}
-                            </Badge>
-                          )}
-                          {case_.is_archived === 1 && (
-                            <Badge variant="secondary" className="text-xs">
-                              {t('caseToggles.isArchived')}
-                            </Badge>
-                          )}
-                          {case_.is_pending === 1 && (
-                            <Badge variant="outline" className="text-xs bg-orange-100 text-orange-800 border-orange-300">
-                              {t('caseToggles.isPending')}
-                            </Badge>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu dir={isRTL ? 'rtl' : 'ltr'}>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <span className="sr-only">Open menu</span>
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align={isRTL ? 'start' : 'end'}>
-                            {/* <DropdownMenuItem onClick={() => handleView(case_.id)}>
-                              <Eye className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.view')}
-                            </DropdownMenuItem> */}
-                            <DropdownMenuItem onClick={() => handleEdit(case_.id)}>
-                              <Edit className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.edit')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handlePrint(case_.id)}>
-                              <Printer className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {language === 'ar' ? 'طباعة الملف' : 'Print Case'}
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleAddNote(case_.id)}>
-                              <FileText className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.addNote')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleAddSession(case_.id)}>
-                              <Calendar className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.addSession')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleAddTask(case_.id)}>
-                              <CheckSquare className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.addTask')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleAddExecution(case_.id)}>
-                              <Gavel className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.addExecution')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleAddPetition(case_.id)}>
-                              <FileSearch className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.addPetition')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleAddCourtLevel(case_.id)}>
-                              <Scale className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {language === 'ar' ? 'اضافة درجة تقاضي' : 'Add Court Level'}
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem 
-                              onClick={() => handleDelete(case_)}
-                              className="text-destructive focus:text-destructive"
-                            >
-                              <Trash2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.delete')}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-          
-          {/* Pagination Controls */}
-          {!isLoading && cases.length > 0 && pagination.totalPages > 1 && (
-            <div className="mt-6 flex items-center justify-center">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-                      className={cn(
-                        currentPage === 1 && 'pointer-events-none opacity-50',
-                        'cursor-pointer'
-                      )}
-                    >
-                      {language === 'ar' ? 'السابق' : 'Previous'}
-                    </PaginationPrevious>
-                  </PaginationItem>
-                  
-                  {getPageNumbers().map((page, index) => {
-                    if (page === 'ellipsis-start' || page === 'ellipsis-end') {
-                      return (
-                        <PaginationItem key={`ellipsis-${index}`}>
-                          <PaginationEllipsis />
-                        </PaginationItem>
-                      );
-                    }
-                    
-                    return (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          onClick={() => handlePageChange(page)}
-                          isActive={currentPage === page}
-                          className="cursor-pointer"
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-                    );
-                  })}
-                  
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() => currentPage < pagination.totalPages && handlePageChange(currentPage + 1)}
-                      className={cn(
-                        currentPage === pagination.totalPages && 'pointer-events-none opacity-50',
-                        'cursor-pointer'
-                      )}
-                    >
-                      {language === 'ar' ? 'التالي' : 'Next'}
-                    </PaginationNext>
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
-          )}
+          <DataTable
+            data={cases}
+            columns={caseColumns}
+            rowKey="id"
+            isLoading={isLoading}
+            emptyMessage={t('common.noData')}
+            rowActions={renderCaseActions}
+            actionsLabel={t('casesTable.actions')}
+            dir={isRTL ? 'rtl' : 'ltr'}
+            pagination={{
+              page: currentPage,
+              totalPages: pagination.totalPages || 1,
+              onPageChange: handlePageChange,
+            }}
+          />
         </CardContent>
       </Card>
 
@@ -719,3 +686,4 @@ const CasesPage = () => {
 };
 
 export default CasesPage;
+

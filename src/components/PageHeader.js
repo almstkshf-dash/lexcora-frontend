@@ -11,6 +11,7 @@ const PageHeader = ({
   actions = null,
   icon: Icon = null,
   sticky = false,
+  contextMeta = null, // { title?: string, lastSynced?: string, action?: ReactNode }
   children,
 }) => {
   const { isRTL } = useLanguage();
@@ -78,6 +79,26 @@ const PageHeader = ({
           )}
         </div>
       </div>
+
+      {sticky && contextMeta && (contextMeta.title || contextMeta.lastSynced || contextMeta.action) && (
+        <div className="mt-2 rounded-lg border bg-muted/40 px-3 py-2 text-xs text-muted-foreground flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            {contextMeta.title && (
+              <span className="font-semibold text-foreground">{contextMeta.title}</span>
+            )}
+            {contextMeta.lastSynced && (
+              <span className="whitespace-nowrap">
+                {contextMeta.lastSynced}
+              </span>
+            )}
+          </div>
+          {contextMeta.action && (
+            <div className="flex items-center gap-2">
+              {contextMeta.action}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

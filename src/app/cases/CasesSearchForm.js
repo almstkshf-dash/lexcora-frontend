@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
-import { CalendarIcon, SearchIcon } from 'lucide-react';
+import { CalendarIcon, SearchIcon, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { getBranches } from '@/app/services/api/branches';
@@ -59,20 +59,34 @@ const CasesSearchForm = ({ onSearch }) => {
     }
   };
 
+  const formatDateDisplay = (dateValue) => {
+    if (!dateValue) return '';
+    try {
+      return new Date(dateValue).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-US');
+    } catch (e) {
+      return dateValue;
+    }
+  };
+
+  const buildSearchPayload = (overrides = {}) => {
+    const nextFileNumber = overrides.fileNumber ?? fileNumber;
+    const nextCaseNumber = overrides.caseNumber ?? caseNumber;
+    const nextFromDate = overrides.fromDate ?? fromDate;
+    const nextToDate = overrides.toDate ?? toDate;
+    const nextBranch = overrides.selectedBranch ?? selectedBranch;
+
+    return {
+      fileNumber: nextFileNumber.trim(),
+      caseNumber: nextCaseNumber.trim(),
+      fromDate: nextFromDate ? format(nextFromDate, 'yyyy-MM-dd') : '',
+      toDate: nextToDate ? format(nextToDate, 'yyyy-MM-dd') : '',
+      branchId: nextBranch
+    };
+  };
+
   // Handle search button click
   const handleSearch = () => {
-    const searchParams = {
-      fileNumber: fileNumber.trim(),
-      caseNumber: caseNumber.trim(),
-      fromDate: fromDate ? format(fromDate, 'yyyy-MM-dd') : '',
-      toDate: toDate ? format(toDate, 'yyyy-MM-dd') : '',
-      branchId: selectedBranch
-    };
-    
-    // Call the onSearch callback if provided
-    if (onSearch) {
-      onSearch(searchParams);
-    }
+    onSearch?.(buildSearchPayload());
   };
 
   // Reset form
@@ -82,7 +96,94 @@ const CasesSearchForm = ({ onSearch }) => {
     setFromDate(undefined);
     setToDate(undefined);
     setSelectedBranch('');
+
+    onSearch?.(buildSearchPayload({
+      fileNumber: '',
+      caseNumber: '',
+      fromDate: undefined,
+      toDate: undefined,
+      selectedBranch: ''
+    }));
   };
+
+  const handleRemoveFilter = (key) => {
+    const overrides = {};
+    switch (key) {
+      case 'fileNumber':
+        setFileNumber('');
+        overrides.fileNumber = '';
+        break;
+      case 'caseNumber':
+        setCaseNumber('');
+        overrides.caseNumber = '';
+        break;
+      case 'fromDate':
+        setFromDate(undefined);
+        overrides.fromDate = undefined;
+        break;
+      case 'toDate':
+        setToDate(undefined);
+        overrides.toDate = undefined;
+        break;
+      case 'branchId':
+        setSelectedBranch('');
+        overrides.selectedBranch = '';
+        break;
+      default:
+        break;
+    }
+    onSearch?.(buildSearchPayload(overrides));
+  };
+
+  const handleClearAllFilters = () => {
+    handleReset();
+  };
+
+  const appliedFilters = useMemo(() => {
+    const list = [];
+
+    if (fileNumber.trim()) {
+      list.push({
+        key: 'fileNumber',
+        label: resolveCopy('casesTable.fileNumber', 'رقم الملف', 'File Number'),
+        value: fileNumber.trim()
+      });
+    }
+    if (caseNumber.trim()) {
+      list.push({
+        key: 'caseNumber',
+        label: resolveCopy('casesTable.caseNumber', 'رقم القضية', 'Case Number'),
+        value: caseNumber.trim()
+      });
+    }
+    if (fromDate) {
+      list.push({
+        key: 'fromDate',
+        label: resolveCopy('casesTable.fromDate', 'من تاريخ', 'From Date'),
+        value: formatDateDisplay(fromDate)
+      });
+    }
+    if (toDate) {
+      list.push({
+        key: 'toDate',
+        label: resolveCopy('casesTable.toDate', 'إلى تاريخ', 'To Date'),
+        value: formatDateDisplay(toDate)
+      });
+    }
+    if (selectedBranch) {
+      const branchLabel = getLocalizedText(
+        branches.find(b => `${b.id}` === `${selectedBranch}`)?.branch_ar,
+        branches.find(b => `${b.id}` === `${selectedBranch}`)?.branch_en
+      ) || selectedBranch;
+      list.push({
+        key: 'branchId',
+        label: resolveCopy('casesTable.branch', 'الفرع', 'Branch'),
+        value: branchLabel
+      });
+    }
+
+    return list;
+  }, [fileNumber, caseNumber, fromDate, toDate, selectedBranch, language, branches]);
 
   return (
     <Card className="w-full">
@@ -254,6 +355,38 @@ const CasesSearchForm = ({ onSearch }) => {
             </Button>
           </div>
         </div>
+
+        {appliedFilters.length > 0 && (
+          <div className={`flex flex-wrap items-center gap-2 mt-4 ${isRTL ? 'justify-end' : 'justify-start'}`}>
+            {appliedFilters.map((filter) => (
+              <div
+                key={filter.key}
+                className="flex items-center gap-2 rounded-full border bg-muted/60 px-3 py-1 text-sm"
+              >
+                <span className="font-semibold">{filter.label}:</span>
+                <span>{filter.value}</span>
+                <button
+                  type="button"
+                  className="flex items-center justify-center rounded-full p-1 hover:bg-muted transition-colors"
+                  onClick={() => handleRemoveFilter(filter.key)}
+                  aria-label={resolveCopy('common.remove', 'إزالة', 'Remove')}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleClearAllFilters}
+              className="ml-1"
+            >
+              {resolveCopy('common.clearAll', 'مسح الكل', 'Clear all')}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

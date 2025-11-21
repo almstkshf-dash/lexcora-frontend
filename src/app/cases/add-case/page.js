@@ -23,6 +23,7 @@ import { useTranslations } from "@/hooks/useTranslations";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { toast } from 'react-toastify';
+import { useNotify } from "@/hooks/useNotify";
 import InlineValidationSummary from "@/components/forms/InlineValidationSummary";
 import AutosaveDraftNotice from "./AutosaveDraftNotice";
 import { FormikProvider } from "./FormikContext";
@@ -83,6 +84,7 @@ const BASE_INITIAL_VALUES = {
 const DRAFT_STORAGE_KEY = "lexcora-add-case-draft";
 function AddCasePage() {
   const { t } = useTranslations();
+  const notify = useNotify();
   const [initialValuesState, setInitialValuesState] = useState(BASE_INITIAL_VALUES);
   const [restoredAt, setRestoredAt] = useState(null);
 
@@ -174,13 +176,11 @@ function AddCasePage() {
     } catch(error){
       toast.dismiss(loadingToast);
       
+      const errorMessage = notify.handleApiError(error, 'cases.createFailed')
       setStatus({
         type: 'error',
-        message: 'حدث خطأ أثناء إنشاء القضية. يرجى المحاولة مرة أخرى.'
+        message: errorMessage
       });
-      
-      const errorMessage = error?.response?.data?.message || error?.message || 'حدث خطأ أثناء إنشاء القضية';
-      toast.error(errorMessage);
       
       if (error?.response?.data?.errors) {
         Object.entries(error.response.data.errors).forEach(([field, message]) => {

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Pagination,
   PaginationContent,
@@ -28,6 +29,10 @@ const DataTable = ({
   pageSize = null,
   actionsLabel = "Actions",
   enableColumnSearch = false,
+  error = null,
+  stickyHeader = false,
+  zebra = false,
+  density = "normal", // "normal" | "compact"
 }) => {
   const [sortState, setSortState] = useState({ id: null, direction: "asc" });
   const [searchTerms, setSearchTerms] = useState({});
@@ -182,8 +187,18 @@ const DataTable = ({
     );
   };
 
+  if (error) {
+    return (
+      <div className="rounded-md border border-destructive/40 bg-destructive/10 text-destructive px-4 py-3 text-sm">
+        {error}
+      </div>
+    );
+  }
+
+  const rowPadding = density === "compact" ? "py-2 px-3" : "py-3 px-4";
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" aria-busy={isLoading}>
       {enableColumnSearch && searchableColumns.length > 0 && (
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {searchableColumns.map((col) => (
@@ -200,12 +215,12 @@ const DataTable = ({
       <div className="border rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <Table dir={dir}>
-            <TableHeader>
+            <TableHeader className={stickyHeader ? "sticky top-0 z-10 bg-background" : undefined}>
               <TableRow>
                 {columns.map((column) => (
                   <TableHead
                     key={column.id}
-                    className={cn(column.headerClassName)}
+                    className={cn(column.headerClassName, density === "compact" ? "py-2 px-3" : undefined)}
                     onClick={() => handleSort(column)}
                     role={column.sortable ? "button" : undefined}
                   >
@@ -215,19 +230,31 @@ const DataTable = ({
                     </div>
                   </TableHead>
                 ))}
-                {hasRowActions && <TableHead className="text-center">{actionsLabel}</TableHead>}
+                {hasRowActions && (
+                  <TableHead className={cn("text-center", density === "compact" ? "py-2 px-3" : undefined, "w-[120px]")}>
+                    {actionsLabel}
+                  </TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={columns.length + (hasRowActions ? 1 : 0)} className="text-center py-10">
-                    <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      <span>{loadingMessage}</span>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                Array.from({ length: Math.min(5, Math.max(3, pageSize || columns.length || 3)) }).map((_, idx) => (
+                  <TableRow key={`skeleton-${idx}`}>
+                    {columns.map((column, colIdx) => (
+                      <TableCell key={`sk-${colIdx}`} className={cn(column.cellClassName, rowPadding)}>
+                        <Skeleton className="h-4 w-full max-w-[180px]" />
+                      </TableCell>
+                    ))}
+                    {hasRowActions && (
+                      <TableCell className={cn("text-center", rowPadding, "w-[120px]")}>
+                        <div className="flex justify-center">
+                          <Skeleton className="h-8 w-16" />
+                        </div>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))
               ) : paginatedData.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={columns.length + (hasRowActions ? 1 : 0)} className="text-center py-10">
@@ -235,15 +262,22 @@ const DataTable = ({
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedData.map((row) => (
-                  <TableRow key={row[rowKey] ?? row.id}>
+                paginatedData.map((row, idx) => (
+                  <TableRow
+                    key={row[rowKey] ?? row.id}
+                    className={cn(
+                      density === "compact" ? "text-sm" : undefined,
+                      zebra && idx % 2 === 1 ? "bg-muted/30" : undefined,
+                      "animate-in fade-in-50"
+                    )}
+                  >
                     {columns.map((column) => (
-                      <TableCell key={column.id} className={cn(column.cellClassName)}>
+                      <TableCell key={column.id} className={cn(column.cellClassName, rowPadding)}>
                         {column.cell ? column.cell(row) : getValue(row, column)}
                       </TableCell>
                     ))}
                     {hasRowActions && (
-                      <TableCell className="text-center">
+                      <TableCell className={cn("text-center", rowPadding, "w-[120px]")}>
                         {rowActions(row)}
                       </TableCell>
                     )}

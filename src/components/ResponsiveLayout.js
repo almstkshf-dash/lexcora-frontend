@@ -71,12 +71,15 @@ const ResponsiveLayout = ({ children }) => {
         )}
         
         {/* Content area with proper spacing - no overlapping */}
-        <div className="flex-1 overflow-auto px-3 md:px-4 lg:px-6 py-3 md:py-4 relative">
+        <div className="flex-1 overflow-auto px-3 md:px-4 lg:px-6 py-3 md:py-4 pb-24 relative">
           {children}
           
           <button
             onClick={() => setIsChatOpen(true)}
-            className={`fixed bottom-6 ${isRTL ? 'left-6' : 'right-6'} z-50 p-4 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 dark:from-purple-500 dark:to-blue-500 hover:from-purple-700 hover:to-blue-700 dark:hover:from-purple-600 dark:hover:to-blue-600 shadow-lg hover:shadow-2xl transition-all duration-300 group animate-in fade-in slide-in-from-bottom-4`}
+            className={`fixed ${isRTL ? 'left-6' : 'right-6'} z-50 p-4 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 dark:from-purple-500 dark:to-blue-500 hover:from-purple-700 hover:to-blue-700 dark:hover:from-purple-600 dark:hover:to-blue-600 shadow-lg hover:shadow-2xl transition-all duration-300 group animate-in fade-in slide-in-from-bottom-4`}
+            style={{
+              bottom: 'clamp(1rem, 1.5rem + env(safe-area-inset-bottom, 0px), 2.5rem)',
+            }}
             aria-label={isRTL ? "مساعد الذكاء الاصطناعي" : "AI Assistant"}
           >
             <Sparkles 

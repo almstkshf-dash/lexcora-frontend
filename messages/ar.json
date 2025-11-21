@@ -1530,7 +1530,13 @@
       "others": "أخرى",
       "welcome_message": "رسالة ترحيبية",
       "price_quote": "عرض سعر"
-    }
+    },
+    "lastSavedAt": "آخر حفظ",
+    "clearDraft": "حذف المسودة",
+    "autosaveSaving": "جارٍ حفظ المسودة…",
+    "autosaveSaved": "تم حفظ المسودة",
+    "autosaveRestored": "تم استعادة المسودة",
+    "autosaveIdle": "الحفظ التلقائي مفعل"
   },
   "clientForms": {
     "title": "نماذج الموكلين",

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -21,6 +21,7 @@ const AppSidebar = ({ isMobileSidebarOpen, onMobileSidebarClose }) => {
   const [openSubmenus, setOpenSubmenus] = useState({});
   const [activeItem, setActiveItem] = useState('/');
   const router = useRouter();
+  const pathname = usePathname();
   const sidebarRef = useRef(null);
   const dispatch = useDispatch();
   const isMobile = useIsMobile();
@@ -80,6 +81,57 @@ const AppSidebar = ({ isMobileSidebarOpen, onMobileSidebarClose }) => {
 
   // Custom keyboard navigation hook
   useKeyboardNavigation(menuItems, activeItem, setActiveItem, handleNavClick);
+
+  // Precompute best matching item for the current path
+  const { bestMatch, bestParent } = useMemo(() => {
+    if (!pathname || !menuItems?.length) {
+      return { bestMatch: '/', bestParent: null };
+    }
+
+    const normalizedPath = pathname.replace(/^\/+/, '');
+    let foundMatch = '/';
+    let parentId = null;
+    let longest = 0;
+
+    const traverse = (items, parent = null) => {
+      items.forEach((item) => {
+        const itemPath = item.id === '/' ? '' : item.id.replace(/^\/+/, '');
+        const isMatch =
+          item.id === '/'
+            ? normalizedPath === ''
+            : normalizedPath === itemPath || normalizedPath.startsWith(`${itemPath}/`);
+
+        if (isMatch && itemPath.length >= longest) {
+          foundMatch = item.id;
+          parentId = parent;
+          longest = itemPath.length;
+        }
+
+        if (item.submenu) {
+          traverse(item.submenu, item.id);
+        }
+      });
+    };
+
+    traverse(menuItems);
+    return { bestMatch: foundMatch, bestParent: parentId };
+  }, [pathname, menuItems]);
+
+  // Sync active item with current route and open matching submenu on load/navigation
+  useEffect(() => {
+    setActiveItem((prev) => (prev === bestMatch ? prev : bestMatch));
+
+    if (bestParent) {
+      setOpenSubmenus((prev) =>
+        prev[bestParent]
+          ? prev
+          : {
+              ...prev,
+              [bestParent]: true,
+            }
+      );
+    }
+  }, [bestMatch, bestParent]);
 
   // Handle click outside to close submenus on mobile
   useEffect(() => {

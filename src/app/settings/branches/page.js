@@ -39,10 +39,12 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getBranches, createBranch, updateBranch, deleteBranch } from '@/app/services/api/branches';
 import { toast } from 'react-toastify';
+import { useNotify } from '@/hooks/useNotify';
 
 const BranchesSettingsPage = () => {
   const {t} = useTranslations();
   const { isRTL, language } = useLanguage();
+  const notify = useNotify();
   const router = useRouter();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -122,8 +124,7 @@ const BranchesSettingsPage = () => {
       mutate();
       handleCloseDialog();
     } catch (error) {
-
-      toast.error(language === 'ar' ? 'حدث خطأ أثناء حفظ الفرع' : 'Error saving branch');
+      notify.handleApiError(error, 'branches.saveFailed')
     } finally {
       setIsSubmitting(false);
     }
@@ -139,8 +140,7 @@ const BranchesSettingsPage = () => {
       toast.success(language === 'ar' ? 'تم حذف الفرع بنجاح' : 'Branch deleted successfully');
       mutate();
     } catch (error) {
-
-      toast.error(language === 'ar' ? 'حدث خطأ أثناء حذف الفرع' : 'Error deleting branch');
+      notify.handleApiError(error, 'branches.deleteFailed')
     }
   };
 

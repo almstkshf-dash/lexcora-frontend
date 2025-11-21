@@ -78,6 +78,15 @@ const CasesPage = () => {
     return casesData?.pagination || { total: 0, page: 1, limit: 10, totalPages: 1 };
   }, [casesData]);
 
+  const lastSynced = useMemo(() => {
+    if (!casesData) return null;
+    try {
+      return new Date().toLocaleTimeString(language === 'ar' ? 'ar-AE' : 'en-US');
+    } catch (e) {
+      return null;
+    }
+  }, [casesData, language]);
+
   // Helper function to get localized text
   const getLocalizedText = (arText, enText) => {
     if (language === 'ar') {
@@ -277,29 +286,15 @@ const CasesPage = () => {
                 : t('common.error')
               }
             </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              {errorMessage}
+            </CardDescription>
           </CardHeader>
-                  <CardContent>
-          <div className="mb-4 pb-4 border-b">
-            <ExportButtons data={cases} t={t} language={language} />
-          </div>
-          <DataTable
-            data={cases}
-            columns={caseColumns}
-            rowKey="id"
-            isLoading={isLoading}
-            loadingMessage={t('common.loading')}
-            emptyMessage={t('common.noData')}
-            rowActions={renderCaseActions}
-            actionsLabel={t('casesTable.actions')}
-            dir={isRTL ? 'rtl' : 'ltr'}
-            enableColumnSearch={false}
-            pagination={{
-              page: currentPage,
-              totalPages: pagination.totalPages || 1,
-              onPageChange: handlePageChange,
-            }}
-          />
-        </CardContent>
+          <CardContent className="flex justify-end">
+            <Button variant="outline" onClick={() => mutate()}>
+              {t('common.retry') || (language === 'ar' ? 'إعادة المحاولة' : 'Retry')}
+            </Button>
+          </CardContent>
         </Card>
       </div>
     );
@@ -595,6 +590,15 @@ const CasesPage = () => {
         ]}
         actions={headerActions}
         sticky
+        contextMeta={{
+          title: t('navigation.cases'),
+          lastSynced: lastSynced || undefined,
+          action: (
+            <Button variant="ghost" size="sm" onClick={() => mutate()}>
+              {t('common.refresh') || (language === 'ar' ? 'تحديث' : 'Refresh')}
+            </Button>
+          ),
+        }}
       />
 
       {/* Search Form */}
@@ -614,9 +618,18 @@ const CasesPage = () => {
           </CardDescription>
         </CardHeader>
                 <CardContent>
-          <div className="mb-4 pb-4 border-b">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div className="flex items-center gap-3">
             <ExportButtons data={cases} t={t} language={language} />
           </div>
+          {pagination.totalPages > 1 && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>
+                {language === 'ar' ? 'الصفحة' : 'Page'} {currentPage} {language === 'ar' ? 'من' : 'of'} {pagination.totalPages}
+              </span>
+            </div>
+          )}
+        </div>
           <DataTable
             data={cases}
             columns={caseColumns}
@@ -626,6 +639,9 @@ const CasesPage = () => {
             rowActions={renderCaseActions}
             actionsLabel={t('casesTable.actions')}
             dir={isRTL ? 'rtl' : 'ltr'}
+            stickyHeader
+            zebra
+            density="compact"
             pagination={{
               page: currentPage,
               totalPages: pagination.totalPages || 1,

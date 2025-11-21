@@ -15,6 +15,8 @@ const MenuItem = React.memo(({
 }) => {
   const IconComponent = item.icon;
   const isActive = activeItem === item.id;
+  const hasActiveChild = item.submenu?.some((subItem) => activeItem === subItem.id);
+  const isCategoryActive = isActive || hasActiveChild;
   const isOpen = openSubmenus[item.id];
 
   if (item.type === 'link') {
@@ -89,7 +91,9 @@ const MenuItem = React.memo(({
           focus:ring-offset-2 
           focus:ring-offset-sidebar
           ${item.type === 'category' 
-            ? 'hover:bg-sidebar-accent/50' 
+            ? isCategoryActive 
+              ? 'bg-sidebar-accent text-sidebar-foreground' 
+              : 'hover:bg-sidebar-accent/50' 
             : isActive 
               ? 'bg-sidebar-primary text-sidebar-primary-foreground' 
               : 'hover:bg-sidebar-accent'
@@ -97,6 +101,7 @@ const MenuItem = React.memo(({
         `}
         aria-expanded={isOpen}
         aria-haspopup="true"
+        aria-current={isCategoryActive ? 'page' : undefined}
       >
         <div className="flex items-center">
           <IconComponent className={`
@@ -105,7 +110,9 @@ const MenuItem = React.memo(({
             transition-colors  
             ${isRTL ? 'ml-3' : 'mr-3'} 
             ${item.type === 'category' 
-              ? 'text-sidebar-foreground/80' 
+              ? isCategoryActive 
+                ? 'text-sidebar-foreground' 
+                : 'text-sidebar-foreground/80' 
               : isActive 
                 ? 'text-sidebar-primary-foreground' 
                 : 'text-sidebar-foreground/70 group-hover:text-sidebar-foreground'

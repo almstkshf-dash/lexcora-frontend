@@ -1,19 +1,20 @@
 "use client";
 
 import { useMemo } from "react";
-import { Users } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useFinanceClients } from "./hooks/useFinanceClients";
 import { getExportColumnConfig } from "./constants";
-import PageHeader from "./components/PageHeader";
+import PageHeader from "@/components/PageHeader";
 import SearchBar from "./components/SearchBar";
 import ClientsTable from "./components/ClientsTable";
 import PaginationControls from "./components/PaginationControls";
 import ClientFinanceModal from "./components/ClientFinanceModal";
+import { Users } from "lucide-react";
 
 export default function FinanceClientsPage() {
   const t = useTranslations("common");
+  const tNav = useTranslations("navigation");
   const { language } = useLanguage();
 
   // Use custom hook for all business logic and state management
@@ -57,6 +58,12 @@ export default function FinanceClientsPage() {
         title={t("financeClients")}
         description={`${t("managingClients")} (${pagination.total || 0})`}
         icon={Users}
+        breadcrumbs={[
+          { label: tNav("dashboard"), href: '/' },
+          { label: tNav("finance") },
+          { label: tNav("financeClients") },
+        ]}
+        sticky
       />
 
       {/* Search & Export Section */}

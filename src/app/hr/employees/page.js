@@ -171,6 +171,14 @@ export default function EmployeeTablePage() {
     }
   };
 
+  const headerActions = (
+    <AddEmployeeDialog
+      onAdd={() => {
+        mutate();
+      }}
+    />
+  );
+
   return (
     <div className="" >
       <div className="">
@@ -178,6 +186,13 @@ export default function EmployeeTablePage() {
         <PageHeader 
           title={t('employees.title')}
           description={t('employees.description')}
+          breadcrumbs={[
+            { label: t('navigation.dashboard'), href: '/' },
+            { label: t('navigation.humanResources') },
+            { label: t('navigation.employees') },
+          ]}
+          actions={headerActions}
+          sticky
         />
 
         {/* Loading State */}
@@ -261,12 +276,6 @@ export default function EmployeeTablePage() {
                 </Select>
               </div>
 
-              {/* Add Button */}
-              <AddEmployeeDialog onAdd={(newEmployee) => {
-                // You can handle adding the new employee here (e.g., update state or send to backend)
-                // Optionally revalidate the SWR data
-                mutate();
-              }} />
             </div>
 
             {/* Export Buttons */}

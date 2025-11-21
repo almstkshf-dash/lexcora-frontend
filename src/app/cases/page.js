@@ -3,11 +3,12 @@
 import React, { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
-import { Eye, Edit, Trash2, MoreHorizontal, FileText, Calendar, CheckSquare, Gavel, FileSearch, User, Scale, Printer } from 'lucide-react';
+import { Eye, Edit, Trash2, MoreHorizontal, FileText, Calendar, CheckSquare, Gavel, FileSearch, User, Scale, Printer, Plus } from 'lucide-react';
 import { getCases } from '@/app/services/api/cases';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import { cn } from '@/lib/utils';
+import PageHeader from '@/components/PageHeader';
 import AddSessionModal from '@/app/cases/modals/AddSessionModal';
 import AddTaskModal from '@/app/cases/modals/AddTaskModal';
 import AddCaseDegreeModal from '@/app/cases/modals/AddCaseDegreeModal';
@@ -327,15 +328,38 @@ const CasesPage = () => {
     );
   }
 
+  const headerActions = (
+    <div className="flex items-center gap-2">
+      <Button
+        size="sm"
+        className="flex items-center gap-2"
+        onClick={() => router.push('/cases/add-case')}
+      >
+        <Plus className="w-4 h-4" />
+        {t('navigation.addCaseFile')}
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => router.push('/cases/my-tasks')}
+      >
+        {t('navigation.myTasks')}
+      </Button>
+    </div>
+  );
+
   return (
     <div className={`container mx-auto p-2 space-y-6 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-      {/* Page Header */}
-      <div className={`flex flex-col space-y-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-        <h1 className="text-3xl font-bold tracking-tight">{t('navigation.cases')}</h1>
-        <p className="text-muted-foreground">
-          {t('casesTable.title')}
-        </p>
-      </div>
+      <PageHeader
+        title={t('navigation.cases')}
+        description={t('casesTable.title')}
+        breadcrumbs={[
+          { label: t('navigation.dashboard'), href: '/' },
+          { label: t('navigation.cases') },
+        ]}
+        actions={headerActions}
+        sticky
+      />
 
       {/* Search Form */}
       <CasesSearchForm onSearch={handleSearch} />

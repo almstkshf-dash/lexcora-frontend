@@ -38,7 +38,7 @@ const SidebarHeader = ({ isRTL, isMobile, onClose }) => {
             <Sparkles className="w-4 h-4 text-primary/60 animate-pulse" />
           </div>
           <p className="text-xs text-sidebar-foreground/60 font-medium tracking-wide">
-            {isRTL ? 'نظام إدارة متكامل' : 'Legal Management System'}
+            {isRTL ? 'النظام الذكي للمحاماة' : 'Legal Management System'}
           </p>
         </div>
 

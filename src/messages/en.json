@@ -1,11 +1,86 @@
 {
-  "hello": "Hello",
-  "legalAssistant": "Legal Assistant",
+  "branding": {
+    "name": "Lexcora",
+    "tagline": "Legal Management System"
+  },
+  "language": {
+    "switch": "Switch language",
+    "arabic": "Arabic",
+    "english": "English"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "casesManagement": "Cases Management",
+    "cases": "Cases",
+    "addCaseFile": "Add Case File",
+    "sessions": "Sessions",
+    "judicialDecisions": "Judicial Decisions",
+    "clientsManagement": "Clients Management",
+    "parties": "Clients & Opponents",
+    "potentialClients": "Potential Clients",
+    "meetings": "Meetings",
+    "callLogs": "Call Logs",
+    "goaml": "GoAML",
+    "forms": "Forms",
+    "approvalsCenter": "Approvals Center",
+    "humanResources": "Human Resources",
+    "employees": "Employees",
+    "requests": "Requests",
+    "assets": "Assets",
+    "events": "Events",
+    "notifications": "Notifications",
+    "finance": "Finance",
+    "financeClients": "Finance Clients",
+    "invoices": "Invoices",
+    "bankAccounts": "Bank Accounts",
+    "statistics": "Statistics",
+    "employeesStatements": "Employee Statements",
+    "settings": "Settings",
+    "appearance": "Appearance",
+    "branches": "Branches",
+    "performance": "Performance",
+    "logs": "Activity Logs",
+    "profile": "Profile",
+    "security": "Security",
+    "myTasks": "My Tasks",
+    "assignedTasks": "Assigned Tasks",
+    "clientOrders": "Client Orders",
+    "welcomeMessages": "Welcome Messages",
+    "priceQuotes": "Price Quotes",
+    "bookings": "Bookings",
+    "payments": "Payments",
+    "language": "Language"
+  },
+  "buttons": {
+    "add": "Add",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "update": "Update",
+    "view": "View",
+    "search": "Search",
+    "back": "Back",
+    "logout": "Logout"
+  },
   "common": {
     "accessDeniedTitle": "Access denied",
     "accessDeniedMessage": "You do not have permission to view this page.",
+    "requiredPermissions": "Required permission: {permissions}",
     "goBack": "Go back",
     "goHome": "Go home",
-    "requiredPermissions": "Required permission: {permissions}"
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "noData": "No data available",
+    "actions": "Actions",
+    "user": "User"
+  },
+  "messages": {
+    "permissionsSavedSuccessfully": "Permissions saved successfully!",
+    "errorSavingPermissions": "Error saving permissions. Please try again."
+  },
+  "employees": {
+    "permissions": "Permissions"
   }
 }

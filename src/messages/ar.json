@@ -1,11 +1,86 @@
 {
-  "hello": "مرحبا",
-  "legalAssistant": "المساعد القانوني",
+  "branding": {
+    "name": "ليكسكورا",
+    "tagline": "نظام إدارة قانوني"
+  },
+  "language": {
+    "switch": "تغيير اللغة",
+    "arabic": "العربية",
+    "english": "الإنجليزية"
+  },
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "casesManagement": "إدارة القضايا",
+    "cases": "القضايا",
+    "addCaseFile": "إضافة ملف قضية",
+    "sessions": "الجلسات",
+    "judicialDecisions": "الأحكام القضائية",
+    "clientsManagement": "إدارة العملاء",
+    "parties": "العملاء والخصوم",
+    "potentialClients": "العملاء المحتملون",
+    "meetings": "الاجتماعات",
+    "callLogs": "سجل المكالمات",
+    "goaml": "غو-إيه إم إل",
+    "forms": "النماذج",
+    "approvalsCenter": "مركز الموافقات",
+    "humanResources": "الموارد البشرية",
+    "employees": "الموظفون",
+    "requests": "الطلبات",
+    "assets": "الممتلكات",
+    "events": "الفعاليات",
+    "notifications": "الإشعارات",
+    "finance": "المالية",
+    "financeClients": "عملاء المالية",
+    "invoices": "الفواتير",
+    "bankAccounts": "الحسابات البنكية",
+    "statistics": "الإحصائيات",
+    "employeesStatements": "كشوفات الموظفين",
+    "settings": "الإعدادات",
+    "appearance": "المظهر",
+    "branches": "الفروع",
+    "performance": "الأداء",
+    "logs": "سجل النشاط",
+    "profile": "الملف الشخصي",
+    "security": "الأمان",
+    "myTasks": "مهامي",
+    "assignedTasks": "المهام المسندة",
+    "clientOrders": "طلبات العملاء",
+    "welcomeMessages": "رسائل الترحيب",
+    "priceQuotes": "عروض الأسعار",
+    "bookings": "الحجوزات",
+    "payments": "المدفوعات",
+    "language": "اللغة"
+  },
+  "buttons": {
+    "add": "إضافة",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ...",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "update": "تحديث",
+    "view": "عرض",
+    "search": "بحث",
+    "back": "رجوع",
+    "logout": "تسجيل الخروج"
+  },
   "common": {
     "accessDeniedTitle": "تم رفض الوصول",
     "accessDeniedMessage": "ليست لديك صلاحية لعرض هذه الصفحة.",
+    "requiredPermissions": "الصلاحية المطلوبة: {permissions}",
     "goBack": "رجوع",
     "goHome": "الصفحة الرئيسية",
-    "requiredPermissions": "الصلاحية المطلوبة: {permissions}"
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ ما",
+    "noData": "لا توجد بيانات",
+    "actions": "الإجراءات",
+    "user": "مستخدم"
+  },
+  "messages": {
+    "permissionsSavedSuccessfully": "تم حفظ الصلاحيات بنجاح!",
+    "errorSavingPermissions": "حدث خطأ أثناء حفظ الصلاحيات. حاول مرة أخرى."
+  },
+  "employees": {
+    "permissions": "الصلاحيات"
   }
 }

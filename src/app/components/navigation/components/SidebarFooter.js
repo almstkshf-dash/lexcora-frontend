@@ -1,11 +1,24 @@
-import React from 'react';
+'use client';
+
+import React, { useMemo } from 'react';
 import { LogOut } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 /**
  * Sidebar Footer Component
  * Displays user profile information and logout button
  */
 const SidebarFooter = ({ user, userRole, isRTL, onLogout }) => {
+  const t = useTranslations('common');
+
+  const fallbackUserLabel = useMemo(() => {
+    const translated = t('user');
+    if (!translated || translated === 'common.user') {
+      return isRTL ? 'مستخدم' : 'User';
+    }
+    return translated;
+  }, [t, isRTL]);
+
   return (
     <footer className="p-4 bg-sidebar border-t border-sidebar-border">
       <div className="bg-sidebar-accent rounded-xl p-3 border border-sidebar-border/50 backdrop-blur-sm">
@@ -15,17 +28,17 @@ const SidebarFooter = ({ user, userRole, isRTL, onLogout }) => {
           </div>
           <div className="flex-1 transition-opacity duration-300">
             <p className="text-sidebar-foreground font-medium text-sm">
-              {user?.employeeName || user?.name || (isRTL ? 'مستخدم' : 'User')}
+              {user?.employeeName || user?.name || fallbackUserLabel}
             </p>
             <p className="text-sidebar-foreground/70 text-xs">
-              {userRole || (isRTL ? 'مستخدم' : 'User')}
+              {userRole || fallbackUserLabel}
             </p>
           </div>
           <button 
             onClick={onLogout}
             className="text-sidebar-foreground/70 hover:text-red-600 transition-colors duration-200 p-1 rounded focus:outline-none focus:ring-2 focus:ring-red-300"
-            aria-label={isRTL ? "تسجيل الخروج" : "Logout"}
-            title={isRTL ? "تسجيل الخروج" : "Logout"}
+            aria-label={t('buttons.logout') || (isRTL ? "تسجيل الخروج" : "Logout")}
+            title={t('buttons.logout') || (isRTL ? "تسجيل الخروج" : "Logout")}
           >
             <LogOut className="w-4 h-4" />
           </button>

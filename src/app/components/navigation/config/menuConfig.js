@@ -24,7 +24,70 @@ import {
   Gauge
 } from 'lucide-react';
 
+const normalizePermission = (perm) => {
+  if (!perm) return null;
+  if (typeof perm === 'string') return perm.trim().toLowerCase();
+  if (typeof perm === 'number') return perm.toString();
+
+  const candidates = [
+    perm.permission_key,
+    perm.permission_name,
+    perm.permission_en,
+    perm.permission_ar,
+    perm.name,
+    perm.code,
+    perm.id,
+    perm.permission_id
+  ].filter(Boolean);
+
+  if (candidates.length === 0) return null;
+  return candidates[0].toString().trim().toLowerCase();
+};
+
+const buildPermissionSet = (permissions = []) => {
+  const set = new Set();
+  permissions.forEach((perm) => {
+    const normalized = normalizePermission(perm);
+    if (normalized) set.add(normalized);
+  });
+  return set;
+};
+
+const filterByPermissions = (items = [], permissionSet) => {
+  return items
+    .map((item) => {
+      const required = item.requiredPermissions;
+      const requires = Array.isArray(required) ? required : required ? [required] : [];
+      const allowed =
+        requires.length === 0 ||
+        requires.some((perm) => {
+          const normalized = normalizePermission(perm);
+          return normalized ? permissionSet.has(normalized) : false;
+        });
+
+      if (!allowed) return null;
+
+      // Recursively filter submenus
+      const filteredSubmenu = item.submenu
+        ? filterByPermissions(item.submenu, permissionSet)
+        : undefined;
+
+      return {
+        ...item,
+        ...(filteredSubmenu ? { submenu: filteredSubmenu } : {}),
+      };
+    })
+    .filter((item) => {
+      if (!item) return false;
+      // Drop empty categories
+      if (item.submenu && item.submenu.length === 0) return false;
+      return true;
+    });
+};
+
 export const getMenuItems = (t, userRole = null, userDepartment = null, permissions = []) => {
+  const permissionSet = buildPermissionSet(permissions);
+
   const menuItems = [
     {
       id: '/',
@@ -105,5 +168,5 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
     }
   ];
 
-  return menuItems;
+  return filterByPermissions(menuItems, permissionSet);
 };

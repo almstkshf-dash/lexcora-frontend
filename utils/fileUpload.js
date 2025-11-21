@@ -8,6 +8,10 @@ import api from "@/app/services/api/axiosInstance";
  */
 export const uploadFiles = async (files, folder = 'documents') => {
   try {
+    if (typeof window === 'undefined') {
+      throw new Error('File uploads must run in the browser');
+    }
+
     // Validate input
     if (!files || !Array.isArray(files) || files.length === 0) {
       return [];
@@ -33,6 +37,7 @@ export const uploadFiles = async (files, folder = 'documents') => {
     
     // Get auth token from cookie
     const getCookie = (name) => {
+      if (typeof document === 'undefined') return null;
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
       if (parts.length === 2) return parts.pop().split(';').shift();
@@ -137,6 +142,7 @@ export const deleteUploadedFiles = async (fileUrls) => {
 
     // Get auth token
     const getCookie = (name) => {
+      if (typeof document === 'undefined') return null;
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
       if (parts.length === 2) return parts.pop().split(';').shift();

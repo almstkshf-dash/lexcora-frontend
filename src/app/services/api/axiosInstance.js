@@ -57,7 +57,9 @@ api.interceptors.response.use(
       
       if (!token || isAuthEndpoint) {
         // Clear auth data
-        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        if (typeof document !== 'undefined') {
+          document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        }
         if (typeof window !== 'undefined') {
           localStorage.removeItem('authToken');
           // Redirect to login if not already there

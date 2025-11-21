@@ -11,7 +11,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Noto_Sans_Arabic } from 'next/font/google';
 import RouteGuard from "@/components/RouteGuard";
-import Script from 'next/script';
 
 const notoSansArabic = Noto_Sans_Arabic({
   subsets: ['arabic'],
@@ -32,16 +31,7 @@ export default function RootLayout({ children }) {
     <html 
     className={`${notoSansArabic.className} ${notoSansArabic.variable}`}
     >
-      <head>
-        <Script 
-          src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" 
-          strategy="beforeInteractive"
-        />
-        <Script 
-          src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" 
-          strategy="beforeInteractive"
-        />
-      </head>
+      <head />
       <body
         className="font-system-arabic antialiased"
       >

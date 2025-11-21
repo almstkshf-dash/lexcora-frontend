@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { 
   selectAuth, 
@@ -42,15 +43,69 @@ export const useAuth = () => {
  * Hook to check if user has specific permission
  * @param {string} permissionName - Permission name to check (Arabic or English)
  * @returns {boolean} Whether user has the permission
- * NOTE: Permission checks disabled - all users have all permissions
  */
 export const usePermission = (permissionName) => {
   const permissions = useSelector(selectPermissions);
   const role = useSelector(s => s.auth.roleEn);
   const department = useSelector(s => s.auth.departmentEn);
 
-  // Always return true - permissions disabled for all users
-  return { permissions, hasPermission: true, role, department };
+  const normalizePermission = (perm) => {
+    if (!perm) return null;
+    if (typeof perm === 'string') return perm.trim().toLowerCase();
+    if (typeof perm === 'number') return perm.toString();
+
+    // Common backend shapes
+    const candidates = [
+      perm.permission_key,
+      perm.permission_name,
+      perm.permission_en,
+      perm.permission_ar,
+      perm.name,
+      perm.code,
+      perm.id,
+      perm.permission_id
+    ].filter(Boolean);
+
+    if (candidates.length === 0) return null;
+    return candidates[0].toString().trim().toLowerCase();
+  };
+
+  const permissionSet = useMemo(() => {
+    const set = new Set();
+    if (!Array.isArray(permissions)) return set;
+    permissions.forEach((perm) => {
+      const normalized = normalizePermission(perm);
+      if (normalized) set.add(normalized);
+    });
+    return set;
+  }, [permissions]);
+
+  const checkAny = (requested) => {
+    if (!requested) return true; // allow when nothing requested
+    const list = Array.isArray(requested) ? requested : [requested];
+    return list.some((r) => {
+      const normalized = normalizePermission(r);
+      return normalized ? permissionSet.has(normalized) : false;
+    });
+  };
+
+  const checkAll = (requested) => {
+    if (!requested) return true;
+    const list = Array.isArray(requested) ? requested : [requested];
+    return list.every((r) => {
+      const normalized = normalizePermission(r);
+      return normalized ? permissionSet.has(normalized) : false;
+    });
+  };
+
+  return { 
+    permissions, 
+    hasPermission: checkAny(permissionName), 
+    hasAnyPermission: checkAny,
+    hasAllPermissions: checkAll,
+    role, 
+    department 
+  };
 };
 
 /**

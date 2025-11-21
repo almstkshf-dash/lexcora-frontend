@@ -10,6 +10,17 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '@/redux/slices/authSlice';
 import { chatWithLegalAssistant } from '@/app/services/api/legalAssistant';
 
+const STORAGE_KEY = 'legalChatHistory';
+
+// Escape any HTML before rendering to avoid XSS from untrusted responses
+const sanitizeText = (text = '') =>
+  text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 const LegalChatPopup = ({ isOpen, onClose }) => {
   const { isRTL } = useLanguage();
   const user = useSelector(selectUser);
@@ -22,6 +33,24 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // Restore persisted chat when the popup opens and save on every change
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const cached = localStorage.getItem(STORAGE_KEY);
+    if (cached) {
+      try {
+        setMessages(JSON.parse(cached));
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+  }, [messages]);
 
   const handleCopyMessage = async (messageId, content) => {
     try {
@@ -92,6 +121,24 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleClearChat = () => {
+    setMessages([]);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  };
+
+  const handleCopyConversation = async () => {
+    try {
+      const transcript = messages
+        .map((msg) => `${msg.role === 'user' ? user?.employeeName || user?.name || user?.email || 'User' : 'Assistant'}: ${msg.content}`)
+        .join('\n\n');
+      await navigator.clipboard.writeText(transcript);
+    } catch (error) {
+      console.error('Failed to copy conversation:', error);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -155,15 +202,9 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
                 )}
                 
                 <div className="prose prose-sm max-w-none dark:prose-invert">
-                  {message.role === 'assistant' ? (
-                    <div 
-                      dangerouslySetInnerHTML={{ 
-                        __html: message.content.replace(/\n/g, '<br/>') 
-                      }} 
-                    />
-                  ) : (
-                    <p className="whitespace-pre-wrap m-0">{message.content}</p>
-                  )}
+                  <p className="whitespace-pre-wrap m-0">
+                    {sanitizeText(message.content)}
+                  </p>
                 </div>
                 {message.sources && (
                   <div className="mt-2 pt-2 border-t border-border text-xs text-muted-foreground">
@@ -205,30 +246,48 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
         </div>
 
         {/* Input Area */}
-        <div className="p-4 border-t bg-background flex-shrink-0">
-        <div className="flex gap-2" dir={isRTL ? 'rtl' : 'ltr'}>
-          <Input
-            type="text"
-            value={inputMessage}
+        <div className="p-4 border-t bg-background flex-shrink-0 space-y-2">
+          <div className={`flex flex-wrap items-center gap-2 ${isRTL ? 'justify-end' : 'justify-start'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopyConversation}
+              disabled={messages.length === 0}
+            >
+              {isRTL ? 'نسخ المحادثة' : 'Copy chat'}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleClearChat}
+              disabled={messages.length === 0}
+            >
+              {isRTL ? 'مسح المحادثة' : 'Clear chat'}
+            </Button>
+          </div>
+          <div className="flex gap-2" dir={isRTL ? 'rtl' : 'ltr'}>
+            <Input
+              type="text"
+              value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder={isRTL ? 'اكتب سؤالك هنا...' : 'Type your question here...'}
+              placeholder={isRTL ? 'اكتب سؤالك هنا...' : 'Type your question here...'}
             className="flex-1"
             disabled={isLoading}
             dir="auto"
-          />
-          <Button
-            onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isLoading}
-            className="bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-            size="icon"
-            aria-label="Send message"
-          >
-            {isLoading ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
-          </Button>
+            />
+            <Button
+              onClick={handleSendMessage}
+              disabled={!inputMessage.trim() || isLoading}
+              className="bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+              size="icon"
+              aria-label="Send message"
+            >
+              {isLoading ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
+            </Button>
+          </div>
         </div>
-      </div>
-    </Card>
+      </Card>
     </>
   );
 };

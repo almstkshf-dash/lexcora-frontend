@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertTriangle, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import CaseAssistantLauncher from '@/app/components/ai/CaseAssistantLauncher';
 
 function CaseDetailsPage({ params }) {
   const { id } = React.use(params);
@@ -70,6 +71,7 @@ function CaseDetailsPage({ params }) {
   }
 
   const { info, parties, sessions, tasks, executions, judicial, petitions, degrees, petition } = caseData.data;
+  const caseId = params?.id || info?.case_id || info?.id;
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -110,6 +112,9 @@ function CaseDetailsPage({ params }) {
   return (
     <div className="min-h-screen bg-white p-8 print:p-6 print:min-h-0 print:h-auto print-container print-full-width" dir="rtl">
       <div className="max-w-4xl mx-auto space-y-8 print:space-y-6 print:max-w-full">
+        <div className="flex justify-end print:hidden">
+          <CaseAssistantLauncher caseId={caseId} align="left" />
+        </div>
         {/* Header */}
         <div className="text-center border-b-2 border-gray-300 pb-6 print:pb-4">
             <div className='flex justify-between items-center'>

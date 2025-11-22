@@ -30,6 +30,7 @@ import Tasks from "./tasks/Tasks"
 import Memos from "./memos/Memos"
 import { useTranslations } from "@/hooks/useTranslations"
 import { useLanguage } from "@/contexts/LanguageContext"
+import CaseAssistantLauncher from "@/app/components/ai/CaseAssistantLauncher"
 function Page() {
     const { id } = useParams();
     const { t} = useTranslations();
@@ -135,7 +136,8 @@ function Page() {
     
     return (
         <FormikProvider caseId={id} caseData={caseData}>
-            <div className="w-full h-full">
+            <div className="w-full h-full space-y-3">
+                <CaseAssistantLauncher caseId={id} />
                 <Tabs dir={isRTL ? "rtl" : "ltr"} defaultValue="info" className="w-full h-full">
                     <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b pb-2 md:pb-3 mb-4">
                         <TabsList className="w-full md:w-auto shadow-sm">

@@ -17,6 +17,9 @@ import { CalendarIcon, Plus, Minus, File, FileText, Image, FileSpreadsheet } fro
 import { cn } from "@/lib/utils"
 import AddLegalPeriodModal from "./AddLegalPeriodModal"
 import { getLegalPeriods } from "@/app/services/api/legalPeriods"
+import { chatWithLegalAssistant } from "@/app/services/api/legalAssistant"
+import { uploadFiles } from "@/../utils/fileUpload"
+import { toast } from "react-toastify"
 
 // Helper function to get file type icon
 const getFileIcon = (fileName) => {
@@ -84,6 +87,8 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
     legalPeriodId: "",
     files: []
   })
+  const [isDrafting, setIsDrafting] = useState(false)
+  const [draftError, setDraftError] = useState(null)
 
   // Fetch legal periods
   useEffect(() => {
@@ -168,6 +173,40 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
       ...prev,
       files: prev.files.filter((_, index) => index !== indexToRemove)
     }))
+  }
+
+  const handleDraftWithAI = async () => {
+    if (isDrafting) return
+    setDraftError(null)
+    setIsDrafting(true)
+    try {
+      const uploaded = formData.files.length ? await uploadFiles(formData.files, 'sessions') : []
+      const prompt = `Draft a session note and optional ruling.
+Session date: ${formData.date || 'N/A'}
+Link: ${formData.link || 'N/A'}
+Decision: ${formData.decision || 'N/A'}
+Ruling: ${formData.ruling || 'N/A'}
+Has ruling: ${formData.hasRuling}
+Is expert session: ${formData.isExpertSession}
+Return concise note text; if ruling is appropriate, include a suggested ruling prefixed with "Ruling:".`
+      const resp = await chatWithLegalAssistant({
+        message: prompt,
+        attachments: uploaded,
+      })
+      if (resp?.answer) {
+        const parts = resp.answer.split('Ruling:')
+        setFormData(prev => ({
+          ...prev,
+          decision: parts[0].trim() || prev.decision,
+          ruling: parts[1] ? parts.slice(1).join('Ruling:').trim() : prev.ruling
+        }))
+      }
+    } catch (err) {
+      toast.error(err?.message || 'Failed to draft session text')
+      setDraftError(err?.message)
+    } finally {
+      setIsDrafting(false)
+    }
   }
 
   const handleSubmit = () => {
@@ -482,7 +521,11 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
           </div>
           
           {/* Footer with buttons */}
-          <div className="flex justify-end gap-x-2  pt-4 border-t flex-shrink-0">
+          <div className="flex justify-end gap-x-2 flex-wrap pt-4 border-t flex-shrink-0">
+            <Button type="button" variant="outline" onClick={handleDraftWithAI} disabled={isDrafting}>
+              {isDrafting ? (t('common.loading') || 'Loading...') : 'Draft with AI'}
+            </Button>
+            {draftError && <span className="text-xs text-destructive">{draftError}</span>}
             <Button type="button" variant="outline" onClick={handleCancel}>
               {t('sessions.cancel')}
             </Button>

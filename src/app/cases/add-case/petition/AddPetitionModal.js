@@ -13,6 +13,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { CalendarIcon, Plus, CircleX, FileText, Image, FileIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { chatWithLegalAssistant } from "@/app/services/api/legalAssistant"
+import { uploadFiles } from "@/../utils/fileUpload"
 
 function AddPetitionModal({ 
   isOpen, 
@@ -32,6 +34,8 @@ function AddPetitionModal({
   })
 
   const [isDragOver, setIsDragOver] = useState(false)
+  const [isDrafting, setIsDrafting] = useState(false)
+  const [draftError, setDraftError] = useState(null)
 
   // Automatically set appeal date based on judge decision and submission date
   useEffect(() => {
@@ -121,6 +125,32 @@ function AddPetitionModal({
     }))
   }
 
+  const handleDraftWithAI = async () => {
+    if (isDrafting) return
+    setDraftError(null)
+    setIsDrafting(true)
+    try {
+      const uploaded = formData.files?.length ? await uploadFiles(formData.files, 'petitions') : []
+      const prompt = `Draft a petition summary and suggest order type.
+Submission date: ${formData.submissionDate || 'N/A'}
+Current order type: ${formData.orderType || 'N/A'}
+Judge decision known? ${formData.judgeDecision}
+Appeal date: ${formData.appealDate || 'N/A'}
+Return a concise suggested order type/description.`
+      const resp = await chatWithLegalAssistant({
+        message: prompt,
+        attachments: uploaded,
+      })
+      if (resp?.answer) {
+        setFormData(prev => ({ ...prev, orderType: resp.answer }))
+      }
+    } catch (err) {
+      setDraftError(err?.message || 'Failed to draft with AI')
+    } finally {
+      setIsDrafting(false)
+    }
+  }
+
   const handleSubmit = () => {
     if (formData.submissionDate && formData.orderType && formData.judgeDecision !== null) {
       // Format dates to proper format for database
@@ -202,6 +232,12 @@ function AddPetitionModal({
                 {t('petitions.orderType')}
                 <span className="text-red-500 ml-1">*</span>
               </Label>
+              <div className="flex justify-end">
+                <Button type="button" variant="outline" size="sm" onClick={handleDraftWithAI} disabled={isDrafting}>
+                  {isDrafting ? (t('common.loading') || 'Loading...') : 'Draft with AI'}
+                </Button>
+              </div>
+              {draftError && <p className="text-xs text-destructive">{draftError}</p>}
               <Input
                 placeholder={t('petitions.orderTypePlaceholder')}
                 value={formData.orderType}

@@ -11,10 +11,14 @@ import SessionSettings from './SessionSettings';
 import RulingSection from './RulingSection';
 import FileUploadSection from './FileUploadSection';
 import { useSessionForm } from './useSessionForm';
+import { chatWithLegalAssistant } from '@/app/services/api/legalAssistant';
+import { uploadFiles } from '@/../utils/fileUpload';
+import { toast } from 'react-toastify';
 
 const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
   const { language } = useLanguage();
   const isRtl = language === 'ar';
+  const [isDrafting, setIsDrafting] = React.useState(false);
 
   const {
     formik,
@@ -31,6 +35,43 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
     clearAllFiles,
     fetchLegalPeriods,
   } = useSessionForm({ isOpen, caseId, isRtl, onClose, onSessionAdded });
+
+  const handleDraftWithAI = async () => {
+    if (isDrafting) return;
+    setIsDrafting(true);
+    try {
+      const uploaded = selectedFiles.length ? await uploadFiles(selectedFiles, 'sessions') : [];
+      const prompt = `Draft a session note and suggested ruling.
+Case ID: ${caseId || ''}
+Topic: ${formik.values.topic || ''}
+Session type: ${formik.values.session_type || ''}
+Decision: ${formik.values.decision || ''}
+Note: ${formik.values.note || ''}
+Provide concise bullet points for note and a short ruling text.`;
+
+      const resp = await chatWithLegalAssistant({
+        message: prompt,
+        context: { caseId },
+        attachments: uploaded,
+      });
+
+      if (resp?.answer) {
+        // Heuristic: split into note/ruling if possible
+        const parts = resp.answer.split('Ruling:');
+        if (parts.length > 1) {
+          formik.setFieldValue('note', parts[0].trim());
+          formik.setFieldValue('ruling', parts.slice(1).join('Ruling:').trim());
+        } else {
+          formik.setFieldValue('note', resp.answer);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(isRtl ? 'تعذر إنشاء مسودة الجلسة' : 'Failed to draft session with AI');
+    } finally {
+      setIsDrafting(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -108,7 +149,15 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
 
           {/* Fixed Footer */}
           <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-b-lg p-6">
-            <div className="flex justify-end gap-3">
+            <div className="flex justify-end gap-3 flex-wrap">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleDraftWithAI}
+                disabled={isLoading || isUploading || isDrafting}
+              >
+                {isDrafting ? (isRtl ? 'جاري الإنشاء...' : 'Drafting...') : (isRtl ? 'صياغة بالذكاء الاصطناعي' : 'Draft with AI')}
+              </Button>
               <Button
                 type="button"
                 variant="outline"

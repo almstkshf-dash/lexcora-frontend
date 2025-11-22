@@ -17,6 +17,8 @@ import { createMemo } from "@/app/services/api/memos"
 import { toast } from "react-toastify"
 import RichTextEditor from "@/components/RichTextEditor"
 import { useTranslations } from "@/hooks/useTranslations"
+import { chatWithLegalAssistant } from "@/app/services/api/legalAssistant"
+import { uploadFiles } from "@/../utils/fileUpload"
 
 export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
   const { t } = useTranslations()
@@ -29,6 +31,8 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
     { value: "Rejected", label: t('memos.statusRejected') }
   ]
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isDrafting, setIsDrafting] = useState(false)
+  const [draftError, setDraftError] = useState(null)
   const [formData, setFormData] = useState({
     title: "",
     submission_date: null,
@@ -117,6 +121,32 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
       ...prev,
       files: prev.files.filter((_, index) => index !== indexToRemove)
     }))
+  }
+
+  const handleDraftWithAI = async () => {
+    if (isDrafting) return
+    setDraftError(null)
+    setIsDrafting(true)
+    try {
+      const uploaded = formData.files?.length ? await uploadFiles(formData.files, 'memos') : []
+      const prompt = `Draft a legal memo for case ${caseId || ''}.
+Title: ${formData.title || 'N/A'}
+Status: ${formData.status || 'N/A'}
+Admin note: ${formData.admin_note || 'N/A'}
+Submission date: ${formData.submission_date || 'N/A'}
+Provide the memo body only.`
+      const resp = await chatWithLegalAssistant({
+        message: prompt,
+        attachments: uploaded,
+      })
+      if (resp?.answer) {
+        setFormData(prev => ({ ...prev, description: resp.answer }))
+      }
+    } catch (err) {
+      setDraftError(err?.message || 'Failed to draft with AI')
+    } finally {
+      setIsDrafting(false)
+    }
   }
 
   return (
@@ -208,6 +238,12 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
             {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description">{t('memos.description')}</Label>
+              <div className="flex justify-end">
+                <Button type="button" variant="outline" size="sm" onClick={handleDraftWithAI} disabled={isDrafting || isSubmitting}>
+                  {isDrafting ? (t('common.loading') || 'Loading...') : 'Draft with AI'}
+                </Button>
+              </div>
+              {draftError && <p className="text-xs text-destructive">{draftError}</p>}
               <RichTextEditor
                 value={formData.description}
                 onChange={(html) => setFormData(prev => ({ ...prev, description: html }))}

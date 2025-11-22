@@ -15,6 +15,8 @@ import { format } from "date-fns"
 import { ar } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 import RichTextEditor from "@/components/RichTextEditor"
+import { chatWithLegalAssistant } from "@/app/services/api/legalAssistant"
+import { uploadFiles } from "@/../utils/fileUpload"
 
 const MEMO_STATUSES = [
   { value: "Draft", label_key: "memos.statusDraft" },
@@ -34,6 +36,8 @@ export default function AddMemoModal({ isOpen, onClose, onAdd }) {
     admin_note: "",
     files: []
   })
+  const [isDrafting, setIsDrafting] = useState(false)
+  const [draftError, setDraftError] = useState(null)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -81,6 +85,33 @@ export default function AddMemoModal({ isOpen, onClose, onAdd }) {
       ...prev,
       files: prev.files.filter((_, index) => index !== indexToRemove)
     }))
+  }
+
+  const handleDraftWithAI = async () => {
+    if (isDrafting) return
+    setDraftError(null)
+    setIsDrafting(true)
+    try {
+      const uploaded = formData.files?.length ? await uploadFiles(formData.files, 'memos') : []
+      const prompt = `
+Draft a concise legal memo with the following context.
+Title: ${formData.title || 'N/A'}
+Status: ${formData.status || 'N/A'}
+Admin note: ${formData.admin_note || 'N/A'}
+Submission date: ${formData.submission_date || 'N/A'}.
+Return the memo body only in clear paragraphs.`
+      const resp = await chatWithLegalAssistant({
+        message: prompt,
+        attachments: uploaded,
+      })
+      if (resp?.answer) {
+        setFormData(prev => ({ ...prev, description: resp.answer }))
+      }
+    } catch (err) {
+      setDraftError(err?.message || 'Failed to draft with AI')
+    } finally {
+      setIsDrafting(false)
+    }
   }
 
   return (
@@ -169,6 +200,12 @@ export default function AddMemoModal({ isOpen, onClose, onAdd }) {
             {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description">{t('memos.description')}</Label>
+              <div className="flex justify-end">
+                <Button type="button" variant="outline" size="sm" onClick={handleDraftWithAI} disabled={isDrafting}>
+                  {isDrafting ? (t('common.loading') || 'Loading...') : 'Draft with AI'}
+                </Button>
+              </div>
+              {draftError && <p className="text-xs text-destructive">{draftError}</p>}
               <RichTextEditor
                 value={formData.description}
                 onChange={(html) => setFormData(prev => ({ ...prev, description: html }))}

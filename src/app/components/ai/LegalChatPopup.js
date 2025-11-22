@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Loader2, Copy, Check, Sparkles } from 'lucide-react';
+import { X, Send, Loader2, Copy, Check, Sparkles, Paperclip, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -9,8 +9,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useSelector } from 'react-redux';
 import { selectUser } from '@/redux/slices/authSlice';
 import { chatWithLegalAssistant } from '@/app/services/api/legalAssistant';
+import { uploadFiles } from '@/../utils/fileUpload';
 
-const STORAGE_KEY = 'legalChatHistory';
+const STORAGE_KEY_BASE = 'legalChatHistory';
 
 // Escape any HTML before rendering to avoid XSS from untrusted responses
 const sanitizeText = (text = '') =>
@@ -21,7 +22,45 @@ const sanitizeText = (text = '') =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 
-const LegalChatPopup = ({ isOpen, onClose }) => {
+const normalizeSources = (sources) => {
+  if (!sources) return [];
+  if (Array.isArray(sources)) {
+    return sources.map((src, idx) => {
+      if (typeof src === 'string') {
+        return { id: `src-${idx}`, label: src, url: src };
+      }
+      const {
+        id,
+        title,
+        name,
+        document_name,
+        document_url,
+        url,
+        link,
+        chunk,
+        page,
+        snippet,
+      } = src || {};
+      return {
+        id: id || `src-${idx}`,
+        label: title || name || document_name || `Source ${idx + 1}`,
+        url: url || link || document_url,
+        chunk,
+        page,
+        snippet,
+      };
+    });
+  }
+  if (typeof sources === 'string') {
+    return sources
+      .split(/[,;]+/)
+      .map((item, idx) => ({ id: `src-${idx}`, label: item.trim(), url: item.trim() }))
+      .filter((s) => s.label);
+  }
+  return [];
+};
+
+const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isContextLoading = false }) => {
   const { isRTL } = useLanguage();
   const user = useSelector(selectUser);
   const [messages, setMessages] = useState([]);
@@ -29,6 +68,11 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const [attachments, setAttachments] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+  const storageKey = context?.caseId ? `${STORAGE_KEY_BASE}:${context.caseId}` : STORAGE_KEY_BASE;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -37,20 +81,23 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
   // Restore persisted chat when the popup opens and save on every change
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const cached = localStorage.getItem(STORAGE_KEY);
+    const cached = localStorage.getItem(storageKey);
     if (cached) {
       try {
         setMessages(JSON.parse(cached));
       } catch {
-        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(storageKey);
+        setMessages([]);
       }
+    } else {
+      setMessages([]);
     }
-  }, []);
+  }, [storageKey]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-  }, [messages]);
+    localStorage.setItem(storageKey, JSON.stringify(messages));
+  }, [messages, storageKey]);
 
   const handleCopyMessage = async (messageId, content) => {
     try {
@@ -66,8 +113,29 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
     scrollToBottom();
   }, [messages]);
 
+  const handleRemoveAttachment = (url) => {
+    setAttachments((prev) => prev.filter((file) => file.document_url !== url));
+  };
+
+  const handleFileChange = async (event) => {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
+    setUploadError(null);
+    setIsUploading(true);
+    try {
+      const uploaded = await uploadFiles(files, 'legal-assistant');
+      setAttachments((prev) => [...prev, ...uploaded]);
+    } catch (err) {
+      console.error('Upload failed', err);
+      setUploadError(err?.message || 'Failed to upload files');
+    } finally {
+      setIsUploading(false);
+      event.target.value = '';
+    }
+  };
+
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
+    if ((!inputMessage.trim() && attachments.length === 0) || isLoading || isUploading) return;
 
     const userName = user?.employeeName || user?.name || user?.email || 'User';
 
@@ -77,19 +145,25 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
       content: inputMessage.trim(),
       userName: userName,
       timestamp: new Date().toISOString(),
+      attachments,
     };
 
     setMessages((prev) => [...prev, userMessage]);
     setInputMessage('');
+    setAttachments([]);
     setIsLoading(true);
 
     try {
-      const data = await chatWithLegalAssistant({
+      const payload = {
         message: userMessage.content,
         userName: userName,
         userId: user?.id || user?.job_id,
-        history: messages,
-      });
+        history: [...messages, userMessage],
+        context,
+        attachments,
+      };
+
+      const data = await chatWithLegalAssistant(payload);
 
       const assistantMessage = {
         id: Date.now() + 1,
@@ -105,7 +179,9 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
       const errorMessage = {
         id: Date.now() + 1,
         role: 'assistant',
-        content: 'عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.',
+        content: isRTL
+          ? 'لا يمكن الوصول للمساعد الآن. حاول مرة أخرى لاحقاً'
+          : 'Unable to reach the assistant right now. Please try again.',
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -124,14 +200,20 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
   const handleClearChat = () => {
     setMessages([]);
     if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(storageKey);
     }
   };
 
   const handleCopyConversation = async () => {
     try {
       const transcript = messages
-        .map((msg) => `${msg.role === 'user' ? user?.employeeName || user?.name || user?.email || 'User' : 'Assistant'}: ${msg.content}`)
+        .map((msg) => {
+          const name = msg.role === 'user' ? user?.employeeName || user?.name || user?.email || 'User' : 'Assistant';
+          const attachmentsLine = msg.attachments?.length
+            ? `\nAttachments: ${msg.attachments.map((f) => f.document_name || f.document_url).join(', ')}`
+            : '';
+          return `${name}: ${msg.content || ''}${attachmentsLine}`;
+        })
         .join('\n\n');
       await navigator.clipboard.writeText(transcript);
     } catch (error) {
@@ -170,6 +252,27 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
           </div>
         </div>
 
+        {(context || isContextLoading) && (
+          <div
+            className="border-b bg-muted/60 px-4 py-2 text-xs text-muted-foreground flex items-center gap-2"
+            dir={isRTL ? 'rtl' : 'ltr'}
+          >
+            <Sparkles size={14} className="text-purple-600" />
+            <div className="flex flex-col">
+              <span className="text-foreground font-medium">
+                {contextLabel ||
+                  (isRTL ? 'يتم الاستناد إلى بيانات القضية الحالية' : 'Grounding answers in this case')}
+              </span>
+              {context?.caseId && (
+                <span className="text-muted-foreground">
+                  {isRTL ? 'رقم القضية' : 'Case ID'}: {context.caseId}
+                </span>
+              )}
+            </div>
+            {isContextLoading && <Loader2 size={14} className="animate-spin ml-auto" />}
+          </div>
+        )}
+
         {/* Messages Container - with proper overflow scroll */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
           <div className="space-y-4">
@@ -206,9 +309,41 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
                     {sanitizeText(message.content)}
                   </p>
                 </div>
-                {message.sources && (
-                  <div className="mt-2 pt-2 border-t border-border text-xs text-muted-foreground">
-                    <strong>{isRTL ? 'المصادر:' : 'Sources:'}</strong> {message.sources}
+                {message.attachments?.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                    {message.attachments.map((file) => (
+                      <a
+                        key={file.document_url}
+                        href={file.document_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-full border border-border bg-background/60 px-2 py-1 hover:bg-background"
+                      >
+                        <Paperclip size={12} />
+                        <span className="truncate max-w-[140px]">{file.document_name || 'Attachment'}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+                {normalizeSources(message.sources).length > 0 && (
+                  <div className="mt-2 pt-2 border-t border-border text-xs text-muted-foreground flex flex-wrap gap-2">
+                    <strong className="pr-1">{isRTL ? 'المصادر:' : 'Sources:'}</strong>
+                    {normalizeSources(message.sources).map((source) => (
+                      <a
+                        key={source.id}
+                        href={source.url || '#'}
+                        target={source.url ? "_blank" : undefined}
+                        rel={source.url ? "noopener noreferrer" : undefined}
+                        className="inline-flex items-center gap-1 rounded-full border border-border bg-background/60 px-2 py-1 hover:bg-background"
+                        title={source.snippet || source.label}
+                      >
+                        <Sparkles size={12} className="text-purple-600" />
+                        <span className="truncate max-w-[140px]">
+                          {source.label}
+                          {source.page ? ` · p.${source.page}` : ''}
+                        </span>
+                      </a>
+                    ))}
                   </div>
                 )}
                 {message.role === 'assistant' && (
@@ -247,6 +382,14 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
 
         {/* Input Area */}
         <div className="p-4 border-t bg-background flex-shrink-0 space-y-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept=".pdf,.doc,.docx,.txt"
+            className="hidden"
+            onChange={handleFileChange}
+          />
           <div className={`flex flex-wrap items-center gap-2 ${isRTL ? 'justify-end' : 'justify-start'}`} dir={isRTL ? 'rtl' : 'ltr'}>
             <Button
               variant="outline"
@@ -264,26 +407,73 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
             >
               {isRTL ? 'مسح المحادثة' : 'Clear chat'}
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="flex items-center gap-2"
+            >
+              {isUploading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Paperclip className="h-4 w-4" />
+              )}
+              <span>{isRTL ? 'إرفاق ملفات' : 'Attach docs'}</span>
+            </Button>
+            {uploadError && (
+              <span className="text-destructive text-xs">{uploadError}</span>
+            )}
           </div>
+
+          {attachments.length > 0 && (
+            <div className="flex flex-wrap gap-2" dir={isRTL ? 'rtl' : 'ltr'}>
+              {attachments.map((file) => (
+                <div
+                  key={file.document_url}
+                  className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-1 text-xs"
+                >
+                  <Paperclip size={12} />
+                  <a
+                    href={file.document_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="truncate max-w-[140px] hover:underline"
+                  >
+                    {file.document_name || 'Attachment'}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveAttachment(file.document_url)}
+                    className="text-muted-foreground hover:text-foreground"
+                    aria-label={isRTL ? 'حذف' : 'Remove'}
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="flex gap-2" dir={isRTL ? 'rtl' : 'ltr'}>
             <Input
               type="text"
               value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder={isRTL ? 'اكتب سؤالك هنا...' : 'Type your question here...'}
-            className="flex-1"
-            disabled={isLoading}
-            dir="auto"
+              className="flex-1"
+              disabled={isLoading || isUploading}
+              dir="auto"
             />
             <Button
               onClick={handleSendMessage}
-              disabled={!inputMessage.trim() || isLoading}
+              disabled={( !inputMessage.trim() && attachments.length === 0) || isLoading || isUploading}
               className="bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
               size="icon"
               aria-label="Send message"
             >
-              {isLoading ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
+              {(isLoading || isUploading) ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
             </Button>
           </div>
         </div>

@@ -8,10 +8,8 @@ import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSelector } from 'react-redux';
 import { selectUser } from '@/redux/slices/authSlice';
-import { chatWithLegalAssistant } from '@/app/services/api/legalAssistant';
+import { chatWithLegalAssistant, chatWithLegalAssistantStream, getLegalAssistantHistory } from '@/app/services/api/legalAssistant';
 import { uploadFiles } from '@/../utils/fileUpload';
-
-const STORAGE_KEY_BASE = 'legalChatHistory';
 
 // Escape any HTML before rendering to avoid XSS from untrusted responses
 const sanitizeText = (text = '') =>
@@ -72,32 +70,51 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
   const [attachments, setAttachments] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
-  const storageKey = context?.caseId ? `${STORAGE_KEY_BASE}:${context.caseId}` : STORAGE_KEY_BASE;
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
+
+  const renderTables = (tables = []) => {
+    if (!tables?.length) return null;
+    return (
+      <div className="mt-3 space-y-3">
+        {tables.map((table, idx) => (
+          <div key={table.title || idx} className="border border-border rounded-lg overflow-hidden">
+            {table.title && (
+              <div className="px-3 py-2 bg-muted text-sm font-semibold">{table.title}</div>
+            )}
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                {table.columns && (
+                  <thead className="bg-muted/60">
+                    <tr>
+                      {table.columns.map((col) => (
+                        <th key={col} className="px-3 py-2 text-left font-medium">{col}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                )}
+                <tbody>
+                  {(table.rows || []).map((row, rIdx) => (
+                    <tr key={rIdx} className="border-t border-border/70">
+                      {(table.columns || Object.keys(row || {})).map((col) => (
+                        <td key={col} className="px-3 py-2 whitespace-nowrap">
+                          {row?.[col] ?? ''}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  // Restore persisted chat when the popup opens and save on every change
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const cached = localStorage.getItem(storageKey);
-    if (cached) {
-      try {
-        setMessages(JSON.parse(cached));
-      } catch {
-        localStorage.removeItem(storageKey);
-        setMessages([]);
-      }
-    } else {
-      setMessages([]);
-    }
-  }, [storageKey]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(storageKey, JSON.stringify(messages));
-  }, [messages, storageKey]);
 
   const handleCopyMessage = async (messageId, content) => {
     try {
@@ -112,6 +129,63 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const quickPrompts = isRTL
+    ? [
+        'لخص آخر جلسة',
+        'ما المستندات الناقصة لهذه القضية؟',
+        'ما المواعيد النهائية القادمة؟',
+        'أنشئ قائمة بالمهام التالية للأسبوع',
+      ]
+    : [
+        'Summarize the last session',
+        'List missing documents for this case',
+        'What deadlines are coming up?',
+        'Create next-week tasks list',
+      ];
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      if (!isOpen || !context?.caseId) return;
+      setIsHistoryLoading(true);
+      try {
+        const data = await getLegalAssistantHistory(context.caseId);
+        const rows = data?.data || data?.history || data || [];
+        const hydrated = [];
+        rows.forEach((row, idx) => {
+          const baseId = `${row?.id || row?.created_at || idx}`;
+          if (row?.message) {
+            hydrated.push({
+              id: `${baseId}-user`,
+              role: 'user',
+              content: row.message,
+              userName: row.user_name || row.user || 'User',
+              timestamp: row.created_at,
+              attachments: row.attachments || [],
+            });
+          }
+          if (row?.answer) {
+            hydrated.push({
+              id: `${baseId}-assistant`,
+              role: 'assistant',
+              content: row.answer,
+              sources: row.sources,
+              tables: row.tables || row.table,
+              timestamp: row.created_at,
+            });
+          }
+        });
+        if (hydrated.length) {
+          setMessages(hydrated);
+        }
+      } catch (err) {
+        console.error('Failed to load chat history', err);
+      } finally {
+        setIsHistoryLoading(false);
+      }
+    };
+    fetchHistory();
+  }, [isOpen, context?.caseId]);
 
   const handleRemoveAttachment = (url) => {
     setAttachments((prev) => prev.filter((file) => file.document_url !== url));
@@ -134,15 +208,18 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
     }
   };
 
-  const handleSendMessage = async () => {
-    if ((!inputMessage.trim() && attachments.length === 0) || isLoading || isUploading) return;
+  const handleSendMessage = async (preset) => {
+    if ((!inputMessage.trim() && !preset && attachments.length === 0) || isLoading || isUploading || isStreaming) return;
 
     const userName = user?.employeeName || user?.name || user?.email || 'User';
+    const trimmed = (preset ?? inputMessage).trim();
+    const effectiveContent =
+      trimmed || (attachments.length ? 'Please review the attached documents and provide a summary.' : 'Hello');
 
     const userMessage = {
       id: Date.now(),
       role: 'user',
-      content: inputMessage.trim(),
+      content: effectiveContent,
       userName: userName,
       timestamp: new Date().toISOString(),
       attachments,
@@ -153,15 +230,81 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
     setAttachments([]);
     setIsLoading(true);
 
+    const payload = {
+      message: effectiveContent,
+      userName: userName,
+      userId: user?.id || user?.job_id,
+      history: undefined,
+      context,
+      attachments,
+    };
+
     try {
-      const payload = {
-        message: userMessage.content,
-        userName: userName,
-        userId: user?.id || user?.job_id,
-        history: [...messages, userMessage],
-        context,
-        attachments,
-      };
+      // Attempt streaming first
+      try {
+        setIsStreaming(true);
+        const reader = await chatWithLegalAssistantStream(payload);
+        const decoder = new TextDecoder();
+        const assistantId = Date.now() + 1;
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: assistantId,
+            role: 'assistant',
+            content: '',
+            sources: null,
+            tables: [],
+            timestamp: new Date().toISOString(),
+          },
+        ]);
+
+        let buffer = '';
+        const updateAssistant = (partial) => {
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantId
+                ? { ...msg, ...partial }
+                : msg
+            )
+          );
+        };
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          let sepIndex;
+          while ((sepIndex = buffer.indexOf('\n\n')) >= 0) {
+            const rawEvent = buffer.slice(0, sepIndex).trim();
+            buffer = buffer.slice(sepIndex + 2);
+            if (!rawEvent.startsWith('data:')) continue;
+            const jsonStr = rawEvent.replace(/^data:\s*/, '');
+            if (jsonStr === '[DONE]') continue;
+            try {
+              const parsed = JSON.parse(jsonStr);
+              const nextContent = parsed.answer || parsed.content || '';
+              updateAssistant({
+                content: nextContent,
+                sources: parsed.sources || null,
+                tables: Array.isArray(parsed?.tables)
+                  ? parsed.tables
+                  : parsed?.table
+                    ? (Array.isArray(parsed.table) ? parsed.table : [parsed.table])
+                    : [],
+              });
+            } catch (e) {
+              // Ignore parse errors for malformed chunks
+            }
+          }
+        }
+        setIsStreaming(false);
+        setIsLoading(false);
+        return;
+      } catch (streamErr) {
+        // Fallback to non-streaming
+        setIsStreaming(false);
+      }
 
       const data = await chatWithLegalAssistant(payload);
 
@@ -170,23 +313,49 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
         role: 'assistant',
         content: data.answer,
         sources: data.sources,
+        tables: Array.isArray(data?.tables)
+          ? data.tables
+          : data?.table
+            ? (Array.isArray(data.table) ? data.table : [data.table])
+            : [],
         timestamp: new Date().toISOString(),
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error(
+        'Error sending message:',
+        JSON.stringify(
+          {
+            status: error?.response?.status,
+            responseData: error?.response?.data,
+            payloadSummary: {
+              message: payload.message,
+              userId: payload.userId,
+              hasContext: !!payload.context,
+              attachmentsCount: payload.attachments?.length || 0,
+            },
+          },
+          null,
+          2
+        )
+      );
+      const backendMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        error?.message;
       const errorMessage = {
         id: Date.now() + 1,
         role: 'assistant',
         content: isRTL
-          ? 'لا يمكن الوصول للمساعد الآن. حاول مرة أخرى لاحقاً'
-          : 'Unable to reach the assistant right now. Please try again.',
+          ? (backendMessage || 'لا يمكن الوصول للمساعد الآن. حاول مرة أخرى لاحقاً')
+          : (backendMessage || 'Unable to reach the assistant right now. Please try again.'),
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      setIsStreaming(false);
     }
   };
 
@@ -199,9 +368,6 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
 
   const handleClearChat = () => {
     setMessages([]);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(storageKey);
-    }
   };
 
   const handleCopyConversation = async () => {
@@ -282,6 +448,11 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
               <p className="text-sm">
                 {isRTL ? 'مرحباً! كيف يمكنني مساعدتك في الأمور القانونية؟' : 'Hello! How can I help you with legal matters?'}
               </p>
+              {isHistoryLoading && (
+                <p className="text-xs mt-2">
+                  {isRTL ? 'جاري تحميل المحادثات السابقة...' : 'Loading previous assistant history...'}
+                </p>
+              )}
             </div>
           )}
           
@@ -346,6 +517,7 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
                     ))}
                   </div>
                 )}
+                {renderTables(message.tables)}
                 {message.role === 'assistant' && (
                   <div className="mt-2 flex justify-end">
                     <Button
@@ -455,6 +627,21 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
             </div>
           )}
 
+          <div className="flex flex-wrap gap-2" dir={isRTL ? 'rtl' : 'ltr'}>
+            {quickPrompts.map((prompt) => (
+              <Button
+                key={prompt}
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => handleSendMessage(prompt)}
+                disabled={isLoading || isUploading || isStreaming}
+              >
+                {prompt}
+              </Button>
+            ))}
+          </div>
+
           <div className="flex gap-2" dir={isRTL ? 'rtl' : 'ltr'}>
             <Input
               type="text"
@@ -468,12 +655,12 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
             />
             <Button
               onClick={handleSendMessage}
-              disabled={( !inputMessage.trim() && attachments.length === 0) || isLoading || isUploading}
+              disabled={( !inputMessage.trim() && attachments.length === 0) || isLoading || isUploading || isStreaming}
               className="bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
               size="icon"
               aria-label="Send message"
             >
-              {(isLoading || isUploading) ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
+              {(isLoading || isUploading || isStreaming) ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
             </Button>
           </div>
         </div>

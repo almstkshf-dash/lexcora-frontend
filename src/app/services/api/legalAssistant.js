@@ -57,10 +57,15 @@ export const chatWithLegalAssistantStream = async (payload) => {
 };
 
 export const getLegalAssistantHistory = async (caseId, limit = 50) => {
-  const response = await api.get(`/legal-assistant/history/${caseId}`, {
-    params: { limit },
-  });
-  return response.data;
+  try {
+    const response = await api.get(`/legal-assistant/history/${caseId}`, {
+      params: { limit },
+    });
+    return response.data;
+  } catch (err) {
+    console.warn('History fetch failed', err?.response?.status, err?.message);
+    return { success: false, data: [], error: err?.message };
+  }
 };
 
 export default {

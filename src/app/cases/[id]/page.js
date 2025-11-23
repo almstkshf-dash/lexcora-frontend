@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import { use } from 'react';
 import { getAllCaseDetails } from '@/app/services/api/cases';
 import useSWR from 'swr';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import CaseAssistantLauncher from '@/app/components/ai/CaseAssistantLauncher';
 
 function CaseDetailsPage({ params }) {
-  const { id } = React.use(params);
+  const { id } = use(params);
   const { t } = useTranslations();
 
   const { data: caseData, error, isLoading } = useSWR(
@@ -71,7 +71,7 @@ function CaseDetailsPage({ params }) {
   }
 
   const { info, parties, sessions, tasks, executions, judicial, petitions, degrees, petition } = caseData.data;
-  const caseId = params?.id || info?.case_id || info?.id;
+  const caseId = id || info?.case_id || info?.id;
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';

@@ -9,6 +9,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useSelector } from 'react-redux';
 import { selectUser } from '@/redux/slices/authSlice';
 import { chatWithLegalAssistant, chatWithLegalAssistantStream, getLegalAssistantHistory } from '@/app/services/api/legalAssistant';
+import { getAllCaseDetails, getCaseDocuments, searchCases } from '@/app/services/api/cases';
 import { uploadFiles } from '@/../utils/fileUpload';
 
 // Escape any HTML before rendering to avoid XSS from untrusted responses
@@ -72,6 +73,20 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
   const [uploadError, setUploadError] = useState(null);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [onDemandContext, setOnDemandContext] = useState(null);
+  const quickPrompts = isRTL
+    ? [
+        'لخص آخر جلسة',
+        'ما المستندات الناقصة في هذا الملف؟',
+        'ما هي المواعيد النهائية القادمة؟',
+        'أنشئ قائمة مهام للأسبوع القادم',
+      ]
+    : [
+        'Summarize the last session',
+        'List missing documents for this case',
+        'What deadlines are coming up?',
+        'Create next-week tasks list',
+      ];
 
   const renderTables = (tables = []) => {
     if (!tables?.length) return null;
@@ -130,26 +145,12 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
     scrollToBottom();
   }, [messages]);
 
-  const quickPrompts = isRTL
-    ? [
-        'لخص آخر جلسة',
-        'ما المستندات الناقصة لهذه القضية؟',
-        'ما المواعيد النهائية القادمة؟',
-        'أنشئ قائمة بالمهام التالية للأسبوع',
-      ]
-    : [
-        'Summarize the last session',
-        'List missing documents for this case',
-        'What deadlines are coming up?',
-        'Create next-week tasks list',
-      ];
-
   useEffect(() => {
     const fetchHistory = async () => {
-      if (!isOpen || !context?.caseId) return;
+      if (!isOpen || !(context?.caseId || onDemandContext?.caseId)) return;
       setIsHistoryLoading(true);
       try {
-        const data = await getLegalAssistantHistory(context.caseId);
+        const data = await getLegalAssistantHistory(context?.caseId || onDemandContext?.caseId);
         const rows = data?.data || data?.history || data || [];
         const hydrated = [];
         rows.forEach((row, idx) => {
@@ -185,7 +186,7 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
       }
     };
     fetchHistory();
-  }, [isOpen, context?.caseId]);
+  }, [isOpen, context?.caseId, onDemandContext?.caseId]);
 
   const handleRemoveAttachment = (url) => {
     setAttachments((prev) => prev.filter((file) => file.document_url !== url));
@@ -208,6 +209,82 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
     }
   };
 
+  const resolveCaseId = async (identifier) => {
+    const term = String(identifier || '').trim();
+    if (!term) return null;
+    try {
+      const response = await searchCases(term);
+      const candidates = response?.data || [];
+      const match =
+        candidates.find(
+          (item) =>
+            String(item?.case_number) === term ||
+            String(item?.file_number) === term ||
+            String(item?.id) === term
+        ) || candidates[0];
+      return match?.id || match?.case_id || null;
+    } catch (err) {
+      console.warn('Case lookup failed', err?.message);
+      return null;
+    }
+  };
+
+  const buildContextFromCase = async (caseIdOrNumber) => {
+    const normalizeInfo = (details) =>
+      details?.data?.info ||
+      details?.info ||
+      details?.data ||
+      details ||
+      null;
+
+    const tryBuild = async (id) => {
+      if (!id) return null;
+      const details = await getAllCaseDetails(id);
+      const info = normalizeInfo(details);
+      if (!info || Object.keys(info).length === 0) return null;
+
+      let documents = [];
+      try {
+        const docs = await getCaseDocuments(id);
+        documents = (docs?.data || docs || []).map((doc, idx) => ({
+          id: doc.id || idx,
+          document_name: doc.document_name || doc.name || `Document ${idx + 1}`,
+          document_url: doc.document_url || doc.url,
+        }));
+      } catch (docErr) {
+        console.warn('Case documents unavailable', docErr?.message);
+      }
+
+      return {
+        type: 'case',
+        caseId: info.id || id,
+        caseSummary: info,
+        documents,
+        fetchedAt: new Date().toISOString(),
+      };
+    };
+
+    try {
+      const direct = await tryBuild(caseIdOrNumber);
+      if (direct) return direct;
+
+      const fallbackId = await resolveCaseId(caseIdOrNumber);
+      if (fallbackId) {
+        const fallback = await tryBuild(fallbackId);
+        if (fallback) return fallback;
+      }
+    } catch (err) {
+      console.error('Failed to build context from case', err);
+    }
+    return null;
+  };
+
+  const extractCaseNumber = (text) => {
+    if (!text) return null;
+    const match = text.match(/(\d{4,})/);
+    return match ? match[1] : null;
+  };
+
   const handleSendMessage = async (preset) => {
     if ((!inputMessage.trim() && !preset && attachments.length === 0) || isLoading || isUploading || isStreaming) return;
 
@@ -216,13 +293,46 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
     const effectiveContent =
       trimmed || (attachments.length ? 'Please review the attached documents and provide a summary.' : 'Hello');
 
+    let effectiveContext = context || onDemandContext || null;
+    if (!effectiveContext?.caseId) {
+      const guessedCase = extractCaseNumber(effectiveContent);
+      if (guessedCase) {
+        effectiveContext = await buildContextFromCase(guessedCase);
+        if (effectiveContext) {
+          setOnDemandContext(effectiveContext);
+        } else {
+          setIsLoading(false);
+          const notFoundMessage = {
+            id: Date.now() + 1,
+            role: 'assistant',
+            content: isRTL
+              ? `?? ????? ?????? ????? ???? ??? (${guessedCase}). ???? ???? ????? ?????? ???? ????? ??? ?????.`
+              : `No data found for case ${guessedCase}. Please provide another case number or open a case page.`,
+            timestamp: new Date().toISOString(),
+          };
+          setMessages((prev) => [...prev, notFoundMessage]);
+          return;
+        }
+      }
+    }
+
+    const contextDocuments = effectiveContext?.documents || [];
+    const combinedAttachments = [];
+    const seen = new Set();
+    [...attachments, ...contextDocuments.filter((doc) => doc?.document_url)].forEach((doc) => {
+      const key = doc.document_url || doc.url;
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+      combinedAttachments.push(doc);
+    });
+
     const userMessage = {
       id: Date.now(),
       role: 'user',
       content: effectiveContent,
       userName: userName,
       timestamp: new Date().toISOString(),
-      attachments,
+      attachments: combinedAttachments,
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -235,8 +345,8 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
       userName: userName,
       userId: user?.id || user?.job_id,
       history: undefined,
-      context,
-      attachments,
+      context: effectiveContext,
+      attachments: combinedAttachments,
     };
 
     try {
@@ -626,21 +736,6 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
               ))}
             </div>
           )}
-
-          <div className="flex flex-wrap gap-2" dir={isRTL ? 'rtl' : 'ltr'}>
-            {quickPrompts.map((prompt) => (
-              <Button
-                key={prompt}
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={() => handleSendMessage(prompt)}
-                disabled={isLoading || isUploading || isStreaming}
-              >
-                {prompt}
-              </Button>
-            ))}
-          </div>
 
           <div className="flex gap-2" dir={isRTL ? 'rtl' : 'ltr'}>
             <Input

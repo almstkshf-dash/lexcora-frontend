@@ -4,7 +4,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { Sparkles, Loader2, ShieldQuestion } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LegalChatPopup from './LegalChatPopup';
-import { getAllCaseDetails } from '@/app/services/api/cases';
+import { getAllCaseDetails, getCaseDocuments } from '@/app/services/api/cases';
 import { getCaseMemos } from '@/app/services/api/memos';
 import { getCasePetitionsByCaseId } from '@/app/services/api/CasePetitions';
 import { getCaseSessions } from '@/app/services/api/sessions';
@@ -50,7 +50,7 @@ const deriveDeadlinesFromSessions = (sessions = []) => {
     .slice(0, 10);
 };
 
-const buildCaseContextPayload = (caseId, { details, memos, petitions, sessions }) => {
+const buildCaseContextPayload = (caseId, { details, memos, petitions, sessions, documents }) => {
   const caseInfo =
     details?.data?.info ||
     details?.info ||
@@ -105,6 +105,11 @@ const buildCaseContextPayload = (caseId, { details, memos, petitions, sessions }
       'updatedAt',
     ]),
     deadlines: deriveDeadlinesFromSessions(sessions?.data || sessions),
+    documents: (documents || []).map((doc, idx) => ({
+      id: doc.id || idx,
+      document_name: doc.document_name || doc.name || `Document ${idx + 1}`,
+      document_url: doc.document_url || doc.url,
+    })),
     fetchedAt: new Date().toISOString(),
   };
 };
@@ -127,11 +132,12 @@ function CaseAssistantLauncher({ caseId, align = 'right' }) {
     setIsLoadingContext(true);
     setContextError(null);
     try {
-      const [detailsRes, memosRes, petitionsRes, sessionsRes] = await Promise.allSettled([
+      const [detailsRes, memosRes, petitionsRes, sessionsRes, docsRes] = await Promise.allSettled([
         getAllCaseDetails(caseId),
         getCaseMemos(caseId),
         getCasePetitionsByCaseId(caseId),
         getCaseSessions(caseId),
+        getCaseDocuments(caseId),
       ]);
 
       const details =
@@ -142,9 +148,11 @@ function CaseAssistantLauncher({ caseId, align = 'right' }) {
         petitionsRes.status === 'fulfilled' ? petitionsRes.value : [];
       const sessions =
         sessionsRes.status === 'fulfilled' ? sessionsRes.value : [];
+      const documents =
+        docsRes.status === 'fulfilled' ? (docsRes.value?.data || docsRes.value || []) : [];
 
       setCaseContext(
-        buildCaseContextPayload(caseId, { details, memos, petitions, sessions })
+        buildCaseContextPayload(caseId, { details, memos, petitions, sessions, documents })
       );
     } catch (error) {
       console.error('Failed to fetch case context', error);

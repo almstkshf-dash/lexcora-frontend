@@ -10,7 +10,9 @@ const SearchInput = ({
   onClear, 
   onFocus, 
   isRTL,
-  typeSelector 
+  typeSelector,
+  inputId = 'global-search',
+  inputName = 'global-search'
 }) => {
   return (
     <div className="relative">
@@ -20,6 +22,8 @@ const SearchInput = ({
       
       <input
         type="text"
+        id={inputId}
+        name={inputName}
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         onFocus={onFocus}

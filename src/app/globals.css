@@ -91,11 +91,11 @@
     --primary: oklch(0.205 0 0);
     --primary-foreground: oklch(0.985 0 0);
     --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
+    --secondary-foreground: oklch(0.16 0.03 240);
     --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
+    --muted-foreground: oklch(0.32 0.04 240);
     --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
+    --accent-foreground: oklch(0.16 0.03 240);
     --destructive: oklch(0.577 0.245 27.325);
     --destructive-foreground: oklch(0.985 0 0);
     --border: oklch(0.922 0 0);
@@ -128,9 +128,9 @@
     --secondary: oklch(0.269 0 0);
     --secondary-foreground: oklch(0.985 0 0);
     --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
+    --muted-foreground: oklch(0.9 0.01 240);
     --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
+    --accent-foreground: oklch(0.94 0.01 250);
     --destructive: oklch(0.704 0.191 22.216);
     --destructive-foreground: oklch(0.985 0 0);
     --border: oklch(1 0 0 / 10%);
@@ -766,6 +766,15 @@
     animation: var(--ambient-animation), var(--ambient-accent-animation);
   }
 
+  input::placeholder,
+  textarea::placeholder {
+    color: color-mix(in oklch, var(--muted-foreground) 90%, var(--foreground) 10%);
+  }
+
+  .text-muted-foreground {
+    color: color-mix(in oklch, var(--muted-foreground) 80%, var(--foreground) 20%) !important;
+  }
+
   html.reader-mode {
     --background: color-mix(in oklch, var(--background) 85%, oklch(0.98 0.01 210) 15%);
     --card: color-mix(in oklch, var(--card) 88%, oklch(0.99 0.01 220) 12%);
@@ -968,9 +977,9 @@
 
 @layer components {
   .badge-primary {
-    background: color-mix(in oklch, var(--primary) 10%, transparent);
-    color: var(--primary);
-    border: 1px solid color-mix(in oklch, var(--primary) 20%, transparent);
+    background: color-mix(in oklch, var(--primary) 18%, transparent);
+    color: color-mix(in oklch, var(--primary-foreground) 80%, var(--foreground) 20%);
+    border: 1px solid color-mix(in oklch, var(--primary) 28%, transparent);
     padding: var(--space-xs) var(--space-sm);
     border-radius: var(--radius-md);
     font-size: 0.75rem;
@@ -978,8 +987,8 @@
   }
   
   .badge-accent {
-    background: var(--accent);
-    color: var(--accent-foreground);
+    background: color-mix(in oklch, var(--accent) 20%, transparent);
+    color: color-mix(in oklch, var(--accent-foreground) 85%, var(--foreground) 15%);
     padding: var(--space-xs) var(--space-sm);
     border-radius: var(--radius-md);
     font-size: 0.75rem;

@@ -1,10 +1,10 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { useSelector } from 'react-redux';
-import { selectUser } from '@/redux/slices/authSlice';
+import { selectUser, selectAuth } from '@/redux/slices/authSlice';
 import { getCreatorTasks, deleteTask } from '@/app/services/api/tasks';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -50,6 +50,33 @@ const MyTasks = () => {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
   const user = useSelector(selectUser);
+  const auth = useSelector(selectAuth);
+
+  const resolvedUser = useMemo(() => {
+    const fromState = user || auth?.user || {};
+    const fromStorage = (() => {
+      if (typeof window === 'undefined') return {};
+      try {
+        const stored = localStorage.getItem('user');
+        return stored ? JSON.parse(stored) : {};
+      } catch (e) {
+        return {};
+      }
+    })();
+    // Prefer state, then auth user, then storage
+    return {
+      ...fromStorage,
+      ...fromState,
+    };
+  }, [user, auth]);
+
+  const userId =
+    resolvedUser?.id ||
+    resolvedUser?._id ||
+    resolvedUser?.user_id ||
+    resolvedUser?.job_id ||
+    auth?.jobId ||
+    null;
   
   // State for status filter
   const [activeStatus, setActiveStatus] = useState('pending');
@@ -66,8 +93,8 @@ const MyTasks = () => {
   
   // Fetch creator tasks using SWR
   const { data: tasksData, error, isLoading, mutate } = useSWR(
-    user?.id ? [`/tasks/creator/${user.id}`, user.id, activeStatus] : null,
-    () => getCreatorTasks(user.id, activeStatus),
+    userId ? [`/tasks/creator/${userId}`, userId, activeStatus] : null,
+    () => getCreatorTasks(userId, activeStatus),
     {
       refreshInterval: 300000, // Refresh every 5 minutes
       revalidateOnFocus: true
@@ -234,12 +261,15 @@ const MyTasks = () => {
     }
   };
 
-  if (!user) {
+  if (!userId) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <User className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
           <p className="text-muted-foreground">{t('common.loading')}</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t('common.error')}
+          </p>
         </div>
       </div>
     );

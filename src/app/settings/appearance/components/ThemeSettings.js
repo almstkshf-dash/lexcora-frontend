@@ -10,7 +10,10 @@ import {
   Droplets,
   Flame,
   Zap,
-  Flower2
+  Flower2,
+  Sparkles,
+  Target,
+  Wind
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,6 +53,12 @@ const ThemeSettings = () => {
         return <Sun className="h-4 w-4 fill-current" />;
       case themes.rose:
         return <Flower2 className="h-4 w-4" />;
+      case themes.calm:
+        return <Wind className="h-4 w-4" />;
+      case themes.focus:
+        return <Target className="h-4 w-4" />;
+      case themes.vibrant:
+        return <Sparkles className="h-4 w-4" />;
       default:
         return <Sun className="h-4 w-4" />;
     }
@@ -75,6 +84,12 @@ const ThemeSettings = () => {
         return t("theme.yellow");
       case themes.rose:
         return t("theme.rose");
+      case themes.calm:
+        return t("theme.calm");
+      case themes.focus:
+        return t("theme.focus");
+      case themes.vibrant:
+        return t("theme.vibrant");
       default:
         return t("theme.light");
     }
@@ -197,11 +212,38 @@ const ThemeSettings = () => {
               >
                 <Flower2 className="h-4 w-4" />
                 <span className="flex-1">{t("theme.rose")}</span>
-                {theme === themes.rose && <Check className="h-4 w-4 text-rose-600" />}
+              {theme === themes.rose && <Check className="h-4 w-4 text-rose-600" />}
+            </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => handleThemeChange(themes.calm)}
+                className="flex items-center gap-3 cursor-pointer"
+              >
+                <Wind className="h-4 w-4" />
+                <span className="flex-1">{t("theme.calm")}</span>
+                {theme === themes.calm && <Check className="h-4 w-4 text-sky-600" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => handleThemeChange(themes.focus)}
+                className="flex items-center gap-3 cursor-pointer"
+              >
+                <Target className="h-4 w-4" />
+                <span className="flex-1">{t("theme.focus")}</span>
+                {theme === themes.focus && <Check className="h-4 w-4 text-indigo-600" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => handleThemeChange(themes.vibrant)}
+                className="flex items-center gap-3 cursor-pointer"
+              >
+                <Sparkles className="h-4 w-4" />
+                <span className="flex-1">{t("theme.vibrant")}</span>
+                {theme === themes.vibrant && <Check className="h-4 w-4 text-pink-600" />}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        <p className="text-xs text-muted-foreground">
+          {t('settings.ambientThemeHint')}
+        </p>
       </CardContent>
     </Card>
   );

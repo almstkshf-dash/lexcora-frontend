@@ -11,6 +11,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Noto_Sans_Arabic } from 'next/font/google';
 import RouteGuard from "@/components/RouteGuard";
+import CelebrationOverlay from "@/components/CelebrationOverlay";
 
 const notoSansArabic = Noto_Sans_Arabic({
   subsets: ['arabic'],
@@ -65,7 +66,7 @@ export default function RootLayout({ children }) {
             </SWRProvider>
           </ThemeProvider>
         </LanguageProvider>
-   
+        <CelebrationOverlay />
       </body>
     </html>
   );

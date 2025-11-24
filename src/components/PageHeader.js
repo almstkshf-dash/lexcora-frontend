@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -16,16 +17,46 @@ const PageHeader = ({
 }) => {
   const { isRTL } = useLanguage();
   const actionContent = actions || children;
+  const containerRef = useRef(null);
+  const [parallax, setParallax] = useState(0);
+
+  useEffect(() => {
+    const updateParallax = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const viewport = window.innerHeight || 1;
+      // Normalize distance: 0 when near top, capped for subtle motion
+      const distance = (rect.top - viewport * 0.35) / viewport;
+      const clamped = Math.max(-1, Math.min(1, distance));
+      setParallax(clamped * 20); // max ~20px translate
+    };
+
+    updateParallax();
+    window.addEventListener('scroll', updateParallax, { passive: true });
+    window.addEventListener('resize', updateParallax);
+    return () => {
+      window.removeEventListener('scroll', updateParallax);
+      window.removeEventListener('resize', updateParallax);
+    };
+  }, []);
+
+  const heroStyle = {
+    '--hero-parallax': `${parallax.toFixed(2)}px`,
+    '--hero-blur': `${Math.min(6, Math.abs(parallax) / 5).toFixed(2)}px`,
+  };
 
   return (
     <div
+      ref={containerRef}
       className={cn(
+        'hero-motion rounded-xl',
         sticky
           ? 'sticky top-0 z-30 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/60 py-3 mb-4'
           : 'mb-6'
       )}
+      style={heroStyle}
     >
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3" data-hero-foreground>
         {breadcrumbs.length > 0 && (
           <nav
             aria-label="Breadcrumb"

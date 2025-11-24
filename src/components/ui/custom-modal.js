@@ -50,6 +50,7 @@ export const CustomModal = ({
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+        data-soft-backdrop
         onClick={onClose}
         aria-hidden="true"
       />
@@ -60,10 +61,10 @@ export const CustomModal = ({
           relative bg-white dark:bg-gray-800 rounded-lg shadow-2xl 
           w-full ${sizeClasses[size]} 
           max-h-[90vh] overflow-hidden
-          transform transition-all
-          animate-in fade-in-0 zoom-in-95 duration-200
+          transform transition-all soft-panel
         `}
         onClick={(e) => e.stopPropagation()}
+        data-soft-panel
       >
         {/* Header */}
         {(title || showCloseButton) && (

@@ -19,6 +19,10 @@ const LanguageSwitcher = () => {
     setLanguage(newLanguage);
   };
 
+  const switchLabel = t("language.switch") || (isRTL ? "تغيير اللغة" : "Switch language");
+  const arabicLabel = getLanguageLabel(languages.ar) || "العربية";
+  const englishLabel = getLanguageLabel(languages.en) || "English";
+
   return (
     <DropdownMenu dir={isRTL ? "rtl" : "ltr"}>
       <DropdownMenuTrigger asChild>
@@ -26,14 +30,14 @@ const LanguageSwitcher = () => {
           variant="outline"
           size="sm"
           className="relative cursor-pointer flex items-center gap-2 h-9 px-3"
-          aria-label={t('language.switch') || (isRTL ? "تغيير اللغة" : "Switch language")}
+          aria-label={switchLabel}
         >
           <Globe className="h-4 w-4" />
           <span className="hidden sm:inline-block text-sm">
             {getLanguageLabel(language)}
           </span>
           <span className="sr-only">
-            {t('language.switch') || (isRTL ? "تغيير اللغة" : "Switch language")}
+            {switchLabel}
           </span>
         </Button>
       </DropdownMenuTrigger>
@@ -43,16 +47,16 @@ const LanguageSwitcher = () => {
           className="flex items-center gap-3 cursor-pointer"
         >
           <Globe className="h-4 w-4" />
-          <span className="flex-1">{t('language.arabic') || 'العربية'}</span>
-          {language === languages.ar && <Check className="h-4 w-4 " />}
+          <span className="flex-1">{arabicLabel}</span>
+          {language === languages.ar && <Check className="h-4 w-4" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => handleLanguageChange(languages.en)}
           className="flex items-center gap-3 cursor-pointer"
         >
           <Globe className="h-4 w-4" />
-          <span className="flex-1">{t('language.english') || 'English'}</span>
-          {language === languages.en && <Check className="h-4 w-4 " />}
+          <span className="flex-1">{englishLabel}</span>
+          {language === languages.en && <Check className="h-4 w-4" />}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

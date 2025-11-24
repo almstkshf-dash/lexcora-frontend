@@ -14,6 +14,7 @@ import ThemeSettings from './components/ThemeSettings';
 import LanguageSettings from './components/LanguageSettings';
 import WorkingHoursSettings from './components/WorkingHoursSettings';
 import FontSettings from './components/FontSettings';
+import ReaderModeSettings from './components/ReaderModeSettings';
 
 const AppearanceSettingsPage = () => {
   const { t } = useTranslations();
@@ -64,6 +65,7 @@ const AppearanceSettingsPage = () => {
         <LanguageSettings />
         <WorkingHoursSettings />
         <FontSettings />
+        <ReaderModeSettings />
       </div>
     </div>
   );

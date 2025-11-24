@@ -14,7 +14,10 @@ export const themes = {
   orangeGold: "orange-gold",
   violet: "violet",
   yellow: "yellow",
-  rose: "rose"
+  rose: "rose",
+  calm: "calm",
+  focus: "focus",
+  vibrant: "vibrant"
 };
 
 export const useTheme = () => {
@@ -27,12 +30,17 @@ export const useTheme = () => {
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(themes.light);
+  const [readerMode, setReaderMode] = useState(false);
 
   useEffect(() => {
     // Get theme from localStorage on component mount
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme && Object.values(themes).includes(savedTheme)) {
       setTheme(savedTheme);
+    }
+    const savedReader = localStorage.getItem("readerMode");
+    if (savedReader === "true") {
+      setReaderMode(true);
     }
   }, []);
 
@@ -54,6 +62,16 @@ export const ThemeProvider = ({ children }) => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    if (readerMode) {
+      root.classList.add("reader-mode");
+    } else {
+      root.classList.remove("reader-mode");
+    }
+    localStorage.setItem("readerMode", readerMode ? "true" : "false");
+  }, [readerMode]);
+
   const toggleTheme = () => {
     const themeValues = Object.values(themes);
     const currentIndex = themeValues.indexOf(theme);
@@ -72,7 +90,9 @@ export const ThemeProvider = ({ children }) => {
       theme, 
       setTheme: setThemeDirectly, 
       toggleTheme,
-      themes 
+      themes,
+      readerMode,
+      setReaderMode
     }}>
       {children}
     </ThemeContext.Provider>

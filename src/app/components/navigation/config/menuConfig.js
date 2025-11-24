@@ -172,6 +172,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       submenu: [
         { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette, requiredPermissions: PERMISSION_REQUIREMENTS.settingsAppearance },
         { id: 'settings/branches', label: t('navigation.branches'), icon: Building2, requiredPermissions: PERMISSION_REQUIREMENTS.settingsBranches },
+        { id: 'settings/user-guide', label: 'User Guide / دليل المستخدم', icon: FileText },
         // { id: 'settings/performance', label: t('navigation.performance'), icon: Gauge },
         { id: 'logs', label: t('navigation.logs'), icon: Clock, requiredPermissions: PERMISSION_REQUIREMENTS.logs },
       ]

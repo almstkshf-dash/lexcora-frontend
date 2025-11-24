@@ -9,6 +9,19 @@ const messages = {
   en: enMessages
 };
 
+const hardcodedFallbacks = {
+  en: {
+    "theme.calm": "Calm (Ambient)",
+    "theme.focus": "Focus (Ambient)",
+    "theme.vibrant": "Vibrant (Ambient)"
+  },
+  ar: {
+    "theme.calm": "هادئ (محسن)",
+    "theme.focus": "تركيز (محسن)",
+    "theme.vibrant": "حيوي (محسن)"
+  }
+};
+
 export const useTranslations = (namespace = null) => {
   const { language, isLoading } = useLanguage();
 
@@ -31,7 +44,9 @@ export const useTranslations = (namespace = null) => {
           if (translation && typeof translation === 'object' && fallbackKey in translation) {
             translation = translation[fallbackKey];
           } else {
-            return key; // Return key if not found in both languages
+            // Before returning the raw key, see if we have a hardcoded fallback
+            const fallback = hardcodedFallbacks[language]?.[key] || hardcodedFallbacks['en']?.[key];
+            return fallback || key; // Return key if not found in both languages
           }
         }
         break;

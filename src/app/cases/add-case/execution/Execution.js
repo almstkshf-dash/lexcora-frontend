@@ -179,7 +179,7 @@ onClick={() => setIsDialogOpen(true)} size="sm">
                       <TableCell className="text-center">
                         <span className={cn(
                           "px-2 py-1 rounded-full text-xs font-medium",
-                          execution.status === "completed" && "bg-green-100 text-green-800",
+                          execution.status === "completed" && "bg-green-100 text-green-800 completion-chip",
                           execution.status === "in_progress" && "bg-blue-100 text-blue-800",
                           execution.status === "pending" && "bg-yellow-100 text-yellow-800",
                           execution.status === "cancelled" && "bg-red-100 text-red-800",

@@ -8,6 +8,7 @@ import SearchBar from '@/app/components/search'
 import QuickActionsBar from '@/app/components/QuickActionsBar'
 import React from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
+import FocusCycleBar from '@/components/FocusCycleBar'
 
 /**
  * Desktop/Tablet Header Component
@@ -69,6 +70,10 @@ function Header() {
         {/* Bottom Accent Line */}
         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
       </header>
+
+      <div className="px-6 pb-2 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/50">
+        <FocusCycleBar />
+      </div>
 
       {/* Quick Actions Bar - Below Header */}
       <QuickActionsBar />

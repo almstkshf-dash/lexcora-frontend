@@ -8,6 +8,22 @@
     "arabic": "Arabic",
     "english": "English"
   },
+  "theme": {
+    "switchTheme": "Switch theme",
+    "light": "Light",
+    "dark": "Dark",
+    "blue": "Blue",
+    "blueNew": "Indigo",
+    "green": "Green",
+    "orange": "Orange",
+    "orangeGold": "Orange Gold",
+    "violet": "Violet",
+    "yellow": "Yellow",
+    "rose": "Rose",
+    "calm": "Calm (Ambient)",
+    "focus": "Focus (Ambient)",
+    "vibrant": "Vibrant (Ambient)"
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "casesManagement": "Cases Management",
@@ -50,6 +66,19 @@
     "bookings": "Bookings",
     "payments": "Payments",
     "language": "Language"
+  },
+  "settings": {
+    "appearanceDescription": "Tune language, themes, working hours, and typography.",
+    "resetToDefaults": "Reset to defaults",
+    "theme": "Theme",
+    "themeDescription": "Choose a palette. Ambient themes add a slow, multi-hour gradient drift for long sessions.",
+    "currentTheme": "Current theme",
+    "ambientThemeHint": "Calm, Focus, and Vibrant include subtle gradients and gentle accent shifts over time.",
+    "readerMode": "Reader mode",
+    "readerModeDescription": "Slightly larger type, wider line height, and a muted palette for data-heavy screens.",
+    "readerModeHint": "Ideal for long reading or table review; toggles instantly.",
+    "readerModeOn": "Reader mode is on",
+    "readerModeOff": "Reader mode is off"
   },
   "buttons": {
     "add": "Add",

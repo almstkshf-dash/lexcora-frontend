@@ -269,57 +269,6 @@ const CasesPage = () => {
     router.push(`/cases/${caseId}`);
   };
 
-  if (error) {
-    // Check if it's a permission error (403)
-    const isPermissionError = error?.response?.status === 403;
-    const errorMessage = isPermissionError 
-      ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لعرض القضايا' : 'You do not have permission to view cases'))
-      : (language === 'ar' ? 'حدث خطأ أثناء تحميل البيانات' : 'An error occurred while loading data');
-    
-    return (
-      <div className="container mx-auto p-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-destructive">
-              {isPermissionError 
-                ? (language === 'ar' ? 'غير مصرح' : 'Unauthorized')
-                : t('common.error')
-              }
-            </CardTitle>
-            <CardDescription className="text-muted-foreground">
-              {errorMessage}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex justify-end">
-            <Button variant="outline" onClick={() => mutate()}>
-              {t('common.retry') || (language === 'ar' ? 'إعادة المحاولة' : 'Retry')}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  const headerActions = (
-    <div className="flex items-center gap-2">
-      <Button
-        size="sm"
-        className="flex items-center gap-2"
-        onClick={() => router.push('/cases/add-case')}
-      >
-        <Plus className="w-4 h-4" />
-        {t('navigation.addCaseFile')}
-      </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => router.push('/cases/my-tasks')}
-      >
-        {t('navigation.myTasks')}
-      </Button>
-    </div>
-  );
-
   const resolveLabel = (key, fallback) => {
     const value = t(key);
     if (!value || value === key || value === key.toLowerCase() || value === key.toUpperCase()) {
@@ -524,6 +473,59 @@ const CasesPage = () => {
       ),
     },
   ], [caseNumberLabel, caseTypeLabel, classificationLabel, clientPartiesLabel, courtLabel, fileNumberLabel, getLocalizedText, maskSensitiveData, opponentPartiesLabel, startDateLabel, topicLabel]);
+
+  if (error) {
+    // Check if it's a permission error (403)
+    const isPermissionError = error?.response?.status === 403;
+    const errorMessage = isPermissionError 
+      ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لعرض القضايا' : 'You do not have permission to view cases'))
+      : (language === 'ar' ? 'حدث خطأ أثناء تحميل البيانات' : 'An error occurred while loading data');
+    
+    return (
+      <div className="container mx-auto p-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-destructive">
+              {isPermissionError 
+                ? (language === 'ar' ? 'غير مصرح' : 'Unauthorized')
+                : t('common.error')
+              }
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              {errorMessage}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-end">
+            <Button variant="outline" onClick={() => mutate()}>
+              {t('common.retry') || (language === 'ar' ? 'إعادة المحاولة' : 'Retry')}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const headerActions = (
+    <div className="flex items-center gap-2">
+      <Button
+        size="sm"
+        className="flex items-center gap-2"
+        onClick={() => router.push('/cases/add-case')}
+      >
+        <Plus className="w-4 h-4" />
+        {t('navigation.addCaseFile')}
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => router.push('/cases/my-tasks')}
+      >
+        {t('navigation.myTasks')}
+      </Button>
+    </div>
+  );
+
+
 
   const renderCaseActions = (case_) => (
     <DropdownMenu dir={isRTL ? 'rtl' : 'ltr'}>

@@ -57,9 +57,12 @@ function LastWeekSessions() {
                 <CardTitle className="text-blue-900 dark:text-blue-100 text-lg flex items-center justify-between">
                     <span>{t('home.weekSessions')}</span>
                     {sessions.length > 0 && (
-                        <span className="relative inline-flex items-center justify-center px-2.5 py-0.5 text-xs font-medium bg-blue-500 text-white rounded-full">
-                            <span className="absolute inset-0 rounded-full bg-blue-500 animate-ping opacity-75"></span>
-                            <span className="relative">{sessions.length}</span>
+                        <span 
+                            className="relative inline-flex items-center justify-center px-2.5 py-0.5 text-xs font-medium bg-blue-500 text-white rounded-full"
+                            aria-label={`${sessions.length} ${t('home.weekSessions')}`}
+                        >
+                            <span className="absolute inset-0 rounded-full bg-blue-500 animate-ping opacity-75" aria-hidden="true"></span>
+                            <span className="relative" aria-hidden="true">{sessions.length}</span>
                         </span>
                     )}
                 </CardTitle>

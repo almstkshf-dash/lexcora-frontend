@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useCallback, useTransition } from 'react'
 import { Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { cn } from '@/lib/utils'
 import { 
   getAppNotifications, 
   getUnreadCount, 
@@ -30,7 +31,19 @@ function NotificationMenu() {
   const isArabic = language === 'ar'
   
   const [isOpen, setIsOpen] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const [filter, setFilter] = useState('all')
+
+  const handleOpenChange = useCallback((open) => {
+    // Use transition to keep the UI responsive while opening the menu
+    startTransition(() => {
+      setIsOpen(open)
+    })
+  }, [])
+
+  const handleFilterChange = useCallback((newFilter) => {
+    setFilter(newFilter)
+  }, [])
 
   // Fetch notifications
   const { data: notificationsData, error, mutate } = useSWR(
@@ -58,7 +71,7 @@ function NotificationMenu() {
   const notifications = notificationsData?.data?.notifications || []
   const unreadCount = unreadData?.data?.unread_count || 0
 
-  const handleMarkAsRead = async (notificationId) => {
+  const handleMarkAsRead = useCallback(async (notificationId) => {
     try {
       await markAsRead(notificationId)
       mutate()
@@ -66,9 +79,9 @@ function NotificationMenu() {
     } catch (error) {
       // Handle error
     }
-  }
+  }, [mutate, mutateUnreadCount])
 
-  const handleMarkAllAsRead = async () => {
+  const handleMarkAllAsRead = useCallback(async () => {
     try {
       await markAllAsRead()
       mutate()
@@ -76,9 +89,9 @@ function NotificationMenu() {
     } catch (error) {
       // Handle error
     }
-  }
+  }, [mutate, mutateUnreadCount])
 
-  const handleDelete = async (notificationId) => {
+  const handleDelete = useCallback(async (notificationId) => {
     try {
       await deleteNotification(notificationId)
       mutate()
@@ -86,10 +99,10 @@ function NotificationMenu() {
     } catch (error) {
       // Handle error
     }
-  }
+  }, [mutate, mutateUnreadCount])
 
   return (
-    <DropdownMenu dir={isArabic ? 'rtl' : 'ltr'} open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu dir={isArabic ? 'rtl' : 'ltr'} open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
@@ -97,7 +110,7 @@ function NotificationMenu() {
           className="relative p-2"
           aria-label={isArabic ? 'التنبيهات' : 'Notifications'}
         >
-          <Bell className="h-5 w-5" />
+          <Bell className={cn("h-5 w-5", isPending && "opacity-50")} />
           {unreadCount > 0 && (
             <>
               <Badge 
@@ -123,7 +136,7 @@ function NotificationMenu() {
               isArabic={isArabic}
               unreadCount={unreadCount}
               filter={filter}
-              onFilterChange={setFilter}
+              onFilterChange={handleFilterChange}
               onMarkAllAsRead={handleMarkAllAsRead}
             />
           </CardHeader>

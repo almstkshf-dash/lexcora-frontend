@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { CardTitle } from '@/components/ui/card'
 import { FILTER_OPTIONS } from './constants'
 
-function NotificationHeader({ 
+const NotificationHeader = React.memo(function NotificationHeader({ 
   isArabic, 
   unreadCount, 
   filter, 
@@ -63,6 +63,6 @@ function NotificationHeader({
       </div>
     </>
   )
-}
+})
 
 export default NotificationHeader

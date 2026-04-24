@@ -253,14 +253,17 @@ function SessionsWithDecisionItem({
                   ? `${tSessions('labels.overdue')} `
                   : `${tSessions('labels.remaining')} `
                 }
-                <div className="relative inline-flex items-center justify-center">
+                <div 
+                  className="relative inline-flex items-center justify-center"
+                  aria-label={`${Math.abs(deadlineInfo.daysRemaining)} ${deadlineInfo.daysRemaining === 1 || Math.abs(deadlineInfo.daysRemaining) === 1 ? tSessions('labels.day') : tSessions('labels.days')} ${deadlineInfo.isOverdue ? tSessions('labels.overdue') : tSessions('labels.remaining')}`}
+                >
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white relative z-10 ${
                     deadlineInfo.isOverdue 
                       ? 'bg-red-500' 
                       : deadlineInfo.isUrgent 
                         ? 'bg-orange-500' 
                         : 'bg-green-500'
-                  }`}>
+                  }`} aria-hidden="true">
                     {Math.abs(deadlineInfo.daysRemaining)}
                   </div>
                   {/* Glowing/flashing rings */}
@@ -270,14 +273,14 @@ function SessionsWithDecisionItem({
                       : deadlineInfo.isUrgent 
                         ? 'bg-orange-400' 
                         : 'bg-green-400'
-                  } opacity-75`}></div>
+                  } opacity-75`} aria-hidden="true"></div>
                   <div className={`absolute inset-[-2px] rounded-full animate-pulse ${
                     deadlineInfo.isOverdue 
                       ? 'bg-red-300' 
                       : deadlineInfo.isUrgent 
                         ? 'bg-orange-300' 
                         : 'bg-green-300'
-                  } opacity-50`} style={{animationDelay: '0.5s'}}></div>
+                  } opacity-50`} style={{animationDelay: '0.5s'}} aria-hidden="true"></div>
                 </div>
                 {deadlineInfo.daysRemaining === 1 || Math.abs(deadlineInfo.daysRemaining) === 1 
                   ? ` ${tSessions('labels.day')}` 

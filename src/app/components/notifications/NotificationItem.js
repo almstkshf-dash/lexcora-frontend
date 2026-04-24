@@ -5,7 +5,7 @@ import { Check, Trash2, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getTypeIcon, getRelatedIcon, formatTimeAgo } from './utils'
 
-function NotificationItem({ 
+const NotificationItem = React.memo(function NotificationItem({ 
   notification, 
   isArabic, 
   onMarkAsRead, 
@@ -76,6 +76,6 @@ function NotificationItem({
       </div>
     </div>
   )
-}
+})
 
 export default NotificationItem

@@ -141,10 +141,10 @@ function AppealsAndChallengesItem({ session }) {
                         <div className="relative">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-sm relative z-10 transition-colors ${
                             objectionInfo.isOverdue 
-                              ? 'bg-red-500' 
+                              ? 'bg-red-600' 
                               : objectionInfo.isUrgent 
-                                ? 'bg-orange-500' 
-                                : 'bg-green-500'
+                                ? 'bg-orange-600' 
+                                : 'bg-green-700'
                           }`}>
                             {Math.abs(objectionInfo.days)}
                           </div>
@@ -183,10 +183,10 @@ function AppealsAndChallengesItem({ session }) {
                         <div className="relative">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-sm relative z-10 transition-colors ${
                             appealInfo.isOverdue 
-                              ? 'bg-red-500' 
+                              ? 'bg-red-600' 
                               : appealInfo.isUrgent 
-                                ? 'bg-orange-500' 
-                                : 'bg-green-500'
+                                ? 'bg-orange-600' 
+                                : 'bg-green-700'
                           }`}>
                             {Math.abs(appealInfo.days)}
                           </div>
@@ -225,10 +225,10 @@ function AppealsAndChallengesItem({ session }) {
                         <div className="relative">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-sm relative z-10 transition-colors ${
                             cassationInfo.isOverdue 
-                              ? 'bg-red-500' 
+                              ? 'bg-red-600' 
                               : cassationInfo.isUrgent 
-                                ? 'bg-orange-500' 
-                                : 'bg-green-500'
+                                ? 'bg-orange-600' 
+                                : 'bg-green-700'
                           }`}>
                             {Math.abs(cassationInfo.days)}
                           </div>

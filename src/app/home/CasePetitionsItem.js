@@ -6,7 +6,7 @@ import { useTranslations } from '@/hooks/useTranslations'
 import { DECISION_STATUS } from '@/lib/constants'
 import { calculateDaysRemaining, formatDate } from '@/lib/dateUtils'
 
-function CasePetitionsItem({ petition }) {
+const CasePetitionsItem = React.memo(function CasePetitionsItem({ petition }) {
   const { t } = useTranslations()
 
   // Get decision status color
@@ -88,15 +88,18 @@ function CasePetitionsItem({ petition }) {
                       return (
                         <>
                           {isOverdue && <span className="text-xs text-red-500 bg-red-50 dark:bg-red-900/20 px-1.5 py-0.5 rounded flex items-center font-bold">⚠️ {t('home.overdue')}</span>}
-                          <div className="relative inline-flex items-center justify-center flex-shrink-0">
+                          <div 
+                            className="relative inline-flex items-center justify-center flex-shrink-0"
+                            aria-label={`${Math.abs(daysRemaining)} ${Math.abs(daysRemaining) === 1 ? t('home.day') : t('home.days')} ${t('home.daysRemaining')}`}
+                          >
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white relative z-10 transition-colors ${
-                              isOverdue ? 'bg-red-500' : isUrgent ? 'bg-orange-500' : 'bg-green-500'
-                            }`}>
+                              isOverdue ? 'bg-red-600' : isUrgent ? 'bg-orange-600' : 'bg-green-700'
+                            }`} aria-hidden="true">
                               {Math.abs(daysRemaining)}
                             </div>
                             <div className={`absolute inset-[-4px] rounded-full animate-pulse ${
                               isOverdue ? 'bg-red-200/50 dark:bg-red-900/30' : isUrgent ? 'bg-orange-200/50 dark:bg-orange-900/30' : 'bg-green-200/50 dark:bg-green-900/30'
-                            }`}></div>
+                            }`} aria-hidden="true"></div>
                           </div>
                           <span className="whitespace-nowrap text-gray-600 dark:text-gray-400">{Math.abs(daysRemaining) === 1 ? t('home.day') : t('home.days')}</span>
                         </>
@@ -125,6 +128,6 @@ function CasePetitionsItem({ petition }) {
       </CardContent>
     </Card>
   )
-}
+})
 
 export default CasePetitionsItem

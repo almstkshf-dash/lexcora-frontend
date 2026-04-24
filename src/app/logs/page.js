@@ -191,9 +191,9 @@ export default function LogsPage() {
         <CardContent>
           <div className="flex gap-4 items-end flex-wrap">
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="block text-sm font-medium text-gray-700 mb-2">
                 من تاريخ
-              </label>
+              </div>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -217,9 +217,9 @@ export default function LogsPage() {
             </div>
             
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="block text-sm font-medium text-gray-700 mb-2">
                 إلى تاريخ
-              </label>
+              </div>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button

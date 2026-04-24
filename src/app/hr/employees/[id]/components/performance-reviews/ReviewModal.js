@@ -202,9 +202,9 @@ const ReviewModal = ({
         <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
           {/* Review Type */}
           <div className="space-y-2">
-            <Label htmlFor="type">
+            <div className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               {isArabic ? 'نوع التقييم' : 'Review Type'} <span className="text-red-500">*</span>
-            </Label>
+            </div>
             <Select
               value={formData.type}
               onValueChange={(value) => handleInputChange('type', value)}
@@ -224,9 +224,9 @@ const ReviewModal = ({
 
           {/* Date */}
           <div className="space-y-2">
-            <Label htmlFor="date">
+            <div className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               {isArabic ? 'التاريخ' : 'Date'} <span className="text-red-500">*</span>
-            </Label>
+            </div>
             <DatePicker
               date={formData.date}
               onDateChange={(date) => handleInputChange('date', date)}
@@ -271,7 +271,7 @@ const ReviewModal = ({
 
           {/* File Upload */}
           <div className="space-y-2">
-            <Label htmlFor="documents">
+            <Label htmlFor="file-upload">
               {isArabic ? 'المستندات' : 'Documents'}
             </Label>
             <div className="border-2 border-dashed rounded-md p-4">

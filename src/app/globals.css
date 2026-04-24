@@ -3,6 +3,7 @@
 @import "../styles/rtl.css";
 @import "./font-fallbacks.css";
 @import "react-big-calendar/lib/css/react-big-calendar.css";
+@import "../styles/editor.css";
 
 @custom-variant dark (&:is(.dark *));
 

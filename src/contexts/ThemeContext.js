@@ -48,6 +48,21 @@ export const ThemeProvider = ({ children }) => {
     // Apply theme to document
     const root = document.documentElement;
     
+    // Temporarily disable all transitions to prevent slow repaints during theme change
+    const css = document.createElement('style');
+    css.appendChild(
+      document.createTextNode(
+        `* {
+          -webkit-transition: none !important;
+          -moz-transition: none !important;
+          -o-transition: none !important;
+          -ms-transition: none !important;
+          transition: none !important;
+        }`
+      )
+    );
+    document.head.appendChild(css);
+
     // Remove all theme classes
     Object.values(themes).forEach(t => {
       root.classList.remove(t);
@@ -60,6 +75,10 @@ export const ThemeProvider = ({ children }) => {
     
     // Save theme to localStorage
     localStorage.setItem("theme", theme);
+
+    // Force a reflow so the theme applies instantly without transition
+    const _ = window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
   }, [theme]);
 
   useEffect(() => {

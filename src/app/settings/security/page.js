@@ -171,6 +171,8 @@ const SecuritySettingsPage = () => {
               <div className="relative">
                 <Input
                   id="currentPassword"
+                  name="currentPassword"
+                  autoComplete="current-password"
                   type={showCurrentPassword ? 'text' : 'password'}
                   value={passwordData.currentPassword}
                   onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
@@ -193,6 +195,8 @@ const SecuritySettingsPage = () => {
               <div className="relative">
                 <Input
                   id="newPassword"
+                  name="newPassword"
+                  autoComplete="new-password"
                   type={showNewPassword ? 'text' : 'password'}
                   value={passwordData.newPassword}
                   onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
@@ -228,6 +232,8 @@ const SecuritySettingsPage = () => {
               <div className="relative">
                 <Input
                   id="confirmPassword"
+                  name="confirmPassword"
+                  autoComplete="new-password"
                   type={showConfirmPassword ? 'text' : 'password'}
                   value={passwordData.confirmPassword}
                   onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}

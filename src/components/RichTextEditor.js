@@ -8,7 +8,6 @@ import TextAlign from '@tiptap/extension-text-align'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { FontSize } from 'tiptap-extension-font-size'
 import { Color } from '@tiptap/extension-color'
-import '@/styles/editor.css'
 import { 
   Bold, 
   Italic, 

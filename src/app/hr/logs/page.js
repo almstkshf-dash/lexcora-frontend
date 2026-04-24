@@ -130,25 +130,31 @@ export default function LogsPage() {
         <CardContent>
           <div className="flex gap-4 items-end flex-wrap">
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="hr-logs-start-date" className="block text-sm font-medium text-gray-700 mb-2">
                 من تاريخ
               </label>
               <input
+                id="hr-logs-start-date"
+                name="hr-logs-start-date"
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
+                autoComplete="off"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="hr-logs-end-date" className="block text-sm font-medium text-gray-700 mb-2">
                 إلى تاريخ
               </label>
               <input
+                id="hr-logs-end-date"
+                name="hr-logs-end-date"
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
+                autoComplete="off"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>

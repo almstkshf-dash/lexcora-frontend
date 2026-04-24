@@ -204,9 +204,9 @@ const TrainingModal = ({
 
           {/* Training Date */}
           <div className="space-y-2">
-            <Label htmlFor="training_date">
+            <div className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               {isArabic ? 'تاريخ التدريب' : 'Training Date'} <span className="text-red-500">*</span>
-            </Label>
+            </div>
             <DatePicker
               date={formData.training_date}
               onDateChange={(date) => handleInputChange('training_date', date)}
@@ -251,7 +251,7 @@ const TrainingModal = ({
 
           {/* File Upload */}
           <div className="space-y-2">
-            <Label htmlFor="documents">
+            <Label htmlFor="file-upload">
               {isArabic ? 'المستندات' : 'Documents'}
             </Label>
             <div className="border-2 border-dashed rounded-md p-4">

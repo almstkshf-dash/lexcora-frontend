@@ -198,6 +198,8 @@ const ProfileSettingsPage = () => {
                 <Label htmlFor="firstName">{t('forms.firstName')}</Label>
                 <Input
                   id="firstName"
+                  name="firstName"
+                  autoComplete="given-name"
                   value={profileData.firstName}
                   onChange={(e) => handleInputChange('firstName', e.target.value)}
                   disabled={!isEditing}
@@ -207,6 +209,8 @@ const ProfileSettingsPage = () => {
                 <Label htmlFor="lastName">{t('forms.lastName')}</Label>
                 <Input
                   id="lastName"
+                  name="lastName"
+                  autoComplete="family-name"
                   value={profileData.lastName}
                   onChange={(e) => handleInputChange('lastName', e.target.value)}
                   disabled={!isEditing}
@@ -221,6 +225,8 @@ const ProfileSettingsPage = () => {
               </Label>
               <Input
                 id="email"
+                name="email"
+                autoComplete="email"
                 type="email"
                 value={profileData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
@@ -232,6 +238,8 @@ const ProfileSettingsPage = () => {
               <Label htmlFor="jobTitle">{t('forms.jobTitle')}</Label>
               <Input
                 id="jobTitle"
+                name="jobTitle"
+                autoComplete="organization-title"
                 value={profileData.jobTitle}
                 onChange={(e) => handleInputChange('jobTitle', e.target.value)}
                 disabled={!isEditing}

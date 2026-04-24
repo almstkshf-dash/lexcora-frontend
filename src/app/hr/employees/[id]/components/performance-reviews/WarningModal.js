@@ -202,9 +202,9 @@ const WarningModal = ({
         <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
           {/* Warning Type */}
           <div className="space-y-2">
-            <Label htmlFor="type">
+            <div className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               {isArabic ? 'نوع الإنذار' : 'Warning Type'} <span className="text-red-500">*</span>
-            </Label>
+            </div>
             <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
               <SelectTrigger>
                 <SelectValue placeholder={isArabic ? 'اختر نوع الإنذار' : 'Select warning type'} />
@@ -218,9 +218,9 @@ const WarningModal = ({
 
           {/* Warning Date */}
           <div className="space-y-2">
-            <Label htmlFor="date">
+            <div className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               {isArabic ? 'تاريخ الإنذار' : 'Warning Date'} <span className="text-red-500">*</span>
-            </Label>
+            </div>
             <DatePicker
               date={formData.date}
               onDateChange={(date) => handleInputChange('date', date)}
@@ -279,7 +279,7 @@ const WarningModal = ({
 
           {/* File Upload */}
           <div className="space-y-2">
-            <Label htmlFor="documents">
+            <Label htmlFor="file-upload">
               {isArabic ? 'المستندات' : 'Documents'}
             </Label>
             <div className="border-2 border-dashed rounded-md p-4">

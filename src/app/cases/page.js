@@ -71,7 +71,7 @@ const CasesPage = () => {
   const cases = useMemo(() => {
     if (!casesData?.success || !casesData?.data) return [];
     return casesData.data;
-  }, [casesData, language]);
+  }, [casesData]);
   
   // Get pagination info
   const pagination = useMemo(() => {
@@ -472,7 +472,7 @@ const CasesPage = () => {
         </div>
       ),
     },
-  ], [caseNumberLabel, caseTypeLabel, classificationLabel, clientPartiesLabel, courtLabel, fileNumberLabel, getLocalizedText, maskSensitiveData, opponentPartiesLabel, startDateLabel, topicLabel]);
+  ], [caseNumberLabel, caseTypeLabel, classificationLabel, clientPartiesLabel, courtLabel, fileNumberLabel, formatDate, getLocalizedText, maskSensitiveData, opponentPartiesLabel, startDateLabel, t, topicLabel]);
 
   if (error) {
     // Check if it's a permission error (403)

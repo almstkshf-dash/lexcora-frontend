@@ -14,7 +14,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
-import { ArrowDownAZ, ArrowUpAZ, Loader2 } from "lucide-react";
+import { ArrowDownAZ, ArrowUpAZ, Loader2, FolderOpen } from "lucide-react";
 
 const DataTable = ({
   data = [],
@@ -265,9 +265,21 @@ const DataTable = ({
                   </TableRow>
                 ))
               ) : paginatedData.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={columns.length + (hasRowActions ? 1 : 0)} className="text-center py-10">
-                    <span className="text-muted-foreground">{emptyMessage}</span>
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={columns.length + (hasRowActions ? 1 : 0)} className="h-72 text-center">
+                    <div className="flex flex-col items-center justify-center space-y-3 animate-in fade-in zoom-in duration-300">
+                      <div className="rounded-full bg-muted/50 p-4 ring-1 ring-border/50 shadow-inner">
+                        <FolderOpen className="h-8 w-8 text-muted-foreground/60" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-base font-medium text-foreground/80">{emptyMessage}</p>
+                        <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
+                          {dir === "rtl" 
+                            ? "لم نجد أي نتائج تطابق بحثك حالياً." 
+                            : "We couldn't find any results matching your search at the moment."}
+                        </p>
+                      </div>
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (

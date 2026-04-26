@@ -1,4 +1,7 @@
 {
+  "language": {
+    "switch": "Switch language"
+  },
   "common": {
     "financeClients": "Client Balances",
     "update": "Update",
@@ -220,7 +223,8 @@
     "view": "View",
     "details": "Details",
     "update": "Update",
-    "create": "Create"
+    "create": "Create",
+    "logout": "Logout"
   },
   "caseTypes": {
     "selectCaseType": "Select case type",

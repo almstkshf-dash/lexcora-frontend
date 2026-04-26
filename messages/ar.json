@@ -1,4 +1,7 @@
 {
+  "language": {
+    "switch": "تغيير اللغة"
+  },
   "common": {
     "financeClients": "أرصدة الموكلين",
     "all": "الكل",
@@ -214,7 +217,8 @@
     "view": "عرض",
     "details": "التفاصيل",
     "update": "تحديث",
-    "create": "إنشاء"
+    "create": "إنشاء",
+    "logout": "تسجيل الخروج"
   },
   "caseTypes": {
     "selectCaseType": "اختر نوع القضية",

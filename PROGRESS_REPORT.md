@@ -66,3 +66,11 @@ Given the bilingual requirement of the platform (Arabic/English), `lexcora-front
 - **Enhanced Interactive Elements:** Implemented micro-animations (scale-on-hover) and refined shadows for primary action buttons to improve tactile feedback and visual prominence.
 - **Responsive Spacing:** Optimized page container padding (`p-4` to `p-6`) and grid spacing to ensure better data density and readability across varying screen sizes.
 
+## 7. Cases Management Enhancements (April 2026)
+
+- **Quick-Glance Metrics (Stat Cards):** Added a metrics section at the top of the Cases page, displaying real-time counts for Total, Active, Pending, and Important cases. This improves situational awareness for legal staff.
+- **Visual Empty States:** Redesigned the "No data" state for the main DataTable. Replaced the generic text with a professional, centered UI featuring a `FolderOpen` icon, descriptive subtext, and entry animations.
+- **Focus Cycle Management:** Enhanced the `FocusCycleBar` (Pomodoro timer) with a minimization toggle. Users can now collapse the timer into a compact state to reduce visual clutter while still keeping track of their focus/break sessions.
+- **i18n Cleanup:** Resolved missing translation keys for critical UI elements like the "Logout" button and "Language Switcher", ensuring a fully bilingual experience without raw system keys.
+- **Sidebar UX:** Refactored the `UserProfile` component to handle RTL/LTR layouts dynamically and use consistent translation hooks for all labels.
+

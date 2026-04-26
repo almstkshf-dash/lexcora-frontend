@@ -600,6 +600,48 @@ const CasesPage = () => {
         }}
       />
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-blue-50/30 border-blue-100 dark:bg-blue-900/10 dark:border-blue-900/20">
+          <CardHeader className="pb-2">
+            <CardDescription className="text-blue-600 dark:text-blue-400 font-medium">
+              {t('casesTable.totalCases')}
+            </CardDescription>
+            <CardTitle className="text-2xl font-bold">{pagination.total}</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card className="bg-green-50/30 border-green-100 dark:bg-green-900/10 dark:border-green-900/20">
+          <CardHeader className="pb-2">
+            <CardDescription className="text-green-600 dark:text-green-400 font-medium">
+              {language === 'ar' ? 'نشطة' : 'Active'}
+            </CardDescription>
+            <CardTitle className="text-2xl font-bold">
+              {cases.filter(c => c.status?.toLowerCase() === 'active').length}
+            </CardTitle>
+          </CardHeader>
+        </Card>
+        <Card className="bg-amber-50/30 border-amber-100 dark:bg-amber-900/10 dark:border-amber-900/20">
+          <CardHeader className="pb-2">
+            <CardDescription className="text-amber-600 dark:text-amber-400 font-medium">
+              {language === 'ar' ? 'قيد الانتظار' : 'Pending'}
+            </CardDescription>
+            <CardTitle className="text-2xl font-bold">
+              {cases.filter(c => c.status?.toLowerCase() === 'pending' || c.is_pending === 1).length}
+            </CardTitle>
+          </CardHeader>
+        </Card>
+        <Card className="bg-rose-50/30 border-rose-100 dark:bg-rose-900/10 dark:border-rose-900/20">
+          <CardHeader className="pb-2">
+            <CardDescription className="text-rose-600 dark:text-rose-400 font-medium">
+              {t('caseToggles.isImportant') || (language === 'ar' ? 'هامة' : 'Important')}
+            </CardDescription>
+            <CardTitle className="text-2xl font-bold">
+              {cases.filter(c => c.is_important === 1).length}
+            </CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+
       {/* Search Form */}
       <CasesSearchForm onSearch={handleSearch} />
 

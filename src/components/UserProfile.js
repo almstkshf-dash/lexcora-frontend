@@ -6,22 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LogOut, User, Briefcase, Building } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { cn } from '@/lib/utils';
 
 const UserProfile = () => {
   const dispatch = useDispatch();
+  const { isRTL } = useLanguage();
   const { 
     user, 
     isAuthenticated, 
     jobId, 
-    email, 
-    permissions, 
-    loading 
-  } = useAuth();
-  
-  const roleAr = useUserRole('ar');
-  const roleEn = useUserRole('en');
-  const departmentAr = useUserDepartment('ar');
-  const departmentEn = useUserDepartment('en');
+  const { t } = useTranslations();
 
   const handleLogout = async () => {
     await dispatch(logoutWithRedux());
@@ -32,18 +28,18 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4" dir="rtl">
+    <div className="max-w-2xl mx-auto p-4" dir={isRTL ? "rtl" : "ltr"}>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-2xl font-bold">الملف الشخصي</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('profile.title') || (isRTL ? 'الملف الشخصي' : 'Profile')}</CardTitle>
           <Button 
             variant="outline" 
             size="sm" 
             onClick={handleLogout}
             disabled={loading}
           >
-            <LogOut className="w-4 h-4 ml-2" />
-            تسجيل الخروج
+            <LogOut className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+            {t('buttons.logout')}
           </Button>
         </CardHeader>
         

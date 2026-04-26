@@ -44,11 +44,11 @@
   --ambient-shift-duration: 14400s;
   --hero-parallax: 0px;
   --hero-blur: 0px;
-  --texture-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+  --texture-noise: none; /* Removed feTurbulence noise - it's too expensive for rendering */
   --texture-geo: radial-gradient(circle at 24% 28%, color-mix(in oklch, var(--primary) 6%, transparent) 0%, transparent 36%), radial-gradient(circle at 78% 18%, color-mix(in oklch, var(--accent) 7%, transparent) 0%, transparent 40%);
-  --texture-stack: var(--ambient-gradient), var(--texture-geo), var(--texture-noise);
-  --texture-sizes: var(--ambient-gradient-size, auto), 180% 180%, 140px 140px;
-  --texture-blends: normal, soft-light, soft-light;
+  --texture-stack: var(--ambient-gradient), var(--texture-geo);
+  --texture-sizes: var(--ambient-gradient-size, auto), 180% 180%;
+  --texture-blends: normal, soft-light;
   --accent-step-1: var(--accent, oklch(0.97 0 0));
   --accent-step-2: var(--accent-step-1);
   --accent-step-3: var(--accent-step-1);
@@ -764,7 +764,8 @@
     background-blend-mode: var(--texture-blends);
     background-attachment: fixed;
     background-repeat: no-repeat;
-    animation: var(--ambient-animation), var(--ambient-accent-animation);
+    /* Animations disabled to improve INP and interaction responsiveness */
+    /* animation: var(--ambient-animation), var(--ambient-accent-animation); */
   }
 
   input::placeholder,

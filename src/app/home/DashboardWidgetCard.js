@@ -117,13 +117,9 @@ function DashboardWidgetCard({
           <span>{title}</span>
           {count > 0 && (
             <span
-              className={`relative flex items-center justify-center min-w-[24px] h-[24px] px-1.5 text-xs font-bold ${colors.badge} text-white rounded-full shadow-sm`}
+              className={`relative flex items-center justify-center min-w-[24px] h-[24px] px-1.5 text-xs font-bold ${colors.badge} text-white rounded-full shadow-sm ring-2 ring-white dark:ring-gray-900`}
               aria-label={badgeAriaLabel}
             >
-              <span
-                className={`absolute inset-0 rounded-full ${colors.badge} animate-ping opacity-75`}
-                aria-hidden="true"
-              />
               <span className="relative z-10" aria-hidden="true">{count}</span>
             </span>
           )}

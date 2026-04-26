@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
 import { Edit, Trash2, MoreHorizontal, FileText, Calendar, CheckSquare, Gavel, FileSearch, User, Scale, Printer, Plus, RefreshCw } from 'lucide-react';
@@ -76,6 +76,11 @@ const CasesPage = () => {
   // Get pagination info
   const pagination = useMemo(() => {
     return casesData?.pagination || { total: 0, page: 1, limit: 10, totalPages: 1 };
+  }, [casesData]);
+
+  // Get stats info
+  const stats = useMemo(() => {
+    return casesData?.stats || { active: 0, pending: 0, important: 0 };
   }, [casesData]);
 
   const lastSynced = useMemo(() => {
@@ -523,8 +528,11 @@ const CasesPage = () => {
   );
 
 
+  const activeCasesCount = stats.active;
+  const pendingCasesCount = stats.pending;
+  const importantCasesCount = stats.important;
 
-  const renderCaseActions = (case_) => (
+  const renderCaseActions = useCallback((case_) => (
     <DropdownMenu dir={isRTL ? 'rtl' : 'ltr'}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -569,14 +577,14 @@ const CasesPage = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem 
           onClick={() => handleDelete(case_)}
-          className="text-destructive focus:text-destructive"
+          variant="destructive"
         >
           <Trash2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
           {t('casesTable.delete')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  ), [isRTL, handleEdit, handlePrint, handleAddNote, handleAddSession, handleAddTask, handleAddExecution, handleAddPetition, handleAddCourtLevel, handleDelete, t, language]);
 
   return (
     <div className={`container mx-auto p-4 md:p-6 space-y-8 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
@@ -616,7 +624,7 @@ const CasesPage = () => {
               {language === 'ar' ? 'نشطة' : 'Active'}
             </CardDescription>
             <CardTitle className="text-2xl font-bold">
-              {cases.filter(c => c.status?.toLowerCase() === 'active').length}
+              {activeCasesCount}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -626,7 +634,7 @@ const CasesPage = () => {
               {language === 'ar' ? 'قيد الانتظار' : 'Pending'}
             </CardDescription>
             <CardTitle className="text-2xl font-bold">
-              {cases.filter(c => c.status?.toLowerCase() === 'pending' || c.is_pending === 1).length}
+              {pendingCasesCount}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -636,7 +644,7 @@ const CasesPage = () => {
               {t('caseToggles.isImportant') || (language === 'ar' ? 'هامة' : 'Important')}
             </CardDescription>
             <CardTitle className="text-2xl font-bold">
-              {cases.filter(c => c.is_important === 1).length}
+              {importantCasesCount}
             </CardTitle>
           </CardHeader>
         </Card>

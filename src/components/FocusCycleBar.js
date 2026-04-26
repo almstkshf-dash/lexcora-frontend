@@ -47,35 +47,36 @@ export default function FocusCycleBar() {
   const progress = 1 - secondsLeft / duration;
   const rafRef = useRef(null);
 
-  // Persist state
+  // Persist state - throttled to avoid 60fps I/O
   useEffect(() => {
-    localStorage.setItem("focus-mode", mode);
-    localStorage.setItem("focus-seconds", secondsLeft.toString());
+    const timer = setTimeout(() => {
+      localStorage.setItem("focus-mode", mode);
+      localStorage.setItem("focus-seconds", Math.floor(secondsLeft).toString());
+    }, 1000); // Only persist once per second max
+    return () => clearTimeout(timer);
   }, [mode, secondsLeft]);
 
-  // Sync with browser tab title
+  // Sync with browser tab title - only on integer second changes
   useEffect(() => {
-    const originalTitle = document.title.split(" | ")[0]; // Keep base title
+    const displaySeconds = Math.floor(secondsLeft);
     if (isRunning) {
-      document.title = `(${formatTime(secondsLeft)}) ${mode === "focus" ? "Focus" : "Break"} | Lexcora`;
+      document.title = `(${formatTime(displaySeconds)}) ${mode === "focus" ? "Focus" : "Break"} | Lexcora`;
     } else {
       document.title = `Paused | Lexcora`;
     }
     return () => {
       document.title = "Lexcora";
     };
-  }, [secondsLeft, isRunning, mode]);
+  }, [Math.floor(secondsLeft), isRunning, mode]);
 
-  // Tick loop using requestAnimationFrame for smoother progress updates.
+  // Tick loop using setInterval for 1-second updates instead of 60fps RAF.
+  // This drastically reduces React reconciliation work and CPU usage.
   useEffect(() => {
     if (!isRunning) return;
 
-    let last = performance.now();
-    const tick = (now) => {
-      const delta = (now - last) / 1000;
-      last = now;
+    const intervalId = setInterval(() => {
       setSecondsLeft((prev) => {
-        const next = prev - delta;
+        const next = prev - 1;
         if (next <= 0) {
           const nextMode = mode === "focus" ? "break" : "focus";
           setMode(nextMode);
@@ -83,13 +84,9 @@ export default function FocusCycleBar() {
         }
         return next;
       });
-      rafRef.current = requestAnimationFrame(tick);
-    };
+    }, 1000);
 
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
+    return () => clearInterval(intervalId);
   }, [isRunning, mode]);
 
   // Tint UI when on break.

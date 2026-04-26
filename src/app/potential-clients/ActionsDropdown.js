@@ -51,7 +51,7 @@ const ActionsDropdown = ({
         >
           <DropdownMenuItem
             onSelect={(e) => e.preventDefault()}
-            className="text-destructive focus:text-destructive"
+            variant="destructive"
           >
             <Trash2 className="mr-2 h-4 w-4" />
             <span>{t("potentialClientsPage.messages.deleteClient") || "Delete"}</span>

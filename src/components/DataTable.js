@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -36,9 +36,22 @@ const DataTable = ({
 }) => {
   const [sortState, setSortState] = useState({ id: null, direction: "asc" });
   const [searchTerms, setSearchTerms] = useState({});
+  const [searchInputValues, setSearchInputValues] = useState({}); // Local state for immediate feedback
   const [internalPage, setInternalPage] = useState(1);
 
-  const searchableColumns = enableColumnSearch ? columns.filter((col) => col.searchable) : [];
+  // Debounce search input updates to prevent massive table re-renders on every keystroke
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearchTerms(searchInputValues);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchInputValues]);
+
+  const searchableColumns = useMemo(() => 
+    enableColumnSearch ? columns.filter((col) => col.searchable) : [],
+    [enableColumnSearch, columns]
+  );
+  
   const hasRowActions = typeof rowActions === "function";
 
   const getValue = (row, column) => {
@@ -51,15 +64,17 @@ const DataTable = ({
     let result = Array.isArray(data) ? [...data] : [];
 
     // Column-level filtering
-    result = result.filter((row) => {
-      return searchableColumns.every((col) => {
-        const term = (searchTerms[col.id] || "").toString().toLowerCase().trim();
-        if (!term) return true;
-        const val = getValue(row, col);
-        const text = (val ?? "").toString().toLowerCase();
-        return text.includes(term);
+    if (searchableColumns.length > 0) {
+      result = result.filter((row) => {
+        return searchableColumns.every((col) => {
+          const term = (searchTerms[col.id] || "").toString().toLowerCase().trim();
+          if (!term) return true;
+          const val = getValue(row, col);
+          const text = (val ?? "").toString().toLowerCase();
+          return text.includes(term);
+        });
       });
-    });
+    }
 
     // Sorting
     if (sortState.id) {
@@ -201,14 +216,14 @@ const DataTable = ({
     <div className="space-y-3" aria-busy={isLoading}>
       {enableColumnSearch && searchableColumns.length > 0 && (
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {searchableColumns.map((col) => (
-            <Input
-              key={col.id}
-              placeholder={col.searchPlaceholder || col.header}
-              value={searchTerms[col.id] || ""}
-              onChange={(e) => setSearchTerms((prev) => ({ ...prev, [col.id]: e.target.value }))}
-            />
-          ))}
+            {searchableColumns.map((col) => (
+              <Input
+                key={col.id}
+                placeholder={col.searchPlaceholder || col.header}
+                value={searchInputValues[col.id] || ""}
+                onChange={(e) => setSearchInputValues((prev) => ({ ...prev, [col.id]: e.target.value }))}
+              />
+            ))}
         </div>
       )}
 

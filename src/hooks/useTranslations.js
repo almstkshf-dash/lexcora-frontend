@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 // Lazy-load JSON to avoid Turbopack HMR pattern-matching errors with large files
@@ -30,7 +31,7 @@ const hardcodedFallbacks = {
 export const useTranslations = (namespace = null) => {
   const { language, isLoading } = useLanguage();
 
-  const t = (key, params = {}) => {
+  const t = useCallback((key, params = {}) => {
     // Return empty string or key while loading
     if (isLoading) {
       return '';
@@ -71,12 +72,15 @@ export const useTranslations = (namespace = null) => {
     });
 
     return result;
-  };
+  }, [language, isLoading]);
 
-  // If namespace is provided, return a function that prefixes keys with namespace
-  if (namespace) {
-    return (key, params) => t(`${namespace}.${key}`, params);
-  }
+  const result = useMemo(() => {
+    // If namespace is provided, return a function that prefixes keys with namespace
+    if (namespace) {
+      return (key, params) => t(`${namespace}.${key}`, params);
+    }
+    return { t };
+  }, [t, namespace]);
 
-  return { t };
+  return result;
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useFinanceClients } from "./hooks/useFinanceClients";
@@ -80,7 +80,7 @@ export default function FinanceClientsPage() {
     },
   ], [t]);
 
-  const renderActions = (row) => (
+  const renderActions = useCallback((row) => (
     <Button
       variant="outline"
       size="sm"
@@ -90,7 +90,7 @@ export default function FinanceClientsPage() {
       <Eye className="h-4 w-4 mr-2" />
       {t("view")}
     </Button>
-  );
+  ), [handleViewClient, t]);
 
   // Handle loading and error states
   if (isInitialLoading) {

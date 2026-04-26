@@ -74,3 +74,9 @@ Given the bilingual requirement of the platform (Arabic/English), `lexcora-front
 - **i18n Cleanup:** Resolved missing translation keys for critical UI elements like the "Logout" button and "Language Switcher", ensuring a fully bilingual experience without raw system keys.
 - **Sidebar UX:** Refactored the `UserProfile` component to handle RTL/LTR layouts dynamically and use consistent translation hooks for all labels.
 
+## 8. Bug Fixes & Stability (April 2026)
+
+- **DataTable ReferenceError Fix:** Resolved a critical `ReferenceError: useEffect is not defined` in the `DataTable` component. The error occurred due to a missing `useEffect` import from the 'react' package while using it for search input debouncing.
+- **Cases Statistics Data Validation:** Fixed a data mismatch issue where case stat cards (Active, Pending, Important) were only showing counts for the current page of results. The logic was moved to the backend to return global counts for the filtered dataset, and the frontend was updated to consume these real-time metrics, ensuring accuracy across all pages.
+
+

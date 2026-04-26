@@ -202,77 +202,127 @@ const CasesPage = () => {
     return pages;
   };
 
-  // Action handlers
-  const handleView = (caseId) => {
+  // Action handlers — wrapped in useCallback for stable references
+  const handleView = useCallback((caseId) => {
     // TODO: Implement view functionality
-  };
+  }, []);
 
-  const handleEdit = (caseId) => {
+  const handleEdit = useCallback((caseId) => {
     router.push(`/cases/${caseId}/edit`);
-  };
+  }, [router]);
 
-  const handleDelete = (case_) => {
+  const handleDelete = useCallback((case_) => {
     setSelectedCaseForDelete(case_);
     setIsDeleteCaseModalOpen(true);
-  };
+  }, []);
 
-  const handleDeleteSuccess = () => {
-    // Refresh the cases data after successful deletion
+  const handleDeleteSuccess = useCallback(() => {
     mutate();
-  };
+  }, [mutate]);
 
-  const handleAddNote = (caseId) => {
+  const handleAddNote = useCallback((caseId) => {
     setSelectedCaseId(caseId);
     setIsAddMemoModalOpen(true);
-  };
+  }, []);
 
-  const handleAddSession = (caseId) => {
+  const handleAddSession = useCallback((caseId) => {
     setSelectedCaseId(caseId);
     setIsAddSessionModalOpen(true);
-  };
+  }, []);
 
-  const handleSessionAdded = (newSession) => {
-    // Refresh the cases data to show any updates
+  const handleSessionAdded = useCallback(() => {
     mutate();
-  };
+  }, [mutate]);
 
-  const handleAddTask = (caseId) => {
+  const handleAddTask = useCallback((caseId) => {
     setSelectedCaseId(caseId);
     setIsAddTaskModalOpen(true);
-  };
+  }, []);
 
-  const handleTaskAdded = (newTask) => {
-    // Refresh the cases data to show any updates
+  const handleTaskAdded = useCallback(() => {
     mutate();
-  };
+  }, [mutate]);
 
-  const handleAddExecution = (caseId) => {
+  const handleAddExecution = useCallback((caseId) => {
     setSelectedCaseId(caseId);
     setIsAddExecutionModalOpen(true);
-  };
+  }, []);
 
-  const handleAddPetition = (caseId) => {
+  const handleAddPetition = useCallback((caseId) => {
     // TODO: Implement add petition functionality
-  };
+  }, []);
 
-  const handleAddCourtLevel = (caseId) => {
+  const handleAddCourtLevel = useCallback((caseId) => {
     setSelectedCaseId(caseId);
     setIsAddCaseDegreeModalOpen(true);
-  };
+  }, []);
 
-  const handleCaseDegreeAdded = (newCaseDegree) => {
-    // Refresh the cases data to show any updates
+  const handleCaseDegreeAdded = useCallback(() => {
     mutate();
-  };
+  }, [mutate]);
 
-  const handleMemoAdded = () => {
-    // Refresh the cases data to show any updates
+  const handleMemoAdded = useCallback(() => {
     mutate();
-  };
+  }, [mutate]);
 
-  const handlePrint = (caseId) => {
+  const handlePrint = useCallback((caseId) => {
     router.push(`/cases/${caseId}`);
-  };
+  }, [router]);
+
+  // renderCaseActions MUST be defined before any early returns (Rules of Hooks)
+  const renderCaseActions = useCallback((case_) => (
+    <DropdownMenu dir={isRTL ? 'rtl' : 'ltr'}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align={isRTL ? 'start' : 'end'}>
+        <DropdownMenuItem onClick={() => handleEdit(case_.id)}>
+          <Edit className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.edit')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handlePrint(case_.id)}>
+          <Printer className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {language === 'ar' ? 'طباعة القضية' : 'Print Case'}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => handleAddNote(case_.id)}>
+          <FileText className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.addNote')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAddSession(case_.id)}>
+          <Calendar className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.addSession')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAddTask(case_.id)}>
+          <CheckSquare className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.addTask')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAddExecution(case_.id)}>
+          <Gavel className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.addExecution')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAddPetition(case_.id)}>
+          <FileSearch className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.addPetition')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAddCourtLevel(case_.id)}>
+          <Scale className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {language === 'ar' ? 'إضافة مرحلة قضائية' : 'Add Court Level'}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => handleDelete(case_)}
+          variant="destructive"
+        >
+          <Trash2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          {t('casesTable.delete')}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  ), [isRTL, handleEdit, handlePrint, handleAddNote, handleAddSession, handleAddTask, handleAddExecution, handleAddPetition, handleAddCourtLevel, handleDelete, t, language]);
 
   const resolveLabel = (key, fallback) => {
     const value = t(key);
@@ -531,60 +581,6 @@ const CasesPage = () => {
   const activeCasesCount = stats.active;
   const pendingCasesCount = stats.pending;
   const importantCasesCount = stats.important;
-
-  const renderCaseActions = useCallback((case_) => (
-    <DropdownMenu dir={isRTL ? 'rtl' : 'ltr'}>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align={isRTL ? 'start' : 'end'}>
-        <DropdownMenuItem onClick={() => handleEdit(case_.id)}>
-          <Edit className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-          {t('casesTable.edit')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handlePrint(case_.id)}>
-          <Printer className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-          {language === 'ar' ? 'طباعة القضية' : 'Print Case'}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => handleAddNote(case_.id)}>
-          <FileText className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-          {t('casesTable.addNote')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleAddSession(case_.id)}>
-          <Calendar className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-          {t('casesTable.addSession')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleAddTask(case_.id)}>
-          <CheckSquare className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-          {t('casesTable.addTask')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleAddExecution(case_.id)}>
-          <Gavel className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-          {t('casesTable.addExecution')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleAddPetition(case_.id)}>
-          <FileSearch className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-          {t('casesTable.addPetition')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleAddCourtLevel(case_.id)}>
-          <Scale className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-          {language === 'ar' ? 'إضافة مرحلة قضائية' : 'Add Court Level'}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem 
-          onClick={() => handleDelete(case_)}
-          variant="destructive"
-        >
-          <Trash2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-          {t('casesTable.delete')}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  ), [isRTL, handleEdit, handlePrint, handleAddNote, handleAddSession, handleAddTask, handleAddExecution, handleAddPetition, handleAddCourtLevel, handleDelete, t, language]);
 
   return (
     <div className={`container mx-auto p-4 md:p-6 space-y-8 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>

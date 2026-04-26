@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save, X, Upload, FileText, Plus, Image, FileIcon } from "lucide-react";
+import { Loader2, Save, X, Upload, FileText, Plus, Image as ImageIcon, FileIcon } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "react-toastify";
@@ -112,7 +112,7 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
   };
 
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
+    if (type.startsWith('image/')) return <ImageIcon className="h-4 w-4" />;
     if (type.includes('pdf')) return <FileText className="h-4 w-4" />;
     return <FileIcon className="h-4 w-4" />;
   };

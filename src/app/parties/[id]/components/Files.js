@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { FileText, Download, Trash2, Upload, X, Image, File, Loader2, Plus, Eye } from 'lucide-react'
+import { FileText, Download, Trash2, Upload, X, Image as ImageIcon, File, Loader2, Plus, Eye } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { cn } from '@/lib/utils'
 import { useTranslations } from '@/hooks/useTranslations'
@@ -144,7 +144,7 @@ function Files({ partyId }) {
   const getFileIcon = (fileName) => {
     const extension = fileName?.split('.').pop()?.toLowerCase()
     if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
-      return <Image className="h-4 w-4 text-blue-500" />
+      return <ImageIcon className="h-4 w-4 text-blue-500" />
     }
     if (extension === 'pdf') {
       return <FileText className="h-4 w-4 text-red-500" />

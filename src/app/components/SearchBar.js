@@ -32,6 +32,9 @@ const SearchBar = () => {
 
     const performSearchAction = async () => {
       setIsSearching(true);
+      // Open the dropdown before the async work so the loading state is visible
+      // and the no-results panel always renders even when the API throws.
+      setIsOpen(true);
       try {
         if (searchType === 'system') {
           // Search app links (existing functionality)
@@ -40,7 +43,7 @@ const SearchBar = () => {
             const label = link.label[lang].toLowerCase();
             const category = link.category[lang].toLowerCase();
             const keywords = link.keywords[lang].map(k => k.toLowerCase());
-            
+
             return (
               label.includes(query) ||
               category.includes(query) ||
@@ -53,7 +56,6 @@ const SearchBar = () => {
           const results = await performSearch(searchQuery, searchType);
           setFilteredResults(results);
         }
-        setIsOpen(true);
         setSelectedIndex(0);
       } catch (error) {
         console.error('Search error:', error);
@@ -71,37 +73,32 @@ const SearchBar = () => {
   }, [searchQuery, searchType, lang]);
 
   // Handle keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (!isOpen) return;
+  const handleKeyDown = (e) => {
+    if (!isOpen) return;
 
-      switch (e.key) {
-        case 'ArrowDown':
-          e.preventDefault();
-          setSelectedIndex(prev => 
-            prev < filteredResults.length - 1 ? prev + 1 : prev
-          );
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          setSelectedIndex(prev => prev > 0 ? prev - 1 : 0);
-          break;
-        case 'Enter':
-          e.preventDefault();
-          if (filteredResults[selectedIndex]) {
-            handleItemClick(filteredResults[selectedIndex]);
-          }
-          break;
-        case 'Escape':
-          setIsOpen(false);
-          setSearchQuery('');
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, filteredResults, selectedIndex]);
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex(prev => 
+          prev < filteredResults.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex(prev => prev > 0 ? prev - 1 : 0);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (filteredResults[selectedIndex]) {
+          handleItemClick(filteredResults[selectedIndex]);
+        }
+        break;
+      case 'Escape':
+        setIsOpen(false);
+        setSearchQuery('');
+        break;
+    }
+  };
 
   // Scroll selected item into view
   useEffect(() => {
@@ -158,208 +155,92 @@ const SearchBar = () => {
 
   const getPlaceholder = () => {
     switch (searchType) {
-      case 'cases':
-        return isRTL ? 'ابحث برقم الملف أو رقم القضية...' : 'Search by file or case number...';
-      case 'parties':
-        return isRTL ? 'ابحث عن خصم...' : 'Search for party...';
-      case 'clients':
-        return isRTL ? 'ابحث عن موكل...' : 'Search for client...';
-      default:
-        return t('common.searchPages');
+      case 'cases':  return t('search.placeholderByFileOrCase');
+      case 'parties': return t('search.placeholderForParty');
+      case 'clients': return t('search.placeholderForClient');
+      default:        return t('common.searchPages');
     }
   };
 
+  // Shared result item button class builder
+  const resultItemClass = (index) => `
+    w-full px-4 py-3
+    text-${isRTL ? 'right' : 'left'}
+    hover:bg-gray-50 dark:hover:bg-gray-700
+    transition-colors
+    border-b border-gray-100 dark:border-gray-700 last:border-b-0
+    ${selectedIndex === index ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
+  `;
+
   const renderResultItem = (item, index) => {
+    let title = '';
+    let subtitle = null;
+
     if (searchType === 'system') {
-      return (
-        <button
-          key={item.id}
-          onClick={() => handleItemClick(item)}
-          onMouseEnter={() => setSelectedIndex(index)}
-          className={`
-            w-full
-            px-4
-            py-3
-            text-${isRTL ? 'right' : 'left'}
-            hover:bg-gray-50
-            dark:hover:bg-gray-700
-            transition-colors
-            border-b
-            border-gray-100
-            dark:border-gray-700
-            last:border-b-0
-            ${selectedIndex === index ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
-          `}
-        >
-          <div className="flex flex-col gap-1">
-            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              {item.label[lang]}
-            </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {item.category[lang]}
-            </span>
-          </div>
-        </button>
-      );
+      title = item.label[lang];
+      subtitle = item.category[lang];
     } else if (searchType === 'cases') {
-      return (
-        <button
-          key={item.id}
-          onClick={() => handleItemClick(item)}
-          onMouseEnter={() => setSelectedIndex(index)}
-          className={`
-            w-full
-            px-4
-            py-3
-            text-${isRTL ? 'right' : 'left'}
-            hover:bg-gray-50
-            dark:hover:bg-gray-700
-            transition-colors
-            border-b
-            border-gray-100
-            dark:border-gray-700
-            last:border-b-0
-            ${selectedIndex === index ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
-          `}
-        >
-          <div className="flex flex-col gap-1">
-            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              {item.topic || (isRTL ? 'بدون موضوع' : 'No topic')}
-            </span>
-            <div className="flex gap-2 text-xs text-gray-500 dark:text-gray-400">
-              <span>{isRTL ? 'رقم الملف:' : 'File:'} {item.file_number || '-'}</span>
-              <span>{isRTL ? 'رقم القضية:' : 'Case:'} {item.case_number || '-'}</span>
-            </div>
-          </div>
-        </button>
+      title = item.topic || t('search.noTopic');
+      subtitle = (
+        <div className="flex gap-2">
+          <span>{t('search.fileLabel')} {item.file_number || '-'}</span>
+          <span>{t('search.caseLabel')} {item.case_number || '-'}</span>
+        </div>
       );
-    } else if (searchType === 'parties') {
-      return (
-        <button
-          key={item.id}
-          onClick={() => handleItemClick(item)}
-          onMouseEnter={() => setSelectedIndex(index)}
-          className={`
-            w-full
-            px-4
-            py-3
-            text-${isRTL ? 'right' : 'left'}
-            hover:bg-gray-50
-            dark:hover:bg-gray-700
-            transition-colors
-            border-b
-            border-gray-100
-            dark:border-gray-700
-            last:border-b-0
-            ${selectedIndex === index ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
-          `}
-        >
-          <div className="flex flex-col gap-1">
-            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              {item.name || (isRTL ? 'بدون اسم' : 'Unnamed')}
-            </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {item.phone || item.national_id || item.e_id || '-'}
-            </span>
-          </div>
-        </button>
-      );
-    } else if (searchType === 'clients') {
-      return (
-        <button
-          key={item.id}
-          onClick={() => handleItemClick(item)}
-          onMouseEnter={() => setSelectedIndex(index)}
-          className={`
-            w-full
-            px-4
-            py-3
-            text-${isRTL ? 'right' : 'left'}
-            hover:bg-gray-50
-            dark:hover:bg-gray-700
-            transition-colors
-            border-b
-            border-gray-100
-            dark:border-gray-700
-            last:border-b-0
-            ${selectedIndex === index ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
-          `}
-        >
-          <div className="flex flex-col gap-1">
-            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              {item.name || (isRTL ? 'بدون اسم' : 'Unnamed')}
-            </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {item.phone || '-'}
-            </span>
-          </div>
-        </button>
-      );
+    } else if (searchType === 'parties' || searchType === 'clients') {
+      title = item.name || t('search.unnamed');
+      subtitle = searchType === 'parties'
+        ? (item.phone || item.national_id || item.e_id || '-')
+        : (item.phone || '-');
+    } else {
+      return null;
     }
+
+    return (
+      <button
+        key={item.id}
+        onClick={() => handleItemClick(item)}
+        onMouseEnter={() => setSelectedIndex(index)}
+        className={resultItemClass(index)}
+      >
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            {title}
+          </span>
+          {subtitle && (
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {subtitle}
+            </span>
+          )}
+        </div>
+      </button>
+    );
   };
 
   return (
     <div className="relative w-full" ref={searchRef}>
       {/* Search Input and Radio Buttons - Inline */}
       <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-        {/* Radio Buttons */}
+        {/* Search Type Filters */}
         <div className={`flex gap-1.5 z-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
-          <label className="flex items-center gap-0.5 cursor-pointer whitespace-nowrap">
-            <input
-              type="radio"
-              name="searchType"
-              value="system"
-              checked={searchType === 'system'}
-              onChange={(e) => setSearchType(e.target.value)}
-              className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-blue-500"
-            />
-            <span className="text-[10px] text-gray-700 dark:text-gray-300">
-              {isRTL ? 'النظام' : 'System'}
-            </span>
-          </label>
-          
-          <label className="flex items-center gap-0.5 cursor-pointer whitespace-nowrap">
-            <input
-              type="radio"
-              name="searchType"
-              value="cases"
-              checked={searchType === 'cases'}
-              onChange={(e) => setSearchType(e.target.value)}
-              className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-blue-500"
-            />
-            <span className="text-[10px] text-gray-700 dark:text-gray-300">
-              {isRTL ? 'الملفات' : 'Cases'}
-            </span>
-          </label>
-          
-          <label className="flex items-center gap-0.5 cursor-pointer whitespace-nowrap">
-            <input
-              type="radio"
-              name="searchType"
-              value="parties"
-              checked={searchType === 'parties'}
-              onChange={(e) => setSearchType(e.target.value)}
-              className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-blue-500"
-            />
-            <span className="text-[10px] text-gray-700 dark:text-gray-300">
-              {isRTL ? 'موكل' : 'Client'}
-            </span>
-          </label>
-          
-          <label className="flex items-center gap-0.5 cursor-pointer whitespace-nowrap">
-            <input
-              type="radio"
-              name="searchType"
-              value="clients"
-              checked={searchType === 'clients'}
-              onChange={(e) => setSearchType(e.target.value)}
-              className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-blue-500"
-            />
-            <span className="text-[10px] text-gray-700 dark:text-gray-300">
-                            {isRTL ? 'خصم' : 'Party'}
-
-            </span>
-          </label>
+          {[
+            { value: 'system',  labelKey: 'search.filterSystem' },
+            { value: 'cases',   labelKey: 'search.filterCases' },
+            { value: 'parties', labelKey: 'search.filterParty' },
+            { value: 'clients', labelKey: 'search.filterClient' },
+          ].map(({ value, labelKey }) => (
+            <button
+              key={value}
+              onClick={() => setSearchType(value)}
+              className={`px-3 py-1 text-xs rounded-full transition-all whitespace-nowrap ${
+                searchType === value
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
+              }`}
+            >
+              {t(labelKey)}
+            </button>
+          ))}
         </div>
 
         {/* Search Input */}
@@ -376,7 +257,9 @@ const SearchBar = () => {
               setIsOpen(true);
             }
           }}
+          onKeyDown={handleKeyDown}
           placeholder={getPlaceholder()}
+          aria-label={getPlaceholder()}
           className={`
             w-full
             ${isRTL ? 'pr-11 pl-10' : 'pl-11 pr-10'}
@@ -408,6 +291,7 @@ const SearchBar = () => {
         {searchQuery && (
           <button
             onClick={handleClear}
+            aria-label={t('common.clearSearch')}
             className={`
               absolute
               inset-y-0

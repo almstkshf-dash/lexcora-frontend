@@ -14,11 +14,6 @@ import {
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-const FontSettings = () => {
-  const { t } = useTranslations();
-  const { isRTL } = useLanguage();
-  const [selectedFont, setSelectedFont] = useState('cairo');
-
   // Font configurations using Google Fonts CSS
   const availableFonts = [
     {
@@ -62,6 +57,11 @@ const FontSettings = () => {
       googleFontsUrl: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
     }
   ];
+
+const FontSettings = () => {
+  const { t } = useTranslations();
+  const { isRTL } = useLanguage();
+  const [selectedFont, setSelectedFont] = useState('cairo');
 
   // Function to load Google Font dynamically
   const loadGoogleFont = (fontConfig) => {

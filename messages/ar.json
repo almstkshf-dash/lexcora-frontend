@@ -63,6 +63,7 @@
     "searchPages": "بحث...",
     "noResultsFound": "لا توجد نتائج",
     "search": "بحث",
+    "clearSearch": "مسح البحث",
     "page": "الصفحة",
     "of": "من",
     "name": "الاسم",
@@ -139,7 +140,25 @@
     "branches": "الفروع",
     "performance": "الأداء",
     "expandSidebar": "توسيع الشريط الجانبي",
-    "collapseSidebar": "طي الشريط الجانبي"
+    "collapseSidebar": "طي الشريط الجانبي",
+    "openMenu": "فتح القائمة",
+    "toggleSearch": "بحث",
+    "appTitle": "ليكسورا",
+    "appSubtitle": "النظام الذكي للمحاماة",
+    "userGuide": "دليل المستخدم"
+  },
+  "search": {
+    "placeholderByFileOrCase": "ابحث برقم الملف أو رقم القضية...",
+    "placeholderForParty": "ابحث عن خصم...",
+    "placeholderForClient": "ابحث عن موكل...",
+    "filterSystem": "النظام",
+    "filterCases": "الملفات",
+    "filterParty": "موكل",
+    "filterClient": "خصم",
+    "noTopic": "بدون موضوع",
+    "unnamed": "بدون اسم",
+    "fileLabel": "رقم الملف:",
+    "caseLabel": "رقم القضية:"
   },
   "theme": {
     "light": "الوضع الفاتح",

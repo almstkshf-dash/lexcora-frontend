@@ -62,6 +62,7 @@ function LastWeekSessionsItem({
   const displayCaseNumber = session ? session.case_number : sessionData.caseNumber
   const displayClientName = session ? (session.clientParties?.[0] || t('home.notSpecified')) : sessionData.clientName
   const displayDegree = session ? session.degree : sessionData.degree
+  const displayFileNumber = session ? session.file_number : sessionData.fileNumber
 
   const degreeInfo = getDegreeBadge(displayDegree)
 
@@ -71,28 +72,47 @@ function LastWeekSessionsItem({
       <CardContent className="p-4 sm:p-5">
      
         <div className="space-y-3">
-          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 flex-wrap">
-            <Clock className="w-4 h-4 flex-shrink-0 text-blue-500 dark:text-blue-400" />
-            <span className="whitespace-nowrap font-medium text-gray-600 dark:text-gray-300">{t('home.sessionDate')}: <span className="text-gray-900 dark:text-gray-100">{displayDate}</span></span>
-            {displayTime && <span className="text-blue-600 dark:text-blue-400 font-semibold whitespace-nowrap">• {displayTime}</span>}
+          {displayFileNumber && (
+            <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+              <FileText className="w-4 h-4 flex-shrink-0 text-orange-500 dark:text-orange-400" />
+              <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.fileNumber')}: </span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayFileNumber}</span>
+            </div>
+          )}
+
+          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+            <Calendar className="w-4 h-4 flex-shrink-0 text-blue-500 dark:text-blue-400" />
+            <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.sessionDate')}: </span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayDate}</span>
           </div>
           
-          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 flex-wrap">
-            <FileText className="w-4 h-4 flex-shrink-0" />
-            <span className="whitespace-nowrap font-medium text-gray-600 dark:text-gray-300">{t('home.caseNumber')}: </span>
-            <span className="font-semibold text-gray-900 dark:text-gray-100 break-all">{displayCaseNumber}</span>
-            {degreeInfo && (
-              <Badge className={`ml-2 text-xs font-semibold px-2 py-0.5 rounded-full ${degreeInfo.color}`}>
+          {displayTime && (
+            <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+              <Clock className="w-4 h-4 flex-shrink-0 text-orange-500 dark:text-orange-400" />
+              <span className="font-semibold text-orange-600 dark:text-orange-400 truncate">{displayTime}</span>
+            </div>
+          )}
+
+          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+            <Hash className="w-4 h-4 flex-shrink-0 text-gray-400" />
+            <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.caseNumber')}: </span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayCaseNumber}</span>
+          </div>
+
+          {degreeInfo && (
+            <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+              <div className="w-4 h-4 flex-shrink-0" />
+              <Badge className={`text-xs font-semibold px-2 py-0.5 rounded-full truncate ${degreeInfo.color}`}>
                 {degreeInfo.label}
               </Badge>
-            )}
-          </div>
+            </div>
+          )}
           
           <div className="flex items-start sm:items-center justify-between gap-2.5 text-sm text-gray-500 dark:text-gray-400 flex-col sm:flex-row border-t border-gray-100 dark:border-gray-800 pt-3">
-            <div className="flex items-center gap-2.5 min-w-0 flex-1 flex-wrap">
+            <div className="flex items-center gap-2.5 min-w-0 flex-1 overflow-hidden whitespace-nowrap">
               <User className="w-4 h-4 flex-shrink-0 text-amber-500 dark:text-amber-400" />
-              <span className="whitespace-nowrap font-medium text-gray-600 dark:text-gray-300">{t('home.client')}: </span>
-              <span className="font-semibold text-gray-900 dark:text-gray-100 break-words">{displayClientName}</span>
+              <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.client')}: </span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayClientName}</span>
             </div>
             <button
               onClick={() => setIsEditModalOpen(true)}

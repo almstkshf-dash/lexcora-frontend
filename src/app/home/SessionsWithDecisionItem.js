@@ -158,79 +158,77 @@ function SessionsWithDecisionItem({
           </div>
         </div>
         
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <Clock className="w-4 h-4" />
-            <span>{tSessions('labels.sessionDate')} {displayDate}</span>
-            {displayTime && <span className="text-purple-600 dark:text-purple-400 font-medium">• {displayTime}</span>}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+            <Clock className="w-4 h-4 flex-shrink-0" />
+            <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{tSessions('labels.sessionDate')}</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayDate}</span>
+            {displayTime && <span className="text-purple-600 dark:text-purple-400 font-semibold truncate">• {displayTime}</span>}
           </div>
           
-
-              {session?.file_number && (
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <File className="w-4 h-4" />
-              <span>{tSessions('labels.fileNumber')} </span>
-              <span className="font-medium text-gray-900 dark:text-gray-100">{session.file_number}</span>
+          {session?.file_number && (
+            <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+              <File className="w-4 h-4 flex-shrink-0" />
+              <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{tSessions('labels.fileNumber')} </span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{session.file_number}</span>
             </div>
           )}
 
           {session?.case_number && (
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <FileText className="w-4 h-4" />
-            <span>{tSessions('labels.caseNumber')} </span>
-            <span className="font-medium text-gray-900 dark:text-gray-100">{displayCaseNumber}</span>
-            {degreeInfo && (
-              <Badge className={`ml-2 ${degreeInfo.color}`}>
-                {degreeInfo.label}
-              </Badge>
-            )}
-          </div>
+            <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+              <FileText className="w-4 h-4 flex-shrink-0" />
+              <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{tSessions('labels.caseNumber')} </span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayCaseNumber}</span>
+              {degreeInfo && (
+                <Badge className={`ml-2 truncate flex-shrink-0 ${degreeInfo.color}`}>
+                  {degreeInfo.label}
+                </Badge>
+              )}
+            </div>
           )}
-
-      
           
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <User className="w-4 h-4" />
-            <span>{tSessions('labels.client')} </span>
-            <span className="font-medium text-gray-900 dark:text-gray-100">
+          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+            <User className="w-4 h-4 flex-shrink-0" />
+            <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{tSessions('labels.client')} </span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">
               {displayClientParties.length > 0 ? displayClientParties.join('، ') : t('common.notSpecified')}
             </span>
           </div>
 
           {displayOpponentParties.length > 0 && (
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <User className="w-4 h-4" />
-              <span>{tSessions('labels.opponent')} </span>
-              <span className="font-medium text-gray-900 dark:text-gray-100">
+            <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+              <User className="w-4 h-4 flex-shrink-0" />
+              <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{tSessions('labels.opponent')} </span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">
                 {displayOpponentParties.join('، ')}
               </span>
             </div>
           )}
 
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <Calendar className="w-4 h-4" />
-            <span>{tSessions('labels.caseType')} </span>
-            <span className="font-medium text-gray-900 dark:text-gray-100">
+          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+            <Calendar className="w-4 h-4 flex-shrink-0" />
+            <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{tSessions('labels.caseType')} </span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">
               {displayCaseTypeTranslated}          
             </span>
           </div>
 
           {/* Decision Field */}
           {session?.decision && (
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <FileText className="w-4 h-4 text-green-600 dark:text-green-400" />
-              <span>{tSessions('labels.decision')} </span>
-              <span className="font-medium text-green-900 dark:text-green-300">
+            <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+              <FileText className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+              <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{tSessions('labels.decision')} </span>
+              <span className="font-semibold text-green-900 dark:text-green-300 truncate">
                 {session.decision}
               </span>
             </div>
           )}
 
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <Calendar className="w-4 h-4 animate-pulse text-purple-600 dark:text-purple-400" />
-            <span>{tSessions('labels.deadline')} </span>
-            <span className="font-medium text-gray-900 dark:text-gray-100">
-              {deadlineInfo ? ` (${deadlineInfo.deadlineDate})` : tSessions('labels.notCalculated')}
+          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+            <Calendar className="w-4 h-4 animate-pulse text-purple-600 dark:text-purple-400 flex-shrink-0" />
+            <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{tSessions('labels.deadline')} </span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+              {deadlineInfo ? `(${deadlineInfo.deadlineDate})` : tSessions('labels.notCalculated')}
             </span>
           </div>
           

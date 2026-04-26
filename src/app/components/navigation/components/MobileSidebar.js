@@ -27,9 +27,16 @@ const MobileSidebar = ({
     <div dir={isRTL ? "rtl" : "ltr"}>
       {/* Mobile Sidebar Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={onClose}>
+        <div
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+          onClick={onClose}
+          aria-hidden="true"
+        >
           {/* Mobile Sidebar */}
-          <aside 
+          <aside
+            role="dialog"
+            aria-modal="true"
+            aria-label={isRTL ? 'قائمة التنقل' : 'Navigation Menu'}
             className={`
               fixed top-0 ${isRTL ? 'right-0' : 'left-0'} bottom-0
               w-80 max-w-[85vw]

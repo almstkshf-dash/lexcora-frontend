@@ -104,14 +104,14 @@ const EditOrderModal = ({
         details: order.details || ''
       })
     }
-  }, [orderData, orderLoading])
+  }, [orderData, orderLoading, formik.setValues])
 
   // Reset form when modal closes
   useEffect(() => {
     if (!isOpen) {
       formik.resetForm()
     }
-  }, [isOpen])
+  }, [isOpen, formik.resetForm])
 
   // Helper function to get error message
   const getErrorMessage = (fieldName) => {

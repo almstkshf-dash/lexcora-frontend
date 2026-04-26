@@ -5,6 +5,9 @@ import {
   Package,
   Scale,
   Calendar,
+  CalendarClock,
+  CalendarCheck2,
+  CalendarDays,
   FolderPlus,
   CheckCircle,
   FileText,
@@ -112,7 +115,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       submenu: [
         { id: 'cases', label: t('navigation.cases'), icon: Scale, requiredPermissions: PERMISSION_REQUIREMENTS.cases },
         { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus, requiredPermissions: PERMISSION_REQUIREMENTS.addCase },
-        { id: 'cases/sessions', label: t('navigation.sessions'), icon: Calendar, requiredPermissions: PERMISSION_REQUIREMENTS.sessions },
+        { id: 'cases/sessions', label: t('navigation.sessions'), icon: CalendarClock, requiredPermissions: PERMISSION_REQUIREMENTS.sessions },
         { id: 'cases/judicial-decisions', label: t('navigation.judicialDecisions'), icon: CheckCircle, requiredPermissions: PERMISSION_REQUIREMENTS.judicialDecisions },
       ]
     },
@@ -124,7 +127,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       submenu: [
         { id: 'parties', label: t('navigation.parties'), icon: Users, requiredPermissions: PERMISSION_REQUIREMENTS.parties },
         { id: 'potential-clients', label: t('navigation.potentialClients'), icon: UserRoundPlus, requiredPermissions: PERMISSION_REQUIREMENTS.potentialClients },
-        { id: 'meetings', label: t('navigation.meetings'), icon: Calendar, requiredPermissions: PERMISSION_REQUIREMENTS.meetings },
+        { id: 'meetings', label: t('navigation.meetings'), icon: CalendarCheck2, requiredPermissions: PERMISSION_REQUIREMENTS.meetings },
         { id: 'call-logs', label: t('navigation.callLogs'), icon: Phone, requiredPermissions: PERMISSION_REQUIREMENTS.callLogs },
         { id: 'goaml', label: t('navigation.goaml'), icon: Shield, requiredPermissions: PERMISSION_REQUIREMENTS.goaml },
         { id: 'client-forms', label: t('navigation.forms'), icon: FileText, requiredPermissions: PERMISSION_REQUIREMENTS.clientForms },
@@ -147,7 +150,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
         { id: 'hr/requests', label: t('navigation.requests'), icon: FileText, requiredPermissions: PERMISSION_REQUIREMENTS.hrRequests },
         { id: 'hr/assets', label: t('navigation.assets'), icon: Package, requiredPermissions: PERMISSION_REQUIREMENTS.hrAssets },
         { id: 'hr/forms', label: t('navigation.forms'), icon: ScrollText, requiredPermissions: PERMISSION_REQUIREMENTS.hrForms },
-        { id: 'hr/events', label: t('navigation.events'), icon: Calendar, requiredPermissions: PERMISSION_REQUIREMENTS.hrEvents },
+        { id: 'hr/events', label: t('navigation.events'), icon: CalendarDays, requiredPermissions: PERMISSION_REQUIREMENTS.hrEvents },
         { id: 'hr/notifications', label: t('navigation.notifications'), icon: Bell, requiredPermissions: PERMISSION_REQUIREMENTS.hrNotifications },
       ]
     },
@@ -172,7 +175,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       submenu: [
         { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette, requiredPermissions: PERMISSION_REQUIREMENTS.settingsAppearance },
         { id: 'settings/branches', label: t('navigation.branches'), icon: Building2, requiredPermissions: PERMISSION_REQUIREMENTS.settingsBranches },
-        { id: 'settings/user-guide', label: 'User Guide / دليل المستخدم', icon: FileText },
+        { id: 'settings/user-guide', label: t('navigation.userGuide'), icon: FileText },
         // { id: 'settings/performance', label: t('navigation.performance'), icon: Gauge },
         { id: 'logs', label: t('navigation.logs'), icon: Clock, requiredPermissions: PERMISSION_REQUIREMENTS.logs },
       ]

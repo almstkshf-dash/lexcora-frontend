@@ -158,7 +158,7 @@ const EditDealModal = ({
       // Set existing documents
       setExistingDocuments(deal.documents || [])
     }
-  }, [dealData])
+  }, [dealData, formik.setValues])
 
   // Reset form when modal closes
   useEffect(() => {
@@ -167,7 +167,7 @@ const EditDealModal = ({
       setFiles([])
       setExistingDocuments([])
     }
-  }, [isOpen])
+  }, [isOpen, formik.resetForm])
 
   // File handling functions
   const handleFileChange = (e) => {

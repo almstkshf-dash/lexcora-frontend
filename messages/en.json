@@ -64,6 +64,7 @@
     "searchPages": "Search for a page...",
     "noResultsFound": "No results found",
     "search": "Search",
+    "clearSearch": "Clear search",
     "page": "Page",
     "of": "of",
     "name": "Name",
@@ -140,7 +141,25 @@
     "branches": "Branches",
     "performance": "Performance",
     "expandSidebar": "Expand Sidebar",
-    "collapseSidebar": "Collapse Sidebar"
+    "collapseSidebar": "Collapse Sidebar",
+    "openMenu": "Open Menu",
+    "toggleSearch": "Toggle Search",
+    "appTitle": "LEXCORA",
+    "appSubtitle": "Legal Management System",
+    "userGuide": "User Guide"
+  },
+  "search": {
+    "placeholderByFileOrCase": "Search by file or case number...",
+    "placeholderForParty": "Search for party...",
+    "placeholderForClient": "Search for client...",
+    "filterSystem": "System",
+    "filterCases": "Cases",
+    "filterParty": "Client",
+    "filterClient": "Party",
+    "noTopic": "No topic",
+    "unnamed": "Unnamed",
+    "fileLabel": "File:",
+    "caseLabel": "Case:"
   },
   "theme": {
     "light": "Light Mode",

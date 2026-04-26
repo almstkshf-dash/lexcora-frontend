@@ -33,7 +33,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Edit, Save, Loader2, Upload, X, FileText, Image, FileIcon, Trash2 } from "lucide-react";
+import { Edit, Save, Loader2, Upload, X, FileText, Image as ImageIcon, FileIcon, Trash2 } from "lucide-react";
 import { getPartyById, updateParty, checkDuplicateParty } from "@/app/services/api/parties";
 import { getBranches } from "@/app/services/api/branches";
 import { deletePartyDocument } from "@/app/services/api/partiesDocuments";
@@ -192,7 +192,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
   };
 
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
+    if (type.startsWith('image/')) return <ImageIcon className="h-4 w-4" />;
     if (type.includes('pdf')) return <FileText className="h-4 w-4" />;
     return <FileIcon className="h-4 w-4" />;
   };

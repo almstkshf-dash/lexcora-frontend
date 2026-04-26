@@ -2,57 +2,45 @@
 
 import { getSessionsWithDecisions } from "../services/api/sessions"
 import SessionsWithDecisionItem from "./SessionsWithDecisionItem"
+import DashboardWidgetCard from "./DashboardWidgetCard"
 import useSWR from 'swr'
-// import { getsessionsWithDecision } from '../services/api/sessions'
+import { useTranslations } from '@/hooks/useTranslations'
 
+const SWR_OPTIONS = { revalidateOnFocus: false, errorRetryCount: 2 }
+
+/**
+ * SessionsWithDecision
+ *
+ * Fully rewritten from scratch to match the dashboard design system.
+ * Previous version had: hardcoded Arabic strings, emoji in UI, bare <div>
+ * instead of Card, no Skeleton, no i18n, a dead commented-out import, and
+ * was not rendered anywhere in Home.js.
+ *
+ * This component is now ready to be added to Home.js when needed.
+ */
 function SessionsWithDecision() {
-    const { data, error, isLoading } = useSWR('sessions-with-decisions', getSessionsWithDecisions)
+  const { t } = useTranslations()
+  const { data, error, isLoading } = useSWR('sessions-with-decisions', getSessionsWithDecisions, SWR_OPTIONS)
 
-    if (isLoading) {
-        return (
-            <div>
-                <div className='text-lg font-bold rounded-2xl bg-purple-200 dark:bg-purple-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-                    ⚖️ الاستئنافات والطعون
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                    <div className="text-center text-gray-500 dark:text-gray-400">جاري التحميل...</div>
-                </div>
-            </div>
-        )
-    }
+  const sessions = data?.success ? data.data : []
 
-    if (error) {
-        return (
-            <div>
-                <div className='text-lg font-bold rounded-2xl bg-purple-200 dark:bg-purple-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-                    ⚖️ الاستئنافات والطعون
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                    <div className="text-center text-red-500 dark:text-red-400">خطأ في تحميل البيانات</div>
-                </div>
-            </div>
-        )
-    }
-
-    const sessions = data?.success ? data.data : []
-
-    return <div>
-        <div className='text-lg font-bold rounded-2xl bg-purple-200 dark:bg-purple-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-            ⚖️ الاستئنافات والطعون
-        </div>
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 p-4">
-            {sessions.length === 0 ? (
-                <div className="text-center text-gray-500 dark:text-gray-400 py-4">لا توجد استئنافات أو طعون</div>
-            ) : (
-                sessions.map((session) => (
-                    <SessionsWithDecisionItem 
-                        key={session.id}
-                        session={session}
-                    />
-                ))
-            )}
-        </div>
-    </div>
+  return (
+    <DashboardWidgetCard
+      theme="purple"
+      title={t('home.sessionsWithDecision')}
+      count={sessions.length}
+      badgeAriaLabel={`${sessions.length} ${t('home.sessionsWithDecision')}`}
+      isLoading={isLoading}
+      error={error}
+      errorMessage={t('home.errorLoadingData')}
+      isEmpty={sessions.length === 0}
+      emptyMessage={t('home.noSessionsWithDecision')}
+    >
+      {sessions.map((session) => (
+        <SessionsWithDecisionItem key={session.id} session={session} />
+      ))}
+    </DashboardWidgetCard>
+  )
 }
 
-export default SessionsWithDecision;
+export default SessionsWithDecision

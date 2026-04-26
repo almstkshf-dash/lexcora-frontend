@@ -11,13 +11,14 @@ const NavigationMenu = ({
   openSubmenus, 
   onNavClick, 
   onToggleSubmenu, 
-  isRTL 
+  isRTL,
+  isCollapsed
 }) => {
   return (
-    <nav className="flex-1 overflow-y-auto mt-6 px-4" role="menubar">
-      <ul className="space-y-2" role="none">
+    <nav className={`flex-1 overflow-y-auto mt-6 ${isCollapsed ? 'px-2' : 'px-4'}`} aria-label={isRTL ? 'قائمة التنقل' : 'Navigation Menu'}>
+      <ul className="space-y-2">
         {menuItems.map((item) => (
-          <li key={item.id} role="none" className='cursor-pointer'>
+          <li key={item.id} className='cursor-pointer'>
             <MenuItem
               item={item}
               activeItem={activeItem}
@@ -25,6 +26,7 @@ const NavigationMenu = ({
               onNavClick={onNavClick}
               onToggleSubmenu={onToggleSubmenu}
               isRTL={isRTL}
+              isCollapsed={isCollapsed}
             />
           </li>
         ))}

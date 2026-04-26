@@ -85,6 +85,7 @@ const WorkingHoursSettings = () => {
   // Fetch working hours on component mount
   useEffect(() => {
     fetchWorkingHours();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

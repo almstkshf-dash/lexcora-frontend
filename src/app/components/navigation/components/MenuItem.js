@@ -11,7 +11,8 @@ const MenuItem = React.memo(({
   openSubmenus, 
   onNavClick, 
   onToggleSubmenu,
-  isRTL 
+  isRTL,
+  isCollapsed
 }) => {
   const IconComponent = item.icon;
   const isActive = activeItem === item.id;
@@ -28,10 +29,10 @@ const MenuItem = React.memo(({
           flex 
           items-center 
           w-full 
-          px-4 
+          ${isCollapsed ? 'justify-center px-2' : 'px-4'} 
           py-3 
           text-sidebar-foreground 
-          hover:text-sidebdar-foreground 
+          hover:text-sidebar-foreground 
           rounded-xl 
           cursor-pointer
           transition-all 
@@ -52,17 +53,21 @@ const MenuItem = React.memo(({
           w-5 
           h-5 
           transition-colors  
-          ${isRTL ? 'icon-spacing-rtl' : 'icon-spacing-ltr'} 
+          ${isRTL && !isCollapsed ? 'icon-spacing-rtl' : (!isCollapsed ? 'icon-spacing-ltr' : '')} 
           ${isActive 
             ? 'text-sidebar-primary-foreground' 
             : 'text-sidebar-foreground/70 group-hover:text-sidebar-foreground'
           }
         `} />
-        <span className="font-medium transition-colors">{item.label}</span>
-        {item.badge && (
-          <span className={`${isRTL ? 'mr-auto' : 'ml-auto'} ${item.badgeColor || 'bg-blue-500'} text-white text-xs px-2 py-1 rounded-full font-semibold`}>
-            {item.badge}
-          </span>
+        {!isCollapsed && (
+          <>
+            <span className="font-medium transition-colors">{item.label}</span>
+            {item.badge && (
+              <span className={`${isRTL ? 'mr-auto' : 'ml-auto'} ${item.badgeColor || 'bg-blue-500'} text-white text-xs px-2 py-1 rounded-full font-semibold`}>
+                {item.badge}
+              </span>
+            )}
+          </>
         )}
       </button>
     );
@@ -71,15 +76,17 @@ const MenuItem = React.memo(({
   return (
     <>
       <button 
-        onClick={() => item.type === 'category' ? onNavClick(item.id, item.type) : onToggleSubmenu(item.id)}
+        onClick={() => {
+          if (isCollapsed) return; // Optional: do nothing or open popout if we wanted to
+          item.type === 'category' ? onNavClick(item.id, item.type) : onToggleSubmenu(item.id)
+        }}
         className={`
           group 
           flex 
           items-center 
-          justify-between 
+          ${isCollapsed ? 'justify-center px-2' : 'justify-between px-4'} 
           w-full 
           cursor-pointer
-          px-4 
           py-3 
           text-sidebar-foreground 
           rounded-xl 
@@ -100,7 +107,7 @@ const MenuItem = React.memo(({
           }
         `}
         aria-expanded={isOpen}
-        aria-haspopup="true"
+        aria-haspopup="menu"
         aria-current={isCategoryActive ? 'page' : undefined}
       >
         <div className="flex items-center">
@@ -108,7 +115,7 @@ const MenuItem = React.memo(({
             w-5 
             h-5 
             transition-colors  
-            ${isRTL ? 'ml-3' : 'mr-3'} 
+            ${isRTL && !isCollapsed ? 'ml-3' : (!isCollapsed ? 'mr-3' : '')} 
             ${item.type === 'category' 
               ? isCategoryActive 
                 ? 'text-sidebar-foreground' 
@@ -118,33 +125,38 @@ const MenuItem = React.memo(({
                 : 'text-sidebar-foreground/70 group-hover:text-sidebar-foreground'
             }
           `} />
-          <span className={`font-medium transition-colors ${
-            item.type === 'category' ? 'text-sidebar-foreground/90' : ''
-          }`}>{item.label}</span>
+          {!isCollapsed && (
+            <span className={`font-medium transition-colors ${
+              item.type === 'category' ? 'text-sidebar-foreground/90' : ''
+            }`}>{item.label}</span>
+          )}
         </div>
-        <ChevronDown 
-          className={`
-            w-4 
-            h-4 
-            transition-all  
-            duration-300 
-            ${isOpen ? 'rotate-180' : ''} 
-            ${item.type === 'category' 
-              ? 'text-sidebar-foreground/60' 
-              : isActive 
-                ? 'text-sidebar-primary-foreground' 
-                : 'text-sidebar-foreground/50'
-            }
-          `}
-        />
+        {!isCollapsed && (
+          <ChevronDown 
+            className={`
+              w-4 
+              h-4 
+              transition-all  
+              duration-300 
+              ${isOpen ? 'rotate-180' : ''} 
+              ${item.type === 'category' 
+                ? 'text-sidebar-foreground/60' 
+                : isActive 
+                  ? 'text-sidebar-primary-foreground' 
+                  : 'text-sidebar-foreground/50'
+              }
+            `}
+          />
+        )}
       </button>
       
-      <div 
-        className={`overflow-hidden p-2 transition-all duration-300 ease-in-out ${
-          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        }`}
-      >
-        <ul className={`${isRTL ? 'mr-4' : 'ml-4'} mt-2 space-y-1`} role="group">
+      {!isCollapsed && (
+        <div 
+          className={`overflow-hidden p-2 transition-all duration-300 ease-in-out ${
+            isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
+          <ul className={`${isRTL ? 'mr-4' : 'ml-4'} mt-2 space-y-1`} role="group">
           {item.submenu?.map((subItem) => {
             const SubIconComponent = subItem.icon;
             const isSubActive = activeItem === subItem.id;
@@ -193,6 +205,7 @@ const MenuItem = React.memo(({
           })}
         </ul>
       </div>
+      )}
     </>
   );
 });

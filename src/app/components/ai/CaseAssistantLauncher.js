@@ -198,10 +198,9 @@ function CaseAssistantLauncher({ caseId, align = 'right' }) {
           {isLoadingContext ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <ShieldQuestion className="h-4 w-4 text-purple-600" />
+            <img src="/images/rased-icon.jpg" alt="Rased" className="h-5 w-5 rounded-full object-cover shadow-sm" />
           )}
           <span className="mx-2">{label}</span>
-          <Sparkles className="h-4 w-4 text-purple-500 group-hover:rotate-12 transition" />
         </Button>
         <p className="text-xs text-muted-foreground">{helper}</p>
       </div>

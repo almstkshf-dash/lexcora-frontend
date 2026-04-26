@@ -30,8 +30,8 @@ export const loginWithRedux = (username, password) => async (dispatch) => {
       dispatch({
         type: 'auth/loginSuccess',
         payload: {
-          user: data.user,
-          permissions: data.permissions
+          user: data.data.user,
+          permissions: data.data.permissions
         }
       });
       
@@ -93,11 +93,11 @@ export const checkAuthStatus = () => async (dispatch) => {
       dispatch({
         type: 'auth/restoreAuth',
         payload: {
-          user: response.data,
-          permissions: response.permissions || [] // Use permissions from response
+          user: response.data.user,
+          permissions: response.data.permissions || [] // Use permissions from inside data
         }
       });
-      return { success: true, user: response.data };
+      return { success: true, user: response.data.user };
     } else {
       // Handle case where API returns success: false or no user data
       dispatch({ type: 'auth/logout' });

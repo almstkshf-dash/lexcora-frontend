@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import useSWR from 'swr';
-import { useSelector } from 'react-redux';
-import { selectUser, selectAuth } from '@/redux/slices/authSlice';
 import { getAssignedToTasks } from '@/app/services/api/tasks';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useTranslations } from '@/hooks/useTranslations';
+import { useResolvedUser } from '@/hooks/useResolvedUser';
+import { useTaskUtils } from '@/hooks/useTaskUtils';
+import { useDebounce } from '@/hooks/useDebounce';
 import EditTaskModal from '@/app/cases/[id]/edit/tasks/EditTaskModal';
 import {
   Table,
@@ -19,114 +18,65 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Clock, Calendar, AlertCircle, User, Eye, RefreshCw } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious,
+  PaginationEllipsis
+} from '@/components/ui/pagination';
+import { Clock, Calendar, AlertCircle, User, Eye, RefreshCw, Search, Filter, Briefcase } from 'lucide-react';
+
+const TableSkeleton = () => (
+  <div className="space-y-3">
+    {[1, 2, 3, 4, 5].map((i) => (
+      <div key={i} className="flex items-center space-x-4 space-x-reverse">
+        <Skeleton className="h-12 w-full" />
+      </div>
+    ))}
+  </div>
+);
 
 const AssignedToTasks = () => {
-  const { isRTL, language } = useLanguage();
-  const { t } = useTranslations();
-  const user = useSelector(selectUser);
-  const auth = useSelector(selectAuth);
+  const { userId, isAuth, user } = useResolvedUser();
+  const { 
+    isRTL, t, formatDate, getPriorityBadgeColor, getStatusBadgeColor, 
+    getPriorityLabel, getStatusLabel, isOverdue 
+  } = useTaskUtils();
 
-  const resolvedUser = useMemo(() => {
-    const fromState = user || auth?.user || {};
-    const fromStorage = (() => {
-      if (typeof window === 'undefined') return {};
-      try {
-        const stored = localStorage.getItem('user');
-        return stored ? JSON.parse(stored) : {};
-      } catch (e) {
-        return {};
-      }
-    })();
-    return {
-      ...fromStorage,
-      ...fromState,
-    };
-  }, [user, auth]);
+  // State for filters and pagination
+  const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 500);
+  const [status, setStatus] = useState('active'); 
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
-  const userId =
-    resolvedUser?.id ||
-    resolvedUser?._id ||
-    resolvedUser?.user_id ||
-    resolvedUser?.job_id ||
-    auth?.jobId ||
-    null;
-  
   // Modal state
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   
   // Fetch assigned tasks using SWR
-  const { data: tasksData, error, isLoading, mutate } = useSWR(
-    userId ? [`/tasks/assigned-to/${userId}`, userId] : null,
-    () => getAssignedToTasks(userId),
+  const { data: response, error, isLoading, mutate } = useSWR(
+    userId ? [`/tasks/assigned-to/${userId}`, userId, status, debouncedSearch, page] : null,
+    () => getAssignedToTasks(userId, { 
+      status: status === 'all' ? undefined : status, 
+      search: debouncedSearch,
+      page,
+      limit
+    }),
     {
-      refreshInterval: 300000, // Refresh every 5 minutes
+      refreshInterval: 300000, 
       revalidateOnFocus: true
     }
   );
 
-  const getPriorityBadgeColor = (priority) => {
-    switch (priority) {
-      case 'urgent':
-        return 'destructive';
-      case 'high':
-        return 'destructive';
-      case 'normal':
-        return 'secondary';
-      default:
-        return 'outline';
-    }
-  };
-
-  const getStatusBadgeColor = (status) => {
-    switch (status) {
-      case 'completed':
-        return 'default';
-      case 'in_progress':
-        return 'secondary';
-      case 'pending':
-        return 'outline';
-      case 'cancel':
-        return 'destructive';
-      default:
-        return 'outline';
-    }
-  };
-
-  const getPriorityLabel = (priority) => {
-    switch (priority) {
-      case 'urgent':
-        return t('tasks.priorityUrgent');
-      case 'high':
-        return t('tasks.priorityHigh');
-      case 'normal':
-        return t('tasks.priorityNormal');
-      default:
-        return priority;
-    }
-  };
-
-  const getStatusLabel = (status) => {
-    switch (status) {
-      case 'pending':
-        return t('tasks.statusPending');
-      case 'in_progress':
-        return t('tasks.statusInProgress');
-      case 'completed':
-        return t('tasks.statusCompleted');
-      case 'cancelled':
-        return t('tasks.statusCancel');
-      default:
-        return status;
-    }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-US');
-  };
+  const tasks = response?.data || [];
+  const pagination = response?.pagination || { totalPages: 1, total: 0 };
 
   const handleEditTask = (taskId) => {
     setSelectedTaskId(taskId);
@@ -136,21 +86,16 @@ const AssignedToTasks = () => {
   const handleModalClose = (shouldRefresh = false) => {
     setIsEditTaskModalOpen(false);
     setSelectedTaskId(null);
-    
-    // Mutate (refresh) the data if needed
-    if (shouldRefresh) {
-      mutate();
-    }
+    if (shouldRefresh) mutate();
   };
 
-  if (!userId) {
+  if (!isAuth && !isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <User className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">{t('common.loading')}</p>
+          <RefreshCw className="h-12 w-12 mx-auto text-primary animate-spin mb-4" />
           <p className="text-sm text-muted-foreground mt-1">
-            {t('common.error')}
+            {t('auth.verifying')}
           </p>
         </div>
       </div>
@@ -164,6 +109,9 @@ const AssignedToTasks = () => {
           <AlertCircle className="h-12 w-12 mx-auto text-destructive mb-4" />
           <p className="text-destructive mb-2">{t('common.error')}</p>
           <p className="text-sm text-muted-foreground">{t('common.errorLoading')}</p>
+          <Button variant="outline" className="mt-4" onClick={() => mutate()}>
+            {t('common.retry')}
+          </Button>
         </div>
       </div>
     );
@@ -171,148 +119,233 @@ const AssignedToTasks = () => {
 
   return (
     <div className="container mx-auto py-6 space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
-      <div className="flex justify-between items-start">
-        <div className="flex flex-col space-y-2">
-          <h1 className="text-3xl font-bold">{t('navigation.myTasks')}</h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex flex-col space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">{t('navigation.myTasks')}</h1>
           <p className="text-muted-foreground">
-            {t('tasks.myTasksDescription') || 'View and manage tasks assigned to you'}
+            {t('tasks.myTasksDescription')}
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => mutate()}
-          disabled={isLoading}
-          className="flex items-center gap-2"
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-          {t('common.refresh') || 'Refresh'}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => mutate()}
+            disabled={isLoading}
+            className="h-9"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''} ${isRTL ? 'ml-2' : 'mr-2'}`} />
+            {t('common.refresh')}
+          </Button>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            {t('navigation.myTasks')}
-          </CardTitle>
-          <CardDescription>
-            {tasksData?.data?.length > 0 
-              ? `${tasksData.data.length} ${t('tasks.tasks')} ${t('tasks.assignedTo')} ${user.name || user.email}`
-              : t('tasks.noTasks')
-            }
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                <p className="text-muted-foreground">{t('common.loading')}</p>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="md:col-span-2 relative">
+          <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground`} />
+          <Input
+            placeholder={t('common.search') + '...'}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className={isRTL ? 'pr-10' : 'pl-10'}
+          />
+        </div>
+        <div>
+          <Select value={status} onValueChange={(val) => { setStatus(val); setPage(1); }}>
+            <SelectTrigger>
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <SelectValue placeholder={t('tasks.status')} />
               </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="active">{t('tasks.activeTasks')}</SelectItem>
+              <SelectItem value="all">{t('common.all')}</SelectItem>
+              <SelectItem value="pending">{t('tasks.statusPending')}</SelectItem>
+              <SelectItem value="in_progress">{t('tasks.statusInProgress')}</SelectItem>
+              <SelectItem value="completed">{t('tasks.statusCompleted')}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <Card className="border-none shadow-sm overflow-hidden">
+        <CardHeader className="bg-muted/30 pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                <Clock className="h-5 w-5 text-primary" />
+                {t('tasks.assignedTasksTitle')}
+              </CardTitle>
+              <CardDescription>
+                {pagination.total > 0 
+                  ? `${pagination.total} ${t('tasks.tasks')} ${t('tasks.found')}`
+                  : t('tasks.noTasks')
+                }
+              </CardDescription>
             </div>
-          ) : tasksData?.data?.length > 0 ? (
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          {isLoading ? (
+            <div className="p-6">
+              <TableSkeleton />
+            </div>
+          ) : tasks.length > 0 ? (
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader>
+                <TableHeader className="bg-muted/20">
                   <TableRow>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {t('common.id')}
-                    </TableHead>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {t('tasks.taskTitle')}
-                    </TableHead>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {t('tasks.description')}
-                    </TableHead>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {t('tasks.priority')}
-                    </TableHead>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {t('tasks.status')}
-                    </TableHead>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {t('tasks.dueDate')}
-                    </TableHead>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {t('tasks.assignedBy')}
-                    </TableHead>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {t('common.actions')}
-                    </TableHead>
+                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>{t('tasks.taskTitle')}</TableHead>
+                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>{t('cases.case')}</TableHead>
+                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>{t('tasks.priority')}</TableHead>
+                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>{t('tasks.status')}</TableHead>
+                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>{t('tasks.dueDate')}</TableHead>
+                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>{t('tasks.assignedBy')}</TableHead>
+                    <TableHead className={isRTL ? 'text-center' : 'text-center'}>{t('common.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {tasksData.data.map((task) => (
-                    <TableRow key={task.id}>
-                      <TableCell className="font-medium">
-                        #{task.id}
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium">{task.title}</div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-xs truncate" title={task.description}>
-                          {task.description}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={getPriorityBadgeColor(task.priority)}>
-                          {getPriorityLabel(task.priority)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={getStatusBadgeColor(task.status)}>
-                          {getStatusLabel(task.status)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          {formatDate(task.due_date)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                          {task.assigned_by_name || task.created_by || '-'}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditTask(task.id)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {tasks.map((task) => {
+                    const overdue = isOverdue(task.due_date, task.status);
+                    return (
+                      <TableRow key={task.id} className="hover:bg-muted/10 transition-colors">
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-foreground line-clamp-1">{task.title}</span>
+                            <span className="text-xs text-muted-foreground line-clamp-1">{task.description}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {task.case_number ? (
+                            <div className="flex items-center gap-1.5 text-sm text-primary font-medium">
+                              <Briefcase className="h-3.5 w-3.5" />
+                              <span>{task.case_number}</span>
+                            </div>
+                          ) : '-'}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={getPriorityBadgeColor(task.priority)} className="capitalize">
+                            {getPriorityLabel(task.priority)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={getStatusBadgeColor(task.status)} className="capitalize">
+                            {getStatusLabel(task.status)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className={`flex items-center gap-1.5 text-sm ${overdue ? 'text-destructive font-bold' : 'text-muted-foreground'}`}>
+                            <Calendar className="h-3.5 w-3.5" />
+                            {formatDate(task.due_date)}
+                            {overdue && <AlertCircle className="h-3 w-3" />}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1.5 text-sm">
+                            <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
+                              <User className="h-3 w-3 text-primary" />
+                            </div>
+                            <span className="truncate max-w-[120px]">{task.assigned_by_name || '-'}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEditTask(task.id)}
+                            className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/10"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
           ) : (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-center">
-                <Clock className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-2">{t('tasks.noTasks')}</p>
-                <p className="text-sm text-muted-foreground">
-                  {t('tasks.noTasksDescription') || 'No tasks have been assigned to you yet.'}
-                </p>
+            <div className="flex flex-col items-center justify-center py-16 px-4">
+              <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center mb-4">
+                <Clock className="h-10 w-10 text-muted-foreground" />
               </div>
+              <h3 className="text-lg font-semibold">{t('tasks.noTasks')}</h3>
+              <p className="text-muted-foreground text-center max-w-sm mt-1">
+                {search || status !== 'active' 
+                  ? t('tasks.noTasksFoundForFilters')
+                  : t('tasks.noTasksDescription')}
+              </p>
+              {(search || status !== 'active') && (
+                <Button 
+                  variant="link" 
+                  onClick={() => { setSearch(''); setStatus('active'); }}
+                  className="mt-2"
+                >
+                  {t('common.clearFilters')}
+                </Button>
+              )}
             </div>
           )}
         </CardContent>
+        {pagination.totalPages > 1 && (
+          <div className="border-t p-4 flex justify-center bg-muted/10">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="cursor-pointer"
+                  />
+                </PaginationItem>
+                
+                {[...Array(pagination.totalPages)].map((_, i) => {
+                  const pageNum = i + 1;
+                  // Show current, first, last, and neighbors
+                  if (
+                    pageNum === 1 || 
+                    pageNum === pagination.totalPages || 
+                    (pageNum >= page - 1 && pageNum <= page + 1)
+                  ) {
+                    return (
+                      <PaginationItem key={pageNum}>
+                        <PaginationLink 
+                          isActive={page === pageNum}
+                          onClick={() => setPage(pageNum)}
+                          className="cursor-pointer"
+                        >
+                          {pageNum}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  }
+                  if (pageNum === page - 2 || pageNum === page + 2) {
+                    return <PaginationItem key={pageNum}><PaginationEllipsis /></PaginationItem>;
+                  }
+                  return null;
+                })}
+
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))}
+                    disabled={page === pagination.totalPages}
+                    className="cursor-pointer"
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
       </Card>
 
-      {/* Edit Task Modal */}
       <EditTaskModal
         isOpen={isEditTaskModalOpen}
         onOpenChange={(isOpen) => {
           if (!isOpen) {
-            // Modal is closing, refresh the data
             handleModalClose(true);
           } else {
             setIsEditTaskModalOpen(isOpen);

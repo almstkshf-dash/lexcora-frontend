@@ -1,13 +1,18 @@
 "use client";
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import arMessages from "../../messages/ar.json";
-import enMessages from "../../messages/en.json";
 
-const messages = {
-  ar: arMessages,
-  en: enMessages
-};
+// Lazy-load JSON to avoid Turbopack HMR pattern-matching errors with large files
+let _cachedMessages = null;
+function getMessages() {
+  if (!_cachedMessages) {
+    _cachedMessages = {
+      ar: require("../../messages/ar.json"),
+      en: require("../../messages/en.json"),
+    };
+  }
+  return _cachedMessages;
+}
 
 const hardcodedFallbacks = {
   en: {
@@ -31,7 +36,8 @@ export const useTranslations = (namespace = null) => {
       return '';
     }
     const keys = key.split('.');
-    let translation = messages[language];
+    const msgs = getMessages();
+    let translation = msgs[language];
 
     // Navigate through nested keys
     for (const k of keys) {
@@ -39,7 +45,7 @@ export const useTranslations = (namespace = null) => {
         translation = translation[k];
       } else {
         // Fallback to English if key not found in current language
-        translation = messages['en'];
+        translation = msgs['en'];
         for (const fallbackKey of keys) {
           if (translation && typeof translation === 'object' && fallbackKey in translation) {
             translation = translation[fallbackKey];

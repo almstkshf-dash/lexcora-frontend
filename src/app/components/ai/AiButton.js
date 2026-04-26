@@ -15,15 +15,17 @@ function AiButton() {
       {/* Fixed Button in Bottom Corner - position based on language */}
       <Button
         onClick={() => setIsChatOpen(true)}
-        className={`fixed bottom-6 ${isRTL ? 'left-6' : 'right-6'} z-40 bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 dark:from-purple-500 dark:to-blue-500 dark:hover:from-purple-600 dark:hover:to-blue-600 text-white p-4 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-110 flex items-center gap-2 group`}
-        aria-label={isRTL ? "مساعد الذكاء الاصطناعي" : "AI Assistant"}
+        className={`fixed bottom-6 ${isRTL ? 'left-6' : 'right-6'} z-40 bg-background hover:bg-muted text-foreground p-1.5 rounded-full shadow-2xl hover:shadow-primary/25 transition-all duration-300 hover:scale-105 flex items-center gap-3 group border border-border/50 ring-1 ring-primary/10`}
+        aria-label={isRTL ? "راصد" : "Rased Assistant"}
       >
-        <Sparkles size={24} className="group-hover:rotate-12 transition-transform" />
-        <span className="text-sm font-medium hidden md:inline">
-          {isRTL ? 'المساعد القانوني' : 'Legal Assistant'}
+        <div className="relative h-14 w-14 rounded-full overflow-hidden border border-primary/20 shadow-md bg-background shrink-0">
+          <img src="/images/rased-icon.jpg" alt="Rased" className="h-full w-full object-cover" />
+        </div>
+        <span className="text-base font-bold hidden md:inline px-3 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+          {isRTL ? 'اسأل راصد' : 'Ask Rased'}
         </span>
         {/* Glow effect */}
-        <span className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-400/50 to-blue-400/50 blur-md opacity-0 group-hover:opacity-100 transition-opacity"></span>
+        <span className="absolute inset-0 rounded-full bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none -z-10"></span>
       </Button>
 
       {/* Chat Popup */}

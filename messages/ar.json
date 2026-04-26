@@ -14,6 +14,8 @@
     "success": "نجح",
     "warning": "تحذير",
     "info": "معلومات",
+    "today": "اليوم",
+    "tomorrow": "غداً",
     "errorLoading": "خطأ في تحميل البيانات",
     "noData": "لا توجد بيانات متاحة",
     "notSpecified": "غير محدد",
@@ -78,8 +80,10 @@
     "amount": "المبلغ",
     "description": "الوصف",
     "print": "طباعة",
-    "exportExcel": "تصدير Excel",
-    "client": "الموكل"
+    "exportExcel": "تصدير اكسل",
+    "client": "العميل",
+    "retry": "إعادة المحاولة",
+    "clearFilters": "مسح الفلاتر"
   },
   "navigation": {
     "dashboard": "لوحة التحكم",
@@ -143,9 +147,16 @@
     "collapseSidebar": "طي الشريط الجانبي",
     "openMenu": "فتح القائمة",
     "toggleSearch": "بحث",
-    "appTitle": "ليكسورا",
-    "appSubtitle": "النظام الذكي للمحاماة",
+    "appTitle": "LEXCORA",
+    "appSubtitle": "Legal Management System",
     "userGuide": "دليل المستخدم"
+  },
+  "cases": {
+    "title": "إدارة القضايا",
+    "case": "القضية",
+    "caseNumber": "رقم القضية",
+    "fileNumber": "رقم الملف",
+    "topic": "الموضوع"
   },
   "search": {
     "placeholderByFileOrCase": "ابحث برقم الملف أو رقم القضية...",
@@ -1114,12 +1125,19 @@
     "errorUpdatingTask": "حدث خطأ أثناء تحديث المهمة",
     "myTasksDescription": "اعرض وأدر المهام المسندة إليك",
     "noTasksDescription": "لم يتم تكليفك بأي مهام بعد.",
+    "assignedTasksTitle": "المهام المسندة",
     "createdTasksTitle": "المهام التي أنشأتها",
     "createdTasksDescription": "اعرض وأدر المهام التي قمت بإنشائها",
     "noCreatedTasksDescription": "لم تقم بإنشاء أي مهام بعد.",
+    "activeTasks": "المهام النشطة",
+    "found": "تم العثور عليها",
+    "noTasksFoundForFilters": "لم يتم العثور على مهام تطابق الفلاتر الحالية.",
     "filterByStatus": "تصفية حسب الحالة",
     "allStatuses": "جميع الحالات",
     "tasks": "مهام",
+    "deleteSuccess": "تم حذف المهمة بنجاح",
+    "deletePermissionError": "ليس لديك صلاحية لحذف هذه المهمة",
+    "deleteError": "حدث خطأ أثناء حذف المهمة",
     "updating": "جاري التحديث...",
     "updatingTask": "جاري تحديث المهمة...",
     "loadingTask": "جاري تحميل المهمة...",
@@ -1275,7 +1293,8 @@
     "accountDisabled": "تم إيقاف حسابك. يرجى التواصل مع المدير",
     "sessionExpired": "انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى",
     "unauthorizedAccess": "غير مسموح لك بالوصول لهذه الصفحة",
-    "logoutSuccess": "تم تسجيل الخروج بنجاح"
+    "logoutSuccess": "تم تسجيل الخروج بنجاح",
+    "verifying": "جاري التحقق من الهوية..."
   },
   "validation": {
     "nameRequired": "الاسم مطلوب",

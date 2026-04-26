@@ -15,12 +15,13 @@ function LegalAssistantButton() {
         onClick={() => setIsChatOpen(true)}
         variant="ghost"
         size="icon"
-        className="relative rounded-xl bg-gradient-to-br from-purple-600/10 to-blue-600/10 hover:from-purple-600/20 hover:to-blue-600/20 border border-purple-500/30 hover:border-purple-500/50 transition-all duration-200 group"
-        aria-label="Open legal assistant"
+        className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-primary/20 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 p-0"
+        aria-label="Open Rased Assistant"
       >
-        <Sparkles 
-          size={20} 
-          className="text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 group-hover:rotate-12 transition-all" 
+        <img 
+          src="/images/rased-icon.jpg" 
+          alt="Rased" 
+          className="h-full w-full object-cover"
         />
       </Button>
 

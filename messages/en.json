@@ -14,6 +14,8 @@
     "success": "Success",
     "warning": "Warning",
     "info": "Information",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
     "errorLoading": "Error loading data",
     "noData": "No data available",
     "notSpecified": "Not specified",
@@ -80,7 +82,9 @@
     "description": "Description",
     "print": "Print",
     "exportExcel": "Export Excel",
-    "client": "Client"
+    "client": "Client",
+    "retry": "Retry",
+    "clearFilters": "Clear filters"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -147,6 +151,13 @@
     "appTitle": "LEXCORA",
     "appSubtitle": "Legal Management System",
     "userGuide": "User Guide"
+  },
+  "cases": {
+    "title": "Cases Management",
+    "case": "Case",
+    "caseNumber": "Case Number",
+    "fileNumber": "File Number",
+    "topic": "Topic"
   },
   "search": {
     "placeholderByFileOrCase": "Search by file or case number...",
@@ -1119,12 +1130,19 @@
     "errorUpdatingTask": "Error updating task",
     "myTasksDescription": "View and manage tasks assigned to you",
     "noTasksDescription": "No tasks have been assigned to you yet.",
+    "assignedTasksTitle": "Assigned Tasks",
     "createdTasksTitle": "My Created Tasks",
     "createdTasksDescription": "View and manage tasks you have created",
     "noCreatedTasksDescription": "You haven't created any tasks yet.",
+    "activeTasks": "Active Tasks",
+    "found": "found",
+    "noTasksFoundForFilters": "No tasks found matching your current filters.",
     "filterByStatus": "Filter by Status",
     "allStatuses": "All Statuses",
     "tasks": "tasks",
+    "deleteSuccess": "Task deleted successfully",
+    "deletePermissionError": "You do not have permission to delete this task",
+    "deleteError": "Error deleting task",
     "updating": "Updating...",
     "updatingTask": "Updating task...",
     "loadingTask": "Loading task...",
@@ -1280,7 +1298,8 @@
     "accountDisabled": "Your account has been disabled. Please contact the administrator",
     "sessionExpired": "Session expired. Please login again",
     "unauthorizedAccess": "You are not authorized to access this page",
-    "logoutSuccess": "Logout successful"
+    "logoutSuccess": "Logout successful",
+    "verifying": "Verifying authentication..."
   },
   "validation": {
     "nameRequired": "Name is required",

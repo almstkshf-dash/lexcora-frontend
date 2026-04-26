@@ -521,10 +521,15 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
         </Button>
 
         {/* Header */}
-        <div className={`bg-background border-b p-4 ${isRTL ? 'pl-12' : 'pr-12'}`}>
-          <div className="flex items-center gap-2">
-            <Sparkles size={20} className="text-purple-600 dark:text-purple-400 animate-pulse" />
-            <h2 className="text-lg font-semibold text-foreground">{isRTL ? 'المساعد القانوني' : 'Legal Assistant'}</h2>
+        <div className={`bg-gradient-to-r from-background to-muted/30 border-b p-4 ${isRTL ? 'pl-12' : 'pr-12'}`}>
+          <div className="flex items-center gap-3">
+            <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border border-primary/20 shadow-sm bg-background">
+              <img src="/images/rased-icon.jpg" alt="Rased" className="h-full w-full object-cover" />
+            </div>
+            <div className="flex flex-col">
+              <h2 className="text-lg font-bold text-foreground tracking-tight">{isRTL ? 'راصد' : 'Rased'}</h2>
+              <span className="text-[11px] font-medium text-muted-foreground">{isRTL ? 'مساعدك الذكي' : 'Your Smart Assistant'}</span>
+            </div>
           </div>
         </div>
 
@@ -553,10 +558,13 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
           <div className="space-y-4">
           {messages.length === 0 && (
-            <div className="text-center text-muted-foreground mt-8">
-              <Sparkles className="mx-auto mb-2 text-purple-500" size={32} />
-              <p className="text-sm">
-                {isRTL ? 'مرحباً! كيف يمكنني مساعدتك في الأمور القانونية؟' : 'Hello! How can I help you with legal matters?'}
+            <div className="flex flex-col items-center justify-center text-center mt-12 mb-8 animate-in slide-in-from-bottom-4 duration-500">
+              <div className="h-20 w-20 rounded-full border-4 border-background shadow-md bg-white mb-4 relative overflow-hidden">
+                <img src="/images/rased-icon.jpg" alt="Rased" className="h-full w-full object-cover" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">{isRTL ? 'مرحباً، أنا راصد' : 'Welcome I Am Rased'}</h3>
+              <p className="text-sm text-muted-foreground max-w-[250px]">
+                {isRTL ? 'مساعدك القانوني' : 'your legal assistant'}
               </p>
               {isHistoryLoading && (
                 <p className="text-xs mt-2">
@@ -569,13 +577,18 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex w-full ${message.role === 'user' ? 'justify-end' : 'justify-start gap-2'}`}
             >
+              {message.role === 'assistant' && (
+                <div className="flex-shrink-0 h-8 w-8 rounded-full overflow-hidden border border-border shadow-sm mt-1 bg-background hidden sm:block">
+                  <img src="/images/rased-icon.jpg" alt="Rased" className="h-full w-full object-cover" />
+                </div>
+              )}
               <div
-                className={`max-w-[80%] rounded-lg p-3 ${
+                className={`max-w-[85%] sm:max-w-[80%] p-3.5 shadow-sm text-sm ${
                   message.role === 'user'
-                    ? 'bg-gradient-to-br from-purple-600 to-blue-600 text-white'
-                    : 'bg-muted text-foreground border'
+                    ? `bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-2xl ${isRTL ? 'rounded-tl-sm' : 'rounded-tr-sm'}`
+                    : `bg-card text-card-foreground border border-border/40 rounded-2xl ${isRTL ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
                 }`}
               >
                 {/* User name for user messages */}
@@ -751,11 +764,11 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
             <Button
               onClick={handleSendMessage}
               disabled={( !inputMessage.trim() && attachments.length === 0) || isLoading || isUploading || isStreaming}
-              className="bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+              className="bg-gradient-to-br from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground shadow-sm transition-all hover:shadow-md"
               size="icon"
               aria-label="Send message"
             >
-              {(isLoading || isUploading || isStreaming) ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
+              {(isLoading || isUploading || isStreaming) ? <Loader2 className="animate-spin" size={20} /> : <Send size={18} className={isRTL ? 'rotate-180' : ''} />}
             </Button>
           </div>
         </div>

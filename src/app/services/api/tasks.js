@@ -23,13 +23,11 @@ export const getTasks = async () => {
   }
 };
 
-export const getAssignedToTasks = async (employeeId) => {
+export const getAssignedToTasks = async (employeeId, options = {}) => {
   try {
-    
-    const response = await api.get(`/tasks/assigned-to/${employeeId}`);
+    const response = await api.get(`/tasks/assigned-to/${employeeId}`, { params: options });
     return response.data;
   } catch (error) {
-
     throw error;
   }
 };
@@ -66,12 +64,11 @@ export const getCaseTasks = async (caseId) => {
   }
 };
 
- export const getCreatorTasks = async (employeeId,status) => {
+ export const getCreatorTasks = async (employeeId, options = {}) => {
   try {
-    const response = await api.get(`/tasks/creator/${employeeId}?status=${status}`);
+    const response = await api.get(`/tasks/creator/${employeeId}`, { params: options });
     return response.data;
   } catch (error) {
-
     throw error;
   }
 };

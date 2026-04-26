@@ -60,13 +60,13 @@ function Bar() {
   ]
 
   return (
-    <div className="space-y-6 flex  flex-wrap gap-4">
+    <div className="flex flex-wrap items-end justify-between gap-6 mb-2">
       {/* Case Settings */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+      <div className="space-y-3 flex-1">
+        <h3 className="text-sm font-medium text-muted-foreground">
           {t('caseSettings.title')}
         </h3>
-        <div className="flex items-center- flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {toggleItems.map((item) => {
             const IconComponent = item.icon
             return (

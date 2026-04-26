@@ -7,21 +7,23 @@ import Inputs from "./Inputs"
 
 function Info() {
   return (
-    <div className="space-y-6 p-4">
-      <Bar />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="space-y-2">
+    <div className="space-y-6">
+      <div className="bg-card border rounded-xl p-6 shadow-sm space-y-8">
+        {/* Top Bar / Settings */}
+        <Bar />
+        
+        {/* Main Grid for Form Fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <CaseType />
-        </div>
-        <div className="space-y-2">
           <CaseClassifications />
-        </div>
-        <div className="space-y-2">
           <Branch />
+          <Inputs />
         </div>
       </div>
-      <Inputs/>
-      <Files/>
+
+      <div className="bg-card border rounded-xl p-6 shadow-sm">
+        <Files />
+      </div>
     </div>
   )
 }

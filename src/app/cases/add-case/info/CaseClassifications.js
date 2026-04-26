@@ -83,7 +83,7 @@ function CaseClassifications() {
       
       if (isPermissionError) {
         // Show permission error message
-        const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لإنشاء تصنيف قضية' : 'You do not have permission to create a case classification')
+        const permissionMessage = error?.response?.data?.message || t('caseClassifications.permissionCreate')
         toast.error(permissionMessage)
       } else {
         // Show general error message (try to get from backend first)
@@ -99,7 +99,7 @@ function CaseClassifications() {
     // Check if it's a permission error (403)
     const isPermissionError = error?.response?.status === 403
     const errorMessage = isPermissionError 
-      ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لعرض تصنيفات القضايا' : 'You do not have permission to view case classifications'))
+      ? (error?.response?.data?.message || t('caseClassifications.permissionView'))
       : t('caseClassifications.failedToLoadCaseClassifications')
     
     return <div className="text-red-500">{errorMessage}</div>

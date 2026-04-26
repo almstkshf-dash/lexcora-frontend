@@ -173,12 +173,75 @@
   },
   "branches": {
     "saveFailed": "Could not save branch. Please try again.",
-    "deleteFailed": "Could not delete branch. Please try again."
+    "deleteFailed": "Could not delete branch. Please try again.",
+    "pleaseFillBothNames": "Please fill in both Arabic and English names.",
+    "failedToCreateBranch": "Failed to create branch.",
+    "branchCreatedSuccessfully": "Branch created successfully.",
+    "failedToLoadBranches": "Failed to load branches.",
+    "loadingBranches": "Loading branches...",
+    "selectBranch": "Select Branch",
+    "addNewBranch": "Add New Branch",
+    "arabicName": "Arabic Name",
+    "enterArabicName": "Enter Arabic name",
+    "englishName": "English Name",
+    "enterEnglishName": "Enter English name",
+    "creating": "Creating...",
+    "createBranch": "Create Branch"
   },
   "cases": {
     "createFailed": "Could not create case. Please try again."
   },
   "employees": {
     "permissions": "Permissions"
+  },
+  "caseTypes": {
+    "pleaseFillBothNames": "Please fill in both Arabic and English names.",
+    "failedToCreateCaseType": "Failed to create case type.",
+    "caseTypeCreatedSuccessfully": "Case type created successfully.",
+    "failedToLoadCaseTypes": "Failed to load case types.",
+    "loadingCaseTypes": "Loading case types...",
+    "selectCaseType": "Select Case Type",
+    "addNewCaseType": "Add New Case Type",
+    "arabicName": "Arabic Name",
+    "enterArabicName": "Enter Arabic name",
+    "englishName": "English Name",
+    "enterEnglishName": "Enter English name",
+    "creating": "Creating...",
+    "createCaseType": "Create Case Type",
+    "permissionCreate": "You do not have permission to create a case type.",
+    "permissionView": "You do not have permission to view case types."
+  },
+  "caseClassifications": {
+    "pleaseFillBothNames": "Please fill in both Arabic and English names.",
+    "failedToCreateCaseClassification": "Failed to create case classification.",
+    "caseClassificationCreatedSuccessfully": "Case classification created successfully.",
+    "failedToLoadCaseClassifications": "Failed to load case classifications.",
+    "loadingCaseClassifications": "Loading case classifications...",
+    "selectCaseClassification": "Select Case Classification",
+    "addNewCaseClassification": "Add New Case Classification",
+    "arabicName": "Arabic Name",
+    "enterArabicName": "Enter Arabic name",
+    "englishName": "English Name",
+    "enterEnglishName": "Enter English name",
+    "creating": "Creating...",
+    "createCaseClassification": "Create Case Classification",
+    "permissionCreate": "You do not have permission to create a case classification.",
+    "permissionView": "You do not have permission to view case classifications."
+  },
+  "counterClaim": {
+    "title": "Counter Case",
+    "caseNumberPlaceholder": "Select counter case",
+    "searchPlaceholder": "Search by case or file number...",
+    "searching": "Searching...",
+    "noResults": "No results found",
+    "minCharactersSearch": "Type at least 3 characters to search",
+    "caseLabel": "Case:",
+    "fileLabel": "File:",
+    "topicLabel": "Topic:"
+  },
+  "sessions": {
+    "clickOrDragFiles": "Click or drag files here",
+    "pdfDocTxtImages": "PDF, DOC, TXT, Images up to 10MB",
+    "noFilesUploaded": "No files uploaded yet"
   }
 }

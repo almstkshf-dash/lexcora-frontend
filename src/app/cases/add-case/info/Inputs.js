@@ -19,7 +19,7 @@ function Inputs() {
   const { t } = useTranslations()
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+    <>
       <FormField
         label={t('caseForm.caseNumber')}
         htmlFor="caseNumber"
@@ -59,7 +59,7 @@ function Inputs() {
         label={t('caseForm.subject')}
         htmlFor="subject"
         error={errors.topic && touched.topic ? errors.topic : null}
-        className="col-span-1 md:col-span-2 lg:col-span-2"
+        className="col-span-1 md:col-span-2 lg:col-span-full"
         description={t('caseForm.subjectHelper')}
       >
         <Textarea
@@ -77,7 +77,7 @@ function Inputs() {
         label={t('caseForm.additionalNotes')}
         htmlFor="additionalNotes"
         error={errors.additionalNote && touched.additionalNote ? errors.additionalNote : null}
-        className="col-span-1 lg:col-span-2"
+        className="col-span-1 md:col-span-2 lg:col-span-full"
       >
         <Textarea
           id="additionalNotes"
@@ -89,7 +89,7 @@ function Inputs() {
           rows={5}
         />
       </FormField>
-    </div>
+    </>
   )
 }
 

@@ -95,7 +95,7 @@ function Files() {
   };
 
   return (
-    <div className='space-x-4 grid grid-cols-2'>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* File Upload Area */}
       <div
         className={cn(
@@ -187,7 +187,7 @@ function Files() {
           <div className="text-center text-muted-foreground py-4">
             <File className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p className="text-sm">
-              {isArabic ? '?? ??? ??? ?? ????? ???' : 'No files uploaded yet'}
+              {t('sessions.noFilesUploaded')}
             </p>
           </div>
         )}

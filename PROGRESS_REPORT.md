@@ -78,5 +78,4 @@ Given the bilingual requirement of the platform (Arabic/English), `lexcora-front
 
 - **DataTable ReferenceError Fix:** Resolved a critical `ReferenceError: useEffect is not defined` in the `DataTable` component. The error occurred due to a missing `useEffect` import from the 'react' package while using it for search input debouncing.
 - **Cases Statistics Data Validation:** Fixed a data mismatch issue where case stat cards (Active, Pending, Important) were only showing counts for the current page of results. The logic was moved to the backend to return global counts for the filtered dataset, and the frontend was updated to consume these real-time metrics, ensuring accuracy across all pages.
-
-
+- **ESLint Next-Intl Setup:** Installed `eslint-plugin-next-intl` to statically analyze translation keys and prevent missing or hardcoded strings from making it to production. Updated `eslint.config.mjs` in both `lexcora-frontend` and `lexcora-client-portal` to use the plugin with ESLint v9's Flat Config and properly scan the `./messages` directory.

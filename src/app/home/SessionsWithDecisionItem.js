@@ -129,6 +129,7 @@ function SessionsWithDecisionItem({
 
   return (
     <Card className="transition-all duration-200 hover:shadow-md hover:scale-[1.02] dark:bg-gray-900 dark:border-gray-700">
+      <CardContent className="p-4 sm:p-5">
         <div className="grid grid-cols-1 gap-2">
           
           {/* Ruling Date */}

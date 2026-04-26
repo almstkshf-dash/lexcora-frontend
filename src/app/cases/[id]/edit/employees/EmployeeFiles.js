@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from 'react';
-import { Upload, File, X, FileText, Image, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
+import { Upload, File, X, FileText, Image as ImageIcon, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,7 @@ function EmployeeFiles({ formikProps }) {
   const isArabic = language === 'ar';
 
   // Get files from Formik values
-  const employeesFiles = values.employeesFiles || [];
+  const employeesFiles = React.useMemo(() => values.employeesFiles || [], [values.employeesFiles]);
 
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -74,7 +74,7 @@ function EmployeeFiles({ formikProps }) {
 
   // Get file icon
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
+    if (type.startsWith('image/')) return <ImageIcon className="h-4 w-4" />;
     if (type.includes('pdf')) return <FileText className="h-4 w-4" />;
     return <FileIcon className="h-4 w-4" />;
   };

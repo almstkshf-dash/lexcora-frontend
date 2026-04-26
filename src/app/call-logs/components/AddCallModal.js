@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'react-toastify';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Image as ImageIcon } from 'lucide-react';
 import { createCallLog } from '@/app/services/api/callLogs';
 import { useTranslations } from '@/hooks/useTranslations';
 
@@ -117,20 +117,25 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
     onClose();
   };
 
+  // Memoize date/time values to prevent unnecessary re-renders
+  const defaultDateTime = useMemo(() => {
+    const now = new Date();
+    return {
+      date: now.toISOString().split('T')[0],
+      time: now.toTimeString().split(' ')[0].substring(0, 5)
+    };
+  }, []);
+
   // Set default date and time to current
   React.useEffect(() => {
     if (isOpen && !formData.call_date && !formData.call_time) {
-      const now = new Date();
-      const currentDate = now.toISOString().split('T')[0];
-      const currentTime = now.toTimeString().split(' ')[0].substring(0, 5);
-      
       setFormData(prev => ({
         ...prev,
-        call_date: currentDate,
-        call_time: currentTime
+        call_date: defaultDateTime.date,
+        call_time: defaultDateTime.time
       }));
     }
-  }, [isOpen]);
+  }, [isOpen, formData.call_date, formData.call_time, defaultDateTime]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>

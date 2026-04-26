@@ -212,15 +212,19 @@ const DataTable = ({
         </div>
       )}
 
-      <div className="border rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table dir={dir}>
-            <TableHeader className={stickyHeader ? "sticky top-0 z-10 bg-background" : undefined}>
+      <div className={cn("border rounded-lg", stickyHeader ? "overflow-clip" : "overflow-hidden")}>
+        <div className={cn(!stickyHeader && "overflow-x-auto")}>
+          <Table dir={dir} wrapperClassName={stickyHeader ? "overflow-visible" : ""}>
+            <TableHeader className={stickyHeader ? "sticky top-0 z-30 bg-background shadow-sm ring-1 ring-border/50" : undefined}>
               <TableRow>
                 {columns.map((column) => (
                   <TableHead
                     key={column.id}
-                    className={cn(column.headerClassName, density === "compact" ? "py-2 px-3" : undefined)}
+                    className={cn(
+                      column.headerClassName,
+                      density === "compact" ? "py-2 px-3" : undefined,
+                      stickyHeader ? "bg-background" : undefined
+                    )}
                     onClick={() => handleSort(column)}
                     role={column.sortable ? "button" : undefined}
                   >
@@ -231,7 +235,12 @@ const DataTable = ({
                   </TableHead>
                 ))}
                 {hasRowActions && (
-                  <TableHead className={cn("text-center", density === "compact" ? "py-2 px-3" : undefined, "w-[120px]")}>
+                  <TableHead className={cn(
+                    "text-center", 
+                    density === "compact" ? "py-2 px-3" : undefined, 
+                    "w-[120px]", 
+                    stickyHeader ? "bg-background" : undefined
+                  )}>
                     {actionsLabel}
                   </TableHead>
                 )}

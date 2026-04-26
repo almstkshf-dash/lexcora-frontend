@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LegalChatPopup from './LegalChatPopup';
@@ -19,7 +20,7 @@ function AiButton() {
         aria-label={isRTL ? "راصد" : "Rased Assistant"}
       >
         <div className="relative h-14 w-14 rounded-full overflow-hidden border border-primary/20 shadow-md bg-background shrink-0">
-          <img src="/images/rased-icon.jpg" alt="Rased" className="h-full w-full object-cover" />
+          <Image src="/images/rased-icon.jpg" alt="Rased" width={56} height={56} className="h-full w-full object-cover" />
         </div>
         <span className="text-base font-bold hidden md:inline px-3 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
           {isRTL ? 'اسأل راصد' : 'Ask Rased'}

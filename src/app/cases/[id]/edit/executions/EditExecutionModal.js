@@ -20,11 +20,11 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, Upload, File as FileIcon, X, FileText, Image, FileSpreadsheet, ExternalLink, Trash2 } from "lucide-react"
+import { CalendarIcon, Upload, File as FileIcon, X, FileText, Image as ImageIcon, FileSpreadsheet, ExternalLink, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "react-toastify"
 import { getExecutionById, updateExecution, deleteExecutionDocument } from "@/app/services/api/executions"
-import { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { mutate } from "swr"
 
 // Helper function to get file type icon
@@ -42,7 +42,7 @@ const getFileIcon = (fileName) => {
     case 'png':
     case 'gif':
     case 'bmp':
-      return <Image className="w-4 h-4" />
+      return <ImageIcon className="w-4 h-4" />
     case 'xls':
     case 'xlsx':
     case 'csv':
@@ -109,7 +109,7 @@ const EditExecutionModal = ({
     }
   }, [isOpen])
 
-  const fetchExecutionData = async () => {
+  const fetchExecutionData = useCallback(async () => {
     if (!executionId) return
     
     setIsLoading(true)
@@ -131,16 +131,16 @@ const EditExecutionModal = ({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [executionId, tc])
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = useCallback((field, value) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }))
-  }
+  }, [])
 
-  const handleFileChange = (e) => {
+  const handleFileChange = useCallback((e) => {
     const files = Array.from(e.target.files)
     if (files.length > 0) {
       setFormData(prev => ({
@@ -149,16 +149,16 @@ const EditExecutionModal = ({
       }))
     }
     e.target.value = ''
-  }
+  }, [])
 
-  const removeFile = (indexToRemove) => {
+  const removeFile = useCallback((indexToRemove) => {
     setFormData(prev => ({
       ...prev,
       attachedFiles: prev.attachedFiles.filter((_, index) => index !== indexToRemove)
     }))
-  }
+  }, [])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault()
     
     if (!formData.date || !formData.type || !formData.status || !formData.amount || !executionId) {
@@ -192,14 +192,14 @@ const EditExecutionModal = ({
     } finally {
       setIsSubmitting(false)
     }
-  }
+  }, [formData, caseId, executionId, t, onClose])
 
-  const handleDeleteDocument = (documentId) => {
+  const handleDeleteDocument = useCallback((documentId) => {
     setDeleteDocumentId(documentId)
     setIsDeleteDocDialogOpen(true)
-  }
+  }, [])
 
-  const confirmDeleteDocument = async () => {
+  const confirmDeleteDocument = useCallback(async () => {
     if (deleteDocumentId) {
       setIsDeletingDoc(true)
       try {

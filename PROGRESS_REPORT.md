@@ -56,3 +56,13 @@ Given the bilingual requirement of the platform (Arabic/English), `lexcora-front
 
 - Optimization of the Turbopack build and mitigating Hot Module Replacement (HMR) latency issues.
 - Deepening accessibility (a11y) to ensure all form auto-completes and label associations strictly follow WCAG guidelines.
+
+---
+
+## 6. Recent UI/UX Refinements (April 2026)
+
+- **Page Header Modernization:** Upgraded the `PageHeader` component with premium card styling, including subtle background gradients (`hero-motion`), border definitions, and improved vertical alignment of title and action buttons (`items-center`).
+- **Data Hierarchy Optimization:** Standardized table layouts for case management, transitioning multi-line lists (like parties) into clean, single-line truncated rows. This ensures vertical alignment consistency and reduces layout shifting in high-density tables.
+- **Enhanced Interactive Elements:** Implemented micro-animations (scale-on-hover) and refined shadows for primary action buttons to improve tactile feedback and visual prominence.
+- **Responsive Spacing:** Optimized page container padding (`p-4` to `p-6`) and grid spacing to ensure better data density and readability across varying screen sizes.
+

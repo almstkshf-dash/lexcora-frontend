@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useFormikContext } from './FormikContext';
 import { searchCasesForAddNewCasePage } from '@/app/services/api/cases';
 import { Button } from '@/components/ui/button';
@@ -42,9 +42,9 @@ function RelatedCases({ caseId }) {
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
+  }, [searchTerm, searchCases]);
 
-  const searchCases = async (term) => {
+  const searchCases = useCallback(async (term) => {
     try {
       setLoading(true);
       const response = await searchCasesForAddNewCasePage(term);
@@ -62,7 +62,7 @@ function RelatedCases({ caseId }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [caseId]);
 
   // Handle adding a case to the related_cases array
   const handleSelectCase = (selectedCase) => {

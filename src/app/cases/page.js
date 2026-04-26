@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
-import { Edit, Trash2, MoreHorizontal, FileText, Calendar, CheckSquare, Gavel, FileSearch, User, Scale, Printer, Plus } from 'lucide-react';
+import { Edit, Trash2, MoreHorizontal, FileText, Calendar, CheckSquare, Gavel, FileSearch, User, Scale, Printer, Plus, RefreshCw } from 'lucide-react';
 import { getCases } from '@/app/services/api/cases';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -88,25 +88,25 @@ const CasesPage = () => {
   }, [casesData, language]);
 
   // Helper function to get localized text
-  const getLocalizedText = (arText, enText) => {
+  const getLocalizedText = React.useCallback((arText, enText) => {
     if (language === 'ar') {
       return arText || enText || ''; // Fallback to English if Arabic is not available
     } else {
       return enText || arText || ''; // Fallback to Arabic if English is not available
     }
-  };
+  }, [language]);
 
   // Helper function to mask sensitive data
-  const maskSensitiveData = (data, isSecret) => {
+  const maskSensitiveData = React.useCallback((data, isSecret) => {
     return isSecret ? '***' : data;
-  };
+  }, []);
 
   // Helper function to format date
-  const formatDate = (dateString) => {
+  const formatDate = React.useCallback((dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-US');
-  };
+  }, [language]);
 
   // Helper function to get status badge
   const getStatusBadge = (status) => {
@@ -316,8 +316,8 @@ const CasesPage = () => {
       sortable: true,
       searchable: true,
       searchPlaceholder: caseNumberLabel,
-      headerClassName: 'text-center',
-      cellClassName: 'font-medium',
+      headerClassName: 'text-center whitespace-normal min-w-[80px]',
+      cellClassName: 'font-medium whitespace-normal break-words text-center text-xs lg:text-sm',
     },
     {
       id: 'file_number',
@@ -325,7 +325,8 @@ const CasesPage = () => {
       sortable: true,
       searchable: true,
       searchPlaceholder: fileNumberLabel,
-      headerClassName: 'text-center',
+      headerClassName: 'text-center whitespace-normal min-w-[80px]',
+      cellClassName: 'whitespace-normal break-words text-center',
       accessor: (row) => maskSensitiveData(row.file_number, row.is_secret),
     },
     {
@@ -334,8 +335,16 @@ const CasesPage = () => {
       sortable: true,
       searchable: true,
       searchPlaceholder: topicLabel,
-      headerClassName: 'text-center',
-      accessor: (row) => maskSensitiveData(row.topic, row.is_secret),
+      headerClassName: 'text-center whitespace-normal min-w-[100px]',
+      cellClassName: 'text-center whitespace-normal break-words max-w-[150px] lg:max-w-[200px]',
+      cell: (row) => {
+        const val = maskSensitiveData(row.topic, row.is_secret);
+        return (
+          <div title={val} className="line-clamp-2 w-full">
+            {val}
+          </div>
+        );
+      },
     },
     {
       id: 'court',
@@ -343,8 +352,16 @@ const CasesPage = () => {
       sortable: true,
       searchable: true,
       searchPlaceholder: courtLabel,
-      headerClassName: 'text-center',
-      accessor: (row) => maskSensitiveData(getLocalizedText(row.court_ar, row.court_en), row.is_secret),
+      headerClassName: 'text-center whitespace-normal min-w-[90px]',
+      cellClassName: 'text-center whitespace-normal break-words max-w-[120px] lg:max-w-[150px]',
+      cell: (row) => {
+        const val = maskSensitiveData(getLocalizedText(row.court_ar, row.court_en), row.is_secret);
+        return (
+          <div title={val} className="line-clamp-2 w-full">
+            {val}
+          </div>
+        );
+      },
     },
     {
       id: 'case_type',
@@ -352,7 +369,8 @@ const CasesPage = () => {
       sortable: true,
       searchable: true,
       searchPlaceholder: caseTypeLabel,
-      headerClassName: 'text-center',
+      headerClassName: 'text-center whitespace-normal min-w-[80px]',
+      cellClassName: 'text-center whitespace-normal break-words',
       accessor: (row) => maskSensitiveData(getLocalizedText(row.case_type_ar, row.case_type_en), row.is_secret),
     },
     {
@@ -361,7 +379,8 @@ const CasesPage = () => {
       sortable: true,
       searchable: true,
       searchPlaceholder: classificationLabel,
-      headerClassName: 'text-center',
+      headerClassName: 'text-center whitespace-normal min-w-[90px]',
+      cellClassName: 'text-center whitespace-normal break-words',
       accessor: (row) =>
         maskSensitiveData(
           getLocalizedText(row.case_classification_ar, row.case_classification_en),
@@ -372,7 +391,8 @@ const CasesPage = () => {
       id: 'start_date',
       header: startDateLabel,
       sortable: true,
-      headerClassName: 'text-center',
+      headerClassName: 'text-center whitespace-normal min-w-[80px]',
+      cellClassName: 'text-center whitespace-normal break-words',
       accessor: (row) => maskSensitiveData(formatDate(row.start_date), row.is_secret),
     },
     {
@@ -380,68 +400,44 @@ const CasesPage = () => {
       header: clientPartiesLabel,
       searchable: true,
       searchPlaceholder: clientPartiesLabel,
-      headerClassName: 'text-center',
+      headerClassName: 'text-center whitespace-normal min-w-[120px]',
+      cellClassName: 'text-center whitespace-normal break-words max-w-[150px] lg:max-w-[200px]',
       accessor: (row) =>
         row.is_secret
           ? '***'
           : (row.clientParties || []).join(', '),
-      cell: (row) =>
-        row.is_secret ? (
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <span>***</span>
+      cell: (row) => {
+        if (row.is_secret) return <span className="text-muted-foreground">***</span>;
+        const val = (row.clientParties || []).join(', ');
+        return (
+          <div title={val} className="flex items-center justify-center gap-1.5 w-full">
+            <User className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+            <span className="text-xs line-clamp-1 text-center">{val || '-'}</span>
           </div>
-        ) : (
-          <div className="space-y-1">
-            {row.clientParties?.length ? (
-              row.clientParties.map((party, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm">{party}</span>
-                </div>
-              ))
-            ) : (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <User className="h-4 w-4" />
-                <span className="text-sm">-</span>
-              </div>
-            )}
-          </div>
-        ),
+        );
+      },
     },
     {
       id: 'opponentParties',
       header: opponentPartiesLabel,
       searchable: true,
       searchPlaceholder: opponentPartiesLabel,
-      headerClassName: 'text-center',
+      headerClassName: 'text-center whitespace-normal min-w-[120px]',
+      cellClassName: 'text-center whitespace-normal break-words max-w-[150px] lg:max-w-[200px]',
       accessor: (row) =>
         row.is_secret
           ? '***'
           : (row.opponentParties || []).join(', '),
-      cell: (row) =>
-        row.is_secret ? (
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <span>***</span>
+      cell: (row) => {
+        if (row.is_secret) return <span className="text-muted-foreground">***</span>;
+        const val = (row.opponentParties || []).join(', ');
+        return (
+          <div title={val} className="flex items-center justify-center gap-1.5 w-full">
+            <User className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+            <span className="text-xs line-clamp-1 text-center">{val || '-'}</span>
           </div>
-        ) : (
-          <div className="space-y-1">
-            {row.opponentParties?.length ? (
-              row.opponentParties.map((party, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-red-600" />
-                  <span className="text-sm">{party}</span>
-                </div>
-              ))
-            ) : (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <User className="h-4 w-4" />
-                <span className="text-sm">-</span>
-              </div>
-            )}
-          </div>
-        ),
+        );
+      },
     },
     {
       id: 'flags',
@@ -506,10 +502,10 @@ const CasesPage = () => {
   }
 
   const headerActions = (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-3">
       <Button
         size="sm"
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all hover:scale-105 active:scale-95"
         onClick={() => router.push('/cases/add-case')}
       >
         <Plus className="w-4 h-4" />
@@ -518,6 +514,7 @@ const CasesPage = () => {
       <Button
         size="sm"
         variant="outline"
+        className="shadow-sm hover:bg-accent transition-all hover:scale-105 active:scale-95"
         onClick={() => router.push('/cases/my-tasks')}
       >
         {t('navigation.myTasks')}
@@ -582,7 +579,7 @@ const CasesPage = () => {
   );
 
   return (
-    <div className={`container mx-auto p-2 space-y-6 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`container mx-auto p-4 md:p-6 space-y-8 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       <PageHeader
         title={t('navigation.cases')}
         description={t('casesTable.title')}
@@ -591,12 +588,12 @@ const CasesPage = () => {
           { label: t('navigation.cases') },
         ]}
         actions={headerActions}
-        sticky
         contextMeta={{
           title: t('navigation.cases'),
           lastSynced: lastSynced || undefined,
           action: (
-            <Button variant="ghost" size="sm" onClick={() => mutate()}>
+            <Button variant="ghost" size="sm" onClick={() => mutate()} className="h-7 px-2 hover:bg-transparent text-muted-foreground hover:text-foreground">
+              <RefreshCw className="h-3 w-3 ml-1" />
               {t('common.refresh') || (language === 'ar' ? 'تحديث' : 'Refresh')}
             </Button>
           ),
@@ -643,7 +640,7 @@ const CasesPage = () => {
             dir={isRTL ? 'rtl' : 'ltr'}
             stickyHeader
             zebra
-            density="compact"
+            density="normal"
             pagination={{
               page: currentPage,
               totalPages: pagination.totalPages || 1,

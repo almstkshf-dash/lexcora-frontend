@@ -88,6 +88,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
   }, [isOpen]);
 
   // Fetch account data when modal opens and accountId is available
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const fetchAccountData = async () => {
       if (!accountId || !isOpen) return;

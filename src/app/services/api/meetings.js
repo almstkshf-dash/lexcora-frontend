@@ -46,7 +46,7 @@ const deleteMeetingDocument = async (documentId) => {
   return response.data;
 };
 
-export default {
+const meetingsApi = {
   getMeetings,
   getMeetingById,
   getMeetingsByPartyId,
@@ -55,5 +55,7 @@ export default {
   deleteMeeting,
   getMeetingDocuments,
   addMeetingDocuments,
-  deleteMeetingDocument
+  deleteMeetingDocument,
 };
+
+export default meetingsApi;

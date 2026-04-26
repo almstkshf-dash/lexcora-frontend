@@ -142,6 +142,7 @@ const EditDealModal = ({
   ]
 
   // Load deal data into form when modal opens
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (dealData?.success && dealData.data) {
       const deal = dealData.data
@@ -158,16 +159,17 @@ const EditDealModal = ({
       // Set existing documents
       setExistingDocuments(deal.documents || [])
     }
-  }, [dealData, formik.setValues])
+  }, [dealData])
 
   // Reset form when modal closes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!isOpen) {
       formik.resetForm()
       setFiles([])
       setExistingDocuments([])
     }
-  }, [isOpen, formik.resetForm])
+  }, [isOpen])
 
   // File handling functions
   const handleFileChange = (e) => {

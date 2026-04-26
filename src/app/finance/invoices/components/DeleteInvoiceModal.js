@@ -14,6 +14,7 @@ export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSucce
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isOpen && invoiceId) {
       loadInvoiceData();

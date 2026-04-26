@@ -20,6 +20,7 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isOpen && expenseId) {
       fetchExpenseDetails();

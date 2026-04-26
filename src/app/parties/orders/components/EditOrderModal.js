@@ -97,6 +97,7 @@ const EditOrderModal = ({
   ]
 
   // Load order data into form when modal opens
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (orderData && !orderLoading) {
       const order = orderData
@@ -113,6 +114,7 @@ const EditOrderModal = ({
   }, [orderData, orderLoading])
 
   // Reset form when modal closes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!isOpen) {
       formik.resetForm()

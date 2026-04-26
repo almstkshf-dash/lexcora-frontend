@@ -1,6 +1,6 @@
 'use client';
 import { useDispatch } from 'react-redux';
-import { useAuth, useUserRole, useUserDepartment } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 import { logoutWithRedux } from '@/app/services/api/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +16,15 @@ const UserProfile = () => {
   const { 
     user, 
     isAuthenticated, 
-    jobId, 
+    jobId,
+    loading,
+    email,
+    permissions,
+    roleAr,
+    roleEn,
+    departmentAr,
+    departmentEn,
+  } = useAuth();
   const { t } = useTranslations();
 
   const handleLogout = async () => {

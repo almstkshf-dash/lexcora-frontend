@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { X, Send, Loader2, Copy, Check, Sparkles, Paperclip, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -524,7 +525,7 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
         <div className={`bg-gradient-to-r from-background to-muted/30 border-b p-4 ${isRTL ? 'pl-12' : 'pr-12'}`}>
           <div className="flex items-center gap-3">
             <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border border-primary/20 shadow-sm bg-background">
-              <img src="/images/rased-icon.jpg" alt="Rased" className="h-full w-full object-cover" />
+              <Image src="/images/rased-icon.jpg" alt="Rased" fill className="object-cover" />
             </div>
             <div className="flex flex-col">
               <h2 className="text-lg font-bold text-foreground tracking-tight">{isRTL ? 'راصد' : 'Rased'}</h2>
@@ -560,7 +561,7 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
           {messages.length === 0 && (
             <div className="flex flex-col items-center justify-center text-center mt-12 mb-8 animate-in slide-in-from-bottom-4 duration-500">
               <div className="h-20 w-20 rounded-full border-4 border-background shadow-md bg-white mb-4 relative overflow-hidden">
-                <img src="/images/rased-icon.jpg" alt="Rased" className="h-full w-full object-cover" />
+                <Image src="/images/rased-icon.jpg" alt="Rased" fill className="object-cover" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">{isRTL ? 'مرحباً، أنا راصد' : 'Welcome I Am Rased'}</h3>
               <p className="text-sm text-muted-foreground max-w-[250px]">
@@ -580,8 +581,8 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
               className={`flex w-full ${message.role === 'user' ? 'justify-end' : 'justify-start gap-2'}`}
             >
               {message.role === 'assistant' && (
-                <div className="flex-shrink-0 h-8 w-8 rounded-full overflow-hidden border border-border shadow-sm mt-1 bg-background hidden sm:block">
-                  <img src="/images/rased-icon.jpg" alt="Rased" className="h-full w-full object-cover" />
+                <div className="flex-shrink-0 h-8 w-8 rounded-full overflow-hidden border border-border shadow-sm mt-1 bg-background hidden sm:block relative">
+                  <Image src="/images/rased-icon.jpg" alt="Rased" fill className="object-cover" />
                 </div>
               )}
               <div

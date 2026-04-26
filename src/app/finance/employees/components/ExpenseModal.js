@@ -100,6 +100,7 @@ const ExpenseModal = ({ isOpen, onClose, onSuccess, expenseId = null, expenseDat
   });
 
   // Update form when expense data changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isEditMode && expenseData) {
       formik.setValues({

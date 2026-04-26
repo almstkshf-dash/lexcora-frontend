@@ -55,6 +55,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
   }, [isOpen]);
 
   // Update form when transaction data changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isEditMode && transactionData) {
       formik.setValues({

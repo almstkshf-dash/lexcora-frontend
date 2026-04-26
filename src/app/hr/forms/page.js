@@ -118,6 +118,7 @@ export default function FormsPage() {
     }
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchForms()
   }, [])

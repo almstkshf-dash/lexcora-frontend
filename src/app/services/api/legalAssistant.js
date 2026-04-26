@@ -68,8 +68,10 @@ export const getLegalAssistantHistory = async (caseId, limit = 50) => {
   }
 };
 
-export default {
+const legalAssistantApi = {
   chatWithLegalAssistant,
   chatWithLegalAssistantStream,
   getLegalAssistantHistory,
 };
+
+export default legalAssistantApi;

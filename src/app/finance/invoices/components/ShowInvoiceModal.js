@@ -21,6 +21,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
   const [deletingAttachment, setDeletingAttachment] = useState(null);
   const [uploadingAttachment, setUploadingAttachment] = useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isOpen && invoiceId) {
       loadInvoiceData();

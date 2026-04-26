@@ -58,6 +58,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
   const bankAccounts = bankAccountsData?.data || [];
 
   // Load invoice data
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isOpen && invoiceId) {
       loadInvoiceData();

@@ -56,9 +56,11 @@ export default function FocusCycleBar() {
     return () => clearTimeout(timer);
   }, [mode, secondsLeft]);
 
+  const flooredSeconds = Math.floor(secondsLeft);
+
   // Sync with browser tab title - only on integer second changes
   useEffect(() => {
-    const displaySeconds = Math.floor(secondsLeft);
+    const displaySeconds = flooredSeconds;
     if (isRunning) {
       document.title = `(${formatTime(displaySeconds)}) ${mode === "focus" ? "Focus" : "Break"} | Lexcora`;
     } else {
@@ -67,7 +69,7 @@ export default function FocusCycleBar() {
     return () => {
       document.title = "Lexcora";
     };
-  }, [Math.floor(secondsLeft), isRunning, mode]);
+  }, [flooredSeconds, isRunning, mode]);
 
   // Tick loop using setInterval for 1-second updates instead of 60fps RAF.
   // This drastically reduces React reconciliation work and CPU usage.

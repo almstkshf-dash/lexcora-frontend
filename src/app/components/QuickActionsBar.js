@@ -62,7 +62,6 @@ function QuickActionsBar() {
       ...def,
       label: t(`navigation.${def.labelKey}`),
     })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [t]
   );
 

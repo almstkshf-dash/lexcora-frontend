@@ -15,6 +15,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
   const [loading, setLoading] = useState(false);
   const printRef = useRef();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isOpen && invoiceId) {
       loadInvoiceData();

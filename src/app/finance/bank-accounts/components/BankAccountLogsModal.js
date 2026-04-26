@@ -89,6 +89,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
   };
 
   // Fetch logs when modal opens with default current month dates
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isOpen && accountId) {
       fetchLogs(dateRange.from, dateRange.to);

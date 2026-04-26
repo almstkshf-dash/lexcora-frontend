@@ -220,7 +220,7 @@ const EditExecutionModal = ({
         setIsDeletingDoc(false)
       }
     }
-  }
+  }, [deleteDocumentId, formData.existingDocuments, handleInputChange, t]);
 
   return (
     <Dialog open={isOpen} onOpenChange={isSubmitting ? undefined : onClose}>

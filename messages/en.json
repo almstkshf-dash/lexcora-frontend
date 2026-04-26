@@ -159,7 +159,12 @@
     "noTopic": "No topic",
     "unnamed": "Unnamed",
     "fileLabel": "File:",
-    "caseLabel": "Case:"
+    "caseLabel": "Case:",
+    "sessionTime": "Session Time",
+    "caseNo": "Case No",
+    "firstInstanceClient": "First Instance Client",
+    "decision": "Decision",
+    "legalPeriodsSpecified": "Legal Periods Specified"
   },
   "theme": {
     "light": "Light Mode",
@@ -2888,7 +2893,11 @@
     "rejected": "Rejected",
     "accepted": "Accepted",
     "sessionDate": "Session Date",
+    "sessionTime": "Session Time",
+    "caseNo": "Case No.",
     "client": "Client",
+    "firstInstanceClient": "First Instance Client",
+    "decision": "Decision",
     "noDecision": "No Decision",
     "appeal": "Appeal",
     "firstInstance": "First Instance",
@@ -2899,6 +2908,7 @@
     "rulingDate": "Ruling Date",
     "clientNames": "Client Names",
     "ruling": "Ruling",
+    "legalPeriodsSpecified": "Legal Periods Specified",
     "lastDateFor": "Last Date for",
     "objection": "Objection",
     "remaining": "Remaining",

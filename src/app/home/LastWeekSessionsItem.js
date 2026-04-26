@@ -71,7 +71,7 @@ function LastWeekSessionsItem({
       <Card className="group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-blue-300/50 dark:hover:border-blue-600/50 dark:bg-gray-900 dark:border-gray-800">
       <CardContent className="p-4 sm:p-5">
      
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 gap-2">
           {displayFileNumber && (
             <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
               <FileText className="w-4 h-4 flex-shrink-0 text-orange-500 dark:text-orange-400" />
@@ -89,37 +89,32 @@ function LastWeekSessionsItem({
           {displayTime && (
             <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
               <Clock className="w-4 h-4 flex-shrink-0 text-orange-500 dark:text-orange-400" />
+              <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.sessionTime')}: </span>
               <span className="font-semibold text-orange-600 dark:text-orange-400 truncate">{displayTime}</span>
             </div>
           )}
 
           <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
             <Hash className="w-4 h-4 flex-shrink-0 text-gray-400" />
-            <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.caseNumber')}: </span>
+            <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.caseNo')}: </span>
             <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayCaseNumber}</span>
-          </div>
-
-          {degreeInfo && (
-            <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-              <div className="w-4 h-4 flex-shrink-0" />
-              <Badge className={`text-xs font-semibold px-2 py-0.5 rounded-full truncate ${degreeInfo.color}`}>
+            {degreeInfo && (
+              <Badge className={`ml-2 text-[10px] font-semibold px-1.5 py-0 rounded-full truncate ${degreeInfo.color}`}>
                 {degreeInfo.label}
               </Badge>
-            </div>
-          )}
+            )}
+          </div>
           
-          <div className="flex items-start sm:items-center justify-between gap-2.5 text-sm text-gray-500 dark:text-gray-400 flex-col sm:flex-row border-t border-gray-100 dark:border-gray-800 pt-3">
-            <div className="flex items-center gap-2.5 min-w-0 flex-1 overflow-hidden whitespace-nowrap">
-              <User className="w-4 h-4 flex-shrink-0 text-amber-500 dark:text-amber-400" />
-              <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.client')}: </span>
-              <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayClientName}</span>
-            </div>
+          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap pt-2 border-t border-gray-100 dark:border-gray-800">
+            <User className="w-4 h-4 flex-shrink-0 text-amber-500 dark:text-amber-400" />
+            <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.client')}: </span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100 truncate flex-1">{displayClientName}</span>
             <button
               onClick={() => setIsEditModalOpen(true)}
-              className="p-2 bg-blue-50/50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-all duration-200 text-blue-600 dark:text-blue-400 self-end sm:self-auto flex-shrink-0 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30"
+              className="p-1.5 bg-blue-50/50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded transition-all duration-200 text-blue-600 dark:text-blue-400 flex-shrink-0 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30"
               title={t('home.editSession')}
             >
-              <Pen className="w-4 h-4" />
+              <Pen className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>

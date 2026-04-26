@@ -65,7 +65,7 @@ const CasePetitionsItem = React.memo(function CasePetitionsItem({ petition }) {
       role="listitem"
     >
       <CardContent className="p-4 sm:p-5">
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 gap-2">
 
           {/* File Number */}
           <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
@@ -82,81 +82,51 @@ const CasePetitionsItem = React.memo(function CasePetitionsItem({ petition }) {
           </div>
 
           {/* Petition Type */}
-          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
+          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap pb-2 border-b border-gray-100 dark:border-gray-800">
             <FileSpreadsheet className="w-4 h-4 flex-shrink-0 text-blue-500 dark:text-blue-400" aria-hidden="true" />
             <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.petition')}:</span>
             <span className="font-medium text-gray-800 dark:text-gray-200 truncate">{petition.type}</span>
           </div>
 
           {/* Date Details */}
-          <div className="space-y-3 pt-3 sm:pt-4 border-t border-gray-100 dark:border-gray-800">
+          <div className="grid grid-cols-1 gap-2">
 
             {/* Submission Date */}
-            <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
               <Calendar1 className="w-4 h-4 flex-shrink-0 text-purple-500 dark:text-purple-400" aria-hidden="true" />
-              <div className="min-w-0 flex-1">
-                <span className="block font-medium text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">
-                  {t('home.submissionDate')}
-                </span>
-                <span className="text-gray-800 dark:text-gray-200 text-sm font-medium">
-                  {formatDate(petition.date, { year: 'numeric', month: 'short', day: 'numeric' }) || t('home.notSpecified')}
-                </span>
-              </div>
+              <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.submissionDate')}:</span>
+              <span className="font-medium text-gray-800 dark:text-gray-200 truncate">
+                {formatDate(petition.date, { year: 'numeric', month: 'short', day: 'numeric' }) || t('home.notSpecified')}
+              </span>
             </div>
 
             {/* Last Date */}
-            <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
               <Clock className="w-4 h-4 flex-shrink-0 text-blue-500 dark:text-blue-400" aria-hidden="true" />
-              <div className="min-w-0 flex-1">
-                <span className="block font-medium text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">
-                  {petition.decision === DECISION_STATUS.ACCEPTED
-                    ? t('petitions.lastDateToRegisterCase')
-                    : t('petitions.lastDateToAppeal')}
-                </span>
-                <span className="text-gray-800 dark:text-gray-200 text-sm font-medium">
-                  {formatDate(petition.appeal_date, { year: 'numeric', month: 'short', day: 'numeric' }) || t('home.notSpecified')}
-                </span>
-              </div>
+              <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">
+                {petition.decision === DECISION_STATUS.ACCEPTED
+                  ? t('petitions.lastDateToRegisterCase')
+                  : t('petitions.lastDateToAppeal')}:
+              </span>
+              <span className="font-medium text-gray-800 dark:text-gray-200 truncate">
+                {formatDate(petition.appeal_date, { year: 'numeric', month: 'short', day: 'numeric' }) || t('home.notSpecified')}
+              </span>
             </div>
 
-            {/* Days Remaining — now driven by memoized daysInfo, not an IIFE */}
+            {/* Days Remaining */}
             {daysInfo && (
-              <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
                 <Clock className="w-4 h-4 flex-shrink-0 text-red-500 dark:text-red-400" aria-hidden="true" />
-                <div className="min-w-0 flex-1">
-                  <span className="block font-medium text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">
-                    {t('home.daysRemaining')}
-                  </span>
-                  <span className="text-gray-800 dark:text-gray-200 flex items-center gap-2 text-sm font-medium mt-0.5">
-                    {daysInfo.isOverdue && (
-                      <span className="text-xs text-red-500 bg-red-50 dark:bg-red-900/20 px-1.5 py-0.5 rounded flex items-center font-bold">
-                        ⚠️ {t('home.overdue')}
-                      </span>
-                    )}
-                    <div
-                      className="relative inline-flex items-center justify-center flex-shrink-0"
-                      aria-label={`${Math.abs(daysInfo.days)} ${Math.abs(daysInfo.days) === 1 ? t('home.day') : t('home.days')} ${t('home.daysRemaining')}`}
-                    >
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white relative z-10 transition-colors ${daysInfo.isOverdue ? 'bg-red-600' : daysInfo.isUrgent ? 'bg-orange-600' : 'bg-green-700'
-                          }`}
-                        aria-hidden="true"
-                      >
-                        {Math.abs(daysInfo.days)}
-                      </div>
-                      <div
-                        className={`absolute inset-[-4px] rounded-full animate-pulse ${daysInfo.isOverdue
-                            ? 'bg-red-200/50 dark:bg-red-900/30'
-                            : daysInfo.isUrgent
-                              ? 'bg-orange-200/50 dark:bg-orange-900/30'
-                              : 'bg-green-200/50 dark:bg-green-900/30'
-                          }`}
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <span className="whitespace-nowrap text-gray-600 dark:text-gray-400">
-                      {Math.abs(daysInfo.days) === 1 ? t('home.day') : t('home.days')}
-                    </span>
+                <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.daysRemaining')}:</span>
+                <div className="flex items-center gap-1.5 overflow-hidden">
+                  <div
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0 ${daysInfo.isOverdue ? 'bg-red-600' : daysInfo.isUrgent ? 'bg-orange-600' : 'bg-green-700'}`}
+                    aria-hidden="true"
+                  >
+                    {Math.abs(daysInfo.days)}
+                  </div>
+                  <span className={`text-xs font-semibold truncate ${daysInfo.isOverdue ? 'text-red-600' : daysInfo.isUrgent ? 'text-orange-600' : 'text-green-700'}`}>
+                    {Math.abs(daysInfo.days) === 1 ? t('home.day') : t('home.days')} {daysInfo.isOverdue ? t('home.overdue') : t('home.remaining')}
                   </span>
                 </div>
               </div>
@@ -164,16 +134,16 @@ const CasePetitionsItem = React.memo(function CasePetitionsItem({ petition }) {
           </div>
 
           {/* Footer: decision badge + details link */}
-          <div className="pt-3 sm:pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-2">
-            <div className={`px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 ${decisionColor}`}>
+          <div className="pt-2 sm:pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-2 overflow-hidden whitespace-nowrap">
+            <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider flex-shrink-0 ${decisionColor}`}>
               {decisionLabel}
             </div>
             <Link
               href={`/cases/${petition.case_id}/edit`}
-              className="flex items-center justify-center gap-2 py-2 px-3 text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-all duration-200"
+              className="p-1.5 bg-blue-50/50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded transition-all duration-200 text-blue-600 dark:text-blue-400 flex-shrink-0 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30"
+              title={t('home.viewDetails')}
             >
-              <Info className="w-4 h-4" aria-hidden="true" />
-              <span>{t('home.viewDetails')}</span>
+              <Info className="w-3.5 h-3.5" aria-hidden="true" />
             </Link>
           </div>
 

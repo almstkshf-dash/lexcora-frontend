@@ -15,26 +15,63 @@ const breakTips = [
   "Wiggle fingers, wrists, and ankles gently."
 ];
 
+const focusTips = [
+  "One task at a time. Deep focus only.",
+  "Silence notifications for better flow.",
+  "Deep breaths help keep the mind clear.",
+  "Small steps lead to big results.",
+  "Momentum is built one minute at a time."
+];
+
 export default function FocusCycleBar() {
-  const [mode, setMode] = useState("focus"); // focus | break
-  const [isRunning, setIsRunning] = useState(true);
-  const [secondsLeft, setSecondsLeft] = useState(FOCUS_DURATION);
-  const tip = useMemo(
-    () => breakTips[Math.floor(Math.random() * breakTips.length)],
-    [mode]
-  );
+  const [mode, setMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("focus-mode") || "focus";
+    }
+    return "focus";
+  });
+  const [isRunning, setIsRunning] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("focus-seconds");
+      return saved ? parseFloat(saved) : FOCUS_DURATION;
+    }
+    return FOCUS_DURATION;
+  });
+
+  const tip = useMemo(() => {
+    const list = mode === "focus" ? focusTips : breakTips;
+    return list[Math.floor(Math.random() * list.length)];
+  }, [mode]);
   const duration = mode === "focus" ? FOCUS_DURATION : BREAK_DURATION;
   const progress = 1 - secondsLeft / duration;
   const rafRef = useRef(null);
 
+  // Persist state
+  useEffect(() => {
+    localStorage.setItem("focus-mode", mode);
+    localStorage.setItem("focus-seconds", secondsLeft.toString());
+  }, [mode, secondsLeft]);
+
+  // Sync with browser tab title
+  useEffect(() => {
+    const originalTitle = document.title.split(" | ")[0]; // Keep base title
+    if (isRunning) {
+      document.title = `(${formatTime(secondsLeft)}) ${mode === "focus" ? "Focus" : "Break"} | Lexcora`;
+    } else {
+      document.title = `Paused | Lexcora`;
+    }
+    return () => {
+      document.title = "Lexcora";
+    };
+  }, [secondsLeft, isRunning, mode]);
+
   // Tick loop using requestAnimationFrame for smoother progress updates.
   useEffect(() => {
+    if (!isRunning) return;
+
     let last = performance.now();
     const tick = (now) => {
-      if (!isRunning) {
-        rafRef.current = requestAnimationFrame(tick);
-        return;
-      }
       const delta = (now - last) / 1000;
       last = now;
       setSecondsLeft((prev) => {
@@ -126,14 +163,22 @@ export default function FocusCycleBar() {
           </button>
         </div>
 
-        {mode === "break" ? (
-          <div className="flex items-center gap-2 text-amber-700 dark:text-amber-200">
-            <Coffee size={14} className="shrink-0" />
-            <span className="line-clamp-1">{tip}</span>
-          </div>
-        ) : (
-          <span className="text-muted-foreground">Stay on task, break soon.</span>
-        )}
+        <div className="flex items-center gap-2">
+          {mode === "break" ? (
+            <Coffee size={14} className="shrink-0 text-amber-700 dark:text-amber-200" />
+          ) : (
+            <div className={cn(
+              "h-2 w-2 rounded-full",
+              isRunning ? "bg-primary animate-pulse" : "bg-muted"
+            )} />
+          )}
+          <span className={cn(
+            "line-clamp-1",
+            mode === "break" ? "text-amber-700 dark:text-amber-200" : "text-muted-foreground"
+          )}>
+            {tip}
+          </span>
+        </div>
       </div>
     </div>
   );

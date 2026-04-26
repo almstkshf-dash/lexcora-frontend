@@ -7,7 +7,9 @@ import {
   Clipboard,
   User,
   Calendar,
-  FileText
+  FileText,
+  Bell,
+  CheckCheck
 } from 'lucide-react'
 
 /**
@@ -16,15 +18,15 @@ import {
 export const getTypeIcon = (type) => {
   switch (type) {
     case 'success':
-      return <CheckCircle className="h-4 w-4 text-green-500" />
+      return <CheckCircle className="h-5 w-5 text-emerald-500" />
     case 'warning':
-      return <AlertTriangle className="h-4 w-4 text-yellow-500" />
+      return <AlertTriangle className="h-5 w-5 text-amber-500" />
     case 'error':
-      return <XCircle className="h-4 w-4 text-red-500" />
+      return <XCircle className="h-5 w-5 text-rose-500" />
     case 'system':
-      return <Settings className="h-4 w-4 text-blue-500" />
+      return <Settings className="h-5 w-5 text-slate-500" />
     default:
-      return <Info className="h-4 w-4 text-blue-500" />
+      return <Info className="h-5 w-5 text-sky-500" />
   }
 }
 
@@ -44,7 +46,7 @@ export const getRelatedIcon = (relatedType) => {
     case 'memo':
       return <FileText className="h-3 w-3" />
     default:
-      return null
+      return <Bell className="h-3 w-3" />
   }
 }
 
@@ -52,6 +54,8 @@ export const getRelatedIcon = (relatedType) => {
  * Format date to relative time string
  */
 export const formatTimeAgo = (dateString, isArabic = false) => {
+  if (!dateString) return ''
+  
   const now = new Date()
   const date = new Date(dateString)
   const diffInSeconds = Math.floor((now - date) / 1000)
@@ -67,5 +71,18 @@ export const formatTimeAgo = (dateString, isArabic = false) => {
   } else {
     const days = Math.floor(diffInSeconds / 86400)
     return isArabic ? `منذ ${days} يوم` : `${days}d ago`
+  }
+}
+
+/**
+ * Play notification sound
+ */
+export const playNotificationSound = () => {
+  try {
+    const audio = new Audio('/sounds/notification.mp3')
+    audio.volume = 0.5
+    audio.play().catch(e => console.warn('Audio play failed:', e))
+  } catch (err) {
+    console.error('Error playing notification sound:', err)
   }
 }

@@ -2441,7 +2441,12 @@
     "objection": "تظلم",
     "remaining": "متبقي",
     "noLegalPeriods": "لا توجد مدد قانونية محددة",
-    "viewDetails": "عرض التفاصيل"
+    "viewDetails": "عرض التفاصيل",
+    "caseNo": "رقم القضية",
+    "sessionTime": "وقت الجلسة",
+    "firstInstanceClient": "موكل الابتدائية",
+    "decision": "القرار",
+    "legalPeriodsSpecified": "المدد القانونية المحددة"
   },
   "legalPeriods": {
     "addNewPeriod": "إضافة مدة قانونية جديدة",

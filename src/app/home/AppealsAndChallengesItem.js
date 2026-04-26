@@ -50,7 +50,7 @@ const AppealsAndChallengesItem = React.memo(function AppealsAndChallengesItem({ 
       role="listitem"
     >
       <CardContent className="p-4 sm:p-5">
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 gap-2">
 
           {/* Ruling Date */}
           <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
@@ -72,7 +72,7 @@ const AppealsAndChallengesItem = React.memo(function AppealsAndChallengesItem({ 
           {displayCaseNumber && (
             <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
               <FileText className="w-4 h-4 flex-shrink-0 text-blue-500 dark:text-blue-400" aria-hidden="true" />
-              <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.caseNumber')}:</span>
+              <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.caseNo')}:</span>
               <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayCaseNumber}</span>
             </div>
           )}
@@ -87,7 +87,7 @@ const AppealsAndChallengesItem = React.memo(function AppealsAndChallengesItem({ 
           </div>
 
           {/* Ruling */}
-          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 pb-3 border-b border-gray-100 dark:border-gray-800 overflow-hidden whitespace-nowrap">
+          <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap pb-2 border-b border-gray-100 dark:border-gray-800">
             <Scale className="w-4 h-4 text-purple-600 dark:text-purple-400 flex-shrink-0" aria-hidden="true" />
             <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.ruling')}:</span>
             <span className="font-semibold text-purple-900 dark:text-purple-300 truncate bg-purple-50 dark:bg-purple-900/20 px-2 py-0.5 rounded">

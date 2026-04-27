@@ -13,7 +13,9 @@ import { getAllBankAccounts, deleteBankAccount } from '@/app/services/api/bankAc
 import AddAccountModal from './components/AddAccountModal';
 import EditAccountModal from './components/EditAccountModal';
 import BankAccountLogsModal from './components/BankAccountLogsModal';
+import BankReconciliationModal from './components/BankReconciliationModal';
 import { toast } from 'react-toastify';
+import { FileCheck } from 'lucide-react';
 
 function BankAccountsPage() {
   const { isRTL } = useLanguage();
@@ -23,6 +25,7 @@ function BankAccountsPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showLogsModal, setShowLogsModal] = useState(false);
+  const [showReconcileModal, setShowReconcileModal] = useState(false);
   const [selectedAccountId, setSelectedAccountId] = useState(null);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -58,6 +61,11 @@ function BankAccountsPage() {
   const handleViewLogs = (account) => {
     setSelectedAccount(account);
     setShowLogsModal(true);
+  };
+
+  const handleReconcile = (account) => {
+    setSelectedAccount(account);
+    setShowReconcileModal(true);
   };
 
   const handleDelete = async (accountId) => {
@@ -181,6 +189,16 @@ function BankAccountsPage() {
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
+
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleReconcile(account)}
+                            title={t('reconcile')}
+                            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                          >
+                            <FileCheck className="h-4 w-4" />
+                          </Button>
                           
                           <Button
                             variant="outline"
@@ -249,6 +267,16 @@ function BankAccountsPage() {
           isOpen={showLogsModal}
           onClose={() => {
             setShowLogsModal(false);
+            setSelectedAccount(null);
+          }}
+          accountId={selectedAccount?.id}
+          accountName={selectedAccount?.account_name}
+        />
+
+        <BankReconciliationModal
+          isOpen={showReconcileModal}
+          onClose={() => {
+            setShowReconcileModal(false);
             setSelectedAccount(null);
           }}
           accountId={selectedAccount?.id}

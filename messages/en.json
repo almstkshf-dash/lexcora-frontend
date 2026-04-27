@@ -135,6 +135,8 @@
     "statistics": "Statistics",
     "financeStatistics": "Statistics",
     "bankAccounts": "Bank Accounts",
+    "pettyCash": "Petty Cash",
+    "cashFlow": "Cash Flow",
     "clientBalances": "Client Balances",
     "invoices": "Invoices",
     "financeClients": "Client Balances",
@@ -224,7 +226,42 @@
     "details": "Details",
     "update": "Update",
     "create": "Create",
-    "logout": "Logout"
+    "logout": "Logout",
+    "reconcile": "Reconcile",
+    "import": "Import",
+    "autoMatch": "Auto Match"
+  },
+  "BankReconciliation": {
+    "title": "Bank Reconciliation",
+    "importStatement": "Import Statement",
+    "autoMatch": "Auto-Match (AI)",
+    "unreconciledLines": "Unreconciled Lines",
+    "internalRecords": "Internal Records",
+    "confirmMatch": "Confirm Match",
+    "resetSelection": "Reset",
+    "successMatch": "Matched successfully",
+    "errorMatch": "Matching failed"
+  },
+  "PettyCash": {
+    "title": "Petty Cash Management",
+    "addNewFund": "Add New Fund",
+    "fundName": "Fund Name",
+    "responsibleEmployee": "Responsible Employee",
+    "currentBalance": "Current Balance",
+    "addTransaction": "Add Transaction",
+    "replenishment": "Replenishment",
+    "disbursement": "Disbursement",
+    "amount": "Amount",
+    "description": "Description",
+    "date": "Date"
+  },
+  "CashFlow": {
+    "title": "Cash Flow Tracking",
+    "totalInflow": "Total Inflow",
+    "totalOutflow": "Total Outflow",
+    "netCashFlow": "Net Cash Flow",
+    "dailyTrend": "Daily Trend",
+    "cashBySource": "Cash by Source"
   },
   "caseTypes": {
     "selectCaseType": "Select case type",

@@ -1,11 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable experimental features for i18n
+  // Enable experimental features
   experimental: {
-    // Enable server components
+    turbopack: {
+      root: '.',
+    },
   },
 
-  // Skip ESLint during production builds — warnings are addressed incrementally
+  // Skip ESLint during production builds
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -14,7 +16,6 @@ const nextConfig = {
   images: {
     domains: ['fonts.gstatic.com', 'fonts.googleapis.com'],
   },
-
 };
 
 export default nextConfig;

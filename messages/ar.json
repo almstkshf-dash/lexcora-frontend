@@ -134,6 +134,8 @@
     "statistics": "الإحصائيات",
     "financeStatistics": "الإحصائيات",
     "bankAccounts": "الحسابات البنكية",
+    "pettyCash": "العهد النقدية (Petty Cash)",
+    "cashFlow": "حركة النقد (Cash Flow)",
     "clientBalances": "أرصدة الموكلين",
     "invoices": "الفواتير",
     "financeClients": "أرصدة الموكلين",
@@ -218,7 +220,42 @@
     "details": "التفاصيل",
     "update": "تحديث",
     "create": "إنشاء",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "reconcile": "تسوية",
+    "import": "استيراد",
+    "autoMatch": "مطابقة تلقائية"
+  },
+  "BankReconciliation": {
+    "title": "تسوية الحساب البنكي",
+    "importStatement": "استيراد كشف الحساب",
+    "autoMatch": "مطابقة تلقائية (ذكاء اصطناعي)",
+    "unreconciledLines": "العمليات غير المسواة",
+    "internalRecords": "السجلات الداخلية",
+    "confirmMatch": "تأكيد المطابقة",
+    "resetSelection": "إعادة تعيين",
+    "successMatch": "تمت المطابقة بنجاح",
+    "errorMatch": "فشل في عملية المطابقة"
+  },
+  "PettyCash": {
+    "title": "إدارة العهد النقدية",
+    "addNewFund": "إضافة صندوق عهدة جديد",
+    "fundName": "اسم الصندوق",
+    "responsibleEmployee": "الموظف المسؤول",
+    "currentBalance": "الرصيد الحالي",
+    "addTransaction": "إضافة عملية",
+    "replenishment": "تغذية العهدة",
+    "disbursement": "صرف مصروف",
+    "amount": "المبلغ",
+    "description": "الوصف",
+    "date": "التاريخ"
+  },
+  "CashFlow": {
+    "title": "تتبع حركة النقد",
+    "totalInflow": "إجمالي التدفقات الداخلة",
+    "totalOutflow": "إجمالي التدفقات الخارجة",
+    "netCashFlow": "صافي التدفق النقدي",
+    "dailyTrend": "الاتجاه اليومي",
+    "cashBySource": "النقد حسب المصدر"
   },
   "caseTypes": {
     "selectCaseType": "اختر نوع القضية",

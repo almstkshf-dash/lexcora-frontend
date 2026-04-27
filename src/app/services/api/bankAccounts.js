@@ -61,3 +61,63 @@ export const deleteBankAccountLog = async (id) => {
   const response = await api.delete(`/bank-accounts/logs/${id}`);
   return response.data;
 };
+
+// --- New Banking & Reconciliation Methods ---
+
+// Import bank statement (XLSX/CSV)
+export const importBankStatement = async (formData) => {
+  const response = await api.post('/banking/import', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+// Auto-match transactions for a bank account
+export const autoMatchTransactions = async (bankAccountId) => {
+  const response = await api.post(`/banking/auto-match/${bankAccountId}`);
+  return response.data;
+};
+
+// Get unreconciled statement lines
+export const getUnreconciledLines = async (bankAccountId) => {
+  const response = await api.get(`/banking/unreconciled/${bankAccountId}`);
+  return response.data;
+};
+
+// Reconcile a statement line with an internal log
+export const reconcileTransaction = async (reconciliationData) => {
+  const response = await api.post('/banking/reconcile', reconciliationData);
+  return response.data;
+};
+
+// Get Cash Flow Report
+export const getCashFlowReport = async (filters = {}) => {
+  const response = await api.get('/banking/cash-flow', { params: filters });
+  return response.data;
+};
+
+// Get Daily Cash Flow (for charts)
+export const getDailyCashFlow = async (days = 30) => {
+  const response = await api.get('/banking/cash-flow/daily', { params: { days } });
+  return response.data;
+};
+
+export const bankAccountsService = {
+  getAll: getAllBankAccounts,
+  getById: getBankAccountById,
+  create: createBankAccount,
+  update: updateBankAccount,
+  delete: deleteBankAccount,
+  getLogs: getBankAccountLogs,
+  createLog: createBankAccountLog,
+  updateLog: updateBankAccountLog,
+  deleteLog: deleteBankAccountLog,
+  importStatement: importBankStatement,
+  autoMatch: autoMatchTransactions,
+  getUnreconciled: getUnreconciledLines,
+  reconcile: reconcileTransaction,
+  getCashFlowData: getCashFlowReport,
+  getDailyCashFlow: getDailyCashFlow
+};

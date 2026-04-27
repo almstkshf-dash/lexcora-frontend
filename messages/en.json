@@ -240,8 +240,25 @@
     "confirmMatch": "Confirm Match",
     "resetSelection": "Reset",
     "successMatch": "Matched successfully",
-    "errorMatch": "Matching failed"
+    "errorMatch": "Matching failed",
+    "statementLines": "Bank Statement Lines",
+    "internalLedger": "Internal Ledger Transactions",
+    "matchSubtitle": "Match bank statement entries with internal records",
+    "selectedLine": "Selected Statement Line",
+    "selectedRecord": "Selected Ledger Record",
+    "importing": "Importing...",
+    "matching": "Matching...",
+    "noUnreconciled": "No unreconciled statement lines. Import a statement to begin.",
+    "noInternalLogs": "No internal logs found for this account."
   },
+  "financeStatistics": {
+    "title": "Finance Statistics",
+    "description": "Comprehensive overview of the office financial status",
+    "bankOverview": "Bank Accounts Overview",
+    "recentInvoices": "Recent Invoices",
+    "recentTransactions": "Recent Transactions"
+  },
+
   "PettyCash": {
     "title": "Petty Cash Management",
     "addNewFund": "Add New Fund",

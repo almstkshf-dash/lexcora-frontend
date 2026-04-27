@@ -131,7 +131,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('ar-AE', {
+    return new Intl.NumberFormat(t('common.direction') === 'rtl' ? 'ar-AE' : 'en-US', {
       style: 'currency',
       currency: 'AED'
     }).format(amount);
@@ -144,15 +144,16 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
       <div 
         className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl w-[98vw] max-w-7xl h-[90vh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
+        dir={t('common.direction') === 'rtl' ? 'rtl' : 'ltr'}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b bg-gray-50 dark:bg-gray-800">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <RefreshCw className="h-6 w-6 text-blue-600" />
-              Bank Reconciliation: {accountName}
+              {t('title')}: {accountName}
             </h2>
-            <p className="text-sm text-gray-500 mt-1">Match bank statement entries with internal records</p>
+            <p className="text-sm text-gray-500 mt-1">{t('matchSubtitle')}</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors">
             <X className="h-6 w-6 text-gray-500" />
@@ -179,7 +180,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
               >
                 <label htmlFor="statement-upload">
                   <Upload className="h-4 w-4 mr-2" />
-                  {importing ? 'Importing...' : 'Import Statement'}
+                  {importing ? t('importing') : t('importStatement')}
                 </label>
               </Button>
             </div>
@@ -189,18 +190,18 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
               className="bg-blue-600 hover:bg-blue-700"
             >
               <CheckCircle2 className="h-4 w-4 mr-2" />
-              Auto-Match (AI)
+              {matching ? t('matching') : t('autoMatch')}
             </Button>
           </div>
           
           <div className="flex items-center gap-4 text-sm font-medium">
             <div className="flex items-center gap-1 text-orange-600">
               <AlertCircle className="h-4 w-4" />
-              {statementLines.length} Unreconciled Lines
+              {statementLines.length} {t('unreconciledLines')}
             </div>
             <div className="flex items-center gap-1 text-blue-600">
               <FileSpreadsheet className="h-4 w-4" />
-              {internalLogs.length} Internal records
+              {internalLogs.length} {t('internalRecords')}
             </div>
           </div>
         </div>
@@ -210,23 +211,23 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
           {/* Left: Statement Lines */}
           <div className="w-1/2 border-r flex flex-col overflow-hidden">
             <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b font-semibold flex justify-between items-center">
-              <span>Bank Statement Lines</span>
+              <span>{t('statementLines')}</span>
               <Badge variant="outline">{statementLines.length}</Badge>
             </div>
             <div className="flex-1 overflow-auto p-2">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>{t('common.date') || 'Date'}</TableHead>
+                    <TableHead>{t('common.description') || 'Description'}</TableHead>
+                    <TableHead className="text-right">{t('common.amount') || 'Amount'}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {statementLines.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={3} className="text-center py-10 text-gray-500">
-                        No unreconciled statement lines. Import a statement to begin.
+                        {t('noUnreconciled')}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -256,24 +257,24 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
           {/* Right: Internal Logs */}
           <div className="w-1/2 flex flex-col overflow-hidden bg-gray-50/30">
             <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b font-semibold flex justify-between items-center">
-              <span>Internal Ledger Transactions</span>
+              <span>{t('internalLedger')}</span>
               <Badge variant="outline">{internalLogs.length}</Badge>
             </div>
             <div className="flex-1 overflow-auto p-2">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>{t('common.date') || 'Date'}</TableHead>
+                    <TableHead>{t('common.type') || 'Type'}</TableHead>
+                    <TableHead>{t('common.description') || 'Description'}</TableHead>
+                    <TableHead className="text-right">{t('common.amount') || 'Amount'}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {internalLogs.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="text-center py-10 text-gray-500">
-                        No internal logs found for this account.
+                        {t('noInternalLogs')}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -310,32 +311,32 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
         <div className="p-6 border-t bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
           <div className="flex gap-10">
             <div className="flex flex-col">
-              <span className="text-xs text-gray-500 uppercase tracking-wider">Selected Statement Line</span>
+              <span className="text-xs text-gray-500 uppercase tracking-wider">{t('selectedLine')}</span>
               <span className="font-bold text-gray-900 dark:text-white">
-                {selectedLine ? `${selectedLine.description} (${formatCurrency(selectedLine.amount)})` : 'None'}
+                {selectedLine ? `${selectedLine.description} (${formatCurrency(selectedLine.amount)})` : '---'}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-xs text-gray-500 uppercase tracking-wider">Selected Ledger Record</span>
+              <span className="text-xs text-gray-500 uppercase tracking-wider">{t('selectedRecord')}</span>
               <span className="font-bold text-gray-900 dark:text-white">
-                {selectedLogId ? internalLogs.find(l => l.id === selectedLogId)?.description || 'Selected' : 'None'}
+                {selectedLogId ? internalLogs.find(l => l.id === selectedLogId)?.description || 'Selected' : '---'}
               </span>
             </div>
           </div>
 
           <div className="flex gap-3">
             <Button variant="outline" onClick={() => { setSelectedLine(null); setSelectedLogId(null); }}>
-              Reset Selection
+              {t('resetSelection')}
             </Button>
             <Button 
               className="bg-green-600 hover:bg-green-700 text-white min-w-[150px]"
               disabled={!selectedLine || !selectedLogId || reconciling}
               onClick={handleManualReconcile}
             >
-              {reconciling ? 'Reconciling...' : (
+              {reconciling ? t('matching') : (
                 <>
                   <Check className="h-4 w-4 mr-2" />
-                  Confirm Match
+                  {t('confirmMatch')}
                 </>
               )}
             </Button>
@@ -343,6 +344,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
         </div>
       </div>
     </div>
+
   );
 }
 

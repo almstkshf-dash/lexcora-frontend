@@ -234,8 +234,25 @@
     "confirmMatch": "تأكيد المطابقة",
     "resetSelection": "إعادة تعيين",
     "successMatch": "تمت المطابقة بنجاح",
-    "errorMatch": "فشل في عملية المطابقة"
+    "errorMatch": "فشل في عملية المطابقة",
+    "statementLines": "بنود كشف الحساب",
+    "internalLedger": "سجلات الدفتر الداخلي",
+    "matchSubtitle": "طابق مدخلات كشف الحساب البنكي مع السجلات الداخلية",
+    "selectedLine": "البند المختار من الكشف",
+    "selectedRecord": "السجل المختار من الدفتر",
+    "importing": "جاري الاستيراد...",
+    "matching": "جاري المطابقة...",
+    "noUnreconciled": "لا توجد بنود غير مسواة. قم باستيراد كشف حساب للبدء.",
+    "noInternalLogs": "لا توجد سجلات داخلية لهذا الحساب."
   },
+  "financeStatistics": {
+    "title": "الإحصائيات المالية",
+    "description": "نظرة شاملة على الوضع المالي للمكتب",
+    "bankOverview": "نظرة عامة على الحسابات البنكية",
+    "recentInvoices": "آخر الفواتير",
+    "recentTransactions": "آخر العمليات"
+  },
+
   "PettyCash": {
     "title": "إدارة العهد النقدية",
     "addNewFund": "إضافة صندوق عهدة جديد",

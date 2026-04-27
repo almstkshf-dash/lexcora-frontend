@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit, Trash2, Plus, Eye, Printer } from 'lucide-react';
+import { Edit, Trash2, Plus, Eye, Printer, ReceiptText } from 'lucide-react';
 import { getAllInvoices } from '@/app/services/api/invoices';
 import AddInvoiceModal from './components/AddInvoiceModal';
 import EditInvoiceModal from './components/EditInvoiceModal';
@@ -17,10 +17,12 @@ import PrintInvoiceModal from './components/PrintInvoiceModal';
 import ExportButtons from '@/components/ui/export-buttons';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
+import PageHeader from '@/components/PageHeader';
 
 function InvoicesPage() {
   const { isRTL, language } = useLanguage();
   const t = useTranslations('invoices');
+  const navT = useTranslations('navigation');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -59,14 +61,14 @@ function InvoicesPage() {
   };
 
   const formatCurrency = (amount, currency = 'AED') => {
-    return new Intl.NumberFormat('ar-AE', {
+    return new Intl.NumberFormat(t('common.direction') === 'rtl' ? 'ar-AE' : 'en-US', {
       style: 'currency',
       currency: currency
     }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('ar-AE');
+    return new Date(dateString).toLocaleDateString(t('common.direction') === 'rtl' ? 'ar-AE' : 'en-US');
   };
 
   const getStatusBadge = (status) => {
@@ -151,12 +153,15 @@ function InvoicesPage() {
   return (
     <div className="p-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            {t('pageTitle')}
-          </h1>
-        </div>
+        <PageHeader
+          title={t('pageTitle')}
+          icon={ReceiptText}
+          breadcrumbs={[
+            { label: navT('dashboard'), href: '/' },
+            { label: navT('finance') },
+            { label: navT('invoices') }
+          ]}
+        />
 
         {/* Invoices Card */}
         <Card>

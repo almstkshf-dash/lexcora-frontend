@@ -8,18 +8,20 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Edit, Trash2, Plus, Eye } from 'lucide-react';
+import { Edit, Trash2, Plus, Eye, FileCheck } from 'lucide-react';
 import { getAllBankAccounts, deleteBankAccount } from '@/app/services/api/bankAccounts';
 import AddAccountModal from './components/AddAccountModal';
 import EditAccountModal from './components/EditAccountModal';
 import BankAccountLogsModal from './components/BankAccountLogsModal';
 import BankReconciliationModal from './components/BankReconciliationModal';
 import { toast } from 'react-toastify';
-import { FileCheck } from 'lucide-react';
+import PageHeader from '@/components/PageHeader';
+import { Landmark } from 'lucide-react';
 
 function BankAccountsPage() {
   const { isRTL } = useLanguage();
   const t = useTranslations('BankAccountsPage');
+  const navT = useTranslations('navigation');
   const [bankAccounts, setBankAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -88,25 +90,31 @@ function BankAccountsPage() {
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('ar-AE', {
+    return new Intl.NumberFormat(t('common.direction') === 'rtl' ? 'ar-AE' : 'en-US', {
       style: 'currency',
       currency: 'AED'
     }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('ar-AE');
+    return new Date(dateString).toLocaleDateString(t('common.direction') === 'rtl' ? 'ar-AE' : 'en-US');
   };
 
   return (
     <div className="p-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            {t('title')}
-          </h1>
-        </div>
+        <PageHeader
+          title={t('title')}
+          icon={Landmark}
+          breadcrumbs={[
+            { label: navT('dashboard'), href: '/' },
+            { label: navT('finance') },
+            { label: navT('bankAccounts') }
+          ]}
+        />
+
+
 
         {/* Bank Accounts Card */}
         <Card>

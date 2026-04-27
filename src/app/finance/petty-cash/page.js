@@ -7,9 +7,9 @@ import {
   CardContent, 
   CardHeader, 
   CardTitle 
-} from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { 
   Table, 
   TableBody, 
@@ -17,28 +17,31 @@ import {
   TableHead, 
   TableHeader, 
   TableRow 
-} from '@/app/components/ui/table';
+} from '@/components/ui/table';
 import { 
   Dialog, 
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
   DialogTrigger 
-} from '@/app/components/ui/dialog';
+} from '@/components/ui/dialog';
 import { 
   Select, 
   SelectContent, 
   SelectItem, 
   SelectTrigger, 
   SelectValue 
-} from '@/app/components/ui/select';
+} from '@/components/ui/select';
 import { Plus, Wallet, ArrowUpCircle, ArrowDownCircle, Search } from 'lucide-react';
 import { pettyCashService } from '@/app/services/api/pettyCash';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-toastify';
+import PageHeader from '@/components/PageHeader';
+
 
 export default function PettyCashPage() {
   const t = useTranslations('PettyCash');
   const commonT = useTranslations('common');
+  const navT = useTranslations('navigation');
   
   const [funds, setFunds] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -107,9 +110,17 @@ export default function PettyCashPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-        <div className="flex gap-2">
+      <PageHeader
+        title={t('title')}
+        icon={Wallet}
+        breadcrumbs={[
+          { label: navT('dashboard'), href: '/' },
+          { label: navT('finance') },
+          { label: navT('pettyCash') }
+        ]}
+      />
+
+      <div className="flex justify-end items-center gap-2">
           <Dialog open={isAddFundOpen} onOpenChange={setIsAddFundOpen}>
             <DialogTrigger asChild>
               <Button variant="outline">
@@ -188,7 +199,6 @@ export default function PettyCashPage() {
               </div>
             </DialogContent>
           </Dialog>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

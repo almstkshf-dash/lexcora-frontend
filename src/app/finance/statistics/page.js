@@ -2,36 +2,36 @@
 
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslations } from '@/hooks/useTranslations';
 import BankAccountsOverview from './components/BankAccountsOverview';
 import LastInvoices from './components/LastInvoices';
 import Transactions from './components/Transactions';
+import PageHeader from '@/components/PageHeader';
+import { BarChart3 } from 'lucide-react';
 
 const FinanceStatisticsPage = () => {
-  const { isRTL, language } = useLanguage();
+  const { isRTL } = useLanguage();
+  const t = useTranslations('financeStatistics');
+  const navT = useTranslations('navigation');
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      {/* Page Header */}
-      <Card>
-        <CardHeader>
-          <CardTitle className={isRTL ? 'text-right' : 'text-left'}>
-            {language === 'ar' ? 'الإحصائيات المالية' : 'Finance Statistics'}
-          </CardTitle>
-          <CardDescription className={isRTL ? 'text-right' : 'text-left'}>
-            {language === 'ar' 
-              ? 'نظرة شاملة على الوضع المالي للمكتب'
-              : 'Comprehensive overview of the office financial status'}
-          </CardDescription>
-        </CardHeader>
-      </Card>
+      <PageHeader
+        title={t('title')}
+        description={t('description')}
+        icon={BarChart3}
+        breadcrumbs={[
+          { label: navT('dashboard'), href: '/' },
+          { label: navT('finance') },
+          { label: navT('statistics') }
+        ]}
+      />
 
-      <Transactions />
-      {/* Bank Accounts Overview */}
-      <BankAccountsOverview />
-
-      {/* Last Invoices */}
-      <LastInvoices />
+      <div className="grid grid-cols-1 gap-6">
+        <Transactions />
+        <BankAccountsOverview />
+        <LastInvoices />
+      </div>
     </div>
   );
 };

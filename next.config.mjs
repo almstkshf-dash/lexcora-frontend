@@ -1,11 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable experimental features
-  experimental: {
-    turbopack: {
-      root: '.',
-    },
-  },
+  // experimental: {},
 
   // Skip ESLint during production builds
   eslint: {

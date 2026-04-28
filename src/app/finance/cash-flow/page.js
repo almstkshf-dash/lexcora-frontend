@@ -28,6 +28,7 @@ export default function CashFlowPage() {
   const t = useTranslations('Accounting');
   const commonT = useTranslations('common');
   const navT = useTranslations('navigation');
+  const { t: tRaw } = useTranslations();
   
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -63,7 +64,7 @@ export default function CashFlowPage() {
     }
 
     try {
-      exportCashFlowCsv({ data, period, t });
+      exportCashFlowCsv({ data, period, t: tRaw });
     } catch {
       toast.error(commonT('errorLoading'));
     }

@@ -39,7 +39,7 @@ const UserProfile = () => {
     <div className="max-w-2xl mx-auto p-4" dir={isRTL ? "rtl" : "ltr"}>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-2xl font-bold">{t('profile.title') || (isRTL ? 'الملف الشخصي' : 'Profile')}</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('profile.title')}</CardTitle>
           <Button 
             variant="outline" 
             size="sm" 
@@ -58,7 +58,7 @@ const UserProfile = () => {
                 <User className="w-5 h-5 text-blue-600" />
                 <div>
                   <p className="font-medium">{user.name}</p>
-                  <p className="text-sm text-gray-500">معرف الوظيفة: {jobId}</p>
+                  <p className="text-sm text-gray-500">{t('profile.jobId')}: {jobId}</p>
                 </div>
               </div>
               
@@ -79,12 +79,12 @@ const UserProfile = () => {
               </div>
               
               <div>
-                <p className="text-sm text-gray-500 mb-2">البريد الإلكتروني:</p>
+                <p className="text-sm text-gray-500 mb-2">{t('profile.email')}:</p>
                 <p className="font-medium">{email}</p>
               </div>
               
               <div>
-                <p className="text-sm text-gray-500 mb-2">الصلاحيات:</p>
+                <p className="text-sm text-gray-500 mb-2">{t('profile.permissions')}:</p>
                 <div className="flex flex-wrap gap-2">
                   {permissions.map((permission) => (
                     <Badge 

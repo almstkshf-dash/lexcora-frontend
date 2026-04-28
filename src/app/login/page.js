@@ -1,7 +1,9 @@
 'use client';
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Eye, EyeOff, Lock, User, Loader2, Scale } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // shadcn/ui components
 import { Button } from '@/components/ui/button';
@@ -16,6 +18,8 @@ import Image from 'next/image';
 
 export default function Page() {
   const dispatch = useDispatch();
+  const { isRTL } = useLanguage();
+  const { t } = useTranslations();
   const authLoading = useSelector(selectAuthLoading);
   const authError = useSelector(selectAuthError);
   
@@ -44,13 +48,13 @@ export default function Page() {
     const newErrors = {};
     
     if (!formData.email) {
-      newErrors.email = 'اسم المستخدم مطلوب';
+      newErrors.email = t('validation.usernameRequired');
     }
     
     if (!formData.password) {
-      newErrors.password = 'كلمة المرور مطلوبة';
+      newErrors.password = t('validation.passwordRequired');
     } else if (formData.password.length < 3) {
-      newErrors.password = 'يجب أن تكون كلمة المرور 3 أحرف على الأقل';
+      newErrors.password = t('validation.passwordMinLength');
     }
     
     setErrors(newErrors);
@@ -81,7 +85,7 @@ export default function Page() {
         }
       }
     } catch (err) {
-
+      console.error('Login error:', err);
     }
   };
 
@@ -102,125 +106,137 @@ export default function Page() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat w-full" style={{ backgroundImage: "url('/background.jpg')", backgroundSize: 'cover', backgroundAttachment: 'scroll' }} dir="rtl">
+    <main 
+      className="min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat w-full" 
+      style={{ backgroundImage: "url('/background.jpg')", backgroundSize: 'cover', backgroundAttachment: 'scroll' }} 
+      dir={isRTL ? "rtl" : "ltr"}
+    >
       <div className="w-full max-w-md">
-       
-
-        {/* Login Card */}
-        <Card className="shadow-lg bg-white/10 backdrop-blur-sm">
-        <CardHeader className="flex items-center flex-col ">
-             <div className="mx-auto  ">
-            <Image height='60' width='60' src="/log_in_card_logo.png" alt="Law Office Logo" className="w-full h-full object-contain" />
-          </div>
-          <h1 className="text-2xl font-bold text-white text-center mb-1">
-            LEXCORA
-          </h1>
+        <Card className="shadow-lg bg-white/10 backdrop-blur-sm border-white/20">
+          <CardHeader className="flex items-center flex-col space-y-4">
+            <div className="mx-auto w-20 h-20 relative">
+              <Image 
+                fill 
+                src="/log_in_card_logo.png" 
+                alt={t('navigation.appTitle') + " Logo"} 
+                className="object-contain" 
+                priority
+              />
+            </div>
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-white tracking-wider">
+                {t('navigation.appTitle')}
+              </h1>
+              <p className="text-white/80 text-sm mt-1">
+                {t('navigation.appSubtitle')}
+              </p>
+            </div>
           </CardHeader>
           
           <CardContent className="p-6">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
               <div className="space-y-4">
                 {authError && (
-                  <Alert variant="destructive">
+                  <Alert variant="destructive" className="bg-red-500/20 text-white border-red-500/50">
                     <AlertDescription>{authError}</AlertDescription>
                   </Alert>
                 )}
                 
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium text-white">
-                    اسم المستخدم
+                    {t('auth.usernameLabel')}
                   </Label>
                   <Input
                     id="email"
                     name="email"
                     type="text"
-                    placeholder="مثال: admin"
+                    placeholder={t('auth.usernamePlaceholder')}
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`h-11 text-white placeholder:text-white/70 ${errors.email ? 'border-red-500' : ''}`}
+                    className={`h-11 bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:ring-blue-500 ${errors.email ? 'border-red-500 ring-1 ring-red-500' : ''}`}
                     disabled={authLoading}
-                    dir="rtl"
+                    required
                   />
                   {errors.email && (
-                    <p className="text-sm text-red-500 mt-1">{errors.email}</p>
+                    <p className="text-sm text-red-400 mt-1 font-medium">{errors.email}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-sm font-medium text-white">
-                    كلمة المرور
+                    {t('auth.passwordLabel')}
                   </Label>
                   <div className="relative">
                     <Input
                       id="password"
                       name="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="مثال: ********"
+                      placeholder={t('auth.passwordPlaceholder')}
                       value={formData.password}
                       onChange={handleInputChange}
-                      className={`h-11 pl-10 text-white placeholder:text-white/70 ${errors.password ? 'border-red-500' : ''}`}
+                      className={`h-11 bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:ring-blue-500 ${isRTL ? 'pl-10' : 'pr-10'} ${errors.password ? 'border-red-500 ring-1 ring-red-500' : ''}`}
                       disabled={authLoading}
-                      dir="rtl"
+                      required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white "
+                      className={`absolute top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors ${isRTL ? 'left-3' : 'right-3'}`}
                       disabled={authLoading}
-                      tabIndex={-1}
+                      aria-label={showPassword ? t('auth.hidePassword') || 'Hide password' : t('auth.showPassword') || 'Show password'}
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+                    <p className="text-sm text-red-400 mt-1 font-medium">{errors.password}</p>
                   )}
                 </div>
 
-                {/* Remember Me Checkbox */}
                 <div className="flex items-center space-x-2 space-x-reverse">
                   <Checkbox 
                     id="rememberMe" 
                     checked={rememberMe}
                     onCheckedChange={setRememberMe}
+                    className="border-white/50 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                   />
                   <Label 
                     htmlFor="rememberMe" 
-                    className="text-sm mx-2 text-white cursor-pointer select-none"
+                    className="text-sm text-white/90 cursor-pointer select-none"
                   >
-                    تذكرني
+                    {t('auth.rememberMe')}
                   </Label>
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full h-11"
+                  className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-bold transition-all shadow-lg"
                   disabled={authLoading}
                 >
                   {authLoading ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      جاري تسجيل الدخول...
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      {t('auth.loggingIn')}
                     </>
                   ) : (
-                    'تسجيل الدخول'
+                    t('auth.loginButton')
                   )}
                 </Button>
               </div>
             </form>
           </CardContent>
-          <CardFooter className="flex flex-col items-center space-y-1">
-            <p className="text-white text-xs font-medium">
+          
+          <CardFooter className="flex flex-col items-center space-y-2 pt-0 pb-6">
+            <div className="w-full h-px bg-white/10 mb-4" />
+            <p className="text-white/60 text-[10px] font-medium uppercase tracking-widest">
               Lexcora ERP system by Almstkshf.com
             </p>
-            <p className="text-white text-xs">
-              For technical support: rased@almstkshf.com | Call: 0585952035
+            <p className="text-white/40 text-[10px] text-center px-4">
+              {isRTL ? 'للدعم الفني:' : 'For technical support:'} rased@almstkshf.com | 0585952035
             </p>
           </CardFooter>
         </Card>
-
-   
       </div>
-    </div>
+    </main>
   );
-}
+}

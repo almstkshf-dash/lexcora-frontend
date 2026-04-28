@@ -37,7 +37,7 @@ const BankAccountsOverview = () => {
     <Card>
       <CardHeader>
         <CardTitle className={isRTL ? 'text-right' : 'text-left'}>
-          {language === 'ar' ? 'الحسابات البنكية' : 'Bank Accounts'}
+          {t('bankAccountsOverview')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -47,7 +47,7 @@ const BankAccountsOverview = () => {
           </div>
         ) : accounts.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            {language === 'ar' ? 'لا توجد حسابات بنكية' : 'No bank accounts found'}
+            {t('noBankAccounts')}
           </div>
         ) : (
           <>
@@ -55,13 +55,13 @@ const BankAccountsOverview = () => {
             <div className="mb-6 p-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg text-white">
               <div className={isRTL ? 'text-right' : 'text-left'}>
                 <p className="text-sm opacity-90 mb-2">
-                  {language === 'ar' ? 'إجمالي الرصيد' : 'Total Balance'}
+                  {t('totalBalance')}
                 </p>
                 <p className="text-3xl font-bold">
                   {formatCurrency(totalBalance)}
                 </p>
                 <p className="text-sm opacity-75 mt-2">
-                  {accounts.length} {language === 'ar' ? 'حساب' : 'accounts'}
+                  {accounts.length} {t('accountsCount')}
                 </p>
               </div>
             </div>
@@ -95,14 +95,14 @@ const BankAccountsOverview = () => {
                       className="mt-1"
                     >
                       {account.status === 'active' 
-                        ? (language === 'ar' ? 'نشط' : 'Active')
-                        : (language === 'ar' ? 'غير نشط' : 'Inactive')}
+                        ? t('active')
+                        : t('inactive')}
                     </Badge>
                   </div>
                   
                   <div className={`mt-4 pt-4 border-t ${isRTL ? 'text-right' : 'text-left'}`}>
                     <p className="text-sm text-gray-500 mb-1">
-                      {language === 'ar' ? 'الرصيد الحالي' : 'Current Balance'}
+                      {t('currentBalance')}
                     </p>
                     <p className="text-xl font-bold text-blue-600">
                       {formatCurrency(account.current_balance)}

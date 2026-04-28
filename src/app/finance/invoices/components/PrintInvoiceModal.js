@@ -9,8 +9,10 @@ import { toast } from "react-toastify";
 import { getInvoiceById } from "@/app/services/api/invoices";
 import { format, parseISO } from "date-fns";
 import { ar } from "date-fns/locale";
+import { useTranslations } from "@/hooks/useTranslations";
 
 export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
+  const t = useTranslations('invoices');
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(false);
   const printRef = useRef();
@@ -196,12 +198,12 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
       if (response.success) {
         setInvoice(response.data);
       } else {
-        toast.error("فشل في تحميل بيانات الفاتورة");
+        toast.error(t('errorLoadingInvoice'));
         onClose();
       }
     } catch (error) {
 
-      toast.error("فشل في تحميل بيانات الفاتورة");
+      toast.error(t('errorLoadingInvoice'));
       onClose();
     } finally {
       setLoading(false);
@@ -484,13 +486,13 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
       <CustomModal
         isOpen={isOpen}
         onClose={onClose}
-        title="طباعة الفاتورة"
+        title={t('printInvoice')}
         size="lg"
       >
         {loading ? (
           <div className="flex items-center justify-center p-12">
             <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-            <span className="mr-3">جاري تحميل البيانات...</span>
+            <span className="mr-3">{t('loadingData')}</span>
           </div>
         ) : invoice ? (
           <>
@@ -796,7 +798,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                     ) : (
                       <tr>
                         <td colSpan="3" style={{ textAlign: 'center', padding: '30px', color: '#6b7280' }}>
-                          لا توجد بنود / No Items
+                          {t('noItems')}
                         </td>
                       </tr>
                     )}

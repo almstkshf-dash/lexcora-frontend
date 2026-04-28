@@ -3,6 +3,8 @@
 import * as React from "react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { getEmployeeCashTransactionStatistics } from "@/app/services/api/employeeCashTransactions"
+import { useTranslations } from '@/hooks/useTranslations';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 import {
   Card,
@@ -20,21 +22,25 @@ import {
 
 export const description = "An interactive bar chart"
 
-const chartConfig = {
+const getChartConfig = (t) => ({
   views: {
-    label: "المعاملات",
+    label: t('transactionsLabel'),
   },
   credit: {
-    label: "عهدة",
+    label: t('credit'),
     color: "hsl(var(--chart-1))",
   },
   debit: {
-    label: "خصم",
+    label: t('debit'),
     color: "hsl(var(--chart-2))",
   },
-} 
+})
 
 export default function Transactions() {
+  const t = useTranslations('financeStatistics');
+  const commonT = useTranslations('common');
+  const { isRTL, language } = useLanguage();
+  const chartConfig = React.useMemo(() => getChartConfig(t), [t]);
   const [activeChart, setActiveChart] = React.useState("credit")
   const [chartData, setChartData] = React.useState([])
   const [summary, setSummary] = React.useState({
@@ -84,7 +90,7 @@ export default function Transactions() {
       <Card className="py-0">
         <CardContent className="p-6">
           <div className="flex items-center justify-center h-[250px]">
-            <div className="text-muted-foreground">جاري التحميل...</div>
+            <div className="text-muted-foreground">{commonT('loading')}</div>
           </div>
         </CardContent>
       </Card>
@@ -95,9 +101,9 @@ export default function Transactions() {
     <Card className="py-0">
       <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-6">
-          <CardTitle>إحصائيات العهد</CardTitle>
+          <CardTitle>{t('transactionsStatistics')}</CardTitle>
           <CardDescription>
-            عرض العهد والخصومات للشهر الأخير
+            {t('transactionsStatisticsDescription')}
           </CardDescription>
         </div>
         <div className="flex">
@@ -114,7 +120,7 @@ export default function Transactions() {
                   {chartConfig[chart].label}
                 </span>
                 <span className="text-lg leading-none font-bold sm:text-3xl">
-                  {total[key].toLocaleString()} د.ك
+                  {total[key].toLocaleString()} {commonT('currency')}
                 </span>
               </button>
             )
@@ -143,7 +149,7 @@ export default function Transactions() {
               minTickGap={32}
               tickFormatter={(value) => {
                 const date = new Date(value)
-                return date.toLocaleDateString("ar-KW", {
+                return date.toLocaleDateString(language === 'ar' ? "ar-AE" : "en-US", {
                   month: "short",
                   day: "numeric",
                 })
@@ -155,7 +161,7 @@ export default function Transactions() {
                   className="w-[150px]"
                   nameKey="views"
                   labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("ar-KW", {
+                    return new Date(value).toLocaleDateString(language === 'ar' ? "ar-AE" : "en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",

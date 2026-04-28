@@ -42,9 +42,9 @@ const LastInvoices = () => {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      paid: { label: language === 'ar' ? 'مدفوع' : 'Paid', variant: 'default', color: 'bg-green-100 text-green-700' },
-      pending: { label: language === 'ar' ? 'قيد الانتظار' : 'Pending', variant: 'secondary', color: 'bg-yellow-100 text-yellow-700' },
-      cancelled: { label: language === 'ar' ? 'ملغي' : 'Cancelled', variant: 'destructive', color: 'bg-red-100 text-red-700' },
+      paid: { label: t('paid'), variant: 'default', color: 'bg-green-100 text-green-700' },
+      pending: { label: t('pending'), variant: 'secondary', color: 'bg-yellow-100 text-yellow-700' },
+      cancelled: { label: t('cancelled'), variant: 'destructive', color: 'bg-red-100 text-red-700' },
     };
     
     const statusInfo = statusMap[status] || statusMap.pending;
@@ -59,7 +59,7 @@ const LastInvoices = () => {
     <Card>
       <CardHeader>
         <CardTitle className={isRTL ? 'text-right' : 'text-left'}>
-          {language === 'ar' ? 'آخر الفواتير' : 'Recent Invoices'}
+          {t('recentInvoices')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -69,7 +69,7 @@ const LastInvoices = () => {
           </div>
         ) : invoices.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            {language === 'ar' ? 'لا توجد فواتير' : 'No invoices found'}
+            {t('noInvoicesFound')}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -77,19 +77,19 @@ const LastInvoices = () => {
               <thead>
                 <tr className="border-b">
                   <th className={`py-3 px-2 text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {language === 'ar' ? 'رقم الفاتورة' : 'Invoice #'}
+                    {t('invoiceNumber')}
                   </th>
                   <th className={`py-3 px-2 text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {language === 'ar' ? 'العميل' : 'Client'}
+                    {t('client')}
                   </th>
                   <th className={`py-3 px-2 text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {language === 'ar' ? 'التاريخ' : 'Date'}
+                    {t('date')}
                   </th>
                   <th className={`py-3 px-2 text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {language === 'ar' ? 'المبلغ' : 'Amount'}
+                    {t('amount')}
                   </th>
                   <th className={`py-3 px-2 text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {language === 'ar' ? 'الحالة' : 'Status'}
+                    {t('status')}
                   </th>
                 </tr>
               </thead>

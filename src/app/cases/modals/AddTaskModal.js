@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { getEmployees } from '@/app/services/api/employees';
 import { createTask } from '@/app/services/api/tasks';
-import { uploadFilesToFirebase } from '@/app/services/api/firebaseStorage';
+import { uploadFiles } from '@/app/services/api/upload';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import { Button } from '@/components/ui/button';
@@ -161,12 +161,12 @@ const AddTaskModal = ({ isOpen, onClose, caseId, onTaskAdded }) => {
     try {
       let files = [];
       
-      // Upload files to Firebase if any are selected
+      // Upload files to Vercel Blob if any are selected
       if (selectedFiles.length > 0) {
         setIsUploadingFiles(true);
         toast.info(t('common.uploadingFiles'));
         
-        const uploadResult = await uploadFilesToFirebase(selectedFiles, 'tasks');
+        const uploadResult = await uploadFiles(selectedFiles, 'tasks');
         
         if (!uploadResult.success) {
           throw new Error(uploadResult.error || 'Failed to upload files');
@@ -174,8 +174,8 @@ const AddTaskModal = ({ isOpen, onClose, caseId, onTaskAdded }) => {
         
         // Transform uploaded files to the required format
         files = uploadResult.files.map(file => ({
-          fileName: file.filename,
-          url: file.url
+          fileName: file.document_name,
+          url: file.document_url
         }));
         
         setIsUploadingFiles(false);

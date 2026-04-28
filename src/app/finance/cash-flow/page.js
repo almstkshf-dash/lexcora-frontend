@@ -63,7 +63,7 @@ export default function CashFlowPage() {
     }
 
     try {
-      exportCashFlowCsv({ data, period });
+      exportCashFlowCsv({ data, period, t });
     } catch {
       toast.error(commonT('errorLoading'));
     }

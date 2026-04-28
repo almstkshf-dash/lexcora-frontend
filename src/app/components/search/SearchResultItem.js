@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from '@/hooks/useTranslations';
 import { FileText, User, UserCheck, ChevronRight, ChevronLeft } from 'lucide-react';
 
 const SearchResultItem = ({ 
@@ -13,6 +14,7 @@ const SearchResultItem = ({
   isRTL, 
   lang 
 }) => {
+  const t = useTranslations();
   const renderContent = () => {
     if (searchType === 'system') {
       return (
@@ -48,11 +50,11 @@ const SearchResultItem = ({
             </div>
             <div className="flex flex-col gap-0.5 min-w-0">
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                {item.topic || (isRTL ? 'بدون موضوع' : 'No topic')}
+                {item.topic || t('search.noTopic')}
               </span>
               <div className="flex gap-2 text-xs text-gray-500 dark:text-gray-400">
-                <span className="truncate">{isRTL ? 'ملف:' : 'File:'} {item.file_number || '-'}</span>
-                <span className="truncate">{isRTL ? 'قضية:' : 'Case:'} {item.case_number || '-'}</span>
+                <span className="truncate">{t('fileLabel')} {item.file_number || '-'}</span>
+                <span className="truncate">{t('caseLabel')} {item.case_number || '-'}</span>
               </div>
             </div>
           </div>
@@ -74,7 +76,7 @@ const SearchResultItem = ({
             </div>
             <div className="flex flex-col gap-0.5 min-w-0">
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                {item.name || (isRTL ? 'بدون اسم' : 'Unnamed')}
+                {item.name || t('search.unnamed')}
               </span>
               <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
                 {item.phone || item.national_id || item.e_id || '-'}
@@ -99,7 +101,7 @@ const SearchResultItem = ({
             </div>
             <div className="flex flex-col gap-0.5 min-w-0">
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                {item.name || (isRTL ? 'بدون اسم' : 'Unnamed')}
+                {item.name || t('search.unnamed')}
               </span>
               <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
                 {item.phone || '-'}

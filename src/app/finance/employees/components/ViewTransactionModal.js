@@ -32,11 +32,11 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
         if (response.success) {
           setTransaction(response.data);
         } else {
-          toast.error('حدث خطأ في تحميل بيانات العهدة');
+          toast.error(t('loadError'));
         }
       } catch (error) {
         console.error('Error fetching transaction:', error);
-        toast.error('حدث خطأ في تحميل بيانات العهدة');
+        toast.error(t('loadError'));
       } finally {
         setLoading(false);
       }
@@ -85,13 +85,13 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        toast.success('جاري تحميل الملف...');
+        toast.success(t('downloadSuccess'));
       } else {
         throw new Error('Failed to get download URL');
       }
     } catch (error) {
       console.error('Error downloading file:', error);
-      toast.error('حدث خطأ في تحميل الملف');
+      toast.error(t('downloadError'));
     }
   };
 
@@ -109,11 +109,11 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
           setTransaction(updatedTransaction.data);
         }
       } else {
-        toast.error(t('deleteAttachmentError') || 'حدث خطأ في حذف المرفق');
+        toast.error(t('deleteAttachmentError'));
       }
     } catch (error) {
       console.error('Error deleting attachment:', error);
-      toast.error(t('deleteAttachmentError') || 'حدث خطأ في حذف المرفق');
+      toast.error(t('deleteAttachmentError'));
     } finally {
       setDeletingAttachment(null);
     }
@@ -152,18 +152,18 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
       const response = await updateEmployeeCashTransaction(transactionId, updatePayload);
       
       if (response.success) {
-        toast.success(`تم إضافة ${files.length} ملف بنجاح`);
+        toast.success(t('filesAdded', { count: files.length }));
         // Refresh transaction data
         const updatedTransaction = await getEmployeeCashTransactionById(transactionId);
         if (updatedTransaction.success) {
           setTransaction(updatedTransaction.data);
         }
       } else {
-        toast.error('حدث خطأ في إضافة الملفات');
+        toast.error(t('addFilesError'));
       }
     } catch (error) {
       console.error('Error uploading files:', error);
-      toast.error('حدث خطأ في إضافة الملفات');
+      toast.error(t('addFilesError'));
     } finally {
       setUploading(false);
     }
@@ -315,7 +315,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
                         size="sm"
                         onClick={() => handleDownload(attachment.attachment_url, attachment.attachment_name)}
                         className="hover:bg-blue-50"
-                        title="تحميل"
+                        title={t('download')}
                       >
                         <Download className="h-4 w-4 text-blue-600" />
                       </Button>
@@ -327,7 +327,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
                             size="sm"
                             className="hover:bg-red-50"
                             disabled={deletingAttachment === attachment.id}
-                            title="حذف"
+                            title={t('delete')}
                           >
                             <Trash2 className="h-4 w-4 text-red-600" />
                           </Button>
@@ -340,7 +340,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                            <AlertDialogCancel>{t('close')}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleDeleteAttachment(attachment.id, attachment.attachment_name)}
                               className="bg-red-600 hover:bg-red-700"

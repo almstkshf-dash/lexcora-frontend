@@ -93,6 +93,14 @@
     "back": "Back",
     "logout": "Logout"
   },
+  "search": {
+    "unnamed": "Unnamed",
+    "clearSearch": "Clear search"
+  },
+  "notifications": {
+    "markAsRead": "Mark as read",
+    "by": "by"
+  },
   "common": {
     "accessDeniedTitle": "Access denied",
     "accessDeniedMessage": "You do not have permission to view this page.",
@@ -110,7 +118,9 @@
     "balance": "Balance",
     "phone": "Phone",
     "nationality": "Nationality",
-    "view": "View"
+    "view": "View",
+    "selected": "Selected",
+    "notSelected": "Not selected"
   },
   "notify": {
     "defaultError": "Something went wrong. Please try again.",
@@ -291,5 +301,15 @@
     "yearly": "Yearly",
     "inflow": "Inflow",
     "outflow": "Outflow"
+  },
+  "cashFlowCsv": {
+    "fileNamePrefix": "cash_flow",
+    "metric": "Metric",
+    "value": "Value",
+    "period": "Period",
+    "inflow": "Inflow",
+    "outflow": "Outflow",
+    "net": "Net",
+    "name": "Name"
   }
 }

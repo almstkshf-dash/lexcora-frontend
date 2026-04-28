@@ -63,7 +63,7 @@ const TransactionsTab = () => {
     });
     
     if (!response.success) {
-      throw new Error('حدث خطأ في تحميل عهد الموظفين');
+      throw new Error(t('loadError'));
     }
     
     return {
@@ -82,7 +82,7 @@ const TransactionsTab = () => {
       dedupingInterval: 5000,
       errorRetryCount: 3,
       onError: (err) => {
-        toast.error(err.message || 'حدث خطأ في تحميل عهد الموظفين');
+        toast.error(err.message || t('loadError'));
       }
     }
   );
@@ -150,12 +150,12 @@ const TransactionsTab = () => {
       // Prepare data for export
       const exportData = transactions.map((transaction, index) => ({
         '#': index + 1,
-        'اسم الموظف': transaction.employee_name || '-',
-        'رقم الهاتف': transaction.employee_phone || '-',
-        'المبلغ': transaction.amount,
-        'الوصف': transaction.description || '-',
-        'أضيف بواسطة': transaction.created_by_name || '-',
-        'تاريخ الإضافة': formatDate(transaction.created_at)
+        [t('colEmployeeName')]: transaction.employee_name || '-',
+        [t('colPhone')]: transaction.employee_phone || '-',
+        [t('colAmount')]: transaction.amount,
+        [t('colDescription')]: transaction.description || '-',
+        [t('colAddedBy')]: transaction.created_by_name || '-',
+        [t('colDate')]: formatDate(transaction.created_at)
       }));
 
       // Create worksheet
@@ -163,29 +163,29 @@ const TransactionsTab = () => {
       
       // Set column widths
       worksheet['!cols'] = [
-        { wch: 5 },   // #
-        { wch: 20 },  // اسم الموظف
-        { wch: 15 },  // رقم الهاتف
-        { wch: 12 },  // المبلغ
-        { wch: 30 },  // الوصف
-        { wch: 20 },  // أضيف بواسطة
-        { wch: 15 }   // تاريخ الإضافة
+        { wch: 5 },
+        { wch: 20 },
+        { wch: 15 },
+        { wch: 12 },
+        { wch: 30 },
+        { wch: 20 },
+        { wch: 15 }
       ];
 
       // Create workbook
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'عهد الموظفين');
+      XLSX.utils.book_append_sheet(workbook, worksheet, t('sheetName'));
 
       // Generate filename with current date
-      const filename = `عهد_الموظفين_${new Date().toLocaleDateString('ar-AE').replace(/\//g, '-')}.xlsx`;
+      const filename = `${t('fileName')}_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`;
 
       // Save file
       XLSX.writeFile(workbook, filename);
       
-      toast.success('تم تصدير البيانات بنجاح');
+      toast.success(t('exportSuccess'));
     } catch (error) {
       console.error('Error exporting to Excel:', error);
-      toast.error('حدث خطأ في تصدير البيانات');
+      toast.error(t('exportError'));
     }
   };
 
@@ -218,7 +218,7 @@ const TransactionsTab = () => {
                 disabled={transactions.length === 0}
               >
                 <Download className="h-4 w-4" />
-                تصدير Excel
+                {t('exportExcel')}
               </Button>
               <Button 
                 onClick={handleAdd}
@@ -248,8 +248,8 @@ const TransactionsTab = () => {
             </div>
           ) : error ? (
             <div className="text-center p-8">
-              <p className="text-red-500 mb-4">حدث خطأ في تحميل البيانات</p>
-              <Button onClick={() => mutate()}>إعادة المحاولة</Button>
+              <p className="text-red-500 mb-4">{t('loadError')}</p>
+              <Button onClick={() => mutate()}>{tCommon('retry')}</Button>
             </div>
           ) : transactions.length === 0 ? (
             <div className="text-center p-8">
@@ -337,7 +337,7 @@ const TransactionsTab = () => {
                             size="sm"
                             onClick={() => handleStatement(transaction)}
                             className="hover:bg-indigo-50"
-                            title="كشف حساب الموظف"
+                            title={t('statementTitle')}
                           >
                             <FileText className="h-4 w-4 text-indigo-600" />
                           </Button>
@@ -346,7 +346,7 @@ const TransactionsTab = () => {
                             size="sm"
                             onClick={() => handleView(transaction.id)}
                             className="hover:bg-green-50"
-                            title="عرض التفاصيل"
+                            title={t('viewDetails')}
                           >
                             <Eye className="h-4 w-4 text-green-600" />
                           </Button>
@@ -355,7 +355,7 @@ const TransactionsTab = () => {
                             size="sm"
                             onClick={() => handlePrint(transaction.id)}
                             className="hover:bg-purple-50"
-                            title="طباعة السند"
+                            title={t('printVoucher')}
                           >
                             <Printer className="h-4 w-4 text-purple-600" />
                           </Button>
@@ -364,7 +364,7 @@ const TransactionsTab = () => {
                             size="sm"
                             onClick={() => handleEdit(transaction)}
                             className="hover:bg-blue-50"
-                            title="تعديل"
+                            title={t('editRecord')}
                           >
                             <Edit className="h-4 w-4 text-blue-600" />
                           </Button>
@@ -409,7 +409,7 @@ const TransactionsTab = () => {
               {transactionsPagination.totalPages > 1 && (
                 <div className="flex items-center justify-between mt-4">
                   <div className="text-sm ">
-                    عرض {((currentPage - 1) * itemsPerPage) + 1} إلى {Math.min(currentPage * itemsPerPage, transactionsPagination.total)} من أصل {transactionsPagination.total}
+                    {t('showing')} {((currentPage - 1) * itemsPerPage) + 1} {t('to')} {Math.min(currentPage * itemsPerPage, transactionsPagination.total)} {t('of')} {transactionsPagination.total}
                   </div>
                   <div className="flex gap-2">
                     <Button

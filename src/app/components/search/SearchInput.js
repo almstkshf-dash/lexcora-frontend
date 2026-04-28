@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Search, X } from 'lucide-react';
 
 const SearchInput = ({ 
@@ -14,6 +15,8 @@ const SearchInput = ({
   inputId = 'global-search',
   inputName = 'global-search'
 }) => {
+  const t = useTranslations();
+
   return (
     <div className="relative">
       <div className={`absolute inset-y-0 ${isRTL ? 'right-0 pr-3' : 'left-0 pl-3'} flex items-center pointer-events-none`}>
@@ -56,7 +59,7 @@ const SearchInput = ({
             <button
               onClick={onClear}
               className="text-muted-foreground hover:text-foreground transition-colors focus:outline-none p-1 rounded-sm hover:bg-accent"
-              aria-label="Clear search"
+              aria-label={t('search.clearSearch')}
             >
               <X className="h-4 w-4" />
             </button>

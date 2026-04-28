@@ -61,14 +61,14 @@ function InvoicesPage() {
   };
 
   const formatCurrency = (amount, currency = 'AED') => {
-    return new Intl.NumberFormat(t('common.direction') === 'rtl' ? 'ar-AE' : 'en-US', {
+    return new Intl.NumberFormat(isRTL ? 'ar-AE' : 'en-US', {
       style: 'currency',
       currency: currency
     }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(t('common.direction') === 'rtl' ? 'ar-AE' : 'en-US');
+    return new Date(dateString).toLocaleDateString(isRTL ? 'ar-AE' : 'en-US');
   };
 
   const getStatusBadge = (status) => {
@@ -174,7 +174,7 @@ function InvoicesPage() {
                   columnConfig={invoiceColumnConfig}
                   language={language}
                   exportName="invoices"
-                  sheetName={language === 'ar' ? 'الفواتير' : 'Invoices'}
+                  sheetName={t('sheetName')}
                 />
                 <Button 
                   onClick={() => setShowAddModal(true)}

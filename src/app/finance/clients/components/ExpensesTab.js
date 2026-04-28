@@ -123,7 +123,7 @@ export default function ExpensesTab({ clientId, clientName, clientBalance }) {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleViewClick(expense)}
-                        title="عرض"
+                        title={t("clientFinance.view")}
                       >
                         <Eye className="h-4 w-4 text-blue-600" />
                       </Button>
@@ -131,7 +131,7 @@ export default function ExpensesTab({ clientId, clientName, clientBalance }) {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleEditClick(expense)}
-                        title="تعديل"
+                        title={t("clientFinance.edit")}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -139,7 +139,7 @@ export default function ExpensesTab({ clientId, clientName, clientBalance }) {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDeleteClick(expense)}
-                        title="حذف"
+                        title={t("clientFinance.delete")}
                       >
                         <Trash2 className="h-4 w-4 text-red-500" />
                       </Button>

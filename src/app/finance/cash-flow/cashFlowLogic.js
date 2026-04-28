@@ -34,7 +34,13 @@ export const exportCashFlowCsv = ({
   createElement = (tag) => document.createElement(tag),
   appendChild = (node) => document.body.appendChild(node),
   removeChild = (node) => document.body.removeChild(node),
+  t = (key) => undefined,
 }) => {
+  const translate = (key, fallback) => {
+    const value = t(key);
+    return value != null ? value : fallback;
+  };
+
   const escapeCsvValue = (value) => {
     const stringValue = String(value ?? '');
     if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
@@ -48,15 +54,15 @@ export const exportCashFlowCsv = ({
   const chartData = data?.chartData || [];
 
   const summaryRows = [
-    ['metric', 'value'],
-    ['period', period],
-    ['inflow', summary.inflow ?? 0],
-    ['outflow', summary.outflow ?? 0],
-    ['net', summary.net ?? 0],
+    [translate('cashFlowCsv.metric', 'metric'), translate('cashFlowCsv.value', 'value')],
+    [translate('cashFlowCsv.period', 'period'), period],
+    [translate('cashFlowCsv.inflow', 'inflow'), summary.inflow ?? 0],
+    [translate('cashFlowCsv.outflow', 'outflow'), summary.outflow ?? 0],
+    [translate('cashFlowCsv.net', 'net'), summary.net ?? 0],
   ];
 
   const trendRows = [
-    ['name', 'inflow', 'outflow'],
+    [translate('cashFlowCsv.name', 'name'), translate('cashFlowCsv.inflow', 'inflow'), translate('cashFlowCsv.outflow', 'outflow')],
     ...chartData.map((item) => [
       item?.name ?? '',
       item?.inflow ?? 0,
@@ -75,7 +81,7 @@ export const exportCashFlowCsv = ({
   const link = createElement('a');
   const date = now.toISOString().split('T')[0];
   link.href = url;
-  link.setAttribute('download', `cash_flow_${period}_${date}.csv`);
+  link.setAttribute('download', `${translate('cashFlowCsv.fileNamePrefix', 'cash_flow')}_${period}_${date}.csv`);
   appendChild(link);
   link.click();
   removeChild(link);

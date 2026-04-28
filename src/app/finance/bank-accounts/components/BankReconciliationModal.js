@@ -48,7 +48,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
       }
     } catch (error) {
       console.error('Error fetching reconciliation data:', error);
-      toast.error('Error loading data');
+      toast.error(t('errorLoadingData'));
     } finally {
       setLoading(false);
     }
@@ -72,13 +72,13 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
 
       const response = await importBankStatement(formData);
       if (response.success) {
-        toast.success('Statement imported successfully');
+        toast.success(t('statementImportedSuccess'));
         fetchUnreconciledData();
       } else {
-        toast.error(response.error || 'Import failed');
+        toast.error(response.error || t('importFailed'));
       }
     } catch (error) {
-      toast.error('Error uploading file');
+      toast.error(t('errorUploadingFile'));
     } finally {
       setImporting(false);
     }
@@ -89,13 +89,13 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
       setMatching(true);
       const response = await autoMatchTransactions(accountId);
       if (response.success) {
-        toast.success(`Successfully matched ${response.matched_count} transactions`);
+        toast.success(t('matchedTransactions', { count: response.matched_count }));
         fetchUnreconciledData();
       } else {
-        toast.error(response.error || 'Auto-match failed');
+        toast.error(response.error || t('autoMatchFailed'));
       }
     } catch (error) {
-      toast.error('Error during auto-match');
+      toast.error(t('errorAutoMatching'));
     } finally {
       setMatching(false);
     }
@@ -103,7 +103,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
 
   const handleManualReconcile = async () => {
     if (!selectedLine || !selectedLogId) {
-      toast.error('Please select both a statement line and an internal transaction');
+      toast.error(t('selectStatementAndInternal'));
       return;
     }
 
@@ -116,15 +116,15 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
       });
 
       if (response.success) {
-        toast.success('Transaction reconciled');
+        toast.success(t('transactionReconciled'));
         setSelectedLine(null);
         setSelectedLogId(null);
         fetchUnreconciledData();
       } else {
-        toast.error(response.error || 'Reconciliation failed');
+        toast.error(response.error || t('reconciliationFailed'));
       }
     } catch (error) {
-      toast.error('Error reconciling transaction');
+      toast.error(t('errorReconcilingTransaction'));
     } finally {
       setReconciling(false);
     }
@@ -289,11 +289,11 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
                         </TableCell>
                         <TableCell>
                           <Badge variant={log.type === 'deposit' ? 'default' : 'destructive'} className="text-[10px]">
-                            {log.type}
+                            {log.type === 'deposit' ? t('deposit') : t('withdrawal')}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-sm max-w-[150px] truncate">
-                          {log.description || 'No description'}
+                          {log.description || t('noDescription')}
                         </TableCell>
                         <TableCell className={`text-right font-bold ${log.type === 'withdrawal' ? 'text-red-600' : 'text-green-600'}`}>
                           {log.type === 'withdrawal' ? '-' : ''}{formatCurrency(log.amount)}
@@ -313,13 +313,13 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
             <div className="flex flex-col">
               <span className="text-xs text-gray-500 uppercase tracking-wider">{t('selectedLine')}</span>
               <span className="font-bold text-gray-900 dark:text-white">
-                {selectedLine ? `${selectedLine.description} (${formatCurrency(selectedLine.amount)})` : '---'}
+                {selectedLine ? `${selectedLine.description} (${formatCurrency(selectedLine.amount)})` : t('notSelected')}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-xs text-gray-500 uppercase tracking-wider">{t('selectedRecord')}</span>
               <span className="font-bold text-gray-900 dark:text-white">
-                {selectedLogId ? internalLogs.find(l => l.id === selectedLogId)?.description || 'Selected' : '---'}
+                {selectedLogId ? internalLogs.find(l => l.id === selectedLogId)?.description || t('selected') : t('notSelected')}
               </span>
             </div>
           </div>

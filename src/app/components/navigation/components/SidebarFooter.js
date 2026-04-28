@@ -62,7 +62,7 @@ const SidebarFooter = ({ user, userRole, isRTL, onLogout, isCollapsed }) => {
                 </button>
               </TooltipTrigger>
               <TooltipContent side={isRTL ? "right" : "left"} className="bg-destructive text-destructive-foreground">
-                <p>{t('buttons.logout') || (isRTL ? "تسجيل الخروج" : "Logout")}</p>
+                <p>{t('buttons.logout')}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

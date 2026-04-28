@@ -98,12 +98,12 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
 
   const handleDateFilter = () => {
     if (!dateRange.from || !dateRange.to) {
-      toast.error('Please select both start and end dates');
+      toast.error(t('pleaseSelectDateRange'));
       return;
     }
     
     if (dateRange.from > dateRange.to) {
-      toast.error('Start date cannot be after end date');
+      toast.error(t('startDateAfterEndDate'));
       return;
     }
     
@@ -129,25 +129,26 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
 
   const handleExportToExcel = () => {
     if (logs.length === 0) {
-      toast.error('No data to export');
+      toast.error(t('noDataToExport'));
       return;
     }
 
+    const descriptionHeader = t('common.description');
     const exportData = logs.map(log => ({
-      'Date': formatDate(log.created_at),
-      'Type': log.type === 'deposit' ? t('deposit') : t('withdrawal'),
-      'Amount': log.amount,
-      'Description': log.description || '-',
-      'Added By': log.employee_name || t('unknown'),
-      'Attachments': log.attachments && log.attachments.length > 0 ? log.attachments.length : 0
+      [t('common.date')]: formatDate(log.created_at),
+      [t('operationType')]: log.type === 'deposit' ? t('deposit') : t('withdrawal'),
+      [t('common.amount')]: log.amount,
+      [descriptionHeader]: log.description || t('noDescription'),
+      [t('addedBy')]: log.employee_name || t('unknown'),
+      [t('attachments')]: log.attachments && log.attachments.length > 0 ? log.attachments.length : 0
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Bank Account Logs');
+    XLSX.utils.book_append_sheet(workbook, worksheet, t('exportSheetName'));
     
     // Auto-size columns
-    const maxWidth = exportData.reduce((w, r) => Math.max(w, r['Description']?.length || 0), 10);
+    const maxWidth = exportData.reduce((w, r) => Math.max(w, r[descriptionHeader]?.length || 0), 10);
     worksheet['!cols'] = [
       { wch: 20 }, // Date
       { wch: 15 }, // Type
@@ -159,7 +160,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
 
     const fileName = `${accountName}_logs_${dateRange.from}_to_${dateRange.to}.xlsx`;
     XLSX.writeFile(workbook, fileName);
-    toast.success('Excel file exported successfully');
+    toast.success(t('exportSuccess'));
   };
 
   const handleFileChange = (e) => {
@@ -422,7 +423,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
                   disabled={logs.length === 0}
                 >
                   <FileSpreadsheet className="h-4 w-4" />
-                  Export to Excel
+                  {t('exportToExcel')}
                 </Button>
               </div>
               
@@ -471,10 +472,10 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t('date')}</TableHead>
+                      <TableHead>{t('common.date')}</TableHead>
                       <TableHead>{t('operationType')}</TableHead>
-                      <TableHead>{t('amount')}</TableHead>
-                      <TableHead>{t('description')}</TableHead>
+                      <TableHead>{t('common.amount')}</TableHead>
+                      <TableHead>{t('common.description')}</TableHead>
                       <TableHead>{t('addedBy')}</TableHead>
                       <TableHead>{t('attachments')}</TableHead>
                       <TableHead>{t('actions')}</TableHead>

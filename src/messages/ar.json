@@ -93,6 +93,14 @@
     "back": "رجوع",
     "logout": "تسجيل الخروج"
   },
+  "search": {
+    "unnamed": "بدون اسم",
+    "clearSearch": "مسح البحث"
+  },
+  "notifications": {
+    "markAsRead": "وضع علامة كمقروء",
+    "by": "بواسطة"
+  },
   "common": {
     "accessDeniedTitle": "تم رفض الوصول",
     "accessDeniedMessage": "ليست لديك صلاحية لعرض هذه الصفحة.",
@@ -110,7 +118,9 @@
     "balance": "الرصيد",
     "phone": "رقم الهاتف",
     "nationality": "الجنسية",
-    "view": "عرض"
+    "view": "عرض",
+    "selected": "محدد",
+    "notSelected": "غير محدد"
   },
   "notify": {
     "defaultError": "حدث خطأ. حاول مرة أخرى.",
@@ -291,5 +301,15 @@
     "yearly": "سنوي",
     "inflow": "دخل",
     "outflow": "مخرج"
+  },
+  "cashFlowCsv": {
+    "fileNamePrefix": "cash_flow",
+    "metric": "المؤشر",
+    "value": "القيمة",
+    "period": "الفترة",
+    "inflow": "دخل",
+    "outflow": "مخرج",
+    "net": "الصافي",
+    "name": "الاسم"
   }
 }

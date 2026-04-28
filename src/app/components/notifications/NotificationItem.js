@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useMemo } from 'react'
+import { useTranslations } from '@/hooks/useTranslations'
 import { Check, Trash2, Clock, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getTypeIcon, getRelatedIcon, formatTimeAgo } from './utils'
@@ -18,6 +19,7 @@ const NotificationItem = React.memo(function NotificationItem({
   onMarkAsRead, 
   onDelete 
 }) {
+  const t = useTranslations();
   const timeAgo = useMemo(() => formatTimeAgo(notification.created_at, isArabic), [notification.created_at, isArabic]);
 
   return (
@@ -57,7 +59,7 @@ const NotificationItem = React.memo(function NotificationItem({
                     onMarkAsRead(notification.id);
                   }}
                   className="h-7 w-7 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
-                  title={isArabic ? 'وضع علامة كمقروء' : 'Mark as read'}
+                  title={t('notifications.markAsRead')}
                 >
                   <Check className="h-4 w-4" />
                 </Button>
@@ -75,7 +77,7 @@ const NotificationItem = React.memo(function NotificationItem({
                     onClick={() => onDelete(notification.id)}
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    <span>{isArabic ? 'حذف' : 'Delete'}</span>
+                    <span>{t('buttons.delete')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -106,7 +108,7 @@ const NotificationItem = React.memo(function NotificationItem({
             
             {notification.created_by_name && (
               <span className="font-medium bg-muted/30 px-2 py-0.5 rounded-full">
-                {isArabic ? 'بواسطة' : 'by'} {notification.created_by_name}
+                {t('notifications.by')} {notification.created_by_name}
               </span>
             )}
           </div>

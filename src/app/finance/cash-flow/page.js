@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -13,14 +13,14 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  LineChart,
-  Line,
   Legend
 } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, Calendar, Download, RefreshCcw } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Download, RefreshCcw } from 'lucide-react';
 import { accountingService } from '@/app/services/api/accounting';
 import { toast } from 'react-toastify';
 import PageHeader from '@/components/PageHeader';
+
+const PERIOD_OPTIONS = ['monthly', 'quarterly', 'yearly'];
 
 export default function CashFlowPage() {
   const { language } = useLanguage();
@@ -31,28 +31,95 @@ export default function CashFlowPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('monthly'); // monthly, quarterly, yearly
+  const latestRequestRef = useRef(0);
 
-  useEffect(() => {
-    fetchCashFlow();
-  }, [period]);
+  const fetchCashFlow = useCallback(async (selectedPeriod) => {
+    const requestId = ++latestRequestRef.current;
 
-  const fetchCashFlow = async () => {
     try {
       setLoading(true);
-      const result = await accountingService.getCashFlow(period);
-      setData(result);
-    } catch (error) {
-      toast.error(commonT('errorLoading'));
+      const result = await accountingService.getCashFlow(selectedPeriod);
+
+      if (requestId === latestRequestRef.current) {
+        setData(result);
+      }
+    } catch {
+      if (requestId === latestRequestRef.current) {
+        toast.error(commonT('errorLoading'));
+      }
     } finally {
-      setLoading(false);
+      if (requestId === latestRequestRef.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, [commonT]);
+
+  useEffect(() => {
+    fetchCashFlow(period);
+  }, [period, fetchCashFlow]);
 
   const formatCurrency = (val) => {
     return new Intl.NumberFormat(language === 'ar' ? 'ar-AE' : 'en-US', {
       style: 'currency',
       currency: 'AED'
     }).format(val);
+  };
+
+  const handleExport = () => {
+    if (!data) {
+      toast.error(commonT('errorLoading'));
+      return;
+    }
+
+    try {
+      const escapeCsvValue = (value) => {
+        const stringValue = String(value ?? '');
+        if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+          return `"${stringValue.replace(/"/g, '""')}"`;
+        }
+
+        return stringValue;
+      };
+
+      const summary = data?.summary || {};
+      const chartData = data?.chartData || [];
+
+      const summaryRows = [
+        ['metric', 'value'],
+        ['period', period],
+        ['inflow', summary.inflow ?? 0],
+        ['outflow', summary.outflow ?? 0],
+        ['net', summary.net ?? 0],
+      ];
+
+      const trendRows = [
+        ['name', 'inflow', 'outflow'],
+        ...chartData.map((item) => [
+          item?.name ?? '',
+          item?.inflow ?? 0,
+          item?.outflow ?? 0,
+        ]),
+      ];
+
+      const csvContent = [
+        ...summaryRows.map((row) => row.map(escapeCsvValue).join(',')),
+        '',
+        ...trendRows.map((row) => row.map(escapeCsvValue).join(',')),
+      ].join('\n');
+
+      const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const date = new Date().toISOString().split('T')[0];
+      link.href = url;
+      link.setAttribute('download', `cash_flow_${period}_${date}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error(commonT('errorLoading'));
+    }
   };
 
   if (loading && !data) {
@@ -77,7 +144,7 @@ export default function CashFlowPage() {
 
       <div className="flex justify-between items-center">
         <div className="flex bg-muted p-1 rounded-lg">
-          {['monthly', 'quarterly', 'yearly'].map((p) => (
+          {PERIOD_OPTIONS.map((p) => (
             <Button
               key={p}
               variant={period === p ? 'default' : 'ghost'}
@@ -89,7 +156,7 @@ export default function CashFlowPage() {
             </Button>
           ))}
         </div>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" onClick={handleExport} disabled={!data}>
           <Download className="mr-2 h-4 w-4" />
           {commonT('export')}
         </Button>

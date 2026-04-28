@@ -99,8 +99,12 @@ export const getCashFlowReport = async (filters = {}) => {
 };
 
 // Get Daily Cash Flow (for charts)
-export const getDailyCashFlow = async (days = 30) => {
-  const response = await api.get('/banking/cash-flow/daily', { params: { days } });
+export const getDailyCashFlow = async (daysOrFilters = 30) => {
+  const params =
+    typeof daysOrFilters === 'object' && daysOrFilters !== null
+      ? daysOrFilters
+      : { days: daysOrFilters };
+  const response = await api.get('/banking/cash-flow/daily', { params });
   return response.data;
 };
 
@@ -120,4 +124,4 @@ export const bankAccountsService = {
   reconcile: reconcileTransaction,
   getCashFlowData: getCashFlowReport,
   getDailyCashFlow: getDailyCashFlow
-};
+};

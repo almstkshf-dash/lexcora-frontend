@@ -16,13 +16,13 @@
     "blueNew": "Indigo",
     "green": "Green",
     "orange": "Orange",
-    "orangeGold": "Orange Gold",
+    "gold": "Gold",
     "violet": "Violet",
     "yellow": "Yellow",
     "rose": "Rose",
-    "calm": "Calm (Ambient)",
-    "focus": "Focus (Ambient)",
-    "vibrant": "Vibrant (Ambient)"
+    "calm": "Calm",
+    "focus": "Focus",
+    "vibrant": "Vibrant"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -121,7 +121,8 @@
     "nationality": "Nationality",
     "view": "View",
     "selected": "Selected",
-    "notSelected": "Not selected"
+    "notSelected": "Not selected",
+    "export": "Export"
   },
   "notify": {
     "defaultError": "Something went wrong. Please try again.",

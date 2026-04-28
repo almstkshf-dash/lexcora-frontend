@@ -16,13 +16,13 @@
     "blueNew": "نيلي",
     "green": "أخضر",
     "orange": "برتقالي",
-    "orangeGold": "برتقالي ذهبي",
+    "orangeGold": "ذهبي",
     "violet": "بنفسجي",
     "yellow": "أصفر",
     "rose": "وردي",
-    "calm": "هادئ (محسن)",
-    "focus": "تركيز (محسن)",
-    "vibrant": "حيوي (محسن)"
+    "calm": "هادئ",
+    "focus": "تركيز",
+    "vibrant": "حيوي"
   },
   "navigation": {
     "dashboard": "لوحة التحكم",
@@ -121,7 +121,8 @@
     "nationality": "الجنسية",
     "view": "عرض",
     "selected": "محدد",
-    "notSelected": "غير محدد"
+    "notSelected": "غير محدد",
+    "export": "تصدير"
   },
   "notify": {
     "defaultError": "حدث خطأ. حاول مرة أخرى.",
@@ -368,6 +369,7 @@
   },
   "PettyCash": {
     "title": "الصندوق الصغير",
+    "longTitle": "العهد النقدية (Petty Cash)",
     "addNewFund": "إضافة صندوق جديد",
     "fundName": "اسم الصندوق",
     "addTransaction": "إضافة معاملة",

@@ -19,6 +19,7 @@ import { TrendingUp, TrendingDown, DollarSign, Download, RefreshCcw } from 'luci
 import { accountingService } from '@/app/services/api/accounting';
 import { toast } from 'react-toastify';
 import PageHeader from '@/components/PageHeader';
+import { exportCashFlowCsv, fetchLatestCashFlow } from './cashFlowLogic';
 
 const PERIOD_OPTIONS = ['monthly', 'quarterly', 'yearly'];
 
@@ -34,24 +35,14 @@ export default function CashFlowPage() {
   const latestRequestRef = useRef(0);
 
   const fetchCashFlow = useCallback(async (selectedPeriod) => {
-    const requestId = ++latestRequestRef.current;
-
-    try {
-      setLoading(true);
-      const result = await accountingService.getCashFlow(selectedPeriod);
-
-      if (requestId === latestRequestRef.current) {
-        setData(result);
-      }
-    } catch {
-      if (requestId === latestRequestRef.current) {
-        toast.error(commonT('errorLoading'));
-      }
-    } finally {
-      if (requestId === latestRequestRef.current) {
-        setLoading(false);
-      }
-    }
+    await fetchLatestCashFlow({
+      selectedPeriod,
+      latestRequestRef,
+      getCashFlow: accountingService.getCashFlow,
+      setData,
+      setLoading,
+      onError: () => toast.error(commonT('errorLoading')),
+    });
   }, [commonT]);
 
   useEffect(() => {
@@ -72,51 +63,7 @@ export default function CashFlowPage() {
     }
 
     try {
-      const escapeCsvValue = (value) => {
-        const stringValue = String(value ?? '');
-        if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
-          return `"${stringValue.replace(/"/g, '""')}"`;
-        }
-
-        return stringValue;
-      };
-
-      const summary = data?.summary || {};
-      const chartData = data?.chartData || [];
-
-      const summaryRows = [
-        ['metric', 'value'],
-        ['period', period],
-        ['inflow', summary.inflow ?? 0],
-        ['outflow', summary.outflow ?? 0],
-        ['net', summary.net ?? 0],
-      ];
-
-      const trendRows = [
-        ['name', 'inflow', 'outflow'],
-        ...chartData.map((item) => [
-          item?.name ?? '',
-          item?.inflow ?? 0,
-          item?.outflow ?? 0,
-        ]),
-      ];
-
-      const csvContent = [
-        ...summaryRows.map((row) => row.map(escapeCsvValue).join(',')),
-        '',
-        ...trendRows.map((row) => row.map(escapeCsvValue).join(',')),
-      ].join('\n');
-
-      const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      const date = new Date().toISOString().split('T')[0];
-      link.href = url;
-      link.setAttribute('download', `cash_flow_${period}_${date}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      exportCashFlowCsv({ data, period });
     } catch {
       toast.error(commonT('errorLoading'));
     }

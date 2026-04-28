@@ -3,13 +3,15 @@
 import React from 'react';
 import useSWR from 'swr';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Loader2, Eye } from 'lucide-react';
 import { getAllInvoices } from '@/app/services/api/invoices';
 
 const LastInvoices = () => {
-  const { isRTL, language } = useLanguage();
+  const { isRTL } = useLanguage();
+  const t = useTranslations('financeStatistics');
   
   const { data: invoicesData, isLoading } = useSWR(
     '/invoices-recent',

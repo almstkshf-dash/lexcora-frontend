@@ -31,6 +31,7 @@ export default function RootLayout({ children }) {
   return (
     <html 
     className={`${notoSansArabic.className} ${notoSansArabic.variable}`}
+    data-scroll-behavior="smooth"
     >
       <head />
       <body

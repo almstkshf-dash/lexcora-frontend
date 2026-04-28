@@ -20,6 +20,8 @@ export default function DepositsTab({ clientId, clientName }) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [selectedDeposit, setSelectedDeposit] = useState(null);
+  const normalizedClientId = Number(clientId);
+  const hasValidClientId = Number.isInteger(normalizedClientId) && normalizedClientId > 0;
 
   // Get payment type icon and label
   const getPaymentTypeInfo = (type) => {
@@ -35,8 +37,8 @@ export default function DepositsTab({ clientId, clientName }) {
   };
 
   const { data: deposits, error, isLoading, mutate } = useSWR(
-    `/clients-deposits/${clientId}`,
-    () => getDepositsByPartyId(clientId)
+    hasValidClientId ? `/clients-deposits/party/${normalizedClientId}` : null,
+    () => getDepositsByPartyId(normalizedClientId)
   );
 
   const handleAddSuccess = () => {

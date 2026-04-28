@@ -1,11 +1,23 @@
 import axiosInstance from "./axiosInstance";
 
 export const getDepositsByPartyId = async (partyId) => {
+  const normalizedPartyId = Number(partyId);
+  if (!Number.isInteger(normalizedPartyId) || normalizedPartyId <= 0) {
+    return { data: [] };
+  }
+
   try {
-    const response = await axiosInstance.get(`/clients-deposits/party/${partyId}`);
+    const response = await axiosInstance.get(`/clients-deposits/party/${normalizedPartyId}`);
     return response.data;
   } catch (error) {
+    const status = error?.response?.status;
     console.error("Error fetching deposits:", error);
+
+    // Keep UI functional when backend returns server-side errors.
+    if (status >= 500) {
+      return { data: [] };
+    }
+
     throw error;
   }
 };

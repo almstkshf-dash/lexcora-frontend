@@ -22,6 +22,7 @@ import {
 import { 
   Dialog, 
   DialogContent, 
+  DialogDescription,
   DialogHeader, 
   DialogTitle, 
   DialogTrigger 
@@ -52,8 +53,14 @@ export default function PettyCashPage() {
   const [isAddFundOpen, setIsAddFundOpen] = useState(false);
   const [isAddTxOpen, setIsAddTxOpen] = useState(false);
   
-  const [newFund, setNewFund] = useState({ name: '', responsible_employee_id: '', initial_balance: 0 });
+  const [newFund, setNewFund] = useState({ name: '', responsible_employee_id: '', initial_balance: '' });
   const [newTx, setNewTx] = useState({ fund_id: '', type: 'disbursement', amount: '', description: '', date: new Date().toISOString().split('T')[0] });
+
+  const toArray = (payload) => {
+    if (Array.isArray(payload)) return payload;
+    if (Array.isArray(payload?.data)) return payload.data;
+    return [];
+  };
 
   const formatCurrency = (value, currency = 'AED') => {
     return new Intl.NumberFormat(language === 'ar' ? 'ar-AE' : 'en-US', {
@@ -74,10 +81,16 @@ export default function PettyCashPage() {
     try {
       setLoading(true);
       const data = await pettyCashService.getFunds();
-      setFunds(data);
-      if (data.length > 0 && !selectedFund) {
-        setSelectedFund(data[0]);
-        fetchTransactions(data[0].id);
+      const normalizedFunds = toArray(data);
+      setFunds(normalizedFunds);
+      const nextSelectedFund = normalizedFunds.find((fund) => fund.id === selectedFund?.id) || normalizedFunds[0] || null;
+      setSelectedFund(nextSelectedFund);
+      if (nextSelectedFund) {
+        fetchTransactions(nextSelectedFund.id);
+      }
+      if (normalizedFunds.length === 0) {
+        setSelectedFund(null);
+        setTransactions([]);
       }
     } catch (error) {
       toast.error(commonT('errorLoading'));
@@ -89,7 +102,7 @@ export default function PettyCashPage() {
   const fetchTransactions = async (fundId) => {
     try {
       const data = await pettyCashService.getTransactions(fundId);
-      setTransactions(data);
+      setTransactions(toArray(data));
     } catch (error) {
       toast.error(commonT('errorLoading'));
     }
@@ -97,9 +110,14 @@ export default function PettyCashPage() {
 
   const handleCreateFund = async () => {
     try {
-      await pettyCashService.createFund(newFund);
+      const initialBalance = Number(newFund.initial_balance);
+      await pettyCashService.createFund({
+        ...newFund,
+        initial_balance: Number.isFinite(initialBalance) ? initialBalance : 0
+      });
       toast.success(commonT('success'));
       setIsAddFundOpen(false);
+      setNewFund({ name: '', responsible_employee_id: '', initial_balance: '' });
       fetchFunds();
     } catch (error) {
       toast.error(commonT('error'));
@@ -144,6 +162,9 @@ export default function PettyCashPage() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>{t('addNewFund')}</DialogTitle>
+                <DialogDescription>
+                  {t('addNewFund')}
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
@@ -158,7 +179,7 @@ export default function PettyCashPage() {
                   <Input 
                     type="number"
                     value={newFund.initial_balance} 
-                    onChange={(e) => setNewFund({...newFund, initial_balance: parseFloat(e.target.value)})} 
+                    onChange={(e) => setNewFund({...newFund, initial_balance: e.target.value})} 
                   />
                 </div>
                 <Button onClick={handleCreateFund} className="w-full">{commonT('save')}</Button>
@@ -176,6 +197,9 @@ export default function PettyCashPage() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>{t('addTransaction')}</DialogTitle>
+                <DialogDescription>
+                  {t('addTransaction')}
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">

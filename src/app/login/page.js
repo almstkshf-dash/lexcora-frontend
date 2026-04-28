@@ -119,6 +119,7 @@ export default function Page() {
                 fill 
                 src="/log_in_card_logo.png" 
                 alt={t('navigation.appTitle') + " Logo"} 
+                sizes="80px"
                 className="object-contain" 
                 priority
               />
@@ -239,4 +240,4 @@ export default function Page() {
       </div>
     </main>
   );
-}
+}

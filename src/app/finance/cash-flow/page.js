@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslations } from '@/hooks/useTranslations';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -22,6 +23,7 @@ import { toast } from 'react-toastify';
 import PageHeader from '@/components/PageHeader';
 
 export default function CashFlowPage() {
+  const { language } = useLanguage();
   const t = useTranslations('Accounting');
   const commonT = useTranslations('common');
   const navT = useTranslations('navigation');
@@ -47,7 +49,7 @@ export default function CashFlowPage() {
   };
 
   const formatCurrency = (val) => {
-    return new Intl.NumberFormat(commonT('direction') === 'rtl' ? 'ar-AE' : 'en-US', {
+    return new Intl.NumberFormat(language === 'ar' ? 'ar-AE' : 'en-US', {
       style: 'currency',
       currency: 'AED'
     }).format(val);
@@ -139,7 +141,7 @@ export default function CashFlowPage() {
             <BarChart data={data?.chartData || []}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="name" />
-              <YAxis tickFormatter={(val) => `د.إ${val}`} />
+              <YAxis tickFormatter={(val) => formatCurrency(val)} />
               <Tooltip 
                 formatter={(val) => formatCurrency(val)}
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}

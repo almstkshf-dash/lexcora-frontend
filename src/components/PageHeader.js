@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const PageHeader = ({
   title,
@@ -16,6 +17,7 @@ const PageHeader = ({
   children,
 }) => {
   const { isRTL } = useLanguage();
+  const { t } = useTranslations();
   const actionContent = actions || children;
   const containerRef = useRef(null);
   const [parallax, setParallax] = useState(0);
@@ -59,7 +61,7 @@ const PageHeader = ({
       <div className="flex flex-col gap-4" data-hero-foreground>
         {breadcrumbs.length > 0 && (
           <nav
-            aria-label="Breadcrumb"
+            aria-label={t('pageHeader.breadcrumb')}
             className={cn(
               'text-xs text-muted-foreground flex items-center flex-wrap gap-1 mb-1',
               isRTL ? 'justify-end' : 'justify-start'

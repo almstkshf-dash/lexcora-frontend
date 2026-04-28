@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslations } from '@/hooks/useTranslations';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   Card, 
   CardContent, 
@@ -39,6 +40,7 @@ import PageHeader from '@/components/PageHeader';
 
 
 export default function PettyCashPage() {
+  const { language } = useLanguage();
   const t = useTranslations('PettyCash');
   const commonT = useTranslations('common');
   const navT = useTranslations('navigation');
@@ -52,6 +54,17 @@ export default function PettyCashPage() {
   
   const [newFund, setNewFund] = useState({ name: '', responsible_employee_id: '', initial_balance: 0 });
   const [newTx, setNewTx] = useState({ fund_id: '', type: 'disbursement', amount: '', description: '', date: new Date().toISOString().split('T')[0] });
+
+  const formatCurrency = (value, currency = 'AED') => {
+    return new Intl.NumberFormat(language === 'ar' ? 'ar-AE' : 'en-US', {
+      style: 'currency',
+      currency,
+    }).format(Number(value) || 0);
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-US');
+  };
 
   useEffect(() => {
     fetchFunds();
@@ -224,7 +237,7 @@ export default function PettyCashPage() {
                   >
                     <span className="font-semibold">{fund.name}</span>
                     <span className={selectedFund?.id === fund.id ? 'text-primary-foreground/80' : 'text-muted-foreground'}>
-                      {fund.balance.toLocaleString()} {fund.currency || 'AED'}
+                      {formatCurrency(fund.balance, fund.currency || 'AED')}
                     </span>
                   </button>
                 ))}
@@ -242,7 +255,7 @@ export default function PettyCashPage() {
                     <CardTitle className="text-xs font-medium text-muted-foreground uppercase">{t('currentBalance')}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{selectedFund.balance.toLocaleString()}</div>
+                    <div className="text-2xl font-bold">{formatCurrency(selectedFund.balance, selectedFund.currency || 'AED')}</div>
                     <p className="text-xs text-muted-foreground mt-1">{selectedFund.name}</p>
                   </CardContent>
                 </Card>
@@ -277,7 +290,7 @@ export default function PettyCashPage() {
                       ) : (
                         transactions.map((tx) => (
                           <TableRow key={tx.id}>
-                            <TableCell>{new Date(tx.date).toLocaleDateString()}</TableCell>
+                            <TableCell>{formatDate(tx.date)}</TableCell>
                             <TableCell>
                               <div className="flex items-center">
                                 {tx.type === 'replenishment' ? (
@@ -293,7 +306,7 @@ export default function PettyCashPage() {
                               tx.type === 'replenishment' ? 'text-green-600' : 'text-red-600'
                             }`}>
                               {tx.type === 'replenishment' ? '+' : '-'}
-                              {parseFloat(tx.amount).toLocaleString()}
+                              {formatCurrency(tx.amount, selectedFund?.currency || 'AED')}
                             </TableCell>
                           </TableRow>
                         ))

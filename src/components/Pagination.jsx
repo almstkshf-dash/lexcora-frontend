@@ -2,8 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { useTranslations } from "@/hooks/useTranslations";
 
 export function Pagination({ currentPage, totalPages, onPageChange }) {
+  const { t } = useTranslations();
   const canGoPrevious = currentPage > 1;
   const canGoNext = currentPage < totalPages;
 
@@ -47,7 +49,10 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
   return (
     <div className="flex items-center justify-between gap-2 px-2">
       <div className="text-sm text-muted-foreground">
-        Page {currentPage} of {totalPages}
+        {t("pagination.summary", {
+          currentPage: String(currentPage),
+          totalPages: String(totalPages),
+        })}
       </div>
       
       <div className="flex items-center gap-1">
@@ -56,7 +61,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
           size="icon"
           onClick={() => onPageChange(1)}
           disabled={!canGoPrevious}
-          aria-label="First page"
+          aria-label={t("pagination.firstPage")}
         >
           <ChevronsLeft className="h-4 w-4" />
         </Button>
@@ -66,7 +71,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
           size="icon"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={!canGoPrevious}
-          aria-label="Previous page"
+          aria-label={t("pagination.previousPage")}
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
@@ -95,7 +100,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
           size="icon"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={!canGoNext}
-          aria-label="Next page"
+          aria-label={t("pagination.nextPage")}
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
@@ -105,7 +110,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
           size="icon"
           onClick={() => onPageChange(totalPages)}
           disabled={!canGoNext}
-          aria-label="Last page"
+          aria-label={t("pagination.lastPage")}
         >
           <ChevronsRight className="h-4 w-4" />
         </Button>

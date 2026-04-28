@@ -19,7 +19,7 @@ import PageHeader from '@/components/PageHeader';
 import { Landmark } from 'lucide-react';
 
 function BankAccountsPage() {
-  const { isRTL } = useLanguage();
+  const { isRTL, language } = useLanguage();
   const t = useTranslations('BankAccountsPage');
   const navT = useTranslations('navigation');
   const [bankAccounts, setBankAccounts] = useState([]);
@@ -82,22 +82,21 @@ function BankAccountsPage() {
         toast.error(t('errorDeletingAccount'));
       }
     } catch (error) {
-
       toast.error(t('errorDeletingAccount'));
     } finally {
       setDeleteLoading(false);
     }
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat(t('common.direction') === 'rtl' ? 'ar-AE' : 'en-US', {
+  const formatCurrency = (amount, currency = 'AED') => {
+    return new Intl.NumberFormat(language === 'ar' ? 'ar-AE' : 'en-US', {
       style: 'currency',
-      currency: 'AED'
+      currency,
     }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(t('common.direction') === 'rtl' ? 'ar-AE' : 'en-US');
+    return new Date(dateString).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-US');
   };
 
   return (
@@ -150,7 +149,7 @@ function BankAccountsPage() {
                     <TableHead>{t('bankName')}</TableHead>
                     <TableHead>{t('accountName')}</TableHead>
                     <TableHead>{t('accountNumber')}</TableHead>
-                    <TableHead>IBAN</TableHead>
+                    <TableHead>{t('iban')}</TableHead>
                     <TableHead>{t('branch')}</TableHead>
                     <TableHead>{t('currentBalance')}</TableHead>
                     <TableHead>{t('status')}</TableHead>
@@ -175,7 +174,7 @@ function BankAccountsPage() {
                         {account.branch_name_ar || '-'}
                       </TableCell>
                       <TableCell>
-                        {formatCurrency(account.current_balance)}
+                        {formatCurrency(account.current_balance, account.currency || 'AED')}
                       </TableCell>
                       <TableCell>
                         <Badge 

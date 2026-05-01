@@ -17,6 +17,8 @@ import {
   getBankAccountLogs
 } from '@/app/services/api/bankAccounts';
 
+import { DEFAULT_CURRENCY, LOCALE } from '@/app/finance/constants';
+
 function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
   const t = useTranslations('BankReconciliation');
   const [loading, setLoading] = useState(false);
@@ -46,8 +48,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
         // For now, let's just show all recent logs as potential candidates
         setInternalLogs(logsRes.data.filter(log => !log.is_reconciled));
       }
-    } catch (error) {
-      console.error('Error fetching reconciliation data:', error);
+    } catch {
       toast.error(t('errorLoadingData'));
     } finally {
       setLoading(false);
@@ -131,9 +132,9 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat(t('common.direction') === 'rtl' ? 'ar-AE' : 'en-US', {
+    return new Intl.NumberFormat(t('common.direction') === 'rtl' ? LOCALE.ar : LOCALE.en, {
       style: 'currency',
-      currency: 'AED'
+      currency: DEFAULT_CURRENCY
     }).format(amount);
   };
 

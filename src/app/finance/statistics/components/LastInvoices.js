@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Loader2, Eye } from 'lucide-react';
 import { getAllInvoices } from '@/app/services/api/invoices';
+import { DEFAULT_CURRENCY, LOCALE, STATS_REFRESH_INTERVAL } from '@/app/finance/constants';
 
 const LastInvoices = () => {
   const { isRTL } = useLanguage();
@@ -16,7 +17,7 @@ const LastInvoices = () => {
   const { data: invoicesData, isLoading } = useSWR(
     '/invoices-recent',
     getAllInvoices,
-    { refreshInterval: 300000 }
+    { refreshInterval: STATS_REFRESH_INTERVAL }
   );
 
   const invoices = React.useMemo(() => {
@@ -28,14 +29,14 @@ const LastInvoices = () => {
   }, [invoicesData]);
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('ar-AE', {
+    return new Intl.NumberFormat(LOCALE.ar, {
       style: 'currency',
-      currency: 'AED'
+      currency: DEFAULT_CURRENCY
     }).format(amount || 0);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('ar-AE', {
+    return new Date(dateString).toLocaleDateString(LOCALE.ar, {
       year: 'numeric',
       month: 'short',
       day: 'numeric'

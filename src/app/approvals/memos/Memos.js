@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -158,7 +158,7 @@ const Memos = () => {
       // Check if it's a permission error (403)
       const isPermissionError = error?.response?.status === 403;
       const errorMessage = isPermissionError 
-        ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لتحديث حالة الموافقة' : 'You do not have permission to update approval status'))
+        ? (error?.response?.data?.message || (language === 'ar' ? '??? ???? ?????? ?????? ???? ????????' : 'You do not have permission to update approval status'))
         : (error?.response?.data?.message || t('memos.failedToUpdateApproval'));
       
       toast.error(errorMessage);

@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CalendarIcon, Plus, Minus, File, FileText, Image, FileSpreadsheet } from "lucide-react"
+import { CalendarIcon, Plus, Minus, File, FileText, ImageIcon, FileSpreadsheet } from "lucide-react"
 import { cn } from "@/lib/utils"
 import AddLegalPeriodModal from "./AddLegalPeriodModal"
 import { getLegalPeriods } from "@/app/services/api/legalPeriods"
@@ -33,7 +33,7 @@ const getFileIcon = (fileName) => {
     case 'png':
     case 'gif':
     case 'bmp':
-      return <Image className="w-4 h-4" />
+      return <ImageIcon className="w-4 h-4" />
     case 'xls':
     case 'xlsx':
     case 'csv':

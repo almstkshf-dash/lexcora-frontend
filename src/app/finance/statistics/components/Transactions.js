@@ -5,6 +5,7 @@ import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { getEmployeeCashTransactionStatistics } from "@/app/services/api/employeeCashTransactions"
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { DEFAULT_CURRENCY, LOCALE } from '@/app/finance/constants';
 
 import {
   Card,
@@ -67,8 +68,8 @@ export default function Transactions() {
           setChartData(data.data.chart_data)
           setSummary(data.data.summary)
         }
-      } catch (error) {
-        console.error("Error fetching transaction statistics:", error)
+      } catch {
+        // silently ignore
       } finally {
         setLoading(false)
       }

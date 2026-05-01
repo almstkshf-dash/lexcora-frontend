@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, UserPlus, Upload, X, File, FileText, Image, FileIcon } from "lucide-react";
+import { Plus, UserPlus, Upload, X, File, FileText, ImageIcon, FileIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import PartyTypeSelector from "./PartyTypeSelector";
 import PartySelector from "./PartySelector";
@@ -84,7 +84,7 @@ const AddPartyToTableModal = ({ children, caseId, onPartyAdded }) => {
 
   // Get file icon
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
+    if (type.startsWith('image/')) return <ImageIcon className="h-4 w-4" />;
     if (type.includes('pdf')) return <FileText className="h-4 w-4" />;
     return <FileIcon className="h-4 w-4" />;
   };

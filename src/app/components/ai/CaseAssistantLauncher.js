@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { Sparkles, Loader2, ShieldQuestion } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LegalChatPopup from './LegalChatPopup';
@@ -198,7 +199,7 @@ function CaseAssistantLauncher({ caseId, align = 'right' }) {
           {isLoadingContext ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <img src="/images/rased-icon.jpg" alt="Rased" className="h-5 w-5 rounded-full object-cover shadow-sm" />
+            <Image src="/images/rased-icon.jpg" alt="Rased" width={20} height={20} className="rounded-full object-cover shadow-sm" />
           )}
           <span className="mx-2">{label}</span>
         </Button>

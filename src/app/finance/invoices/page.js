@@ -18,6 +18,7 @@ import ExportButtons from '@/components/ui/export-buttons';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import PageHeader from '@/components/PageHeader';
+import { DEFAULT_CURRENCY, LOCALE, STATUS } from '@/app/finance/constants';
 
 function InvoicesPage() {
   const { isRTL, language } = useLanguage();
@@ -60,25 +61,25 @@ function InvoicesPage() {
     mutate(); // Refresh the list
   };
 
-  const formatCurrency = (amount, currency = 'AED') => {
-    return new Intl.NumberFormat(isRTL ? 'ar-AE' : 'en-US', {
+  const formatCurrency = (amount, currency = DEFAULT_CURRENCY) => {
+    return new Intl.NumberFormat(isRTL ? LOCALE.ar : LOCALE.en, {
       style: 'currency',
       currency: currency
     }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(isRTL ? 'ar-AE' : 'en-US');
+    return new Date(dateString).toLocaleDateString(isRTL ? LOCALE.ar : LOCALE.en);
   };
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      pending: { label: t('statusPending'), variant: 'secondary' },
-      approved: { label: t('statusApproved'), variant: 'success' },
-      rejected: { label: t('statusRejected'), variant: 'destructive' }
+      [STATUS.PENDING]: { label: t('statusPending'), variant: 'secondary' },
+      [STATUS.APPROVED]: { label: t('statusApproved'), variant: 'success' },
+      [STATUS.REJECTED]: { label: t('statusRejected'), variant: 'destructive' }
     };
 
-    const config = statusConfig[status] || statusConfig.pending;
+    const config = statusConfig[status] || statusConfig[STATUS.PENDING];
     
     return (
       <Badge variant={config.variant}>
@@ -120,7 +121,7 @@ function InvoicesPage() {
       en: 'Amount',
       ar: 'المبلغ',
       dataKey: 'amount',
-      formatter: (value, item) => `${value} ${item.currency || 'AED'}`
+      formatter: (value, item) => `${value} ${item.currency || DEFAULT_CURRENCY}`
     },
     vat: {
       en: 'VAT %',

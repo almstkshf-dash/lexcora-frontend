@@ -38,6 +38,7 @@ import { Plus, Wallet, ArrowUpCircle, ArrowDownCircle, Search } from 'lucide-rea
 import { pettyCashService } from '@/app/services/api/pettyCash';
 import { toast } from 'react-toastify';
 import PageHeader from '@/components/PageHeader';
+import { DEFAULT_CURRENCY, LOCALE, LOG_TYPE } from '@/app/finance/constants';
 
 
 export default function PettyCashPage() {
@@ -54,7 +55,7 @@ export default function PettyCashPage() {
   const [isAddTxOpen, setIsAddTxOpen] = useState(false);
   
   const [newFund, setNewFund] = useState({ name: '', responsible_employee_id: '', initial_balance: '' });
-  const [newTx, setNewTx] = useState({ fund_id: '', type: 'disbursement', amount: '', description: '', date: new Date().toISOString().split('T')[0] });
+  const [newTx, setNewTx] = useState({ fund_id: '', type: LOG_TYPE.DISBURSEMENT, amount: '', description: '', date: new Date().toISOString().split('T')[0] });
 
   const toArray = (payload) => {
     if (Array.isArray(payload)) return payload;
@@ -62,15 +63,15 @@ export default function PettyCashPage() {
     return [];
   };
 
-  const formatCurrency = (value, currency = 'AED') => {
-    return new Intl.NumberFormat(language === 'ar' ? 'ar-AE' : 'en-US', {
+  const formatCurrency = (value, currency = DEFAULT_CURRENCY) => {
+    return new Intl.NumberFormat(language === 'ar' ? LOCALE.ar : LOCALE.en, {
       style: 'currency',
       currency,
     }).format(Number(value) || 0);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-US');
+    return new Date(dateString).toLocaleDateString(language === 'ar' ? LOCALE.ar : LOCALE.en);
   };
 
   useEffect(() => {
@@ -212,8 +213,8 @@ export default function PettyCashPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="disbursement">{t('disbursement')}</SelectItem>
-                      <SelectItem value="replenishment">{t('replenishment')}</SelectItem>
+                      <SelectItem value={LOG_TYPE.DISBURSEMENT}>{t('disbursement')}</SelectItem>
+                      <SelectItem value={LOG_TYPE.REPLENISHMENT}>{t('replenishment')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -261,7 +262,7 @@ export default function PettyCashPage() {
                   >
                     <span className="font-semibold">{fund.name}</span>
                     <span className={selectedFund?.id === fund.id ? 'text-primary-foreground/80' : 'text-muted-foreground'}>
-                      {formatCurrency(fund.balance, fund.currency || 'AED')}
+                      {formatCurrency(fund.balance, fund.currency || DEFAULT_CURRENCY)}
                     </span>
                   </button>
                 ))}
@@ -279,7 +280,7 @@ export default function PettyCashPage() {
                     <CardTitle className="text-xs font-medium text-muted-foreground uppercase">{t('currentBalance')}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{formatCurrency(selectedFund.balance, selectedFund.currency || 'AED')}</div>
+                    <div className="text-2xl font-bold">{formatCurrency(selectedFund.balance, selectedFund.currency || DEFAULT_CURRENCY)}</div>
                     <p className="text-xs text-muted-foreground mt-1">{selectedFund.name}</p>
                   </CardContent>
                 </Card>
@@ -317,7 +318,7 @@ export default function PettyCashPage() {
                             <TableCell>{formatDate(tx.date)}</TableCell>
                             <TableCell>
                               <div className="flex items-center">
-                                {tx.type === 'replenishment' ? (
+                                {tx.type === LOG_TYPE.REPLENISHMENT ? (
                                   <ArrowUpCircle className="mr-2 h-4 w-4 text-green-500" />
                                 ) : (
                                   <ArrowDownCircle className="mr-2 h-4 w-4 text-red-500" />
@@ -327,10 +328,10 @@ export default function PettyCashPage() {
                             </TableCell>
                             <TableCell>{tx.description}</TableCell>
                             <TableCell className={`text-right font-medium ${
-                              tx.type === 'replenishment' ? 'text-green-600' : 'text-red-600'
+                              tx.type === LOG_TYPE.REPLENISHMENT ? 'text-green-600' : 'text-red-600'
                             }`}>
-                              {tx.type === 'replenishment' ? '+' : '-'}
-                              {formatCurrency(tx.amount, selectedFund?.currency || 'AED')}
+                              {tx.type === LOG_TYPE.REPLENISHMENT ? '+' : '-'}
+                              {formatCurrency(tx.amount, selectedFund?.currency || DEFAULT_CURRENCY)}
                             </TableCell>
                           </TableRow>
                         ))

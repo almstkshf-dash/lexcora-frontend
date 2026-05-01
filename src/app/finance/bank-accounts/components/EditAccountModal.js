@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getBankAccountById, updateBankAccount } from '@/app/services/api/bankAccounts';
 import { getBranches } from '@/app/services/api/branches';
+import { ACCOUNT_STATUS } from '@/app/finance/constants';
 import { toast } from 'react-toastify';
 
 const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
@@ -28,7 +29,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
     iban: Yup.string().optional(),
     branch_id: Yup.number().nullable(),
     current_balance: Yup.number().min(0, t('balanceNegativeError')).default(0),
-    status: Yup.string().oneOf(['active', 'inactive']).default('active')
+    status: Yup.string().oneOf([ACCOUNT_STATUS.ACTIVE, ACCOUNT_STATUS.INACTIVE]).default(ACCOUNT_STATUS.ACTIVE)
   });
 
   const formik = useFormik({
@@ -39,7 +40,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
       iban: '',
       branch_id: '',
       current_balance: 0,
-      status: 'active'
+      status: ACCOUNT_STATUS.ACTIVE
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -106,7 +107,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
             iban: accountData.iban || '',
             branch_id: accountData.branch_id ? accountData.branch_id.toString() : '',
             current_balance: accountData.current_balance || 0,
-            status: accountData.status || 'active'
+            status: accountData.status || ACCOUNT_STATUS.ACTIVE
           });
         } else {
           toast.error(t('errorLoadingAccount'));
@@ -265,8 +266,8 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
                 <SelectValue placeholder={t('selectStatus')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">{t('active')}</SelectItem>
-                <SelectItem value="inactive">{t('inactive')}</SelectItem>
+                <SelectItem value={ACCOUNT_STATUS.ACTIVE}>{t('active')}</SelectItem>
+                <SelectItem value={ACCOUNT_STATUS.INACTIVE}>{t('inactive')}</SelectItem>
               </SelectContent>
             </Select>
           </div>

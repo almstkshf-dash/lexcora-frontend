@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, CircleX, FileText, Image, FileIcon } from "lucide-react";
+import { Plus, CircleX, FileText, ImageIcon, FileIcon } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useFormikContext } from '../../FormikContext';
 import { cn } from "@/lib/utils";
@@ -85,7 +85,7 @@ const EditPartyModal = ({ children, party }) => {
 
   // Get file icon
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
+    if (type.startsWith('image/')) return <ImageIcon className="h-4 w-4" />;
     if (type.includes('pdf')) return <FileText className="h-4 w-4" />;
     return <FileIcon className="h-4 w-4" />;
   };

@@ -16,6 +16,7 @@ import { getBankAccountLogs, createBankAccountLog, deleteBankAccountLog } from '
 import ViewLogDetailsModal from './ViewLogDetailsModal';
 import EditLogModal from './EditLogModal';
 import * as XLSX from 'xlsx';
+import { DEFAULT_CURRENCY, LOCALE, LOG_TYPE } from '@/app/finance/constants';
 
 function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
   const t = useTranslations('BankAccountLogs');
@@ -55,7 +56,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
   
   // Form state
   const [formData, setFormData] = useState({
-    type: 'deposit',
+    type: LOG_TYPE.DEPOSIT,
     amount: '',
     description: ''
   });
@@ -80,8 +81,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
       } else {
         toast.error(t('errorLoadingLogs'));
       }
-    } catch (error) {
-      console.error('Error fetching logs:', error);
+    } catch {
       toast.error(t('errorLoadingLogs'));
     } finally {
       setLoading(false);
@@ -111,14 +111,14 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('ar-AE', {
+    return new Intl.NumberFormat(LOCALE.ar, {
       style: 'currency',
-      currency: 'AED'
+      currency: DEFAULT_CURRENCY
     }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString('ar-AE', {
+    return new Date(dateString).toLocaleString(LOCALE.ar, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -136,7 +136,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
     const descriptionHeader = t('common.description');
     const exportData = logs.map(log => ({
       [t('common.date')]: formatDate(log.created_at),
-      [t('operationType')]: log.type === 'deposit' ? t('deposit') : t('withdrawal'),
+      [t('operationType')]: log.type === LOG_TYPE.DEPOSIT ? t('deposit') : t('withdrawal'),
       [t('common.amount')]: log.amount,
       [descriptionHeader]: log.description || t('noDescription'),
       [t('addedBy')]: log.employee_name || t('unknown'),
@@ -198,15 +198,14 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
       
       if (response.success) {
         toast.success(t('logAddedSuccess'));
-        setFormData({ type: 'deposit', amount: '', description: '' });
+        setFormData({ type: LOG_TYPE.DEPOSIT, amount: '', description: '' });
         setAttachments([]);
         setShowAddForm(false);
         fetchLogs(dateRange.from, dateRange.to); // Refresh logs with current date range
       } else {
         toast.error(response.error || t('errorAddingLog'));
       }
-    } catch (error) {
-      console.error('Error creating log:', error);
+    } catch {
       toast.error(t('errorAddingLog'));
     } finally {
       setSubmitting(false);
@@ -234,8 +233,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
       } else {
         toast.error(response.error || t('errorDeletingLog'));
       }
-    } catch (error) {
-      console.error('Error deleting log:', error);
+    } catch {
       toast.error(t('errorDeletingLog'));
     } finally {
       setDeleteLoading(false);
@@ -288,7 +286,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
                   size="sm"
                   onClick={() => {
                     setShowAddForm(false);
-                    setFormData({ type: 'deposit', amount: '', description: '' });
+                    setFormData({ type: LOG_TYPE.DEPOSIT, amount: '', description: '' });
                     setAttachments([]);
                   }}
                 >
@@ -309,8 +307,8 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="deposit">{t('deposit')}</SelectItem>
-                        <SelectItem value="withdrawal">{t('withdrawal')}</SelectItem>
+                        <SelectItem value={LOG_TYPE.DEPOSIT}>{t('deposit')}</SelectItem>
+                        <SelectItem value={LOG_TYPE.WITHDRAWAL}>{t('withdrawal')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -395,7 +393,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
                     variant="outline"
                     onClick={() => {
                       setShowAddForm(false);
-                      setFormData({ type: 'deposit', amount: '', description: '' });
+                      setFormData({ type: LOG_TYPE.DEPOSIT, amount: '', description: '' });
                       setAttachments([]);
                     }}
                   >
@@ -487,9 +485,9 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
                         <TableCell>{formatDate(log.created_at)}</TableCell>
                         <TableCell>
                           <Badge
-                            variant={log.type === 'deposit' ? 'default' : 'destructive'}
+                            variant={log.type === LOG_TYPE.DEPOSIT ? 'default' : 'destructive'}
                           >
-                            {log.type === 'deposit' ? t('deposit') : t('withdrawal')}
+                            {log.type === LOG_TYPE.DEPOSIT ? t('deposit') : t('withdrawal')}
                           </Badge>
                         </TableCell>
                         <TableCell className="font-semibold">

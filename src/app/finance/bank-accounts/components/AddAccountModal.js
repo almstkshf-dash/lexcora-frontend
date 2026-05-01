@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { createBankAccount } from '@/app/services/api/bankAccounts';
 import { getBranches } from '@/app/services/api/branches';
+import { ACCOUNT_STATUS } from '@/app/finance/constants';
 import { toast } from 'react-toastify';
 
 const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
@@ -45,7 +46,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
     iban: Yup.string().optional(),
     branch_id: Yup.number().nullable(),
     current_balance: Yup.number().min(0, t('balanceNegativeError')).default(0),
-    status: Yup.string().oneOf(['active', 'inactive']).default('active')
+    status: Yup.string().oneOf([ACCOUNT_STATUS.ACTIVE, ACCOUNT_STATUS.INACTIVE]).default(ACCOUNT_STATUS.ACTIVE)
   });
 
   const formik = useFormik({
@@ -56,9 +57,8 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
       iban: '',
       branch_id: '',
       current_balance: 0,
-      status: 'active'
+      status: ACCOUNT_STATUS.ACTIVE
     },
-    validationSchema,
     onSubmit: async (values) => {
       setIsLoading(true);
       try {
@@ -217,8 +217,8 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
                 <SelectValue placeholder={t('selectStatus')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">{t('active')}</SelectItem>
-                <SelectItem value="inactive">{t('inactive')}</SelectItem>
+                <SelectItem value={ACCOUNT_STATUS.ACTIVE}>{t('active')}</SelectItem>
+                <SelectItem value={ACCOUNT_STATUS.INACTIVE}>{t('inactive')}</SelectItem>
               </SelectContent>
             </Select>
           </div>

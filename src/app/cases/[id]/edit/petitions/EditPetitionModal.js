@@ -11,7 +11,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { CalendarIcon, Upload, X, FileText, Image, FileIcon, Trash2 } from "lucide-react"
+import { CalendarIcon, Upload, X, FileText, ImageIcon, FileIcon, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getCasePetitionById, deleteCasePetitionDocument } from '@/app/services/api/CasePetitions'
 
@@ -115,7 +115,7 @@ function EditPetitionModal({
 
   // Get file icon
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
+    if (type.startsWith('image/')) return <ImageIcon className="h-4 w-4" />;
     if (type.includes('pdf')) return <FileText className="h-4 w-4" />;
     return <FileIcon className="h-4 w-4" />;
   };
@@ -124,7 +124,7 @@ function EditPetitionModal({
   const getDocumentIcon = (fileName) => {
     if (!fileName) return <FileIcon className="h-4 w-4" />;
     const ext = fileName.toLowerCase().split('.').pop();
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return <Image className="h-4 w-4" />;
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return <ImageIcon className="h-4 w-4" />;
     if (ext === 'pdf') return <FileText className="h-4 w-4" />;
     return <FileIcon className="h-4 w-4" />;
   };

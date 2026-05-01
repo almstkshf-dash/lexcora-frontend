@@ -1,5 +1,5 @@
 import { Calendar1, Clock, File, FileSpreadsheet, FileText, Info } from 'lucide-react'
-import Link from 'next/link'
+import Link from 'next/link';
 import React, { useMemo } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { useTranslations } from '@/hooks/useTranslations'

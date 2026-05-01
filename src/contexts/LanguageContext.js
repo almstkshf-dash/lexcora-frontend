@@ -1,8 +1,6 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-
 const LanguageContext = createContext();
 
 export const languages = {
@@ -21,8 +19,6 @@ export const useLanguage = () => {
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(languages.ar);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-
   useEffect(() => {
     const savedLanguage = localStorage.getItem("language");
     if (savedLanguage && Object.values(languages).includes(savedLanguage)) {

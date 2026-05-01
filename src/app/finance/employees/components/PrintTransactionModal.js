@@ -7,6 +7,7 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { Printer, X } from 'lucide-react';
 import { getEmployeeCashTransactionById } from '@/app/services/api/employeeCashTransactions';
 import { toast } from 'react-toastify';
+import { DEFAULT_CURRENCY, LOCALE } from '@/app/finance/constants';
 
 const PrintTransactionModal = ({ isOpen, onClose, transactionId }) => {
   const { isRTL } = useLanguage();
@@ -29,8 +30,7 @@ const PrintTransactionModal = ({ isOpen, onClose, transactionId }) => {
           toast.error('حدث خطأ في تحميل بيانات العهدة');
           onClose();
         }
-      } catch (error) {
-        console.error('Error fetching transaction:', error);
+      } catch {
         toast.error('حدث خطأ في تحميل بيانات العهدة');
         onClose();
       } finally {
@@ -68,14 +68,14 @@ const PrintTransactionModal = ({ isOpen, onClose, transactionId }) => {
   if (!isOpen) return null;
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('ar-AE', {
+    return new Intl.NumberFormat(LOCALE.ar, {
       style: 'currency',
-      currency: 'AED'
+      currency: DEFAULT_CURRENCY
     }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('ar-AE', {
+    return new Date(dateString).toLocaleDateString(LOCALE.ar, {
       year: 'numeric',
       month: 'long',
       day: 'numeric'

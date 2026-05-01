@@ -10,6 +10,7 @@ import { getInvoiceById } from "@/app/services/api/invoices";
 import { format, parseISO } from "date-fns";
 import { ar } from "date-fns/locale";
 import { useTranslations } from "@/hooks/useTranslations";
+import { DEFAULT_CURRENCY, CURRENCY_NAMES } from '@/app/finance/constants';
 
 export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
   const t = useTranslations('invoices');
@@ -180,14 +181,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
   };
 
   const getCurrencyName = (currency) => {
-    const currencies = {
-      'AED': { ar: 'درهم إماراتي', en: 'UAE Dirham' },
-      'USD': { ar: 'دولار أمريكي', en: 'US Dollar' },
-      'EUR': { ar: 'يورو', en: 'Euro' },
-      'GBP': { ar: 'جنيه إسترليني', en: 'British Pound' },
-      'SAR': { ar: 'ريال سعودي', en: 'Saudi Riyal' }
-    };
-    return currencies[currency] || { ar: currency, en: currency };
+    return CURRENCY_NAMES[currency] || { ar: currency, en: currency };
   };
 
   const loadInvoiceData = async () => {
@@ -455,7 +449,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
     };
   };
 
-  const formatCurrency = (amount, currency = 'AED') => {
+  const formatCurrency = (amount, currency = DEFAULT_CURRENCY) => {
     return new Intl.NumberFormat('ar-AE', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
@@ -473,8 +467,9 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
 
   const getStatusLabel = (status) => {
     const statusLabels = {
-      pending: 'قيد الانتظار',
-      approved: 'معتمدة'
+      pending: t('statusPending'),
+      approved: t('statusApproved'),
+      rejected: t('statusRejected'),
     };
     return statusLabels[status] || status;
   };
@@ -708,9 +703,9 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                 {/* Header Section */}
                 <div className="header-section">
                   <div className="company-info">
-                    <div className="company-name">مكتب Lexcora للمحاماة والاستشارات القانونية</div>
+                    <div className="company-name">{t('companyNameAr')}</div>
                     <div style={{ fontSize: '12px', marginBottom: '15px' }}>
-                      Lexcora Law office & Legal Consultations
+                      {t('companyNameEn')}
                     </div>
                     <div className="invoice-title">
                       فاتورة / INVOICE
@@ -889,24 +884,18 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
             </CustomModalBody>
 
             <CustomModalFooter>
-              <Button
-                variant="outline"
-                onClick={onClose}
-              >
-                إغلاق
+              <Button variant="outline" onClick={onClose}>
+                {t('close')}
               </Button>
-              <Button
-                onClick={handlePrint}
-                className="flex items-center gap-2"
-              >
+              <Button onClick={handlePrint} className="flex items-center gap-2">
                 <Printer className="h-4 w-4" />
-                طباعة
+                {t('print')}
               </Button>
             </CustomModalFooter>
           </>
         ) : (
-          <div className="p-12 text-center ">
-            لم يتم العثور على بيانات الفاتورة
+          <div className="p-12 text-center">
+            {t('noInvoiceData')}
           </div>
         )}
       </CustomModal>

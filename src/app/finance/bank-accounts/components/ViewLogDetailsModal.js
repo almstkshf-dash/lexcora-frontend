@@ -5,6 +5,8 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { Badge } from '@/components/ui/badge';
 import { Download, X } from 'lucide-react';
 
+import { DEFAULT_CURRENCY, LOCALE, LOG_TYPE } from '@/app/finance/constants';
+
 function ViewLogDetailsModal({ isOpen, onClose, log }) {
   const t = useTranslations('BankAccountLogs');
   
@@ -12,14 +14,14 @@ function ViewLogDetailsModal({ isOpen, onClose, log }) {
   if (!isOpen || !log) return null;
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('ar-AE', {
+    return new Intl.NumberFormat(LOCALE.ar, {
       style: 'currency',
-      currency: 'AED'
+      currency: DEFAULT_CURRENCY
     }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString('ar-AE', {
+    return new Date(dateString).toLocaleString(LOCALE.ar, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -55,8 +57,8 @@ function ViewLogDetailsModal({ isOpen, onClose, log }) {
             <div>
               <label className="text-sm font-medium text-gray-500">{t('operationType')}</label>
               <div className="mt-1">
-                <Badge variant={log.type === 'deposit' ? 'default' : 'destructive'}>
-                  {log.type === 'deposit' ? t('deposit') : t('withdrawal')}
+                <Badge variant={log.type === LOG_TYPE.DEPOSIT ? 'default' : 'destructive'}>
+                  {log.type === LOG_TYPE.DEPOSIT ? t('deposit') : t('withdrawal')}
                 </Badge>
               </div>
             </div>

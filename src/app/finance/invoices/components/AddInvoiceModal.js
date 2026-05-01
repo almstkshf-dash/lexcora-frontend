@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus, Trash2, Loader2, CalendarIcon, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,40 @@ import useSWR from "swr";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { DEFAULT_VAT, DEFAULT_CURRENCY, STATUS } from '@/app/finance/constants';
+
+function InvoiceItemRow({ item, index, isSubmitting, onItemChange, onRemove, showRemove, t }) {
+  const handleDescChange = useCallback((e) => onItemChange(index, 'description', e.target.value), [onItemChange, index]);
+  const handleAmountChange = useCallback((e) => onItemChange(index, 'amount', e.target.value), [onItemChange, index]);
+  const handleRemove = useCallback(() => onRemove(index), [onRemove, index]);
+  return (
+    <div className="flex gap-2 items-start">
+      <div className="flex-1">
+        <Input placeholder={t('itemDescription')} value={item.description} onChange={handleDescChange} disabled={isSubmitting} required />
+      </div>
+      <div className="w-32">
+        <Input type="number" step="0.01" placeholder={t('itemAmount')} value={item.amount} onChange={handleAmountChange} disabled={isSubmitting} required />
+      </div>
+      {showRemove && (
+        <Button type="button" variant="ghost" size="icon" onClick={handleRemove} disabled={isSubmitting} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function AttachmentFileRow({ attachment, index, isSubmitting, onRemove }) {
+  const handleRemove = useCallback(() => onRemove(index), [onRemove, index]);
+  return (
+    <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-md">
+      <span className="text-sm truncate flex-1">{attachment.attachment_name}</span>
+      <Button type="button" variant="ghost" size="icon" onClick={handleRemove} disabled={isSubmitting} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+        <X className="h-4 w-4" />
+      </Button>
+    </div>
+  );
+}
 
 export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultClientId }) {
   const t = useTranslations('invoices');
@@ -29,8 +63,8 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
     client_id: "",
     branch_id: "",
     bank_account_id: "",
-    vat: "5.00",
-    currency: "AED",
+    vat: DEFAULT_VAT,
+    currency: DEFAULT_CURRENCY,
   });
   const [items, setItems] = useState([{ description: "", amount: "" }]);
   const [attachments, setAttachments] = useState([]);
@@ -65,8 +99,8 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
         client_id: "",
         branch_id: "",
         bank_account_id: "",
-        vat: "5.00",
-        currency: "AED",
+        vat: DEFAULT_VAT,
+        currency: DEFAULT_CURRENCY,
       });
       setItems([{ description: "", amount: "" }]);
       setAttachments([]);
@@ -124,6 +158,10 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
     setAttachments(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleUploadClick = () => {
+    document.getElementById('invoice-attachments').click();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -159,9 +197,9 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
         client_id: formData.client_id || null,
         branch_id: formData.branch_id || null,
         bank_account_id: formData.bank_account_id || null,
-        status: "pending",
+        status: STATUS.PENDING,
         vat: parseFloat(formData.vat) || 0,
-        currency: formData.currency || "AED",
+        currency: formData.currency || DEFAULT_CURRENCY,
         items: validItems,
         attachments: attachments,
       };
@@ -334,7 +372,7 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="AED">درهم إماراتي (AED)</SelectItem>
+                  <SelectItem value={DEFAULT_CURRENCY}>درهم إماراتي (AED)</SelectItem>
                   {/* <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
                   <SelectItem value="EUR">يورو (EUR)</SelectItem>
                   <SelectItem value="GBP">جنيه إسترليني (GBP)</SelectItem>
@@ -362,44 +400,16 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
 
               <div className="space-y-3">
                 {items.map((item, index) => (
-                  <div key={index} className="flex gap-2 items-start">
-                    <div className="flex-1">
-                      <Input
-                        placeholder={t('itemDescription')}
-                        value={item.description}
-                        onChange={(e) =>
-                          handleItemChange(index, "description", e.target.value)
-                        }
-                        disabled={isSubmitting}
-                        required
-                      />
-                    </div>
-                    <div className="w-32">
-                      <Input
-                        type="number"
-                        step="0.01"
-                        placeholder={t('itemAmount')}
-                        value={item.amount}
-                        onChange={(e) =>
-                          handleItemChange(index, "amount", e.target.value)
-                        }
-                        disabled={isSubmitting}
-                        required
-                      />
-                    </div>
-                    {items.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemoveItem(index)}
-                        disabled={isSubmitting}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
+                  <InvoiceItemRow
+                    key={index}
+                    item={item}
+                    index={index}
+                    isSubmitting={isSubmitting}
+                    onItemChange={handleItemChange}
+                    onRemove={handleRemoveItem}
+                    showRemove={items.length > 1}
+                    t={t}
+                  />
                 ))}
               </div>
             </div>
@@ -412,7 +422,7 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => document.getElementById('invoice-attachments').click()}
+                  onClick={handleUploadClick}
                   disabled={isSubmitting}
                   className="flex items-center gap-2"
                 >
@@ -432,19 +442,13 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
               {attachments.length > 0 && (
                 <div className="space-y-2">
                   {attachments.map((attachment, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-md">
-                      <span className="text-sm truncate flex-1">{attachment.attachment_name}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemoveAttachment(index)}
-                        disabled={isSubmitting}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <AttachmentFileRow
+                      key={index}
+                      attachment={attachment}
+                      index={index}
+                      isSubmitting={isSubmitting}
+                      onRemove={handleRemoveAttachment}
+                    />
                   ))}
                 </div>
               )}

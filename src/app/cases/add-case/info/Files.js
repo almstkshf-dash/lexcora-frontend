@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from 'react';
-import { Plus, File, Minus, FileText, Image, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
+import { Plus, File, Minus, FileText, ImageIcon, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -81,7 +81,7 @@ function Files() {
 
   // Get file icon
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
+    if (type.startsWith('image/')) return <ImageIcon className="h-4 w-4" />;
     if (type.includes('pdf')) return <FileText className="h-4 w-4" />;
     return <FileIcon className="h-4 w-4" />;
   };

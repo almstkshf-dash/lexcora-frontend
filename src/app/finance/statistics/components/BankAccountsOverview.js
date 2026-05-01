@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Building2, Loader2, TrendingUp, TrendingDown } from 'lucide-react';
 import { getAllBankAccounts } from '@/app/services/api/bankAccounts';
+import { DEFAULT_CURRENCY, LOCALE, ACCOUNT_STATUS, STATS_REFRESH_INTERVAL } from '@/app/finance/constants';
 
 const BankAccountsOverview = () => {
   const { isRTL } = useLanguage();
@@ -16,7 +17,7 @@ const BankAccountsOverview = () => {
   const { data: accountsData, isLoading } = useSWR(
     '/bank-accounts-stats',
     getAllBankAccounts,
-    { refreshInterval: 300000 }
+    { refreshInterval: STATS_REFRESH_INTERVAL }
   );
 
   const accounts = React.useMemo(() => {
@@ -29,9 +30,9 @@ const BankAccountsOverview = () => {
   }, [accounts]);
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('ar-AE', {
+    return new Intl.NumberFormat(LOCALE.ar, {
       style: 'currency',
-      currency: 'AED'
+      currency: DEFAULT_CURRENCY
     }).format(amount || 0);
   };
 
@@ -93,7 +94,7 @@ const BankAccountsOverview = () => {
                       </div>
                     </div>
                     <Badge 
-                      variant={account.status === 'active' ? 'default' : 'secondary'}
+                      variant={account.status === ACCOUNT_STATUS.ACTIVE ? 'default' : 'secondary'}
                       className="mt-1"
                     >
                       {account.status === 'active' 

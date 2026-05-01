@@ -36,7 +36,7 @@ import {
   X
 } from 'lucide-react'
 import { toast } from 'react-toastify'
-import Link from 'next/link'
+import Link from 'next/link';
 
 function PartyDocumentsModal({ children, caseId, partyId, partyName }) {
   const { language } = useLanguage()

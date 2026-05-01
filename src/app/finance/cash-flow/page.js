@@ -20,6 +20,7 @@ import { accountingService } from '@/app/services/api/accounting';
 import { toast } from 'react-toastify';
 import PageHeader from '@/components/PageHeader';
 import { exportCashFlowCsv, fetchLatestCashFlow } from './cashFlowLogic';
+import { DEFAULT_CURRENCY, LOCALE } from '@/app/finance/constants';
 
 const PERIOD_OPTIONS = ['monthly', 'quarterly', 'yearly'];
 
@@ -51,9 +52,9 @@ export default function CashFlowPage() {
   }, [period, fetchCashFlow]);
 
   const formatCurrency = (val) => {
-    return new Intl.NumberFormat(language === 'ar' ? 'ar-AE' : 'en-US', {
+    return new Intl.NumberFormat(language === 'ar' ? LOCALE.ar : LOCALE.en, {
       style: 'currency',
-      currency: 'AED'
+      currency: DEFAULT_CURRENCY
     }).format(val);
   };
 

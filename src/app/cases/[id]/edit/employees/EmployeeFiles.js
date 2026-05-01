@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useCallback } from 'react';
-import { Upload, File, X, FileText, Image as ImageIcon, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
+import { Upload, File, X, FileText, ImageIcon, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
+import NextImage from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -156,10 +157,12 @@ function EmployeeFiles({ formikProps }) {
                         {/* File Preview/Icon */}
                         <div className="flex-shrink-0">
                           {preview ? (
-                            <img
+                            <NextImage
                               src={preview}
                               alt={fileName}
-                              className="h-10 w-10 object-cover rounded"
+                              width={40}
+                              height={40}
+                              className="object-cover rounded"
                             />
                           ) : (
                             <div className="h-10 w-10 bg-muted rounded flex items-center justify-center">

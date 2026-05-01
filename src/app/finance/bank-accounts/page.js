@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Edit, Trash2, Plus, Eye, FileCheck } from 'lucide-react';
 import { getAllBankAccounts, deleteBankAccount } from '@/app/services/api/bankAccounts';
+import { DEFAULT_CURRENCY, LOCALE, ACCOUNT_STATUS } from '@/app/finance/constants';
 import AddAccountModal from './components/AddAccountModal';
 import EditAccountModal from './components/EditAccountModal';
 import BankAccountLogsModal from './components/BankAccountLogsModal';
@@ -88,15 +89,15 @@ function BankAccountsPage() {
     }
   };
 
-  const formatCurrency = (amount, currency = 'AED') => {
-    return new Intl.NumberFormat(language === 'ar' ? 'ar-AE' : 'en-US', {
+  const formatCurrency = (amount, currency = DEFAULT_CURRENCY) => {
+    return new Intl.NumberFormat(language === 'ar' ? LOCALE.ar : LOCALE.en, {
       style: 'currency',
       currency,
     }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-US');
+    return new Date(dateString).toLocaleDateString(language === 'ar' ? LOCALE.ar : LOCALE.en);
   };
 
   return (
@@ -174,13 +175,13 @@ function BankAccountsPage() {
                         {account.branch_name_ar || '-'}
                       </TableCell>
                       <TableCell>
-                        {formatCurrency(account.current_balance, account.currency || 'AED')}
+                        {formatCurrency(account.current_balance, account.currency || DEFAULT_CURRENCY)}
                       </TableCell>
                       <TableCell>
                         <Badge 
-                          variant={account.status === 'active' ? 'default' : 'secondary'}
+                          variant={account.status === ACCOUNT_STATUS.ACTIVE ? 'default' : 'secondary'}
                         >
-                          {account.status === 'active' ? t('active') : t('inactive')}
+                          {account.status === ACCOUNT_STATUS.ACTIVE ? t('active') : t('inactive')}
                         </Badge>
                       </TableCell>
                       <TableCell>

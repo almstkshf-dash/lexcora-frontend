@@ -21,7 +21,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Plus, Save, Loader2, Upload, X, FileText, Image, FileIcon } from "lucide-react";
+import { Plus, Save, Loader2, Upload, X, FileText, ImageIcon, FileIcon } from "lucide-react";
 import { createParty, checkDuplicateParty } from "@/app/services/api/parties";
 import { getBranches } from "@/app/services/api/branches";
 import { toast } from "react-toastify";
@@ -120,7 +120,7 @@ const AddPartyModal = ({ onPartyAdded, children, initialPartyType = "" }) => {
   };
 
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
+    if (type.startsWith('image/')) return <ImageIcon className="h-4 w-4" />;
     if (type.includes('pdf')) return <FileText className="h-4 w-4" />;
     return <FileIcon className="h-4 w-4" />;
   };

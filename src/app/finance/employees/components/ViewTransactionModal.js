@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -12,6 +12,42 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { getEmployeeCashTransactionById, updateEmployeeCashTransaction, deleteEmployeeCashTransactionAttachment } from '@/app/services/api/employeeCashTransactions';
 import { uploadFiles } from '../../../../../utils/fileUpload';
 import api from '@/app/services/api/axiosInstance';
+import { DEFAULT_CURRENCY, LOCALE, TRANSACTION_TYPE } from '@/app/finance/constants';
+
+function AttachmentItem({ attachment, deletingAttachment, onDownload, onDelete, t, formatDateTime }) {
+  const handleDownload = useCallback(() => onDownload(attachment.attachment_url, attachment.attachment_name), [onDownload, attachment.attachment_url, attachment.attachment_name]);
+  const handleDelete = useCallback(() => onDelete(attachment.id, attachment.attachment_name), [onDelete, attachment.id, attachment.attachment_name]);
+  return (
+    <div className="flex items-center justify-between p-3  rounded-lg border  transition-colors">
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium truncate">{attachment.attachment_name}</p>
+        <p className="text-xs ">{formatDateTime(attachment.created_at)}</p>
+      </div>
+      <div className="flex gap-2 mr-3">
+        <Button type="button" variant="ghost" size="sm" onClick={handleDownload} className="hover:bg-blue-50" title={t('download')}>
+          <Download className="h-4 w-4 text-blue-600" />
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button type="button" variant="ghost" size="sm" className="hover:bg-red-50" disabled={deletingAttachment === attachment.id} title={t('delete')}>
+              <Trash2 className="h-4 w-4 text-red-600" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('deleteAttachmentConfirm')}</AlertDialogTitle>
+              <AlertDialogDescription>{t('deleteAttachmentMessage')}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('close')}</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">{t('delete')}</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </div>
+  );
+}
 
 const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
   const { isRTL } = useLanguage();
@@ -34,8 +70,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
         } else {
           toast.error(t('loadError'));
         }
-      } catch (error) {
-        console.error('Error fetching transaction:', error);
+      } catch {
         toast.error(t('loadError'));
       } finally {
         setLoading(false);
@@ -43,19 +78,19 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
     };
 
     fetchTransaction();
-  }, [transactionId, isOpen]);
+  }, [transactionId, isOpen, t]);
 
   if (!isOpen) return null;
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('ar-AE', {
+    return new Intl.NumberFormat(LOCALE.ar, {
       style: 'currency',
-      currency: 'AED'
+      currency: DEFAULT_CURRENCY
     }).format(amount);
   };
 
   const formatDateTime = (dateString) => {
-    return new Date(dateString).toLocaleString('ar-AE');
+    return new Date(dateString).toLocaleString(LOCALE.ar);
   };
 
   const extractKeyFromUrl = (url) => {
@@ -63,7 +98,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
       const urlObj = new URL(url);
       const pathname = urlObj.pathname;
       return pathname.startsWith('/') ? pathname.substring(1) : pathname;
-    } catch (error) {
+    } catch {
       return url;
     }
   };
@@ -76,12 +111,13 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
       // Get fresh presigned URL from backend
       const response = await api.post('/upload/presigned-url', { key });
       
-      if (response.data.success && response.data.url) {
-        // Use the fresh presigned URL
+      const presignedUrl = response.data.url;
+      if (response.data.success && presignedUrl && presignedUrl.startsWith('https://')) {
         const link = document.createElement('a');
-        link.href = response.data.url;
+        link.href = presignedUrl;
         link.download = name;
         link.target = '_blank';
+        link.rel = 'noopener noreferrer';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -89,8 +125,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
       } else {
         throw new Error('Failed to get download URL');
       }
-    } catch (error) {
-      console.error('Error downloading file:', error);
+    } catch {
       toast.error(t('downloadError'));
     }
   };
@@ -102,7 +137,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
       const response = await deleteEmployeeCashTransactionAttachment(transactionId, attachmentId);
       
       if (response.success) {
-        toast.success(t('deleteAttachmentSuccess') || 'تم حذف المرفق بنجاح');
+        toast.success(t('deleteAttachmentSuccess'));
         // Refresh transaction data
         const updatedTransaction = await getEmployeeCashTransactionById(transactionId);
         if (updatedTransaction.success) {
@@ -111,8 +146,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
       } else {
         toast.error(t('deleteAttachmentError'));
       }
-    } catch (error) {
-      console.error('Error deleting attachment:', error);
+    } catch {
       toast.error(t('deleteAttachmentError'));
     } finally {
       setDeletingAttachment(null);
@@ -144,7 +178,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
       const updatePayload = {
         employee_id: transaction.employee_id,
         amount: transaction.amount,
-        type: 'credit',
+        type: TRANSACTION_TYPE.CREDIT,
         description: transaction.description,
         attachments: [...currentAttachments, ...newAttachments]
       };
@@ -161,8 +195,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
       } else {
         toast.error(t('addFilesError'));
       }
-    } catch (error) {
-      console.error('Error uploading files:', error);
+    } catch {
       toast.error(t('addFilesError'));
     } finally {
       setUploading(false);
@@ -180,8 +213,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
           try {
             const parsed = JSON.parse(transaction.attachments);
             attachments = Array.isArray(parsed) ? parsed.filter(att => att !== null) : [];
-          } catch (parseError) {
-            console.error('Failed to parse attachments JSON:', parseError);
+          } catch {
             attachments = [];
           }
         } else if (Array.isArray(transaction.attachments)) {
@@ -193,8 +225,8 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
         }
       }
       
-    } catch (e) {
-      console.error('Error parsing attachments:', e);
+    } catch {
+      // ignore
     }
   }
 
@@ -296,62 +328,15 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
             ) : (
               <div className="space-y-2">
                 {attachments.map((attachment) => (
-                  <div
+                  <AttachmentItem
                     key={attachment.id}
-                    className="flex items-center justify-between p-3  rounded-lg border  transition-colors"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {attachment.attachment_name}
-                      </p>
-                      <p className="text-xs ">
-                        {formatDateTime(attachment.created_at)}
-                      </p>
-                    </div>
-                    <div className="flex gap-2 mr-3">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDownload(attachment.attachment_url, attachment.attachment_name)}
-                        className="hover:bg-blue-50"
-                        title={t('download')}
-                      >
-                        <Download className="h-4 w-4 text-blue-600" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="hover:bg-red-50"
-                            disabled={deletingAttachment === attachment.id}
-                            title={t('delete')}
-                          >
-                            <Trash2 className="h-4 w-4 text-red-600" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>{t('deleteAttachmentConfirm')}</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {t('deleteAttachmentMessage')}
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>{t('close')}</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteAttachment(attachment.id, attachment.attachment_name)}
-                              className="bg-red-600 hover:bg-red-700"
-                            >
-                              {t('delete')}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </div>
+                    attachment={attachment}
+                    deletingAttachment={deletingAttachment}
+                    onDownload={handleDownload}
+                    onDelete={handleDeleteAttachment}
+                    t={t}
+                    formatDateTime={formatDateTime}
+                  />
                 ))}
               </div>
             )}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from 'react';
-import { Upload, FileText, Image, FileIcon, X } from 'lucide-react';
+import { Upload, FileText, ImageIcon, FileIcon, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -22,7 +22,7 @@ const formatFileSize = (bytes) => {
 };
 
 const getFileIcon = (type) => {
-  if (type.startsWith('image/')) return <Image className="h-3.5 w-3.5" />;
+  if (type.startsWith('image/')) return <ImageIcon className="h-3.5 w-3.5" />;
   if (type.includes('pdf')) return <FileText className="h-3.5 w-3.5" />;
   return <FileIcon className="h-3.5 w-3.5" />;
 };

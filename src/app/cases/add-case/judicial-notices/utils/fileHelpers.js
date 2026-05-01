@@ -1,4 +1,4 @@
-import { FileText, Image, FileSpreadsheet, File } from "lucide-react"
+import { FileText, ImageIcon, FileSpreadsheet, File } from "lucide-react"
 
 /**
  * Get the appropriate icon component based on file extension
@@ -19,7 +19,7 @@ export const getFileIcon = (fileName) => {
     case 'png':
     case 'gif':
     case 'bmp':
-      return <Image className="w-4 h-4" />
+      return <ImageIcon className="w-4 h-4" />
     case 'xls':
     case 'xlsx':
     case 'csv':

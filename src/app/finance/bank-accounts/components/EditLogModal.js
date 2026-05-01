@@ -11,6 +11,8 @@ import { Upload, X, Download } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { updateBankAccountLog } from '@/app/services/api/bankAccounts';
 
+import { DEFAULT_CURRENCY, LOCALE, LOG_TYPE } from '@/app/finance/constants';
+
 function EditLogModal({ isOpen, onClose, log, onSuccess }) {
   const t = useTranslations('BankAccountLogs');
   const [submitting, setSubmitting] = useState(false);
@@ -26,7 +28,7 @@ function EditLogModal({ isOpen, onClose, log, onSuccess }) {
   useEffect(() => {
     if (log && isOpen) {
       setFormData({
-        type: log.type || 'deposit',
+        type: log.type || LOG_TYPE.DEPOSIT,
         amount: log.amount || '',
         description: log.description || ''
       });
@@ -88,8 +90,7 @@ function EditLogModal({ isOpen, onClose, log, onSuccess }) {
       } else {
         toast.error(response.error || t('errorUpdatingLog'));
       }
-    } catch (error) {
-      console.error('Error updating log:', error);
+    } catch {
       toast.error(t('errorUpdatingLog'));
     } finally {
       setSubmitting(false);
@@ -128,8 +129,8 @@ function EditLogModal({ isOpen, onClose, log, onSuccess }) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="deposit">{t('deposit')}</SelectItem>
-                  <SelectItem value="withdrawal">{t('withdrawal')}</SelectItem>
+                  <SelectItem value={LOG_TYPE.DEPOSIT}>{t('deposit')}</SelectItem>
+                  <SelectItem value={LOG_TYPE.WITHDRAWAL}>{t('withdrawal')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

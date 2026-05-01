@@ -2,7 +2,8 @@
 
 import React, { useState, useCallback } from 'react';
 import { useFormikContext } from '../FormikContext';
-import { Plus, File, Minus, FileText, Image, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
+import NextImage from 'next/image';
+import { Plus, File, Minus, FileText, ImageIcon, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -76,7 +77,7 @@ function Files() {
 
   // Get file icon
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
+    if (type.startsWith('image/')) return <ImageIcon className="h-4 w-4" />;
     if (type.includes('pdf')) return <FileText className="h-4 w-4" />;
     return <FileIcon className="h-4 w-4" />;
   };
@@ -144,10 +145,12 @@ function Files() {
                   >
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
                       {preview ? (
-                        <img
+                        <NextImage
                           src={preview}
                           alt={fileName}
-                          className="h-10 w-10 rounded object-cover"
+                          width={40}
+                          height={40}
+                          className="rounded object-cover"
                         />
                       ) : (
                         <div className="h-10 w-10 rounded bg-muted flex items-center justify-center">

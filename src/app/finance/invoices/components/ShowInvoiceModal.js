@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Loader2, Download, Trash2, FileText, File, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { CustomModal, CustomModalBody, CustomModalFooter } from "@/components/ui/custom-modal";
 import { toast } from "react-toastify";
 import { getInvoiceById, deleteInvoiceAttachment, uploadInvoiceAttachments } from "@/app/services/api/invoices";
@@ -11,6 +12,44 @@ import { format, parseISO } from "date-fns";
 import { ar, enUS } from "date-fns/locale";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
+
+function AttachmentRow({ attachment, deletingAttachment, onDownload, onDelete, getFileIcon, tCommon }) {
+  const handleDownload = useCallback(() => onDownload(attachment), [onDownload, attachment]);
+  const handleDelete = useCallback(() => onDelete(attachment.id), [onDelete, attachment.id]);
+
+  return (
+    <div className="flex items-center justify-between p-3 rounded border border-gray-200 hover:bg-gray-100 transition-colors">
+      <div className="flex items-center gap-3 flex-1">
+        {getFileIcon(attachment.attachment_name)}
+        <p className="text-sm font-medium">{attachment.attachment_name}</p>
+      </div>
+      <div className="flex items-center gap-2">
+        <Button variant="outline" size="sm" onClick={handleDownload} className="flex items-center gap-1">
+          <Download className="h-4 w-4" />
+          <span>{tCommon('download')}</span>
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" size="sm" disabled={deletingAttachment === attachment.id} className="flex items-center gap-1 text-red-600 hover:text-red-700">
+              {deletingAttachment === attachment.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+              <span>{tCommon('delete')}</span>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{tCommon('confirmDelete')}</AlertDialogTitle>
+              <AlertDialogDescription>{tCommon('confirmDeleteMessage')}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">{tCommon('delete')}</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </div>
+  );
+}
 
 export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
   const t = useTranslations('invoices');
@@ -20,15 +59,9 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
   const [loading, setLoading] = useState(false);
   const [deletingAttachment, setDeletingAttachment] = useState(null);
   const [uploadingAttachment, setUploadingAttachment] = useState(false);
+  const fileInputRef = useRef(null);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (isOpen && invoiceId) {
-      loadInvoiceData();
-    }
-  }, [isOpen, invoiceId]);
-
-  const loadInvoiceData = async () => {
+  const loadInvoiceData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getInvoiceById(invoiceId);
@@ -46,9 +79,15 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [invoiceId, onClose, t]);
 
-  const formatCurrency = (amount, currency = 'AED') => {
+  useEffect(() => {
+    if (isOpen && invoiceId) {
+      loadInvoiceData();
+    }
+  }, [isOpen, invoiceId, loadInvoiceData]);
+
+  const formatCurrency = useCallback((amount, currency = 'AED') => {
     const currencyMap = {
       'AED': 'ar-AE',
       'USD': 'en-US',
@@ -56,74 +95,65 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
       'GBP': 'en-GB',
       'SAR': 'ar-SA'
     };
-    
     return new Intl.NumberFormat(currencyMap[currency] || 'ar-AE', {
       style: 'currency',
       currency: currency
     }).format(amount);
-  };
+  }, []);
 
-  const formatDate = (dateString) => {
+  const formatDate = useCallback((dateString) => {
     if (!dateString) return '-';
     try {
       return format(parseISO(dateString), "PPP", { locale: isRTL ? ar : enUS });
     } catch {
       return dateString;
     }
-  };
+  }, [isRTL]);
 
-  const getStatusBadge = (status) => {
+  const getStatusBadge = useCallback((status) => {
     const statusConfig = {
       pending: { label: t('statusPending'), variant: 'secondary' },
       approved: { label: t('statusApproved'), variant: 'success' },
       rejected: { label: t('statusRejected'), variant: 'destructive' }
     };
-
     const config = statusConfig[status] || statusConfig.pending;
-    
     return (
       <Badge variant={config.variant}>
         {config.label}
       </Badge>
     );
-  };
+  }, [t]);
 
-  const handleDownloadAttachment = (attachment) => {
-    // Use the S3 URL directly from attachment_url
-    const fileUrl = attachment.attachment_url;
-    
-    // Create temporary link and trigger download
+  const handleDownloadAttachment = useCallback((attachment) => {
     const link = document.createElement('a');
-    link.href = fileUrl;
+    link.href = attachment.attachment_url;
     link.download = attachment.attachment_name;
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
+  }, []);
 
-  const handleDeleteAttachment = async (attachmentId) => {
-    if (!confirm(tCommon('confirmDelete'))) return;
-    
+  const handleDeleteAttachment = useCallback(async (attachmentId) => {
     try {
       setDeletingAttachment(attachmentId);
       const response = await deleteInvoiceAttachment(attachmentId);
       
       if (response.success) {
         toast.success(tCommon('deleteSuccess'));
-        loadInvoiceData(); // Reload to get updated data
+        loadInvoiceData();
       } else {
         toast.error(response.error || tCommon('deleteError'));
       }
-    } catch (error) {
+    } catch {
       toast.error(tCommon('deleteError'));
     } finally {
       setDeletingAttachment(null);
     }
-  };
+  }, [loadInvoiceData, tCommon]);
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = useCallback(async (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
@@ -149,9 +179,9 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
     } finally {
       setUploadingAttachment(false);
     }
-  };
+  }, [invoiceId, loadInvoiceData, tCommon]);
 
-  const getFileIcon = (fileName) => {
+  const getFileIcon = useCallback((fileName) => {
     if (!fileName) {
       return <File className="h-5 w-5 " />;
     }
@@ -160,13 +190,15 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
       return <FileText className="h-5 w-5 " />;
     }
     return <File className="h-5 w-5 " />;
-  };
+  }, []);
 
-  const handleBackdropClick = (e) => {
+  const handleUploadClick = useCallback(() => fileInputRef.current?.click(), []);
+
+  const handleBackdropClick = useCallback((e) => {
     if (e.target === e.currentTarget && !loading) {
       onClose();
     }
-  };
+  }, [loading, onClose]);
 
   if (!isOpen) return null;
 
@@ -301,7 +333,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => document.getElementById('invoice-attachments-upload').click()}
+                  onClick={handleUploadClick}
                   disabled={uploadingAttachment}
                   className="flex items-center gap-2"
                 >
@@ -318,7 +350,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                   )}
                 </Button>
                 <input
-                  id="invoice-attachments-upload"
+                  ref={fileInputRef}
                   type="file"
                   multiple
                   onChange={handleFileUpload}
@@ -330,43 +362,15 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
               {invoice.attachments && invoice.attachments.length > 0 ? (
                 <div className="space-y-2">
                   {invoice.attachments.map((attachment) => (
-                    <div 
-                      key={attachment.id} 
-                      className="flex items-center justify-between p-3  rounded border border-gray-200 hover:bg-gray-100 transition-colors"
-                    >
-                      <div className="flex items-center gap-3 flex-1">
-                        {getFileIcon(attachment.attachment_name)}
-                        <div>
-                          <p className="text-sm font-medium ">{attachment.attachment_name}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDownloadAttachment(attachment)}
-                          className="flex items-center gap-1"
-                        >
-                          <Download className="h-4 w-4" />
-                          <span>{tCommon('download')}</span>
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDeleteAttachment(attachment.id)}
-                          disabled={deletingAttachment === attachment.id}
-                          className="flex items-center gap-1 text-red-600 hover:text-red-700"
-                        >
-                          {deletingAttachment === attachment.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                          <span>{tCommon('delete')}</span>
-                        </Button>
-                      </div>
-                    </div>
+                    <AttachmentRow
+                      key={attachment.id}
+                      attachment={attachment}
+                      deletingAttachment={deletingAttachment}
+                      onDownload={handleDownloadAttachment}
+                      onDelete={handleDeleteAttachment}
+                      getFileIcon={getFileIcon}
+                      tCommon={tCommon}
+                    />
                   ))}
                 </div>
               ) : (

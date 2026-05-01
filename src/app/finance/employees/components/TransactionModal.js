@@ -17,6 +17,7 @@ import { getAllBankAccounts } from '@/app/services/api/bankAccounts';
 import { uploadFiles } from '../../../../../utils/fileUpload';
 import { toast } from 'react-toastify';
 import { X, Upload } from 'lucide-react';
+import { DEFAULT_CURRENCY, LOCALE, ACCOUNT_STATUS, TRANSACTION_TYPE } from '@/app/finance/constants';
 
 const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, transactionData = null }) => {
   const { isRTL } = useLanguage();
@@ -41,11 +42,11 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
         
         if (bankAccountsRes.success) {
           // Filter only active bank accounts
-          const activeBankAccounts = bankAccountsRes.data.filter(acc => acc.status === 'active');
+          const activeBankAccounts = bankAccountsRes.data.filter(acc => acc.status === ACCOUNT_STATUS.ACTIVE);
           setBankAccounts(activeBankAccounts);
         }
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      } catch {
+        // silently ignore fetch errors
       }
     };
     
@@ -88,15 +89,11 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
     onSubmit: async (values) => {
       setIsLoading(true);
       try {
-        console.log('=== Transaction Form Submit ===');
-        console.log('Selected Files:', selectedFiles);
         
         // Upload files only when submitting (not when selecting)
         let uploadedAttachments = [];
         if (!isEditMode && selectedFiles.length > 0) {
-          console.log('Uploading files...');
           const uploadedResults = await uploadFiles(selectedFiles, 'employee-cash-transactions');
-          console.log('Upload Results:', uploadedResults);
           uploadedAttachments = uploadedResults.map(file => ({
             attachment_url: file.document_url,
             attachment_name: file.document_name
@@ -106,12 +103,11 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
         const transactionPayload = {
           employee_id: parseInt(values.employee_id),
           amount: parseFloat(values.amount),
-          type: 'credit', // Always credit by default
+          type: TRANSACTION_TYPE.CREDIT,
           ...(!isEditMode && values.bank_account_id && { bank_account_id: parseInt(values.bank_account_id) }),
           description: values.description || null,
           attachments: uploadedAttachments
         };
-        
         
         let response;
         if (isEditMode) {
@@ -119,9 +115,6 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
         } else {
           response = await createEmployeeCashTransaction(transactionPayload);
         }
-        
-        console.log('API Response:', response);
-        
         if (response.success) {
           toast.success(isEditMode ? t('updateSuccess') : t('addSuccess'));
           formik.resetForm();
@@ -131,8 +124,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
         } else {
           toast.error(response.message || t('saveError'));
         }
-      } catch (error) {
-        console.error('Error saving transaction:', error);
+      } catch {
         toast.error(t('saveError'));
       } finally {
         setIsLoading(false);
@@ -227,7 +219,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
                 <SelectContent>
                   {bankAccounts.map((account) => (
                     <SelectItem key={account.id} value={account.id.toString()}>
-                      {account.bank_name} - {account.account_name} ({new Intl.NumberFormat('ar-AE', { style: 'currency', currency: 'AED' }).format(account.current_balance)})
+                      {account.bank_name} - {account.account_name} ({new Intl.NumberFormat(LOCALE.ar, { style: 'currency', currency: DEFAULT_CURRENCY }).format(account.current_balance)})
                     </SelectItem>
                   ))}
                 </SelectContent>

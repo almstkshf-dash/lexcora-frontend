@@ -163,6 +163,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
         { id: 'finance/clients', label: t('navigation.financeClients'), icon: Users, requiredPermissions: PERMISSION_REQUIREMENTS.financeClients },
         { id: 'finance/invoices', label: t('navigation.invoices'), icon: List, requiredPermissions: PERMISSION_REQUIREMENTS.invoices },
         { id: 'finance/bank-accounts', label: t('navigation.bankAccounts'), icon: Banknote, requiredPermissions: PERMISSION_REQUIREMENTS.bankAccounts },
+        { id: 'finance/ledger', label: t('navigation.ledger'), icon: FileText, requiredPermissions: PERMISSION_REQUIREMENTS.financeLedger },
         { id: 'finance/petty-cash', label: t('navigation.pettyCash'), icon: Banknote, requiredPermissions: PERMISSION_REQUIREMENTS.pettyCash },
         { id: 'finance/cash-flow', label: t('navigation.cashFlow'), icon: BarChartIcon, requiredPermissions: PERMISSION_REQUIREMENTS.cashFlow },
         { id: 'finance/statistics', label: t('navigation.statistics'), icon: BarChartIcon, requiredPermissions: PERMISSION_REQUIREMENTS.financeStatistics },

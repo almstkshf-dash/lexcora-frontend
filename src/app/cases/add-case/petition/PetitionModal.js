@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { CalendarIcon, Plus, CircleX, FileText, Image, FileIcon } from "lucide-react"
+import { CalendarIcon, Plus, CircleX, FileText, ImageIcon, FileIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 function PetitionModal({ 
@@ -44,7 +44,7 @@ function PetitionModal({
 
   // Get file icon
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
+    if (type.startsWith('image/')) return <ImageIcon className="h-4 w-4" />;
     if (type.includes('pdf')) return <FileText className="h-4 w-4" />;
     return <FileIcon className="h-4 w-4" />;
   };

@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Plus, CalendarIcon, Upload, File, X, FileText, Image, FileSpreadsheet, ExternalLink, Trash2 } from "lucide-react"
+import { Plus, CalendarIcon, Upload, File, X, FileText, ImageIcon, FileSpreadsheet, ExternalLink, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { mutate } from 'swr'
 
@@ -44,7 +44,7 @@ const getFileIcon = (fileName) => {
     case 'png':
     case 'gif':
     case 'bmp':
-      return <Image className="w-4 h-4" />
+      return <ImageIcon className="w-4 h-4" />
     case 'xls':
     case 'xlsx':
     case 'csv':

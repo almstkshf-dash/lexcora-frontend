@@ -99,6 +99,11 @@ export const getAccountsTree = async (params) => {
   return response.data;
 };
 
+export const createAccount = async (data) => {
+  const response = await api.post('/accounting/accounts', data);
+  return response.data;
+};
+
 export const getProfitAndLoss = async (params) => {
   const response = await api.get('/accounting/reports/profit-loss', { params });
   return response.data;

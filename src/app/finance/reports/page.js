@@ -22,7 +22,9 @@ import {
   Search,
   AlertTriangle,
   CheckCircle2,
-  DollarSign
+  DollarSign,
+  Printer,
+  Download
 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import { Progress } from '@/components/ui/progress';
@@ -48,7 +50,7 @@ import { Button } from '@/components/ui/button';
 
 // --- Components ---
 
-const HierarchicalRow = ({ node, level = 0, isRTL }) => {
+const HierarchicalRow = ({ node, level = 0, isRTL, accT }) => {
   const [isOpen, setIsOpen] = useState(level < 1); // Expand first level by default
   const hasChildren = node.children && node.children.length > 0;
   
@@ -83,13 +85,13 @@ const HierarchicalRow = ({ node, level = 0, isRTL }) => {
         </TableCell>
       </TableRow>
       {hasChildren && isOpen && node.children.map(child => (
-        <HierarchicalRow key={child.account_id} node={child} level={level + 1} isRTL={isRTL} />
+        <HierarchicalRow key={child.account_id} node={child} level={level + 1} isRTL={isRTL} accT={accT} />
       ))}
     </>
   );
 };
 
-const HierarchicalTable = ({ data, isRTL, commonT }) => (
+const HierarchicalTable = ({ data, isRTL, commonT, accT }) => (
   <div className="rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden">
     <Table>
       <TableHeader className="bg-muted/50">
@@ -100,7 +102,7 @@ const HierarchicalTable = ({ data, isRTL, commonT }) => (
       </TableHeader>
       <TableBody>
         {data.map(node => (
-          <HierarchicalRow key={node.account_id} node={node} isRTL={isRTL} />
+          <HierarchicalRow key={node.account_id} node={node} isRTL={isRTL} accT={accT} />
         ))}
         {data.length === 0 && (
           <TableRow>
@@ -151,7 +153,7 @@ const AgingCard = ({ party, isRTL, commonT }) => (
     </CardContent>
   </Card>
 );
-const CashFlowSection = ({ title, data, type, isRTL, accT }) => (
+const CashFlowSection = ({ title, data, type, isRTL, accT, commonT }) => (
   <div className="space-y-4">
     <div className="flex justify-between items-center px-1">
       <h3 className="text-lg font-bold flex items-center gap-2">
@@ -239,6 +241,16 @@ export default function ReportsPage() {
           { label: navT('finance'), href: '/finance' },
           { label: navT('reports') }
         ]}
+        actions={
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => window.print()} className="gap-2">
+              <Printer className="h-4 w-4" /> {commonT('print')}
+            </Button>
+            <Button variant="default" onClick={() => window.print()} className="gap-2">
+              <Download className="h-4 w-4" /> {commonT('export')}
+            </Button>
+          </div>
+        }
       />
 
       <Tabs defaultValue="pl" className="w-full">
@@ -274,14 +286,14 @@ export default function ReportsPage() {
                 <span className="w-1 h-5 bg-green-500 rounded-full" />
                 {accT('income')}
               </h3>
-              {plData ? <HierarchicalTable data={plData.data?.revenue || []} isRTL={isRTL} commonT={commonT} /> : <Skeleton className="h-[400px] w-full" />}
+              {plData ? <HierarchicalTable data={plData.data?.revenue || []} isRTL={isRTL} commonT={commonT} accT={accT} /> : <Skeleton className="h-[400px] w-full" />}
             </div>
             <div className="space-y-4">
               <h3 className="text-lg font-bold flex items-center gap-2 px-1">
                 <span className="w-1 h-5 bg-red-500 rounded-full" />
                 {accT('expenses')}
               </h3>
-              {plData ? <HierarchicalTable data={plData.data?.expenses || []} isRTL={isRTL} commonT={commonT} /> : <Skeleton className="h-[400px] w-full" />}
+              {plData ? <HierarchicalTable data={plData.data?.expenses || []} isRTL={isRTL} commonT={commonT} accT={accT} /> : <Skeleton className="h-[400px] w-full" />}
             </div>
           </div>
           
@@ -318,7 +330,7 @@ export default function ReportsPage() {
                 <span className="w-1 h-5 bg-blue-500 rounded-full" />
                 {accT('assets')}
               </h3>
-              {bsData ? <HierarchicalTable data={bsData.data?.assets || []} isRTL={isRTL} commonT={commonT} /> : <Skeleton className="h-[400px] w-full" />}
+              {bsData ? <HierarchicalTable data={bsData.data?.assets || []} isRTL={isRTL} commonT={commonT} accT={accT} /> : <Skeleton className="h-[400px] w-full" />}
             </div>
             <div className="space-y-8">
               <div className="space-y-4">
@@ -326,14 +338,14 @@ export default function ReportsPage() {
                   <span className="w-1 h-5 bg-amber-500 rounded-full" />
                   {accT('liabilities')}
                 </h3>
-                {bsData ? <HierarchicalTable data={bsData.data?.liabilities || []} isRTL={isRTL} commonT={commonT} /> : <Skeleton className="h-[200px] w-full" />}
+                {bsData ? <HierarchicalTable data={bsData.data?.liabilities || []} isRTL={isRTL} commonT={commonT} accT={accT} /> : <Skeleton className="h-[200px] w-full" />}
               </div>
               <div className="space-y-4">
                 <h3 className="text-lg font-bold flex items-center gap-2 px-1">
                   <span className="w-1 h-5 bg-purple-500 rounded-full" />
                   {accT('equity')}
                 </h3>
-                {bsData ? <HierarchicalTable data={bsData.data?.equity || []} isRTL={isRTL} commonT={commonT} /> : <Skeleton className="h-[200px] w-full" />}
+                {bsData ? <HierarchicalTable data={bsData.data?.equity || []} isRTL={isRTL} commonT={commonT} accT={accT} /> : <Skeleton className="h-[200px] w-full" />}
               </div>
             </div>
           </div>
@@ -481,9 +493,9 @@ export default function ReportsPage() {
         {/* Cash Flow Statement */}
         <TabsContent value="cf" className="space-y-8">
            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <CashFlowSection title={accT('operating')} data={cfData?.data?.operating || []} type="operating" isRTL={isRTL} accT={accT} />
-              <CashFlowSection title={accT('investing')} data={cfData?.data?.investing || []} type="investing" isRTL={isRTL} accT={accT} />
-              <CashFlowSection title={accT('financing')} data={cfData?.data?.financing || []} type="financing" isRTL={isRTL} accT={accT} />
+              <CashFlowSection title={accT('operating')} data={cfData?.data?.operating || []} type="operating" isRTL={isRTL} accT={accT} commonT={commonT} />
+              <CashFlowSection title={accT('investing')} data={cfData?.data?.investing || []} type="investing" isRTL={isRTL} accT={accT} commonT={commonT} />
+              <CashFlowSection title={accT('financing')} data={cfData?.data?.financing || []} type="financing" isRTL={isRTL} accT={accT} commonT={commonT} />
            </div>
 
            <Card className="bg-primary/5 border-none shadow-xl">

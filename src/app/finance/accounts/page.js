@@ -12,6 +12,7 @@ import { ChevronDown, ChevronRight, ListTree, Plus, FileText, Check, X } from 'l
 import PageHeader from '@/components/PageHeader';
 import { getAccountsTree } from '@/app/services/api/accounting';
 import { cn } from '@/lib/utils';
+import AddAccountModal from './components/AddAccountModal';
 
 const AccountRow = ({ account, level = 0 }) => {
   const [isOpen, setIsOpen] = useState(level === 0); // Root levels open by default
@@ -85,6 +86,7 @@ export default function AccountsPage() {
   const { data, error, mutate } = useSWR('/accounting/accounts/tree', () => getAccountsTree());
   const accountsTree = data?.data || [];
   const loading = !data && !error;
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   return (
     <div className="p-6" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -98,7 +100,7 @@ export default function AccountsPage() {
             { label: navT('accounts') }
           ]}
           actions={
-            <Button onClick={() => {}} className="gap-2">
+            <Button onClick={() => setIsAddModalOpen(true)} className="gap-2">
               <Plus className="h-4 w-4" /> {commonT('add')}
             </Button>
           }
@@ -144,6 +146,11 @@ export default function AccountsPage() {
           </CardContent>
         </Card>
       </div>
+      <AddAccountModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+        onSuccess={() => mutate()} 
+      />
     </div>
   );
 }

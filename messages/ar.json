@@ -118,7 +118,8 @@
     "endDate": "تاريخ الانتهاء",
     "open": "مفتوح",
     "closed": "مغلق",
-    "currencySymbol": "درهم"
+    "currencySymbol": "درهم",
+    "areYouSure": "هل أنت متأكد أنك تريد حذف هذا العنصر؟"
   },
   "navigation": {
     "dashboard": "لوحة التحكم",
@@ -191,7 +192,9 @@
     "ledger": "دفتر الأستاذ",
     "reports": "التقارير المالية",
     "budgeting": "الميزانيات والفترات",
-    "language": "اللغة"
+    "language": "اللغة",
+    "profileSettings": "إعدادات الملف الشخصي",
+    "appLogoSuffix": " شعار"
   },
   "cases": {
     "title": "إدارة القضايا",
@@ -213,7 +216,12 @@
     "unnamed": "بدون اسم",
     "fileLabel": "رقم الملف:",
     "caseLabel": "رقم القضية:",
-    "clearSearch": "مسح البحث"
+    "clearSearch": "مسح البحث",
+    "sessionTime": "وقت الجلسة",
+    "caseNo": "رقم القضية",
+    "firstInstanceClient": "موكل الدرجة الأولى",
+    "decision": "القرار",
+    "legalPeriodsSpecified": "المدد القانونية المحددة"
   },
   "theme": {
     "light": "فاتح",
@@ -239,7 +247,8 @@
     "switchTheme": "تغيير السمة",
     "calm": "هادئ",
     "focus": "تركيز",
-    "vibrant": "حيوي"
+    "vibrant": "حيوي",
+    "gold": "ذهبي"
   },
   "buttons": {
     "save": "حفظ",
@@ -698,7 +707,13 @@
       "invalidType": "نوع الملف غير صالح",
       "tooLarge": "حجم الملف كبير جداً (الحد الأقصى 10 ميجابايت)",
       "filesCount": "ملف",
-      "uploadedFiles": "الملفات المرفوعة"
+      "uploadedFiles": "الملفات المرفوعة",
+      "coverLabel": "صورة الغلاف",
+      "remainingImages": "صور متبقية",
+      "alerts": {
+        "fileTooLarge": "الملف {fileName} كبير جداً. يجب ألا يتجاوز حجم الصورة 5 ميجابايت.",
+        "maxImagesExceeded": "لا يمكن رفع أكثر من {maxImages} صور"
+      }
     }
   },
   "meetings": {
@@ -1450,7 +1465,9 @@
     "sessionExpired": "انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى",
     "unauthorizedAccess": "غير مسموح لك بالوصول لهذه الصفحة",
     "logoutSuccess": "تم تسجيل الخروج بنجاح",
-    "verifying": "جاري التحقق من الهوية..."
+    "verifying": "جاري التحقق من الهوية...",
+    "hidePassword": "إخفاء كلمة المرور",
+    "showPassword": "إظهار كلمة المرور"
   },
   "validation": {
     "nameRequired": "الاسم مطلوب",
@@ -2737,7 +2754,29 @@
     "confirmDeleteInvoice": "هل أنت متأكد من حذف هذه الفاتورة؟ لا يمكن التراجع عن هذا الإجراء.",
     "paidInvoiceWarning": "تحذير: هذه الفاتورة مدفوعة. قد يؤثر حذفها على السجلات المالية.",
     "deletingInvoice": "جارٍ الحذف...",
-    "deleteInvoiceButton": "حذف الفاتورة"
+    "deleteInvoiceButton": "حذف الفاتورة",
+    "pageDescription": "إدارة وتتبع فواتير العملاء",
+    "deleteInvoice": "حذف الفاتورة",
+    "viewInvoice": "عرض الفاتورة",
+    "invoiceNumberOptional": "رقم الفاتورة (اختياري - يتم إنشاؤه تلقائياً)",
+    "invoiceDate": "التاريخ",
+    "bankAccountRequired": "الحساب البنكي *",
+    "vat": "ضريبة القيمة المضافة %",
+    "createdByName": "أُنشئت بواسطة",
+    "save": "حفظ",
+    "noInvoicesFound": "لم يتم العثور على فواتير",
+    "addFirstInvoice": "إضافة فاتورة جديدة",
+    "pending": "قيد الانتظار",
+    "approved": "معتمدة",
+    "export": "تصدير",
+    "exportToExcel": "تصدير إلى إكسل",
+    "exportToPDF": "تصدير إلى PDF",
+    "confirmDelete": "تأكيد الحذف",
+    "confirmDeleteMessage": "هل أنت متأكد أنك تريد حذف هذه الفاتورة؟ لا يمكن التراجع عن هذا الإجراء.",
+    "pleaseSelectBank": "الرجاء اختيار الحساب البنكي",
+    "approve": "اعتماد",
+    "approveInvoice": "اعتماد الفاتورة",
+    "approveInvoiceMessage": "هل أنت متأكد أنك تريد اعتماد الفاتورة {invoiceNumber} بمبلغ {amount}؟ سيؤدي هذا إلى تغيير الحالة إلى معتمدة."
   },
   "clientFinance": {
     "accountStatement": "كشف الحساب",

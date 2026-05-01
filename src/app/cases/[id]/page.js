@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import CaseAssistantLauncher from '@/app/components/ai/CaseAssistantLauncher';
+import CaseFinancialSummary from './components/CaseFinancialSummary';
 
 function CaseDetailsPage({ params }) {
   const { id } = use(params);
@@ -239,6 +240,8 @@ function CaseDetailsPage({ params }) {
             <TeamRow label={t('caseDetailsPage.legalResearcher')} value={info.legal_researcher_name || noValue} tone="orange" />
           </div>
         </div>
+
+        <CaseFinancialSummary caseId={caseId} />
 
         <div className="space-y-6 print:space-y-4 print-avoid-break">
           <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">

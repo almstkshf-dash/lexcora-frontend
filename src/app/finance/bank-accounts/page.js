@@ -134,7 +134,7 @@ function BankAccountsPage() {
             {loading ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                <span className="mr-3">{t('loading')}</span>
+                <span className="ms-3">{t('loading')}</span>
               </div>
             ) : bankAccounts.length === 0 ? (
               <div className="text-center p-8">

@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 export default function FinanceClientsPage() {
   const t = useTranslations("common");
   const tNav = useTranslations("navigation");
-  const { language } = useLanguage();
+  const { language, isRTL } = useLanguage();
 
   // Use custom hook for all business logic and state management
   const {
@@ -87,7 +87,7 @@ export default function FinanceClientsPage() {
       onClick={() => handleViewClient(row)}
       className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
     >
-      <Eye className="h-4 w-4 mr-2" />
+      <Eye className="h-4 w-4 me-2" />
       {t("view")}
     </Button>
   ), [handleViewClient, t]);
@@ -102,7 +102,7 @@ export default function FinanceClientsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6" dir={isRTL ? "rtl" : "ltr"}>
       {/* Header Section */}
       <PageHeader
         title={t("financeClients")}

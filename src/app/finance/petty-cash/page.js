@@ -42,7 +42,7 @@ import { DEFAULT_CURRENCY, LOCALE, LOG_TYPE } from '@/app/finance/constants';
 
 
 export default function PettyCashPage() {
-  const { language } = useLanguage();
+  const { language, isRTL } = useLanguage();
   const t = useTranslations('PettyCash');
   const commonT = useTranslations('common');
   const navT = useTranslations('navigation');
@@ -141,7 +141,7 @@ export default function PettyCashPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <PageHeader
         title={t('title')}
         icon={Wallet}
@@ -156,7 +156,7 @@ export default function PettyCashPage() {
           <Dialog open={isAddFundOpen} onOpenChange={setIsAddFundOpen}>
             <DialogTrigger asChild>
               <Button variant="outline">
-                <Wallet className="mr-2 h-4 w-4" />
+                <Wallet className="me-2 h-4 w-4" />
                 {t('addNewFund')}
               </Button>
             </DialogTrigger>
@@ -191,7 +191,7 @@ export default function PettyCashPage() {
           <Dialog open={isAddTxOpen} onOpenChange={setIsAddTxOpen}>
             <DialogTrigger asChild>
               <Button disabled={!selectedFund}>
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="me-2 h-4 w-4" />
                 {t('addTransaction')}
               </Button>
             </DialogTrigger>
@@ -291,8 +291,8 @@ export default function PettyCashPage() {
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>{commonT('actions')}</CardTitle>
                   <div className="relative w-64">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder={commonT('search')} className="pl-8" />
+                    <Search className="absolute start-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input placeholder={commonT('search')} className="ps-8" />
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -319,9 +319,9 @@ export default function PettyCashPage() {
                             <TableCell>
                               <div className="flex items-center">
                                 {tx.type === LOG_TYPE.REPLENISHMENT ? (
-                                  <ArrowUpCircle className="mr-2 h-4 w-4 text-green-500" />
+                                  <ArrowUpCircle className="me-2 h-4 w-4 text-green-500" />
                                 ) : (
-                                  <ArrowDownCircle className="mr-2 h-4 w-4 text-red-500" />
+                                  <ArrowDownCircle className="me-2 h-4 w-4 text-red-500" />
                                 )}
                                 {t(tx.type)}
                               </div>

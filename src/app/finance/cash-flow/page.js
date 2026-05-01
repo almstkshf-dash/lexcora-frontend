@@ -25,7 +25,7 @@ import { DEFAULT_CURRENCY, LOCALE } from '@/app/finance/constants';
 const PERIOD_OPTIONS = ['monthly', 'quarterly', 'yearly'];
 
 export default function CashFlowPage() {
-  const { language } = useLanguage();
+  const { language, isRTL } = useLanguage();
   const t = useTranslations('Accounting');
   const commonT = useTranslations('common');
   const navT = useTranslations('navigation');
@@ -80,7 +80,7 @@ export default function CashFlowPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6" dir={isRTL ? "rtl" : "ltr"}>
       <PageHeader
         title={t('cashFlow')}
         icon={TrendingUp}
@@ -106,7 +106,7 @@ export default function CashFlowPage() {
           ))}
         </div>
         <Button variant="outline" size="sm" onClick={handleExport} disabled={!data}>
-          <Download className="mr-2 h-4 w-4" />
+          <Download className="me-2 h-4 w-4" />
           {commonT('export')}
         </Button>
       </div>

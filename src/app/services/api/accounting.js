@@ -93,8 +93,101 @@ export const getFinancialStats = async () => {
   return response.data;
 };
 
+// Accounting & Reports
+export const getAccountsTree = async (params) => {
+  const response = await api.get('/accounting/accounts/tree', { params });
+  return response.data;
+};
+
+export const getProfitAndLoss = async (params) => {
+  const response = await api.get('/accounting/reports/profit-loss', { params });
+  return response.data;
+};
+
+export const getBalanceSheet = async (params) => {
+  const response = await api.get('/accounting/reports/balance-sheet', { params });
+  return response.data;
+};
+
+export const getAgingReceivables = async (params) => {
+  const response = await api.get('/accounting/reports/aging-receivables', { params });
+  return response.data;
+};
+
+export const getAgingPayables = async (params) => {
+  const response = await api.get('/accounting/reports/aging-payables', { params });
+  return response.data;
+};
+
+export const getCaseFinancialSummary = async (caseId) => {
+  const response = await api.get(`/accounting/reports/case-summary/${caseId}`);
+  return response.data;
+};
+
+export const getProjectFinancialSummary = async (projectId) => {
+  const response = await api.get(`/accounting/reports/project-summary/${projectId}`);
+  return response.data;
+};
+
+export const getDepartmentFinancialSummary = async (departmentId) => {
+  const response = await api.get(`/accounting/reports/department-summary/${departmentId}`);
+  return response.data;
+};
+
+export const getTrialBalance = async (params) => {
+  const response = await api.get('/accounting/reports/trial-balance', { params });
+  return response.data;
+};
+
+export const getAccountingCashFlow = async (params) => {
+  const response = await api.get('/accounting/reports/cash-flow', { params });
+  return response.data;
+};
+
+// Fiscal Periods
+export const getFiscalPeriods = async (params) => {
+  const response = await api.get('/accounting/fiscal-periods', { params });
+  return response.data;
+};
+
+export const createFiscalPeriod = async (data) => {
+  const response = await api.post('/accounting/fiscal-periods', data);
+  return response.data;
+};
+
+export const updateFiscalPeriodStatus = async (id, status) => {
+  const response = await api.patch(`/accounting/fiscal-periods/${id}/status`, { status });
+  return response.data;
+};
+
+// Budgets
+export const setBudget = async (data) => {
+  const response = await api.post('/accounting/budgets', data);
+  return response.data;
+};
+
+export const getBudgetVsActual = async (params) => {
+  const response = await api.get('/accounting/reports/budget-vs-actual', { params });
+  return response.data;
+};
+
 export const accountingService = {
   getCashFlow,
   getDailyCashFlow,
-  getFinancialStats
+  getFinancialStats,
+  getAccountsTree,
+  getProfitAndLoss,
+  getBalanceSheet,
+  getAgingReceivables,
+  getAgingPayables,
+  getCaseFinancialSummary,
+  getProjectFinancialSummary,
+  getDepartmentFinancialSummary,
+  getTrialBalance,
+  getAccountingCashFlow,
+  getFiscalPeriods,
+  createFiscalPeriod,
+  updateFiscalPeriodStatus,
+  setBudget,
+  getBudgetVsActual
 };

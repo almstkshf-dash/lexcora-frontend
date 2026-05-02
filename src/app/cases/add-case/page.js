@@ -79,6 +79,7 @@ const BASE_INITIAL_VALUES = {
   employeeFiles: [],
   courtFiles: [],
   related_cases: [],
+  relatedFiles: [],
 };
 
 const DRAFT_STORAGE_KEY = "lexcora-add-case-draft";
@@ -141,7 +142,8 @@ function AddCasePage() {
         related_cases: values.related_cases ? values.related_cases.map(c => c.id) : [],
         files: values.caseFiles || [],
         employeesFiles: values.employeeFiles || [],
-        courtFiles: values.courtFiles || []
+        courtFiles: values.courtFiles || [],
+        relatedFiles: values.relatedFiles || []
       };
 
       // Call the batch API endpoint

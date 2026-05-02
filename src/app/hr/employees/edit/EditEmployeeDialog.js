@@ -87,6 +87,7 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
         contract_end_date: employee.contract_end_date ? employee.contract_end_date.split('T')[0] : '',
         registration_expiration_date: employee.registration_expiration_date ? employee.registration_expiration_date.split('T')[0] : '',
         basic_salary: employee.basic_salary || '',
+        hourly_rate: employee.hourly_rate || '',
         status: employee.status || 'active'
       });
     }

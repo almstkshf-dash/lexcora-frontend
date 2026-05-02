@@ -127,6 +127,13 @@ const WorkInfoTab = ({ formData, handleInputChange, departments, roles, branches
           value={formData.basic_salary}
           placeholder="0.00"
         />
+        <FormField 
+          label={t('employees.hourlyRate') || 'أجر الساعة'} 
+          name="hourly_rate" 
+          type="number"
+          value={formData.hourly_rate}
+          placeholder="0.00"
+        />
       </CardContent>
     </Card>
   );

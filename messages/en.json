@@ -748,7 +748,8 @@
       "uploadFiles": "Upload Documents",
       "selectFiles": "Select Files",
       "addClient": "Add Client",
-      "addPotentialClient": "Add Potential Client"
+      "addPotentialClient": "Add Potential Client",
+      "generateInvoice": "Generate Invoice"
     },
     "fields": {
       "client": "Client / Potential Client",
@@ -762,7 +763,12 @@
       "documents": "Documents",
       "address": "Meeting Address",
       "attendees": "Attendees",
-      "link": "Meeting Link"
+      "link": "Meeting Link",
+      "isConsultation": "Is Consultation?",
+      "consultationFee": "Consultation Fee",
+      "hourlyRate": "Hourly Rate",
+      "duration": "Duration (Minutes)",
+      "relatedCase": "Related Case"
     },
     "results": {
       "scheduled": "Scheduled",
@@ -785,7 +791,8 @@
       "selectDate": "Select date",
       "enterAddress": "Enter meeting address...",
       "searchEmployee": "Search employee...",
-      "enterLink": "Enter meeting link..."
+      "enterLink": "Enter meeting link...",
+      "selectCase": "Select related case (optional)"
     },
     "validation": {
       "clientRequired": "Client is required",
@@ -3400,7 +3407,18 @@
     },
     "title": "Employee Finance",
     "relatedCases": {
-      "minSearchChars": "Type at least 3 characters to search"
+      "title": "Related Cases",
+      "manageRelatedFiles": "Manage Related Cases & Documents",
+      "addRemoveRelatedFiles": "Add or remove cases and documents related to this case",
+      "relatedFiles": "Related Cases/Files",
+      "selectRelatedCase": "Select Related Case",
+      "searchPlaceholder": "Search by case number or file number...",
+      "searching": "Searching...",
+      "minSearchChars": "Type at least 3 characters to search",
+      "noCasesFound": "No cases found",
+      "fileLabel": "File",
+      "uploadFiles": "Upload Documents",
+      "noFiles": "No documents uploaded"
     },
     "tabs": {
       "transactions": "Transactions",
@@ -3531,5 +3549,108 @@
     "outflow": "Outflow",
     "net": "Net",
     "name": "Name"
+  },
+  "caseDetailsPage": {
+    "title": "Case Details",
+    "fileNumber": "File Number",
+    "caseNumber": "Case Number",
+    "basicInformation": "Basic Information",
+    "startDate": "Start Date",
+    "topic": "Topic",
+    "fees": "Fees",
+    "court": "Court",
+    "caseType": "Case Type",
+    "caseClassification": "Case Classification",
+    "branch": "Branch",
+    "policeStation": "Police Station",
+    "publicProsecution": "Public Prosecution",
+    "additionalNotes": "Additional Notes",
+    "team": "Team",
+    "lawyer": "Lawyer",
+    "secretary": "Secretary",
+    "legalAdvisor": "Legal Advisor",
+    "legalResearcher": "Legal Researcher",
+    "partiesTitle": "Related Parties ({count})",
+    "partyName": "Party Name",
+    "address": "Address",
+    "noParties": "No parties associated with this case.",
+    "sessionsTitle": "Sessions ({count})",
+    "sessionNumber": "Session #",
+    "decision": "Decision",
+    "link": "Link",
+    "sessionLabel": "Session {number}",
+    "sessionLink": "View Session",
+    "noSessions": "No sessions recorded for this case.",
+    "tasksTitle": "Tasks ({count})",
+    "taskTitle": "Task Title",
+    "statusLabel": "Status",
+    "priorityLabel": "Priority",
+    "dueDate": "Due Date",
+    "assignedTo": "Assigned To",
+    "assignedBy": "Assigned By",
+    "noTasks": "No tasks associated with this case.",
+    "executionsTitle": "Executions ({count})",
+    "executionNumber": "Execution #",
+    "executionLabel": "Execution {number}",
+    "noExecutions": "No executions recorded for this case.",
+    "judicialNoticesTitle": "Judicial Notices ({count})",
+    "noticeLabel": "Notice {number}",
+    "noticeNumber": "Notice #",
+    "certificationDate": "Certification Date",
+    "serviceCompleted": "Service Completed",
+    "notificationPeriod": "Notification Period",
+    "caseFiled": "Case Filed",
+    "daysCount": "{count} Days",
+    "noJudicialNotices": "No judicial notices recorded.",
+    "petitionsTitle": "Petitions ({count})",
+    "petition": "Petition",
+    "petitionLabel": "Petition {number}",
+    "orderType": "Order Type",
+    "decisionStatusLabel": "Decision Status",
+    "appealDate": "Appeal Date",
+    "noPetitions": "No petitions recorded.",
+    "degreesTitle": "Case Degrees ({count})",
+    "degreeLabel": "Degree {number}",
+    "degreeNumber": "Degree #",
+    "referralDate": "Referral Date",
+    "year": "Year",
+    "noDegrees": "No other degrees recorded.",
+    "errorLoading": "Error loading case details.",
+    "noData": "Case details not found.",
+    "currency": "AED",
+    "status": {
+      "active": "Active",
+      "pending": "Pending",
+      "completed": "Completed",
+      "inProgress": "In Progress"
+    },
+    "priority": {
+      "high": "High",
+      "normal": "Normal",
+      "low": "Low"
+    },
+    "partyType": {
+      "opponent": "Opponent",
+      "client": "Client"
+    },
+    "sessionType": {
+      "expert": "Expert Session",
+      "regular": "Regular Session"
+    },
+    "executionType": {
+      "almulaa": "Almulaa Execution"
+    },
+    "decisionStatus": {
+      "accepted": "Accepted",
+      "notAccepted": "Not Accepted"
+    },
+    "yes": "Yes",
+    "no": "No",
+    "relatedFilesTitle": "Related Documents ({count})",
+    "documentName": "Document Name",
+    "actions": "Actions",
+    "noRelatedFiles": "No related documents uploaded yet.",
+    "relatedCasesTitle": "Related Cases ({count})",
+    "noRelatedCases": "No related cases linked yet."
   }
 }

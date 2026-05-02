@@ -151,6 +151,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
         { id: 'hr/assets', label: t('navigation.assets'), icon: Package, requiredPermissions: PERMISSION_REQUIREMENTS.hrAssets },
         { id: 'hr/forms', label: t('navigation.forms'), icon: ScrollText, requiredPermissions: PERMISSION_REQUIREMENTS.hrForms },
         { id: 'hr/events', label: t('navigation.events'), icon: CalendarDays, requiredPermissions: PERMISSION_REQUIREMENTS.hrEvents },
+        { id: 'hr/payroll', label: t('navigation.payroll') || 'الرواتب', icon: DollarSign, requiredPermissions: PERMISSION_REQUIREMENTS.payroll },
         { id: 'hr/notifications', label: t('navigation.notifications'), icon: Bell, requiredPermissions: PERMISSION_REQUIREMENTS.hrNotifications },
       ]
     },

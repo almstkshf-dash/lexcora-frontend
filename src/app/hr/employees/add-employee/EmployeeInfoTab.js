@@ -367,6 +367,16 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
               onChange={handleChange} 
             />
           </FormField>
+
+          <FormField label={t('employees.hourlyRate') || 'أجر الساعة'}>
+            <Input 
+              name="hourlyRate" 
+              placeholder={t('employees.hourlyRatePlaceholder') || 'أدخل أجر الساعة'} 
+              type="number"
+              value={form.hourlyRate} 
+              onChange={handleChange} 
+            />
+          </FormField>
         </div>
       </div>
 

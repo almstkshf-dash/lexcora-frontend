@@ -23,6 +23,8 @@ import useSWR from "swr";
 import AddPartyModal from "../parties/AddPartyModal";
 import { AddClientModal } from "../potential-clients/AddClientModal";
 import RichTextEditor from "@/components/RichTextEditor";
+import { searchCases } from "../services/api/cases";
+import { useEffect } from "react";
 
 export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
   const { t } = useTranslations();
@@ -30,6 +32,7 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddPotentialClientModal, setShowAddPotentialClientModal] = useState(false);
+  const [caseSearchResults, setCaseSearchResults] = useState([]);
 
   // Fetch employees for attendee selection
   const { data: employeesData, isLoading: employeesLoading } = useSWR(
@@ -70,6 +73,25 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
     name: party.name,
     party_type: party.party_type
   }));
+  
+  // Handle case search
+  const handleCaseSearch = useCallback(async (query) => {
+    try {
+      const response = await searchCases(query);
+      if (response.success) {
+        setCaseSearchResults(response.data);
+      }
+    } catch (error) {
+      setCaseSearchResults([]);
+    }
+  }, []);
+
+  // Format case options for combobox
+  const caseOptions = caseSearchResults.map(c => ({
+    value: c.id,
+    label: `${c.file_number} - ${c.topic}`,
+    topic: c.topic
+  }));
 
   const meetingResults = [
     { value: "scheduled", label: t("meetings.results.scheduled") },
@@ -95,7 +117,12 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
     meeting_type: "",
     address: "",
     link: "",
-    employee_ids: []
+    employee_ids: [],
+    is_consultation: false,
+    consultation_fee: 0,
+    hourly_rate: 0,
+    duration_minutes: 60,
+    case_id: ""
   };
 
   // Validation schema
@@ -137,7 +164,12 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
         meeting_type: values.meeting_type || null,
         address: values.address || null,
         link: values.link || null,
-        employee_ids: values.employee_ids || []
+        employee_ids: values.employee_ids || [],
+        is_consultation: values.is_consultation || false,
+        consultation_fee: values.is_consultation ? values.consultation_fee : null,
+        hourly_rate: values.is_consultation ? values.hourly_rate : null,
+        duration_minutes: values.is_consultation ? values.duration_minutes : null,
+        case_id: values.case_id || null
       };
 
       const result = await meetingsApi.createMeeting(meetingData);
@@ -246,7 +278,26 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
           onSubmit={handleSubmit}
           enableReinitialize
         >
-          {({ values, setFieldValue, isSubmitting, errors, touched }) => (
+          {({ values, setFieldValue, isSubmitting, errors, touched }) => {
+            // Internal logic for dynamic fields
+            useEffect(() => {
+              if (values.is_consultation && values.employee_ids.length > 0) {
+                const selectedEmployees = employees.filter(emp => values.employee_ids.includes(emp.id));
+                const maxRate = Math.max(...selectedEmployees.map(emp => emp.hourly_rate || 0), 0);
+                if (maxRate > 0) {
+                  setFieldValue("hourly_rate", maxRate);
+                }
+              }
+            }, [values.employee_ids, values.is_consultation, employees, setFieldValue]);
+
+            useEffect(() => {
+              if (values.is_consultation && values.hourly_rate && values.duration_minutes) {
+                const fee = (parseFloat(values.hourly_rate) * (parseInt(values.duration_minutes) / 60)).toFixed(2);
+                setFieldValue("consultation_fee", fee);
+              }
+            }, [values.hourly_rate, values.duration_minutes, values.is_consultation, setFieldValue]);
+
+            return (
             <Form className="space-y-4">
               {/* Client/Party Selection with SearchableCombobox - Hidden when partyId is provided */}
               {!partyId && (
@@ -428,6 +479,81 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
                   <ErrorMessage name="link" component="div" className="text-red-500 text-sm" />
                 </div>
               )}
+
+              {/* Consultation Section */}
+              <div className="space-y-4 pt-2 border-t">
+                <div className="flex items-center space-x-2 space-x-reverse py-2">
+                  <Checkbox
+                    id="is_consultation"
+                    checked={values.is_consultation}
+                    onCheckedChange={(checked) => setFieldValue("is_consultation", checked)}
+                  />
+                  <Label htmlFor="is_consultation" className="cursor-pointer font-medium">
+                    {t("meetings.fields.isConsultation")}
+                  </Label>
+                </div>
+
+                {values.is_consultation && (
+                  <div className="grid grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg border animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="space-y-2">
+                      <Label htmlFor="hourly_rate" className="text-sm font-medium">
+                        {t("meetings.fields.hourlyRate")}
+                      </Label>
+                      <Input
+                        id="hourly_rate"
+                        type="number"
+                        value={values.hourly_rate}
+                        onChange={(e) => setFieldValue("hourly_rate", e.target.value)}
+                        placeholder="0.00"
+                        className="bg-background"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="duration_minutes" className="text-sm font-medium">
+                        {t("meetings.fields.duration")}
+                      </Label>
+                      <Input
+                        id="duration_minutes"
+                        type="number"
+                        value={values.duration_minutes}
+                        onChange={(e) => setFieldValue("duration_minutes", e.target.value)}
+                        placeholder="60"
+                        className="bg-background"
+                      />
+                    </div>
+                    <div className="space-y-2 col-span-2">
+                      <Label htmlFor="consultation_fee" className="text-sm font-medium">
+                        {t("meetings.fields.consultationFee")}
+                      </Label>
+                      <Input
+                        id="consultation_fee"
+                        type="number"
+                        value={values.consultation_fee}
+                        onChange={(e) => setFieldValue("consultation_fee", e.target.value)}
+                        placeholder="0.00"
+                        className="bg-background font-bold text-primary"
+                      />
+                    </div>
+                    
+                    {/* Case selection */}
+                    <div className="space-y-2 col-span-2">
+                       <Label htmlFor="case_id" className="text-sm font-medium">
+                        {t("meetings.fields.relatedCase")}
+                      </Label>
+                      <SearchableCombobox
+                        value={values.case_id}
+                        onValueChange={(value) => setFieldValue("case_id", value)}
+                        onSearch={handleCaseSearch}
+                        options={caseOptions}
+                        placeholder={t("meetings.placeholders.selectCase")}
+                        emptyMessage={t("meetings.messages.noResults")}
+                        minSearchLength={0}
+                        className="bg-background"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
               {/* Notes Field */}
               <div className="space-y-2">
                 <Label htmlFor="note" className="text-sm font-medium">
@@ -610,7 +736,8 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
                 </Button>
               </div>
             </Form>
-          )}
+            );
+          }}
         </Formik>
       </CustomModalBody>
       

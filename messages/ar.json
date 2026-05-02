@@ -758,7 +758,8 @@
       "uploadFiles": "رفع مستندات",
       "selectFiles": "اختر ملفات",
       "addClient": "إضافة موكل",
-      "addPotentialClient": "إضافة موكل محتمل"
+      "addPotentialClient": "إضافة موكل محتمل",
+      "generateInvoice": "إنشاء فاتورة"
     },
     "fields": {
       "client": "الموكل / الموكل المحتمل",
@@ -772,7 +773,12 @@
       "documents": "المستندات",
       "address": "عنوان الاجتماع",
       "attendees": "الحضور",
-      "link": "رابط الاجتماع"
+      "link": "رابط الاجتماع",
+      "isConsultation": "استشارة قانونية؟",
+      "consultationFee": "رسوم الاستشارة",
+      "hourlyRate": "السعر بالساعة",
+      "duration": "المدة (بالدقائق)",
+      "relatedCase": "القضية المرتبطة"
     },
     "results": {
       "scheduled": "مجدول",
@@ -795,7 +801,8 @@
       "selectDate": "اختر التاريخ",
       "enterAddress": "ادخل عنوان الاجتماع...",
       "searchEmployee": "ابحث عن موظف...",
-      "enterLink": "ادخل رابط الاجتماع..."
+      "enterLink": "ادخل رابط الاجتماع...",
+      "selectCase": "اختر القضية المرتبطة (اختياري)"
     },
     "validation": {
       "clientRequired": "الموكل مطلوب",
@@ -2994,7 +3001,18 @@
     },
     "title": "مالية الموظف",
     "relatedCases": {
-      "minSearchChars": "اكتب 3 أحرف على الأقل للبحث"
+      "title": "القضايا ذات الصلة",
+      "manageRelatedFiles": "إدارة القضايا والملفات ذات الصلة",
+      "addRemoveRelatedFiles": "إضافة أو إزالة القضايا والملفات المتعلقة بهذه القضية",
+      "relatedFiles": "القضايا/الملفات ذات الصلة",
+      "selectRelatedCase": "اختر قضية ذات صلة",
+      "searchPlaceholder": "ابحث برقم القضية أو رقم الملف...",
+      "searching": "جاري البحث...",
+      "minSearchChars": "اكتب 3 أحرف على الأقل للبحث",
+      "noCasesFound": "لم يتم العثور على قضايا",
+      "fileLabel": "ملف",
+      "uploadFiles": "رفع المستندات",
+      "noFiles": "لم يتم رفع مستندات"
     },
     "tabs": {
       "transactions": "المعاملات",
@@ -3544,5 +3562,108 @@
     "monthlyRevenue": "الإيرادات الشهرية",
     "recentBookings": "الحجوزات الأخيرة",
     "popularCars": "السيارات الأكثر طلباً"
+  },
+  "caseDetailsPage": {
+    "title": "تفاصيل القضية",
+    "fileNumber": "رقم الملف",
+    "caseNumber": "رقم القضية",
+    "basicInformation": "المعلومات الأساسية",
+    "startDate": "تاريخ البدء",
+    "topic": "الموضوع",
+    "fees": "الأتعاب",
+    "court": "المحكمة",
+    "caseType": "نوع القضية",
+    "caseClassification": "تصنيف القضية",
+    "branch": "الفرع",
+    "policeStation": "مركز الشرطة",
+    "publicProsecution": "النيابة العامة",
+    "additionalNotes": "ملاحظات إضافية",
+    "team": "فريق العمل",
+    "lawyer": "المحامي",
+    "secretary": "السكرتارية",
+    "legalAdvisor": "المستشار القانوني",
+    "legalResearcher": "الباحث القانوني",
+    "partiesTitle": "الأطراف ذات الصلة ({count})",
+    "partyName": "اسم الطرف",
+    "address": "العنوان",
+    "noParties": "لا توجد أطراف مرتبطة بهذه القضية.",
+    "sessionsTitle": "الجلسات ({count})",
+    "sessionNumber": "رقم الجلسة",
+    "decision": "القرار",
+    "link": "الرابط",
+    "sessionLabel": "الجلسة {number}",
+    "sessionLink": "عرض الجلسة",
+    "noSessions": "لا توجد جلسات مسجلة لهذه القضية.",
+    "tasksTitle": "المهام ({count})",
+    "taskTitle": "عنوان المهمة",
+    "statusLabel": "الحالة",
+    "priorityLabel": "الأولوية",
+    "dueDate": "تاريخ الاستحقاق",
+    "assignedTo": "مسند إلى",
+    "assignedBy": "مسند بواسطة",
+    "noTasks": "لا توجد مهام مرتبطة بهذه القضية.",
+    "executionsTitle": "التنفيذات ({count})",
+    "executionNumber": "رقم التنفيذ",
+    "executionLabel": "التنفيذ {number}",
+    "noExecutions": "لا توجد تنفيذات مسجلة لهذه القضية.",
+    "judicialNoticesTitle": "الإخطارات القضائية ({count})",
+    "noticeLabel": "إخطار {number}",
+    "noticeNumber": "رقم الإخطار",
+    "certificationDate": "تاريخ التصديق",
+    "serviceCompleted": "تم الإعلان",
+    "notificationPeriod": "مدة الإخطار",
+    "caseFiled": "تم رفع القضية",
+    "daysCount": "{count} أيام",
+    "noJudicialNotices": "لا توجد إخطارات قضائية مسجلة.",
+    "petitionsTitle": "العرائض ({count})",
+    "petition": "العريضة",
+    "petitionLabel": "العريضة {number}",
+    "orderType": "نوع الأمر",
+    "decisionStatusLabel": "حالة القرار",
+    "appealDate": "تاريخ الاستئناف",
+    "noPetitions": "لا توجد عرائض مسجلة.",
+    "degreesTitle": "درجات القضية ({count})",
+    "degreeLabel": "درجة {number}",
+    "degreeNumber": "رقم الدرجة",
+    "referralDate": "تاريخ الإحالة",
+    "year": "السنة",
+    "noDegrees": "لا توجد درجات أخرى مسجلة.",
+    "errorLoading": "خطأ في تحميل تفاصيل القضية.",
+    "noData": "لم يتم العثور على تفاصيل القضية.",
+    "currency": "د.إ",
+    "status": {
+      "active": "نشط",
+      "pending": "قيد الانتظار",
+      "completed": "مكتمل",
+      "inProgress": "قيد التنفيذ"
+    },
+    "priority": {
+      "high": "عالية",
+      "normal": "عادية",
+      "low": "منخفضة"
+    },
+    "partyType": {
+      "opponent": "خصم",
+      "client": "موكل"
+    },
+    "sessionType": {
+      "expert": "جلسة خبير",
+      "regular": "جلسة عادية"
+    },
+    "executionType": {
+      "almulaa": "تنفيذ الملاء"
+    },
+    "decisionStatus": {
+      "accepted": "مقبول",
+      "notAccepted": "غير مقبول"
+    },
+    "yes": "نعم",
+    "no": "لا",
+    "relatedFilesTitle": "المستندات ذات الصلة ({count})",
+    "documentName": "اسم المستند",
+    "actions": "الإجراءات",
+    "noRelatedFiles": "لم يتم رفع مستندات ذات صلة بعد.",
+    "relatedCasesTitle": "القضايا ذات الصلة ({count})",
+    "noRelatedCases": "لا توجد قضايا مرتبطة بعد."
   }
 }

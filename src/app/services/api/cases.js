@@ -179,6 +179,13 @@ export const createCaseWithRelations = async (data) => {
       );
     }
 
+    // Upload related documents
+    if (data.caseData?.relatedFiles && data.caseData.relatedFiles.length > 0) {
+      const uploaded = await uploadFiles(data.caseData.relatedFiles);
+      uploadedData.caseData.relatedFiles = uploaded;
+      uploadedFileUrls.push(...uploaded.map(f => f.document_url));
+    }
+
     // Send to backend - if this fails, catch block will cleanup files
     const response = await api.post(`/cases/batch`, uploadedData);
     return response.data;

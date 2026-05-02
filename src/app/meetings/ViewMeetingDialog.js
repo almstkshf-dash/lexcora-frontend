@@ -12,6 +12,11 @@ import { Calendar, Clock, MapPin, FileText, Users, Monitor, Link } from 'lucide-
 import meetingsApi from '../services/api/meetings'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
+import { CreditCard, Receipt } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { toast } from "react-toastify"
+import { useState } from 'react'
+import { mutate } from 'swr'
 
 const ViewMeetingDialog = ({ 
   isOpen, 
@@ -21,6 +26,7 @@ const ViewMeetingDialog = ({
   const { t } = useTranslations()
   const { language } = useLanguage()
   const isArabic = language === 'ar'
+  const [generatingInvoice, setGeneratingInvoice] = useState(false)
 
   const { data: meetingData, isLoading } = useSWR(
     meetingId && isOpen ? `meeting-${meetingId}` : null,
@@ -66,6 +72,26 @@ const ViewMeetingDialog = ({
         {config.label}
       </Badge>
     );
+  }
+
+  const handleGenerateInvoice = async () => {
+    if (!meetingId) return;
+    
+    setGeneratingInvoice(true);
+    try {
+      const response = await meetingsApi.generateInvoice(meetingId);
+      if (response.success) {
+        toast.success(isArabic ? 'تم إنشاء الفاتورة بنجاح' : 'Invoice generated successfully');
+        mutate(`meeting-${meetingId}`);
+      } else {
+        toast.error(response.message || (isArabic ? 'فشل إنشاء الفاتورة' : 'Failed to generate invoice'));
+      }
+    } catch (error) {
+      console.error('Invoice generation error:', error);
+      toast.error(isArabic ? 'حدث خطأ أثناء إنشاء الفاتورة' : 'An error occurred while generating invoice');
+    } finally {
+      setGeneratingInvoice(false);
+    }
   }
 
   return (
@@ -192,6 +218,71 @@ const ViewMeetingDialog = ({
                   />
                 </div>
               </div>
+            )}
+
+            {/* Consultation Info */}
+            {meeting.is_consultation && (
+              <>
+                <Separator />
+                <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <CreditCard className="h-5 w-5 text-primary" />
+                      {isArabic ? 'معلومات الاستشارة' : 'Consultation Info'}
+                    </h3>
+                    {meeting.invoice_id ? (
+                      <div className="flex items-center gap-2">
+                        <Badge className="bg-green-100 text-green-800 border-0">
+                          {isArabic ? 'تمت الفوترة' : 'Invoiced'}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">#{meeting.invoice_id}</span>
+                      </div>
+                    ) : (
+                      meeting.meet_result === 'completed' && (
+                        <Button 
+                          size="sm" 
+                          onClick={handleGenerateInvoice}
+                          disabled={generatingInvoice}
+                          className="gap-2"
+                        >
+                          <Receipt className="h-4 w-4" />
+                          {isArabic ? 'إنشاء فاتورة' : 'Generate Invoice'}
+                        </Button>
+                      )
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {isArabic ? 'رسوم الاستشارة' : 'Consultation Fee'}
+                      </p>
+                      <p className="text-lg font-bold text-primary">
+                        {meeting.consultation_fee} AED
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {isArabic ? 'السعر بالساعة' : 'Hourly Rate'}
+                      </p>
+                      <p className="text-base">{meeting.hourly_rate} AED/hr</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {isArabic ? 'المدة' : 'Duration'}
+                      </p>
+                      <p className="text-base">{meeting.duration_minutes} {isArabic ? 'دقيقة' : 'min'}</p>
+                    </div>
+                  </div>
+                  {meeting.case_topic && (
+                    <div className="mt-4 pt-4 border-t">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {isArabic ? 'القضية المرتبطة' : 'Related Case'}
+                      </p>
+                      <p className="text-base font-medium">{meeting.case_topic}</p>
+                    </div>
+                  )}
+                </div>
+              </>
             )}
 
             <Separator />

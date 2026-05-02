@@ -74,8 +74,10 @@ function CaseDetailsPage({ params }) {
     );
   }
 
-  const { info, parties, sessions, tasks, executions, judicial, degrees, petition } = caseData.data;
+  const { info, parties, sessions, tasks, executions, judicial, degrees, petition, relatedFiles, relatedCases } = caseData.data;
   const caseId = id || info?.case_id || info?.id;
+
+  const noValue = t('common.notSpecified');
 
   const getLocalizedValue = (arabicValue, englishValue, fallbackValue = null) => {
     const localized = language === 'ar' ? arabicValue || englishValue : englishValue || arabicValue;
@@ -123,36 +125,38 @@ function CaseDetailsPage({ params }) {
 
   const getPartyTypeLabel = (type) => {
     if (type === 'opponent') return t('caseDetailsPage.partyType.opponent');
-    return type || t('common.notSpecified');
+    if (type === 'client') return t('caseDetailsPage.partyType.client');
+    return type || noValue;
   };
 
-  const getSessionTypeLabel = (isExpertSession) =>
-    isExpertSession ? t('caseDetailsPage.sessionType.expert') : t('caseDetailsPage.sessionType.regular');
+  const getSessionTypeLabel = (isExpert) => {
+    return isExpert ? t('caseDetailsPage.sessionType.expert') : t('caseDetailsPage.sessionType.regular');
+  };
 
   const getExecutionTypeLabel = (type) => {
     if (type === 'almulaa') return t('caseDetailsPage.executionType.almulaa');
-    return type || t('common.notSpecified');
+    return type || noValue;
   };
 
   const getDecisionStatusLabel = (status) => {
     if (status === 'accepted') return t('caseDetailsPage.decisionStatus.accepted');
     if (status === 'not accepted') return t('caseDetailsPage.decisionStatus.notAccepted');
-    return status || t('common.notSpecified');
+    return status || noValue;
   };
 
   const getBooleanBadge = (value) => (
     <Badge
+      variant="outline"
       className={
         value === 'yes'
-          ? 'bg-green-100 text-green-800 print:bg-gray-200 print:text-gray-800'
-          : 'bg-red-100 text-red-800 print:bg-gray-200 print:text-gray-800'
+          ? 'bg-green-50 text-green-700 border-green-200'
+          : 'bg-red-50 text-red-700 border-red-200'
       }
     >
       {value === 'yes' ? t('caseDetailsPage.yes') : t('caseDetailsPage.no')}
     </Badge>
   );
 
-  const noValue = t('common.notSpecified');
   const casePartyRows = parties || [];
   const sessionRows = sessions || [];
   const taskRows = tasks || [];
@@ -160,6 +164,8 @@ function CaseDetailsPage({ params }) {
   const judicialRows = judicial || [];
   const degreeRows = degrees || [];
   const petitionRows = petition || [];
+  const relatedFileRows = relatedFiles || [];
+  const relatedCaseRows = relatedCases || [];
 
   return (
     <div className="min-h-screen bg-white p-8 print:p-6 print:min-h-0 print:h-auto print-container print-full-width" dir={direction}>
@@ -616,6 +622,98 @@ function CaseDetailsPage({ params }) {
             </div>
           ) : (
             <EmptyState message={t('caseDetailsPage.noDegrees')} />
+          )}
+        </div>
+
+        <div className="space-y-6 print:space-y-4 print-avoid-break">
+          <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">
+            {t('caseDetailsPage.relatedFilesTitle', { count: String(relatedFileRows.length) })}
+          </h2>
+
+          {relatedFileRows.length > 0 ? (
+            <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50 print:bg-gray-100">
+                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.documentName')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.type')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.date')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold print:hidden`}>{t('caseDetailsPage.actions')}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {relatedFileRows.map((file, index) => (
+                    <TableRow key={index} className="hover:bg-gray-50 print:hover:bg-transparent">
+                      <TableCell className="font-medium">{file.document_name || noValue}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="uppercase">
+                          {file.document_url?.split('.').pop() || 'FILE'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{formatDate(file.created_at)}</TableCell>
+                      <TableCell className="print:hidden">
+                        {file.document_url ? (
+                          <a
+                            href={file.document_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                          >
+                            {t('documents.view')}
+                          </a>
+                        ) : (
+                          <span className="text-gray-400">{noValue}</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <EmptyState message={t('caseDetailsPage.noRelatedFiles')} />
+          )}
+        </div>
+
+        <div className="space-y-6 print:space-y-4 print-avoid-break">
+          <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">
+            {t('caseDetailsPage.relatedCasesTitle', { count: String(relatedCaseRows.length) })}
+          </h2>
+
+          {relatedCaseRows.length > 0 ? (
+            <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50 print:bg-gray-100">
+                    <TableHead className={`${textAlignClass} font-semibold`}>{t('cases.fileNumber')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold`}>{t('cases.caseNumber')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold`}>{t('cases.topic')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold print:hidden`}>{t('caseDetailsPage.actions')}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {relatedCaseRows.map((rc, index) => (
+                    <TableRow key={index} className="hover:bg-gray-50 print:hover:bg-transparent">
+                      <TableCell className="font-medium">{rc.file_number || noValue}</TableCell>
+                      <TableCell>{rc.case_number || noValue}</TableCell>
+                      <TableCell>{rc.topic || noValue}</TableCell>
+                      <TableCell className="print:hidden">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-blue-600 hover:text-blue-800"
+                          onClick={() => window.open(`/cases/${rc.id}`, '_blank')}
+                        >
+                          {t('common.view')}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <EmptyState message={t('caseDetailsPage.noRelatedCases')} />
           )}
         </div>
       </div>

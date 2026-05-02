@@ -14,6 +14,7 @@ import AddPartyModal from '@/app/parties/AddPartyModal';
 import EditPartyModal from '@/app/parties/EditPartyModal';
 import DeletePartyModal from '@/app/parties/DeletePartyModal';
 import CreateClientDealModal from '@/app/parties/deals/CreateClientDealModal';
+import { AddMeetingModal } from '@/app/meetings/AddMeetingModal';
 import {
   Table,
   TableBody,
@@ -51,6 +52,9 @@ const Parties = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchParams, setSearchParams] = useState({});
   const itemsPerPage = 10;
+  
+  const [isAddMeetingModalOpen, setIsAddMeetingModalOpen] = useState(false);
+  const [selectedMeetingPartyId, setSelectedMeetingPartyId] = useState(null);
   
   // Build query parameters for API call
   const queryParams = useMemo(() => ({
@@ -283,6 +287,11 @@ const Parties = () => {
     router.push(`/parties/${partyId}`);
   };
 
+  const handleAddMeeting = (partyId) => {
+    setSelectedMeetingPartyId(partyId);
+    setIsAddMeetingModalOpen(true);
+  };
+
   if (error) {
     const isPermissionError = error?.response?.status === 403;
     const errorMessage = isPermissionError 
@@ -480,6 +489,10 @@ const Parties = () => {
                                 {language === 'ar' ? 'اضافة اتفاقية جديدة' : 'Add New Deal'}
                               </DropdownMenuItem>
                             </CreateClientDealModal>
+                            <DropdownMenuItem onClick={() => handleAddMeeting(party.id)}>
+                              <Calendar className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+                              {t('meetings.addModal.title')}
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DeletePartyModal 
                               partyId={party.id}
@@ -556,6 +569,13 @@ const Parties = () => {
           )}
         </CardContent>
       </Card>
+
+      <AddMeetingModal 
+        isOpen={isAddMeetingModalOpen}
+        onClose={() => setIsAddMeetingModalOpen(false)}
+        partyId={selectedMeetingPartyId}
+        onSuccess={() => mutate()}
+      />
     </div>
   );
 };

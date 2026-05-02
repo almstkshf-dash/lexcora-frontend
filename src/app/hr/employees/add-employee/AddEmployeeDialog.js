@@ -70,7 +70,8 @@ export default function AddEmployeeModal({ onAdd }) {
     accountNumber: "",
     bankName: "",
     contractType: "",
-    registrationExpirationDate: ""
+    registrationExpirationDate: "",
+    hourlyRate: ""
   });
 
   const handleChange = (e) => {
@@ -187,7 +188,8 @@ export default function AddEmployeeModal({ onAdd }) {
           accountNumber: "",
           bankName: "",
           contractType: "",
-          registrationExpirationDate: ""
+          registrationExpirationDate: "",
+          hourlyRate: ""
         });
         setTab("info");
       } else {

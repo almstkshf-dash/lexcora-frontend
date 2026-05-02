@@ -8,7 +8,7 @@ import { Pagination } from "./Pagination";
 import { ClientDetailsModal } from "./ClientDetailsModal";
 import { EditClientModal } from "./EditClientModal";
 import { AddClientModal } from "./AddClientModal";
-import { AddMeetingModal } from "./meetings/AddMeetingModal";
+import { AddMeetingModal } from "../meetings/AddMeetingModal";
 import ActionsDropdown from "./ActionsDropdown";
 import ExportButtons from "@/components/ui/export-buttons";
 import {
@@ -403,7 +403,7 @@ function PotentialClients() {
       <AddMeetingModal 
         isOpen={isAddMeetingModalOpen}
         onClose={handleCloseMeetingModal}
-        clientId={selectedMeetingClientId}
+        partyId={selectedMeetingClientId}
         onSuccess={handleMeetingSuccess}
       />
     </div>

@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Plus, Pencil, Trash2, Loader2, FileText, Search, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Plus, Pencil, Trash2, Loader2, FileText, Search, ChevronLeft, ChevronRight, DollarSign, BookOpen } from 'lucide-react'
 import { toast } from 'react-toastify'
 import ExportButtons from '@/components/ui/export-buttons'
 import RequestModal from './components/RequestModal'
@@ -397,6 +397,41 @@ function RequestsPage() {
     }
   }
 
+  const getFinanceBadge = (request) => {
+    const status = request.finance_approval
+    const hasValue = +request.leave_value_aed > 0
+    const hasJournal = !!request.journal_entry_id
+    return (
+      <div className="flex flex-col gap-1 items-start">
+        {status === 'approved' ? (
+          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+            {isArabic ? 'موافق مالياً' : 'Finance OK'}
+          </Badge>
+        ) : status === 'rejected' ? (
+          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+            {isArabic ? 'مرفوض مالياً' : 'Finance Rejected'}
+          </Badge>
+        ) : (
+          <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+            {isArabic ? 'بانتظار المالية' : 'Awaiting Finance'}
+          </Badge>
+        )}
+        {hasValue && (
+          <span className="text-xs text-blue-700 font-medium flex items-center gap-1">
+            <DollarSign className="h-3 w-3" />
+            {(+request.leave_value_aed).toLocaleString('en-AE', { minimumFractionDigits: 2 })} AED
+          </span>
+        )}
+        {hasJournal && (
+          <span className="text-xs text-green-600 flex items-center gap-1">
+            <BookOpen className="h-3 w-3" />
+            {isArabic ? `قيد #${request.journal_entry_id}` : `JE #${request.journal_entry_id}`}
+          </span>
+        )}
+      </div>
+    )
+  }
+
   const renderTableSkeleton = (columns = 6, rows = 6) => (
     <div className="overflow-x-auto">
       <Table>
@@ -592,6 +627,12 @@ function RequestsPage() {
                         <TableHead>{isArabic ? 'تاريخ الطلب' : 'Request Date'}</TableHead>
                         <TableHead>{isArabic ? 'موافقة المدير' : 'Manager'}</TableHead>
                         <TableHead>{isArabic ? 'موافقة HR' : 'HR'}</TableHead>
+                        <TableHead>
+                          <span className="flex items-center gap-1">
+                            <DollarSign className="h-3 w-3 text-blue-600" />
+                            {isArabic ? 'الشؤون المالية' : 'Finance'}
+                          </span>
+                        </TableHead>
                         <TableHead className="text-center">{isArabic ? 'الإجراءات' : 'Actions'}</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -622,6 +663,9 @@ function RequestsPage() {
                           </TableCell>
                           <TableCell>
                             {getApprovalBadge(request.hr_approval)}
+                          </TableCell>
+                          <TableCell>
+                            {getFinanceBadge(request)}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center justify-center gap-2">

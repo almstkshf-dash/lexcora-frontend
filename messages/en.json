@@ -3737,6 +3737,12 @@
     "noPhone": "No phone",
     "selectAll": "Select all",
     "messagePreview": "Message Preview",
+    "printExport": "Print / Export PDF",
+    "servicesList": "Services List",
+    "totalAmount": "Total Amount",
+    "currency": "Currency",
+    "priceQuoteTemplate": "Price Quote",
+    "priceQuoteTemplateDesc": "Send customized price quotes to clients",
     "noPreview": "No preview available",
     "clientsSelected": "client(s) selected",
     "sending": "Sending..."

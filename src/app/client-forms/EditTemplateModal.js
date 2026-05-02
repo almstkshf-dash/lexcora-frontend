@@ -8,7 +8,7 @@ import { uploadFile } from '@/app/services/api/upload'
 import { useTranslations } from "@/hooks/useTranslations"
 
 export default function EditTemplateModal({ config, template, isArabic, onClose, onSaved }) {
-  const t = useTranslations()
+  const { t } = useTranslations()
   const [lang, setLang] = useState('ar')
   const [form, setForm] = useState({
     title_ar: '', title_en: '', body_ar: '', body_en: '', image_url: ''

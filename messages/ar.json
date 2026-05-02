@@ -3750,6 +3750,12 @@
     "noPhone": "لا يوجد هاتف",
     "selectAll": "تحديد الكل",
     "messagePreview": "معاينة الرسالة",
+    "printExport": "طباعة / تصدير PDF",
+    "servicesList": "الخدمات المقدمة",
+    "totalAmount": "المبلغ الإجمالي",
+    "currency": "العملة",
+    "priceQuoteTemplate": "عرض سعر",
+    "priceQuoteTemplateDesc": "إرسال عروض أسعار مخصصة للعملاء",
     "noPreview": "لا يوجد نص للمعاينة",
     "clientsSelected": "عميل محدد",
     "sending": "جاري الإرسال..."

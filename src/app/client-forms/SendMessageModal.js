@@ -2,14 +2,14 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Button } from "@/components/ui/button"
 import { toast } from 'react-toastify'
-import { X, Send, Mail, MessageCircle, Globe, Users, Search, Loader2, Paperclip, Check, AlertCircle } from 'lucide-react'
+import { X, Send, Mail, MessageCircle, Globe, Users, Search, Loader2, Paperclip, Check, AlertCircle, Printer } from 'lucide-react'
 import { sendClientMessage } from '@/app/services/api/clientMessages'
 import axiosInstance from '@/app/services/api/axiosInstance'
 import { uploadFile } from '@/app/services/api/upload'
 import { useTranslations } from "@/hooks/useTranslations"
 
 export default function SendMessageModal({ config, template, isArabic, onClose }) {
-  const t = useTranslations()
+  const { t } = useTranslations()
   const [lang, setLang] = useState(isArabic ? 'ar' : 'en')
   const [channel, setChannel] = useState('email')
   const [clients, setClients] = useState([])
@@ -187,7 +187,13 @@ export default function SendMessageModal({ config, template, isArabic, onClose }
                       ) : (
                         <input className="w-full border rounded-xl px-3 py-2 text-sm bg-background outline-none focus:ring-2 focus:ring-primary"
                           dir={lang === 'ar' ? 'rtl' : 'ltr'}
-                          placeholder={varName === 'case_number' ? t('clientMessages.caseNumber') : varName}
+                          placeholder={
+                            varName === 'case_number' ? t('clientMessages.caseNumber') :
+                            varName === 'services_list' ? t('clientMessages.servicesList') :
+                            varName === 'total_amount' ? t('clientMessages.totalAmount') :
+                            varName === 'currency' ? t('clientMessages.currency') :
+                            varName
+                          }
                           value={variables[varName] || ''}
                           onChange={e => setVariables(v => ({ ...v, [varName]: e.target.value }))} />
                       )}
@@ -273,7 +279,35 @@ export default function SendMessageModal({ config, template, isArabic, onClose }
 
               {/* Preview */}
               <div>
-                <label className="text-sm font-medium mb-2 block">{t('clientMessages.messagePreview')}</label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium">{t('clientMessages.messagePreview')}</label>
+                  <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5 px-2" onClick={() => {
+                    const printWindow = window.open('', '_blank');
+                    printWindow.document.write(`
+                      <html dir="${lang === 'ar' ? 'rtl' : 'ltr'}">
+                        <head>
+                          <title>${t('clientMessages.messagePreview')}</title>
+                          <style>
+                            body { font-family: system-ui, -apple-system, sans-serif; padding: 40px; line-height: 1.6; color: #333; }
+                            .header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid #eee; }
+                            .content { white-space: pre-wrap; font-size: 14px; }
+                          </style>
+                        </head>
+                        <body>
+                          <div class="header">
+                            <h2 style="margin: 0;">${isArabic ? config.labelAr || config.labelKey : config.labelEn || config.labelKey}</h2>
+                          </div>
+                          <div class="content">${previewBody() || ''}</div>
+                          <script>window.onload = function() { window.print(); window.close(); }</script>
+                        </body>
+                      </html>
+                    `);
+                    printWindow.document.close();
+                  }}>
+                    <Printer className="w-3 h-3" />
+                    {t('clientMessages.printExport')}
+                  </Button>
+                </div>
                 <div className="border rounded-xl p-4 bg-muted/30 text-sm whitespace-pre-line text-foreground/80 max-h-40 overflow-y-auto leading-relaxed"
                   dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                   {previewBody() || t('clientMessages.noPreview')}

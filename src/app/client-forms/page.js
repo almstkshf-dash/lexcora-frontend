@@ -40,6 +40,17 @@ const MESSAGE_CONFIGS = [
     hasVariables: ['case_number', 'verdict_summary'],
   },
   {
+    type: 'price_quote',
+    icon: FileText,
+    gradient: 'from-sky-500 to-blue-600',
+    bg: 'bg-sky-50 dark:bg-sky-950/40',
+    border: 'border-sky-200 dark:border-sky-800',
+    badge: 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300',
+    labelKey: 'priceQuoteTemplate',
+    descKey: 'priceQuoteTemplateDesc',
+    hasVariables: ['services_list', 'total_amount', 'currency'],
+  },
+  {
     type: 'eid_al_fitr',
     icon: Moon,
     gradient: 'from-purple-500 to-violet-500',
@@ -114,7 +125,7 @@ const MESSAGE_CONFIGS = [
 ]
 
 export default function ClientFormsPage() {
-  const t = useTranslations()
+  const { t } = useTranslations()
   const { language } = useLanguage()
   const isArabic = language === 'ar'
 

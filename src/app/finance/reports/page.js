@@ -24,7 +24,8 @@ import {
   CheckCircle2,
   DollarSign,
   Printer,
-  Download
+  Download,
+  Package
 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import { Progress } from '@/components/ui/progress';
@@ -41,7 +42,8 @@ import {
   getProjectFinancialSummary,
   getDepartmentFinancialSummary,
   getTrialBalance,
-  getAccountingCashFlow
+  getAccountingCashFlow,
+  getAssetsReport
 } from '@/app/services/api/accounting';
 import { getDepartments } from '@/app/services/api/departments';
 import { searchCases } from '@/app/services/api/cases';
@@ -212,6 +214,7 @@ export default function ReportsPage() {
   const { data: arData } = useSWR('/accounting/reports/aging-receivables', () => getAgingReceivables());
   const { data: apData } = useSWR('/accounting/reports/aging-payables', () => getAgingPayables());
   const { data: budgetData } = useSWR('/accounting/reports/budget-vs-actual', () => getBudgetVsActual());
+  const { data: assetsData } = useSWR('/accounting/reports/assets', () => getAssetsReport());
   const { data: deptsData } = useSWR('/departments', () => getDepartments());
 
   const { data: caseSummary } = useSWR(
@@ -272,6 +275,9 @@ export default function ReportsPage() {
           </TabsTrigger>
           <TabsTrigger value="aging" className="flex-1 gap-2 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <PieChartIcon className="h-4 w-4" /> {accT('aging')}
+          </TabsTrigger>
+          <TabsTrigger value="assets" className="flex-1 gap-2 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">
+            <Package className="h-4 w-4" /> {isRTL ? 'سجل الأصول' : 'Assets Register'}
           </TabsTrigger>
           <TabsTrigger value="profitability" className="flex-1 gap-2 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <Briefcase className="h-4 w-4" /> {accT('profitability')}
@@ -530,6 +536,31 @@ export default function ReportsPage() {
            </Card>
         </TabsContent>
 
+         {/* Assets Register */}
+        <TabsContent value="assets" className="space-y-6">
+           <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                 <Package className="h-6 w-6 text-primary" />
+                 {isRTL ? 'سجل الأصول الثابتة' : 'Fixed Assets Register'}
+              </h3>
+              <div className="flex gap-4">
+                 <div className="text-right">
+                    <p className="text-xs text-muted-foreground uppercase">{isRTL ? 'إجمالي التكلفة' : 'Total Cost'}</p>
+                    <p className="text-lg font-bold">
+                       {assetsData?.data?.reduce((sum, a) => sum + parseFloat(a.purchase_cost || 0), 0).toLocaleString()} AED
+                    </p>
+                 </div>
+                 <div className="text-right">
+                    <p className="text-xs text-muted-foreground uppercase">{isRTL ? 'القيمة الحالية' : 'Current Value'}</p>
+                    <p className="text-lg font-bold text-primary">
+                       {assetsData?.data?.reduce((sum, a) => sum + parseFloat(a.current_value || 0), 0).toLocaleString()} AED
+                    </p>
+                 </div>
+              </div>
+           </div>
+           {assetsData ? <AssetsRegister data={assetsData.data || []} isRTL={isRTL} commonT={commonT} accT={accT} /> : <Skeleton className="h-[400px] w-full" />}
+        </TabsContent>
+
         {/* Profitability Analysis */}
         <TabsContent value="profitability" className="space-y-12">
            <Tabs defaultValue="case-p" className="w-full">
@@ -591,6 +622,58 @@ export default function ReportsPage() {
     </div>
   );
 }
+const AssetsRegister = ({ data, isRTL, commonT, accT }) => (
+  <div className="rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden">
+    <Table>
+      <TableHeader className="bg-muted/50">
+        <TableRow>
+          <TableHead>{isRTL ? 'الأصل' : 'Asset'}</TableHead>
+          <TableHead>{isRTL ? 'الحساب' : 'Account'}</TableHead>
+          <TableHead className="text-right">{isRTL ? 'تكلفة الشراء' : 'Purchase Cost'}</TableHead>
+          <TableHead className="text-right">{isRTL ? 'نسبة الإهلاك' : 'Depreciation %'}</TableHead>
+          <TableHead className="text-right">{isRTL ? 'القيمة الحالية' : 'Current Value'}</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {data.map(asset => (
+          <TableRow key={asset.id} className="hover:bg-muted/30 transition-colors">
+            <TableCell>
+              <p className="font-medium">{asset.name}</p>
+              <p className="text-xs text-muted-foreground">{asset.type}</p>
+            </TableCell>
+            <TableCell>
+              {asset.account_id ? (
+                <div>
+                  <p className="text-sm">{isRTL ? asset.account_name_ar : asset.account_name_en}</p>
+                  <p className="text-xs text-muted-foreground font-mono">{asset.account_code}</p>
+                </div>
+              ) : (
+                <span className="text-muted-foreground italic text-xs">{isRTL ? 'غير مربوط' : 'Not linked'}</span>
+              )}
+            </TableCell>
+            <TableCell className="text-right font-mono">
+              {asset.purchase_cost?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </TableCell>
+            <TableCell className="text-right font-mono">
+              {asset.depreciation_rate}%
+            </TableCell>
+            <TableCell className="text-right font-mono font-bold text-primary">
+              {asset.current_value?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </TableCell>
+          </TableRow>
+        ))}
+        {data.length === 0 && (
+          <TableRow>
+            <TableCell colSpan={5} className="text-center py-10 text-muted-foreground italic">
+              {commonT('noData')}
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+  </div>
+);
+
 const ProfitabilityView = ({ title, subtitle, data, accT, formatCurrency }) => (
   <div className="animate-in slide-in-from-bottom-4 duration-500 space-y-6">
      <Card className="border-primary/20 shadow-xl overflow-hidden">

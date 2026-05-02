@@ -1,4 +1,6 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { useIsClient } from "@/hooks/useIsClient";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -78,97 +80,116 @@ export default function ActivityLogModal({ trigger, employee }) {
     });
   }, [logs, sortBy]);
 
+
+  const isClient = useIsClient();
+
+  if (!open || !isClient) return (
+    <span onClick={() => setOpen(true)} className="cursor-pointer">{trigger}</span>
+  );
+
+  const modalContent = (
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+    >
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={() => setOpen(false)}
+      />
+
+      {/* Modal Content */}
+      <div 
+        className="relative z-10 bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col border border-border overflow-hidden"
+        dir={language === 'ar' ? 'rtl' : 'ltr'}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center p-4 border-b border-border bg-card">
+          <h2 className="text-lg font-bold text-foreground">{t("admins.activityLogTitle")}</h2>
+          <Button variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label={t("common.close")}>
+            <CircleX className="w-5 h-5" />
+          </Button>
+        </div>
+
+        <div className="flex gap-2 p-4 border-b border-border bg-card">
+          <Select dir={language === "ar" ? "rtl" : "ltr"} value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder={t("admins.sort")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">{t("activityLog.newestFirst")}</SelectItem>
+              <SelectItem value="oldest">{t("activityLog.oldestFirst")}</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button variant="outline" size="sm" onClick={() => mutate()} disabled={isLoading}>
+            {t("common.refresh")}
+          </Button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 bg-card">
+          {isLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <div className="flex items-center gap-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                <span className="text-muted-foreground">{t("activityLog.loading")}</span>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="flex items-center justify-center p-8">
+              <div className="flex items-center gap-2 text-destructive">
+                <AlertCircle className="w-5 h-5" />
+                <span>{t("activityLog.loadingError")}</span>
+              </div>
+            </div>
+          ) : filteredLogs.length === 0 ? (
+            <div className="flex flex-col items-center justify-center p-12 text-muted-foreground">
+              <Clock className="w-12 h-12 mb-4 opacity-20" />
+              <h3 className="text-lg font-medium mb-2">{t("activityLog.emptyTitle")}</h3>
+              <p className="text-sm text-center">{t("activityLog.emptyDescription")}</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredLogs.map((log) => (
+                <div key={log.id} className="bg-muted/30 rounded-lg p-4 border border-border hover:bg-muted/50 transition-colors">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-medium text-foreground">{log.employee_name}</h4>
+                        <Badge className={getStatusColor(log.action)}>{getActionLabel(log.action)}</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">{log.description}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-muted-foreground/60">
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {formatDate(log.created_at, locale)} - {formatTime(log.created_at, locale)}
+                    </span>
+                    <span className="opacity-50">#{log.id}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="p-4 border-t border-border flex justify-between items-center bg-card">
+          <div className="text-sm text-muted-foreground">
+            {!isLoading && !error && data?.success && (
+              <span>{t("activityLog.totalRecords", { count: String(filteredLogs.length) })}</span>
+            )}
+          </div>
+          <Button onClick={() => setOpen(false)}>{t("common.close")}</Button>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <>
-      <span onClick={() => setOpen(true)}>{trigger}</span>
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-          onClick={(event) => event.target === event.currentTarget && setOpen(false)}
-        >
-          <div className="bg-white rounded-lg w-full max-w-4xl max-h-[85vh] flex flex-col">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h2 className="text-lg font-bold">{t("admins.activityLogTitle")}</h2>
-              <Button variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label={t("common.close")}>
-                <CircleX className="w-5 h-5" />
-              </Button>
-            </div>
-
-            <div className="flex gap-2 p-4 border-b">
-              <Select dir={language === "ar" ? "rtl" : "ltr"} value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder={t("admins.sort")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="newest">{t("activityLog.newestFirst")}</SelectItem>
-                  <SelectItem value="oldest">{t("activityLog.oldestFirst")}</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Button variant="outline" size="sm" onClick={() => mutate()} disabled={isLoading}>
-                {t("common.refresh")}
-              </Button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4">
-              {isLoading ? (
-                <div className="flex items-center justify-center p-8">
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                    <span className="text-gray-600">{t("activityLog.loading")}</span>
-                  </div>
-                </div>
-              ) : error ? (
-                <div className="flex items-center justify-center p-8">
-                  <div className="flex items-center gap-2 text-red-600">
-                    <AlertCircle className="w-5 h-5" />
-                    <span>{t("activityLog.loadingError")}</span>
-                  </div>
-                </div>
-              ) : filteredLogs.length === 0 ? (
-                <div className="flex flex-col items-center justify-center p-12 text-gray-500">
-                  <Clock className="w-12 h-12 mb-4 text-gray-300" />
-                  <h3 className="text-lg font-medium mb-2">{t("activityLog.emptyTitle")}</h3>
-                  <p className="text-sm text-center">{t("activityLog.emptyDescription")}</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {filteredLogs.map((log) => (
-                    <div key={log.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:bg-gray-100 transition-colors">
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-medium text-gray-900">{log.employee_name}</h4>
-                            <Badge className={getStatusColor(log.action)}>{getActionLabel(log.action)}</Badge>
-                          </div>
-                          <p className="text-sm text-gray-700 mb-2">{log.description}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {formatDate(log.created_at, locale)} - {formatTime(log.created_at, locale)}
-                        </span>
-                        <span className="text-gray-400">#{log.id}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="p-4 border-t flex justify-between items-center">
-              <div className="text-sm text-gray-500">
-                {!isLoading && !error && data?.success && (
-                  <span>{t("activityLog.totalRecords", { count: String(filteredLogs.length) })}</span>
-                )}
-              </div>
-              <Button onClick={() => setOpen(false)}>{t("common.close")}</Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <span onClick={() => setOpen(true)} className="cursor-pointer">{trigger}</span>
+      {createPortal(modalContent, document.body)}
     </>
   );
 }

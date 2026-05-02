@@ -131,6 +131,69 @@ const ViewAssetModal = ({
             </div>
           </div>
 
+          <Separator />
+
+          {/* Financial Information */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">{isArabic ? 'المعلومات المالية' : 'Financial Information'}</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">
+                  {isArabic ? 'تكلفة الشراء' : 'Purchase Cost'}
+                </p>
+                <p className="text-base font-semibold">
+                  {asset.purchase_cost ? Number(asset.purchase_cost).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00'}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">
+                  {isArabic ? 'تاريخ الشراء' : 'Purchase Date'}
+                </p>
+                <p className="text-base">
+                  {asset.purchase_date 
+                    ? format(new Date(asset.purchase_date), 'yyyy-MM-dd')
+                    : '-'
+                  }
+                </p>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">
+                  {isArabic ? 'الحساب المرتبط' : 'Linked Account'}
+                </p>
+                <p className="text-base">
+                  {asset.account_code ? `${asset.account_code} - ${isArabic ? asset.account_name_ar : asset.account_name_en}` : '-'}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">
+                  {isArabic ? 'نسبة الإهلاك' : 'Depreciation Rate'}
+                </p>
+                <p className="text-base">{asset.depreciation_rate || 0}%</p>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">
+                  {isArabic ? 'القيمة المتبقية' : 'Salvage Value'}
+                </p>
+                <p className="text-base">
+                  {asset.salvage_value ? Number(asset.salvage_value).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00'}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">
+                  {isArabic ? 'القيمة الحالية' : 'Current Value'}
+                </p>
+                <p className="text-base font-semibold text-green-600">
+                  {asset.current_value ? Number(asset.current_value).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00'}
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Notes */}
           {asset.note && (
             <>

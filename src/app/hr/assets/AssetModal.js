@@ -16,6 +16,7 @@ import { Loader2, Upload, X, FileText } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { createAsset, updateAsset, deleteAssetDocument } from '@/app/services/api/assets'
 import { getBranches } from '@/app/services/api/branches'
+import { getAccounts } from '@/app/services/api/accounting'
 import { uploadFiles } from '../../../../utils/fileUpload'
 
 const AssetModal = ({ 
@@ -38,14 +39,22 @@ const AssetModal = ({
     branch_id: '',
     issue_date: null,
     expiry_date: null,
-    note: ''
+    note: '',
+    purchase_cost: '',
+    purchase_date: null,
+    account_id: '',
+    depreciation_rate: '',
+    salvage_value: ''
   })
   const [selectedFiles, setSelectedFiles] = useState([])
   const [existingDocuments, setExistingDocuments] = useState([])
 
   // Fetch branches
-  const { data: branchesData } = useSWR('branches', getBranches)
   const branches = branchesData?.data || []
+  
+  // Fetch accounts
+  const { data: accountsData } = useSWR('accounts', () => getAccounts({ type: 'asset' }))
+  const accounts = accountsData?.data || []
 
   // Populate form when editing
   useEffect(() => {
@@ -56,7 +65,12 @@ const AssetModal = ({
         branch_id: asset.branch_id || '',
         issue_date: asset.issue_date ? new Date(asset.issue_date) : null,
         expiry_date: asset.expiry_date ? new Date(asset.expiry_date) : null,
-        note: asset.note || ''
+        note: asset.note || '',
+        purchase_cost: asset.purchase_cost || '',
+        purchase_date: asset.purchase_date ? new Date(asset.purchase_date) : null,
+        account_id: asset.account_id || '',
+        depreciation_rate: asset.depreciation_rate || '',
+        salvage_value: asset.salvage_value || ''
       })
       setExistingDocuments(asset.documents || [])
     } else {
@@ -66,7 +80,12 @@ const AssetModal = ({
         branch_id: '',
         issue_date: null,
         expiry_date: null,
-        note: ''
+        note: '',
+        purchase_cost: '',
+        purchase_date: null,
+        account_id: '',
+        depreciation_rate: '',
+        salvage_value: ''
       })
       setExistingDocuments([])
     }
@@ -82,7 +101,12 @@ const AssetModal = ({
         branch_id: '',
         issue_date: null,
         expiry_date: null,
-        note: ''
+        note: '',
+        purchase_cost: '',
+        purchase_date: null,
+        account_id: '',
+        depreciation_rate: '',
+        salvage_value: ''
       })
       setSelectedFiles([])
       setExistingDocuments([])
@@ -175,8 +199,13 @@ const AssetModal = ({
         issue_date: formData.issue_date ? format(formData.issue_date, 'yyyy-MM-dd') : null,
         expiry_date: formData.expiry_date ? format(formData.expiry_date, 'yyyy-MM-dd') : null,
         note: formData.note || null,
+        purchase_cost: formData.purchase_cost || 0,
+        purchase_date: formData.purchase_date ? format(formData.purchase_date, 'yyyy-MM-dd') : null,
+        account_id: formData.account_id || null,
+        depreciation_rate: formData.depreciation_rate || 0,
+        salvage_value: formData.salvage_value || 0,
         documents: uploadedDocuments,
-        record_type: recordType // Include record_type
+        record_type: recordType
       }
 
       // Create or update
@@ -294,6 +323,86 @@ const AssetModal = ({
               rows={3}
               disabled={isLoading}
             />
+          </div>
+
+          <div className="border-t pt-4 mt-4">
+            <h3 className="text-lg font-semibold mb-4">{isArabic ? 'المعلومات المالية' : 'Financial Information'}</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Purchase Cost */}
+              <div className="space-y-2">
+                <Label htmlFor="purchase_cost">{isArabic ? 'تكلفة الشراء' : 'Purchase Cost'}</Label>
+                <Input
+                  id="purchase_cost"
+                  type="number"
+                  step="0.01"
+                  value={formData.purchase_cost}
+                  onChange={(e) => handleInputChange('purchase_cost', e.target.value)}
+                  placeholder="0.00"
+                  disabled={isLoading}
+                />
+              </div>
+
+              {/* Purchase Date */}
+              <div className="space-y-2">
+                <Label>{isArabic ? 'تاريخ الشراء' : 'Purchase Date'}</Label>
+                <DatePicker
+                  date={formData.purchase_date}
+                  onDateChange={(date) => handleInputChange('purchase_date', date)}
+                  placeholder={isArabic ? 'اختر التاريخ' : 'Select date'}
+                  disabled={isLoading}
+                />
+              </div>
+
+              {/* Account Link (Chart of Accounts) */}
+              <div className="space-y-2">
+                <Label htmlFor="account_id">{isArabic ? 'الحساب المرتبط' : 'Linked Account'}</Label>
+                <Select
+                  value={formData.account_id?.toString()}
+                  onValueChange={(value) => handleInputChange('account_id', parseInt(value))}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={isArabic ? 'اختر حساباً' : 'Select an account'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {accounts.map((account) => (
+                      <SelectItem key={account.id} value={account.id.toString()}>
+                        {account.code} - {isArabic ? account.name_ar : account.name_en}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Depreciation Rate */}
+              <div className="space-y-2">
+                <Label htmlFor="depreciation_rate">{isArabic ? 'نسبة الإهلاك (%)' : 'Depreciation Rate (%)'}</Label>
+                <Input
+                  id="depreciation_rate"
+                  type="number"
+                  step="0.01"
+                  value={formData.depreciation_rate}
+                  onChange={(e) => handleInputChange('depreciation_rate', e.target.value)}
+                  placeholder="0.00"
+                  disabled={isLoading}
+                />
+              </div>
+
+              {/* Salvage Value */}
+              <div className="space-y-2">
+                <Label htmlFor="salvage_value">{isArabic ? 'القيمة المتبقية' : 'Salvage Value'}</Label>
+                <Input
+                  id="salvage_value"
+                  type="number"
+                  step="0.01"
+                  value={formData.salvage_value}
+                  onChange={(e) => handleInputChange('salvage_value', e.target.value)}
+                  placeholder="0.00"
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Existing Documents (Edit Mode) */}

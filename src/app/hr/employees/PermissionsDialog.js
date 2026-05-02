@@ -1,4 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { useIsClient } from "@/hooks/useIsClient";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Shield, CircleX, Loader2 } from "lucide-react";
@@ -93,6 +95,126 @@ export default function PermissionsModal({ trigger,id }) {
         }
     };
 
+    const isClient = useIsClient();
+
+    if (!open || !isClient) return (
+        <>
+            {/* Trigger */}
+            {trigger ? (
+                <div onClick={() => setOpen(true)}>
+                    {trigger}
+                </div>
+            ) : (
+                <button
+                    className="flex items-center gap-2 w-full px-2 py-1 hover:bg-muted rounded text-right cursor-pointer"
+                    onClick={() => setOpen(true)}
+                >
+                    <Shield className="w-4 h-4 text-muted-foreground" />
+                    {t('employees.permissions')}
+                </button>
+            )}
+        </>
+    );
+
+    const modalContent = (
+        <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+        >
+            {/* Backdrop */}
+            <div 
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                onClick={() => setOpen(false)}
+            />
+
+            {/* Modal Content */}
+            <div
+                className="relative z-10 bg-card rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-border flex flex-col"
+                dir={isRTL ? "rtl" : "ltr"}
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b border-border bg-card">
+                    <h2 className="text-xl font-semibold text-foreground">{t('employees.permissions')}</h2>
+                    <button
+                        onClick={() => setOpen(false)}
+                        className="p-1 hover:bg-muted rounded-full transition-colors"
+                    >
+                        <CircleX className="w-5 h-5 text-muted-foreground" />
+                    </button>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 overflow-y-auto flex-1 bg-card">
+                    {isLoading ? (
+                        <div className="flex items-center justify-center py-8">
+                            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                        </div>
+                    ) : error ? (
+                        <div className="flex items-center justify-center py-8">
+                            <div className="text-destructive font-medium">{t('common.error')}</div>
+                        </div>
+                    ) : localPermissions.length === 0 ? (
+                        <div className="flex items-center justify-center py-8">
+                            <div className="text-muted-foreground">{t('common.noData')}</div>
+                        </div>
+                    ) : (
+                        <div className="space-y-6">
+                            {Object.entries(groupedPermissions).map(([groupName, groupPermissions]) => (
+                                <div key={groupName} className="border border-border rounded-lg p-4 bg-muted/20">
+                                    {/* Group Header */}
+                                    <h3 className="text-base font-semibold text-foreground mb-4 pb-2 border-b border-border">
+                                        {getGroupNameTranslation(groupName)}
+                                    </h3>
+                                    
+                                    {/* Permissions Grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        {groupPermissions.map((permission) => {
+                                            const localPermission = localPermissions.find(p => p.id === permission.id);
+                                            return (
+                                                <label
+                                                    key={permission.id}
+                                                    className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 p-2 rounded transition-colors"
+                                                >
+                                                    <Checkbox
+                                                        checked={localPermission?.isPermissionForThisUser === 1}
+                                                        onCheckedChange={() => handleTogglePermission(permission.id)}
+                                                        id={`permission-${permission.id}`}
+                                                    />
+                                                    <span className="text-sm text-foreground">
+                                                        {isRTL ? permission.permission_ar : permission.permission_en}
+                                                    </span>
+                                                </label>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Footer */}
+                <div className="flex justify-end gap-2 p-6 border-t border-border bg-muted/30">
+                    <Button
+                        variant="outline"
+                        onClick={() => setOpen(false)}
+                        className="cursor-pointer"
+                    >
+                        {t('buttons.cancel')}
+                    </Button>
+                    <Button
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        className="cursor-pointer min-w-[100px]"
+                    >
+                        {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isSaving ? (t('buttons.saving') || 'Saving...') : t('buttons.save')}
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <>
             {/* Trigger */}
@@ -110,99 +232,7 @@ export default function PermissionsModal({ trigger,id }) {
                 </button>
             )}
 
-            {/* Modal */}
-            {open && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-                    onClick={handleOverlayClick}
-                >
-                    <div
-                        className="bg-card rounded-lg shadow-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden border border-border"
-                        dir="rtl"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* Header */}
-                        <div className="flex items-center justify-between p-6 border-b border-border">
-                            <h2 className="text-xl font-semibold text-foreground">{t('employees.permissions')}</h2>
-                            <button
-                                onClick={() => setOpen(false)}
-                                className="p-1 hover:bg-muted rounded-full transition-colors"
-                            >
-                                <CircleX className="w-5 h-5 text-muted-foreground" />
-                            </button>
-                        </div>
-
-                        {/* Content */}
-                        <div className="p-6 overflow-y-auto max-h-[60vh]">
-                            {isLoading ? (
-                                <div className="flex items-center justify-center py-8">
-                                    <div className="text-muted-foreground">{t('common.loading')}</div>
-                                </div>
-                            ) : error ? (
-                                <div className="flex items-center justify-center py-8">
-                                    <div className="text-destructive">{t('common.error')}</div>
-                                </div>
-                            ) : localPermissions.length === 0 ? (
-                                <div className="flex items-center justify-center py-8">
-                                    <div className="text-muted-foreground">{t('common.noData')}</div>
-                                </div>
-                            ) : (
-                                <div className="space-y-6">
-                                    {Object.entries(groupedPermissions).map(([groupName, groupPermissions]) => (
-                                        <div key={groupName} className="border border-border rounded-lg p-4 bg-muted/20">
-                                            {/* Group Header */}
-                                            <h3 className="text-base font-semibold text-foreground mb-4 pb-2 border-b border-border">
-                                                {getGroupNameTranslation(groupName)}
-                                            </h3>
-                                            
-                                            {/* Permissions Grid */}
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                {groupPermissions.map((permission) => {
-                                                    const localPermission = localPermissions.find(p => p.id === permission.id);
-                                                    return (
-                                                        <label
-                                                            key={permission.id}
-                                                            className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 p-2 rounded transition-colors"
-                                                        >
-                                                            <Checkbox
-                                                                checked={localPermission?.isPermissionForThisUser === 1}
-                                                                onCheckedChange={() => handleTogglePermission(permission.id)}
-                                                                id={`permission-${permission.id}`}
-                                                            />
-                                                            <span className="text-sm text-foreground">
-                                                                {isRTL ? permission.permission_ar : permission.permission_en}
-                                                            </span>
-                                                        </label>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Footer */}
-                        <div className="flex justify-end gap-2 p-6 border-t border-border bg-muted/30">
-                            <Button
-                                variant="outline"
-                                onClick={() => setOpen(false)}
-                                className="cursor-pointer"
-                            >
-                                {t('buttons.cancel')}
-                            </Button>
-                            <Button
-                                onClick={handleSave}
-                                disabled={isSaving}
-                                className="cursor-pointer"
-                            >
-                                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                {isSaving ? (t('buttons.saving') || 'Saving...') : t('buttons.save')}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {createPortal(modalContent, document.body)}
         </>
     );
 }

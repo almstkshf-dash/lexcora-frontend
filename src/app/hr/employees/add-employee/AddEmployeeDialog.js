@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Plus, CircleX, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/hooks/useTranslations";
+import { useIsClient } from "@/hooks/useIsClient";
 import { createEmployee, checkDuplicateEmployee } from '@/app/services/api/employees';
 import { toast } from 'react-toastify';
 import EmployeeInfoTab from './EmployeeInfoTab';
@@ -12,22 +14,40 @@ import EmployeeDocumentsTab from './EmployeeDocumentsTab';
 
 // Custom Modal Component
 const Modal = ({ isOpen, onClose, children }) => {
-  if (!isOpen) return null;
+  const isClient = useIsClient();
+  
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+  if (!isOpen || !isClient) return null;
+
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
       
       {/* Modal Content */}
-      <div className="relative z-10 bg-white dark:bg-black  rounded-lg shadow-2xl max-h-[90vh] overflow-y-auto w-full max-w-4xl">
+      <div 
+        className="relative z-10 bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto w-full max-w-4xl border border-border"
+        onClick={(e) => e.stopPropagation()}
+      >
         {children}
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default function AddEmployeeModal({ onAdd }) {

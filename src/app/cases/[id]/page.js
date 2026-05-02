@@ -255,33 +255,33 @@ function CaseDetailsPage({ params }) {
           </h2>
 
           {casePartyRows.length > 0 ? (
-            <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
+            <div className="border border-gray-200 rounded-lg overflow-x-auto print-no-shadow print:overflow-visible">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50 print:bg-gray-100">
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.partyName')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.type')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.phone')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('profile.email')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.nationality')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.address')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.partyName')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[100px]`}>{t('common.type')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('common.phone')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[180px]`}>{t('profile.email')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('common.nationality')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[200px]`}>{t('caseDetailsPage.address')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {casePartyRows.map((party, index) => (
                     <TableRow key={index} className="hover:bg-gray-50 print:hover:bg-transparent">
-                      <TableCell className="font-medium">{party.party_name || noValue}</TableCell>
-                      <TableCell>
+                      <TableCell className={`${textAlignClass} font-medium`}>{party.party_name || noValue}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         <Badge variant="outline" className="print:border-gray-400">
                           {getPartyTypeLabel(party.type)}
                         </Badge>
                       </TableCell>
-                      <TableCell>{party.phone || noValue}</TableCell>
-                      <TableCell className="text-left" dir="ltr">{party.email || noValue}</TableCell>
-                      <TableCell>{party.nationality || noValue}</TableCell>
-                      <TableCell className="max-w-xs">
+                      <TableCell className={`${textAlignClass}`}>{party.phone || noValue}</TableCell>
+                      <TableCell className={`${textAlignClass}`} dir="ltr">{party.email || noValue}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{party.nationality || noValue}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         {party.address ? (
-                          <div className="text-sm text-gray-600 truncate" title={party.address}>
+                          <div className="text-sm text-gray-600 line-clamp-2" title={party.address}>
                             {party.address}
                           </div>
                         ) : (
@@ -304,24 +304,24 @@ function CaseDetailsPage({ params }) {
           </h2>
 
           {sessionRows.length > 0 ? (
-            <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
+            <div className="border border-gray-200 rounded-lg overflow-x-auto print-no-shadow print:overflow-visible">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50 print:bg-gray-100">
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.sessionNumber')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.date')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.type')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.decision')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.note')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold print:hidden`}>{t('caseDetailsPage.link')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('caseDetailsPage.sessionNumber')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('common.date')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('common.type')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[200px]`}>{t('caseDetailsPage.decision')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[200px]`}>{t('common.note')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[100px] print:hidden`}>{t('caseDetailsPage.link')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {sessionRows.map((session, index) => (
                     <TableRow key={index} className="hover:bg-gray-50 print:hover:bg-transparent">
-                      <TableCell className="font-medium">{t('caseDetailsPage.sessionLabel', { number: String(index + 1) })}</TableCell>
-                      <TableCell>{formatDate(session.session_date)}</TableCell>
-                      <TableCell>
+                      <TableCell className={`${textAlignClass} font-medium`}>{t('caseDetailsPage.sessionLabel', { number: String(index + 1) })}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{formatDate(session.session_date)}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         <Badge
                           variant={session.is_expert_session ? 'default' : 'outline'}
                           className={session.is_expert_session ? 'bg-purple-100 text-purple-800 print:bg-gray-200 print:text-gray-800' : ''}
@@ -329,25 +329,25 @@ function CaseDetailsPage({ params }) {
                           {getSessionTypeLabel(session.is_expert_session)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="max-w-xs">
+                      <TableCell className={`${textAlignClass}`}>
                         {session.decision ? (
-                          <div className="text-sm truncate" title={session.decision}>
+                          <div className="text-sm line-clamp-2" title={session.decision}>
                             {session.decision}
                           </div>
                         ) : (
                           <span className="text-gray-400">{noValue}</span>
                         )}
                       </TableCell>
-                      <TableCell className="max-w-xs">
+                      <TableCell className={`${textAlignClass}`}>
                         {session.note ? (
-                          <div className="text-sm text-gray-600 truncate" title={session.note}>
+                          <div className="text-sm text-gray-600 line-clamp-2" title={session.note}>
                             {session.note}
                           </div>
                         ) : (
                           <span className="text-gray-400">{noValue}</span>
                         )}
                       </TableCell>
-                      <TableCell className="print:hidden">
+                      <TableCell className={`${textAlignClass} print:hidden`}>
                         {session.link ? (
                           <a href={session.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm">
                             {t('caseDetailsPage.sessionLink')}
@@ -372,30 +372,30 @@ function CaseDetailsPage({ params }) {
           </h2>
 
           {taskRows.length > 0 ? (
-            <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
+            <div className="border border-gray-200 rounded-lg overflow-x-auto print-no-shadow print:overflow-visible">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50 print:bg-gray-100">
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.taskTitle')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.description')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.statusLabel')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.priorityLabel')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.dueDate')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.assignedTo')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.assignedBy')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.createdAt')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.taskTitle')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[200px]`}>{t('common.description')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('caseDetailsPage.statusLabel')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('caseDetailsPage.priorityLabel')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('caseDetailsPage.dueDate')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.assignedTo')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.assignedBy')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('common.createdAt')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {taskRows.map((task, index) => (
                     <TableRow key={index} className="hover:bg-gray-50 print:hover:bg-transparent">
-                      <TableCell className="font-medium">{task.title || noValue}</TableCell>
-                      <TableCell className="max-w-xs">
-                        <div className="text-sm text-gray-600 truncate" title={task.description || noValue}>
+                      <TableCell className={`${textAlignClass} font-medium`}>{task.title || noValue}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>
+                        <div className="text-sm text-gray-600 line-clamp-2" title={task.description || noValue}>
                           {task.description || noValue}
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         <Badge
                           className={
                             task.status === 'pending'
@@ -408,7 +408,7 @@ function CaseDetailsPage({ params }) {
                           {getTaskStatusLabel(task.status)}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         <Badge
                           className={
                             task.priority === 'high'
@@ -421,10 +421,10 @@ function CaseDetailsPage({ params }) {
                           {getPriorityLabel(task.priority)}
                         </Badge>
                       </TableCell>
-                      <TableCell>{formatDate(task.due_date)}</TableCell>
-                      <TableCell>{task.assigned_to_name || noValue}</TableCell>
-                      <TableCell>{task.assigned_by_name || noValue}</TableCell>
-                      <TableCell>{formatDate(task.created_at)}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{formatDate(task.due_date)}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{task.assigned_to_name || noValue}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{task.assigned_by_name || noValue}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{formatDate(task.created_at)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -441,33 +441,33 @@ function CaseDetailsPage({ params }) {
           </h2>
 
           {executionRows.length > 0 ? (
-            <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
+            <div className="border border-gray-200 rounded-lg overflow-x-auto print-no-shadow print:overflow-visible">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50 print:bg-gray-100">
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.executionNumber')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.type')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.amount')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.statusLabel')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.date')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.employee')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.note')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.createdAt')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[100px]`}>{t('caseDetailsPage.executionNumber')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('common.type')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('common.amount')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('caseDetailsPage.statusLabel')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('common.date')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('common.employee')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[200px]`}>{t('common.note')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('common.createdAt')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {executionRows.map((execution, index) => (
                     <TableRow key={index} className="hover:bg-gray-50 print:hover:bg-transparent">
-                      <TableCell className="font-medium">{t('caseDetailsPage.executionLabel', { number: String(index + 1) })}</TableCell>
-                      <TableCell>
+                      <TableCell className={`${textAlignClass} font-medium`}>{t('caseDetailsPage.executionLabel', { number: String(index + 1) })}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         <Badge variant="outline">{getExecutionTypeLabel(execution.type)}</Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         <Badge className="bg-green-100 text-green-800 print:bg-gray-200 print:text-gray-800">
                           {formatCurrency(execution.amount)}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         <Badge
                           className={
                             execution.status === 'in_progress'
@@ -480,18 +480,18 @@ function CaseDetailsPage({ params }) {
                           {getTaskStatusLabel(execution.status)}
                         </Badge>
                       </TableCell>
-                      <TableCell>{formatDate(execution.date)}</TableCell>
-                      <TableCell>{execution.employee_name || noValue}</TableCell>
-                      <TableCell className="max-w-xs">
+                      <TableCell className={`${textAlignClass}`}>{formatDate(execution.date)}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{execution.employee_name || noValue}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         {execution.note ? (
-                          <div className="text-sm text-gray-600 truncate" title={execution.note}>
+                          <div className="text-sm text-gray-600 line-clamp-2" title={execution.note}>
                             {execution.note}
                           </div>
                         ) : (
                           <span className="text-gray-400">{noValue}</span>
                         )}
                       </TableCell>
-                      <TableCell>{formatDate(execution.created_at)}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{formatDate(execution.created_at)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -508,25 +508,25 @@ function CaseDetailsPage({ params }) {
           </h2>
 
           {judicialRows.length > 0 ? (
-            <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
+            <div className="border border-gray-200 rounded-lg overflow-x-auto print-no-shadow print:overflow-visible">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50 print:bg-gray-100">
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.noticeNumber')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.certificationDate')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.serviceCompleted')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.notificationPeriod')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.caseFiled')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.noticeNumber')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.certificationDate')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.serviceCompleted')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.notificationPeriod')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.caseFiled')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {judicialRows.map((notice, index) => (
                     <TableRow key={index} className="hover:bg-gray-50 print:hover:bg-transparent">
-                      <TableCell className="font-medium">{t('caseDetailsPage.noticeLabel', { number: String(index + 1) })}</TableCell>
-                      <TableCell>{formatDate(notice.date)}</TableCell>
-                      <TableCell>{getBooleanBadge(notice.service_completed)}</TableCell>
-                      <TableCell>{t('caseDetailsPage.daysCount', { count: String(notice.notification_period_days || 0) })}</TableCell>
-                      <TableCell>{getBooleanBadge(notice.case_filed)}</TableCell>
+                      <TableCell className={`${textAlignClass} font-medium`}>{t('caseDetailsPage.noticeLabel', { number: String(index + 1) })}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{formatDate(notice.date)}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{getBooleanBadge(notice.service_completed)}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{t('caseDetailsPage.daysCount', { count: String(notice.notification_period_days || 0) })}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{getBooleanBadge(notice.case_filed)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -543,26 +543,26 @@ function CaseDetailsPage({ params }) {
           </h2>
 
           {petitionRows.length > 0 ? (
-            <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
+            <div className="border border-gray-200 rounded-lg overflow-x-auto print-no-shadow print:overflow-visible">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50 print:bg-gray-100">
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.petition')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.orderType')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.decisionStatusLabel')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.date')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.appealDate')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.createdAt')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('caseDetailsPage.petition')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.orderType')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.decisionStatusLabel')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('common.date')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('caseDetailsPage.appealDate')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[120px]`}>{t('common.createdAt')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {petitionRows.map((petitionDetail, index) => (
                     <TableRow key={`detail-${index}`} className="hover:bg-gray-50 print:hover:bg-transparent">
-                      <TableCell className="font-medium">{t('caseDetailsPage.petitionLabel', { number: String(index + 1) })}</TableCell>
-                      <TableCell>
+                      <TableCell className={`${textAlignClass} font-medium`}>{t('caseDetailsPage.petitionLabel', { number: String(index + 1) })}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         <Badge variant="outline">{petitionDetail.type_title || noValue}</Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         <Badge
                           className={
                             petitionDetail.decision_status === 'accepted'
@@ -575,9 +575,9 @@ function CaseDetailsPage({ params }) {
                           {getDecisionStatusLabel(petitionDetail.decision_status)}
                         </Badge>
                       </TableCell>
-                      <TableCell>{formatDate(petitionDetail.date)}</TableCell>
-                      <TableCell>{formatDate(petitionDetail.appeal_date)}</TableCell>
-                      <TableCell>{formatDate(petitionDetail.created_at)}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{formatDate(petitionDetail.date)}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{formatDate(petitionDetail.appeal_date)}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{formatDate(petitionDetail.created_at)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -594,27 +594,27 @@ function CaseDetailsPage({ params }) {
           </h2>
 
           {degreeRows.length > 0 ? (
-            <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
+            <div className="border border-gray-200 rounded-lg overflow-x-auto print-no-shadow print:overflow-visible">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50 print:bg-gray-100">
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.degreeNumber')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.year')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.referralDate')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.caseNumber')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.createdAt')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.degreeNumber')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[100px]`}>{t('caseDetailsPage.year')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.referralDate')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('caseDetailsPage.caseNumber')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('common.createdAt')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {degreeRows.map((degree, index) => (
                     <TableRow key={index} className="hover:bg-gray-50 print:hover:bg-transparent">
-                      <TableCell className="font-medium">{t('caseDetailsPage.degreeLabel', { number: String(index + 1) })}</TableCell>
-                      <TableCell>
+                      <TableCell className={`${textAlignClass} font-medium`}>{t('caseDetailsPage.degreeLabel', { number: String(index + 1) })}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         <Badge variant="outline">{degree.year}</Badge>
                       </TableCell>
-                      <TableCell>{formatDate(degree.referral_date)}</TableCell>
-                      <TableCell>{degree.case_number || noValue}</TableCell>
-                      <TableCell>{formatDate(degree.created_at)}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{formatDate(degree.referral_date)}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{degree.case_number || noValue}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{formatDate(degree.created_at)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -631,27 +631,27 @@ function CaseDetailsPage({ params }) {
           </h2>
 
           {relatedFileRows.length > 0 ? (
-            <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
+            <div className="border border-gray-200 rounded-lg overflow-x-auto print-no-shadow print:overflow-visible">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50 print:bg-gray-100">
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('caseDetailsPage.documentName')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.type')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('common.date')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold print:hidden`}>{t('caseDetailsPage.actions')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[200px]`}>{t('caseDetailsPage.documentName')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[100px]`}>{t('common.type')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('common.date')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[100px] print:hidden`}>{t('caseDetailsPage.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {relatedFileRows.map((file, index) => (
                     <TableRow key={index} className="hover:bg-gray-50 print:hover:bg-transparent">
-                      <TableCell className="font-medium">{file.document_name || noValue}</TableCell>
-                      <TableCell>
+                      <TableCell className={`${textAlignClass} font-medium`}>{file.document_name || noValue}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>
                         <Badge variant="outline" className="uppercase">
                           {file.document_url?.split('.').pop() || 'FILE'}
                         </Badge>
                       </TableCell>
-                      <TableCell>{formatDate(file.created_at)}</TableCell>
-                      <TableCell className="print:hidden">
+                      <TableCell className={`${textAlignClass}`}>{formatDate(file.created_at)}</TableCell>
+                      <TableCell className={`${textAlignClass} print:hidden`}>
                         {file.document_url ? (
                           <a
                             href={file.document_url}
@@ -681,23 +681,27 @@ function CaseDetailsPage({ params }) {
           </h2>
 
           {relatedCaseRows.length > 0 ? (
-            <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
+            <div className="border border-gray-200 rounded-lg overflow-x-auto print-no-shadow print:overflow-visible">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50 print:bg-gray-100">
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('cases.fileNumber')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('cases.caseNumber')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold`}>{t('cases.topic')}</TableHead>
-                    <TableHead className={`${textAlignClass} font-semibold print:hidden`}>{t('caseDetailsPage.actions')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('cases.fileNumber')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[150px]`}>{t('cases.caseNumber')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[200px]`}>{t('cases.topic')}</TableHead>
+                    <TableHead className={`${textAlignClass} font-semibold min-w-[100px] print:hidden`}>{t('caseDetailsPage.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {relatedCaseRows.map((rc, index) => (
                     <TableRow key={index} className="hover:bg-gray-50 print:hover:bg-transparent">
-                      <TableCell className="font-medium">{rc.file_number || noValue}</TableCell>
-                      <TableCell>{rc.case_number || noValue}</TableCell>
-                      <TableCell>{rc.topic || noValue}</TableCell>
-                      <TableCell className="print:hidden">
+                      <TableCell className={`${textAlignClass} font-medium`}>{rc.file_number || noValue}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>{rc.case_number || noValue}</TableCell>
+                      <TableCell className={`${textAlignClass}`}>
+                        <div className="line-clamp-2" title={rc.topic || noValue}>
+                          {rc.topic || noValue}
+                        </div>
+                      </TableCell>
+                      <TableCell className={`${textAlignClass} print:hidden`}>
                         <Button
                           variant="ghost"
                           size="sm"

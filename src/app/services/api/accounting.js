@@ -93,7 +93,12 @@ export const getFinancialStats = async () => {
   return response.data;
 };
 
-// Accounting & Reports
+// Accounts
+export const getAccounts = async (params) => {
+  const response = await api.get('/accounting/accounts', { params });
+  return response.data;
+};
+
 export const getAccountsTree = async (params) => {
   const response = await api.get('/accounting/accounts/tree', { params });
   return response.data;
@@ -176,11 +181,17 @@ export const getBudgetVsActual = async (params) => {
   return response.data;
 };
 
+export const getAssetsReport = async (params) => {
+  const response = await api.get('/accounting/reports/assets', { params });
+  return response.data;
+};
+
 export const accountingService = {
   getCashFlow,
   getDailyCashFlow,
   getFinancialStats,
   getAccountsTree,
+  getAccounts,
   getProfitAndLoss,
   getBalanceSheet,
   getAgingReceivables,
@@ -194,5 +205,6 @@ export const accountingService = {
   createFiscalPeriod,
   updateFiscalPeriodStatus,
   setBudget,
-  getBudgetVsActual
+  getBudgetVsActual,
+  getAssetsReport
 };

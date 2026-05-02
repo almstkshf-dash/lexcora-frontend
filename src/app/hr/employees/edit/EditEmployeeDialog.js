@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { useIsClient } from '@/hooks/useIsClient';
 import useSWR from 'swr';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -143,175 +145,181 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
     };
   }, [open]);
 
+  const isClient = useIsClient();
+
+  if (!open || !isClient) return (
+    <div onClick={() => {
+      if (!employeeId) return;
+      setOpen(true);
+    }}>
+      {trigger}
+    </div>
+  );
+
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={() => setOpen(false)}
+      />
+      
+      {/* Modal Content */}
+      <div 
+        className="relative z-10 bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-5xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col border border-border"
+        dir={isRTL ? 'rtl' : 'ltr'}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-border bg-card">
+          <div className="flex items-center gap-2">
+            <User className="w-5 h-5 text-foreground" />
+            <h2 className="text-lg font-semibold text-foreground">{t('employees.editEmployee')}</h2>
+          </div>
+          <button
+            onClick={() => setOpen(false)}
+            className="p-1 rounded-full hover:bg-muted transition-colors"
+          >
+            <Minus className="w-5 h-5 text-muted-foreground" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6 bg-card">
+          {!employeeId && (
+            <div className="flex items-center justify-center py-8 text-destructive">
+              <AlertCircle className="w-6 h-6 mr-2" />
+              {t('employees.missingEmployeeId')}
+            </div>
+          )}
+
+          {employeeId && isLoading && (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          )}
+
+          {employeeId && error && (
+            <div className="flex items-center justify-center py-8 text-destructive">
+              <AlertCircle className="w-6 h-6 mr-2" />
+              {t('employees.errorLoadingDetails')}
+            </div>
+          )}
+
+          {employeeId && !isLoading && !error && !employee && open && (
+            <div className="flex items-center justify-center py-8 text-muted-foreground">
+              <AlertCircle className="w-6 h-6 mr-2" />
+              {t('employees.noEmployeeFound')}
+            </div>
+          )}
+
+          {employeeId && employee && (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {submitError && (
+                <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                  <div className="flex items-center gap-2 text-destructive">
+                    <AlertCircle className="w-5 h-5" />
+                    <span>{submitError}</span>
+                  </div>
+                </div>
+              )}
+
+              <Tabs dir={isRTL ? "rtl" : "ltr"} defaultValue="personal" className="w-full">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="personal" className="flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    {t('employees.personalInfo')}
+                  </TabsTrigger>
+                  <TabsTrigger value="contact" className="flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    {t('employees.contactInfo')}
+                  </TabsTrigger>
+                  <TabsTrigger value="work" className="flex items-center gap-2">
+                    <Building className="w-4 h-4" />
+                    {t('employees.workInfo')}
+                  </TabsTrigger>
+                  <TabsTrigger value="documents" className="flex items-center gap-2">
+                    <FileText className="w-4 h-4" />
+                    {t('employees.documentsInfo')}
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="personal" className="mt-6">
+                  <PersonalInfoTab 
+                    formData={formData} 
+                    handleInputChange={handleInputChange} 
+                  />
+                </TabsContent>
+
+                <TabsContent value="contact" className="mt-6">
+                  <ContactInfoTab 
+                    formData={formData} 
+                    handleInputChange={handleInputChange} 
+                  />
+                </TabsContent>
+
+                <TabsContent value="work" className="mt-6">
+                  <WorkInfoTab 
+                    formData={formData} 
+                    handleInputChange={handleInputChange}
+                    departments={departments}
+                    roles={roles}
+                    branches={branches}
+                    managers={managers}
+                    employeeId={employeeId}
+                  />
+                </TabsContent>
+
+                <TabsContent value="documents" className="mt-6">
+                  <DocumentsInfoTab 
+                    formData={formData} 
+                    handleInputChange={handleInputChange} 
+                  />
+                </TabsContent>
+              </Tabs>
+            </form>
+          )}
+        </div>
+
+        {/* Footer */}
+        {employeeId && employee && (
+          <div className="flex justify-end gap-3 p-6 border-t border-border bg-muted/30">
+            <Button 
+              type="button"
+              variant="outline" 
+              onClick={() => setOpen(false)}
+              disabled={isSubmitting}
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button 
+              type="button"
+              onClick={handleSubmit}
+              disabled={isSubmitting || rolesLoading || departmentsLoading || branchesLoading || managersLoading}
+              className="flex items-center gap-2 min-w-[100px]"
+            >
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              {isSubmitting ? t('common.saving') : t('common.save')}
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <>
-      {/* Trigger */}
       <div onClick={() => {
-        if (!employeeId) {
-
-          return;
-        }
+        if (!employeeId) return;
         setOpen(true);
       }}>
         {trigger}
       </div>
-
-      {/* Modal */}
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setOpen(false)}
-          />
-          
-          {/* Modal Content */}
-          <div 
-            className="relative bg-white rounded-lg shadow-xl max-w-5xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col"
-            dir={isRTL ? 'rtl' : 'ltr'}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b">
-              <div className="flex items-center gap-2">
-                <User className="w-5 h-5" />
-                <h2 className="text-lg font-semibold">{t('employees.editEmployee')}</h2>
-              </div>
-              <button
-                onClick={() => setOpen(false)}
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-              >
-                <Minus className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6">
-              {!employeeId && (
-                <div className="flex items-center justify-center py-8 text-red-600">
-                  <AlertCircle className="w-6 h-6 mr-2" />
-                  {t('employees.missingEmployeeId')}
-                </div>
-              )}
-
-              {employeeId && isLoading && (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin mr-2" />
-                  {t('employees.loadingEmployeeDetails')}
-                </div>
-              )}
-
-              {employeeId && error && (
-                <div className="flex items-center justify-center py-8 text-red-600">
-                  <AlertCircle className="w-6 h-6 mr-2" />
-                  {t('employees.errorLoadingDetails')}
-                </div>
-              )}
-
-              {employeeId && !isLoading && !error && !employee && open && (
-                <div className="flex items-center justify-center py-8 text-muted-foreground">
-                  <AlertCircle className="w-6 h-6 mr-2" />
-                  {t('employees.noEmployeeFound')}
-                </div>
-              )}
-
-              {employeeId && employee && (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {submitError && (
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                      <div className="flex items-center gap-2 text-red-600">
-                        <AlertCircle className="w-5 h-5" />
-                        <span>{submitError}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  <Tabs dir={isRTL ? "rtl" : "ltr"} defaultValue="personal" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4">
-                      <TabsTrigger value="personal" className="flex items-center gap-2">
-                        <User className="w-4 h-4" />
-                        {t('employees.personalInfo')}
-                      </TabsTrigger>
-                      <TabsTrigger value="contact" className="flex items-center gap-2">
-                        <Mail className="w-4 h-4" />
-                        {t('employees.contactInfo')}
-                      </TabsTrigger>
-                      <TabsTrigger value="work" className="flex items-center gap-2">
-                        <Building className="w-4 h-4" />
-                        {t('employees.workInfo')}
-                      </TabsTrigger>
-                      <TabsTrigger value="documents" className="flex items-center gap-2">
-                        <FileText className="w-4 h-4" />
-                        {t('employees.documentsInfo')}
-                      </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="personal" className="mt-6">
-                      <PersonalInfoTab 
-                        formData={formData} 
-                        handleInputChange={handleInputChange} 
-                      />
-                    </TabsContent>
-
-                    <TabsContent value="contact" className="mt-6">
-                      <ContactInfoTab 
-                        formData={formData} 
-                        handleInputChange={handleInputChange} 
-                      />
-                    </TabsContent>
-
-                    <TabsContent value="work" className="mt-6">
-                      <WorkInfoTab 
-                        formData={formData} 
-                        handleInputChange={handleInputChange}
-                        departments={departments}
-                        roles={roles}
-                        branches={branches}
-                        managers={managers}
-                        employeeId={employeeId}
-                      />
-                    </TabsContent>
-
-                    <TabsContent value="documents" className="mt-6">
-                      <DocumentsInfoTab 
-                        formData={formData} 
-                        handleInputChange={handleInputChange} 
-                      />
-                    </TabsContent>
-                  </Tabs>
-                </form>
-              )}
-            </div>
-
-            {/* Footer */}
-            {employeeId && employee && (
-              <div className="flex justify-end gap-3 p-6 border-t bg-gray-50">
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  onClick={() => setOpen(false)}
-                  disabled={isSubmitting}
-                >
-                  {t('common.cancel')}
-                </Button>
-                <Button 
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={isSubmitting || rolesLoading || departmentsLoading || branchesLoading || managersLoading}
-                  className="flex items-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Save className="w-4 h-4" />
-                  )}
-                  {isSubmitting ? t('common.saving') : t('common.save')}
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {createPortal(modalContent, document.body)}
     </>
   );
 };

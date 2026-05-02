@@ -13,7 +13,8 @@ import {
   FileText,
   Globe,
   Building2,
-  Gauge
+  Gauge,
+  Link2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -99,6 +100,15 @@ const SettingsPage = () => {
       href: '/settings/reports',
       color: 'text-indigo-600',
       bgColor: 'bg-indigo-50 dark:bg-indigo-950'
+    },
+    {
+      id: 'integrations',
+      title: language === 'ar' ? 'التكاملات والإرسال' : 'Integrations & Messaging',
+      description: language === 'ar' ? 'ربط Outlook وواتساب بيزنس لإرسال رسائل العملاء' : 'Connect Outlook & WhatsApp Business for client messaging',
+      icon: Link2,
+      href: '/settings/integrations',
+      color: 'text-cyan-600',
+      bgColor: 'bg-cyan-50 dark:bg-cyan-950'
     }
   ];
 

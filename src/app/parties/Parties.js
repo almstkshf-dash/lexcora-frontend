@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
-import { Eye, Edit, Trash2, MoreHorizontal, Phone, User, Scale, IdCard, FileText, Crown } from 'lucide-react';
+import { Eye, Edit, Trash2, MoreHorizontal, Phone, User, Scale, IdCard, FileText, Crown, Calendar } from 'lucide-react';
 import { getAllParties } from '@/app/services/api/parties';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';

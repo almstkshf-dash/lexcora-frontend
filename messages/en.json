@@ -3652,5 +3652,22 @@
     "noRelatedFiles": "No related documents uploaded yet.",
     "relatedCasesTitle": "Related Cases ({count})",
     "noRelatedCases": "No related cases linked yet."
+  },
+  "clientForms": {
+    "title": "Client Communications",
+    "browseAndDownload": "Manage message templates and send to clients",
+    "noFormsFound": "No forms found",
+    "clickToDownload": "Click to download",
+    "createdBy": "Created by",
+    "deleteForm": "Delete form",
+    "formDeleted": "Form deleted successfully",
+    "errorDeleting": "Error deleting form"
+  },
+  "clientMessages": {
+    "templateSaved": "Template saved",
+    "sendSuccess": "Message sent successfully",
+    "sendError": "Failed to send message",
+    "settingsSaved": "Settings saved",
+    "integrations": "Integrations & Messaging"
   }
 }

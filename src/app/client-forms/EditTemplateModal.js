@@ -5,8 +5,10 @@ import { toast } from 'react-toastify'
 import { X, Save, Image, Loader2, Globe } from 'lucide-react'
 import { updateClientMessageTemplate } from '@/app/services/api/clientMessages'
 import { uploadFile } from '@/app/services/api/upload'
+import { useTranslations } from "@/hooks/useTranslations"
 
 export default function EditTemplateModal({ config, template, isArabic, onClose, onSaved }) {
+  const t = useTranslations()
   const [lang, setLang] = useState('ar')
   const [form, setForm] = useState({
     title_ar: '', title_en: '', body_ar: '', body_en: '', image_url: ''
@@ -45,7 +47,7 @@ export default function EditTemplateModal({ config, template, isArabic, onClose,
     setSaving(true)
     try {
       await updateClientMessageTemplate(config.type, form)
-      toast.success(isArabic ? 'تم حفظ القالب بنجاح' : 'Template saved successfully')
+      toast.success(t('clientMessages.templateSaved'))
       onSaved()
     } catch {
       toast.error(isArabic ? 'خطأ في حفظ القالب' : 'Error saving template')
@@ -68,8 +70,8 @@ export default function EditTemplateModal({ config, template, isArabic, onClose,
               <Icon className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-bold text-lg">{isArabic ? 'تعديل القالب' : 'Edit Template'}</h2>
-              <p className="text-sm opacity-80">{isArabic ? config.labelAr : config.labelEn}</p>
+              <h2 className="font-bold text-lg">{t('clientMessages.editTemplate')}</h2>
+              <p className="text-sm opacity-80">{t(`clientMessages.${config.labelKey}`)}</p>
             </div>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
@@ -97,7 +99,7 @@ export default function EditTemplateModal({ config, template, isArabic, onClose,
           {/* Title */}
           <div>
             <label className="text-sm font-medium text-foreground mb-1.5 block">
-              {isArabic ? 'العنوان' : 'Subject'} ({lang === 'ar' ? 'Arabic' : 'English'})
+              {lang === 'ar' ? t('clientMessages.subjectAr') : t('clientMessages.subjectEn')}
             </label>
             <input
               className="w-full border rounded-xl px-4 py-2.5 text-sm bg-background focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
@@ -111,11 +113,11 @@ export default function EditTemplateModal({ config, template, isArabic, onClose,
           {/* Body */}
           <div>
             <label className="text-sm font-medium text-foreground mb-1.5 block">
-              {isArabic ? 'نص الرسالة' : 'Message Body'} ({lang === 'ar' ? 'Arabic' : 'English'})
+              {lang === 'ar' ? t('clientMessages.bodyAr') : t('clientMessages.bodyEn')}
             </label>
             {config.hasVariables && (
               <div className="flex flex-wrap gap-1 mb-2">
-                <span className="text-xs text-muted-foreground">{isArabic ? 'المتغيرات المتاحة:' : 'Available variables:'}</span>
+                <span className="text-xs text-muted-foreground">{t('clientMessages.availableVariables')}</span>
                 {['client_name', 'firm_name', ...(config.hasVariables || [])].map(v => (
                   <span key={v} className="text-[10px] px-2 py-0.5 rounded-full bg-muted font-mono text-muted-foreground cursor-pointer hover:bg-primary/10"
                     onClick={() => {
@@ -140,7 +142,7 @@ export default function EditTemplateModal({ config, template, isArabic, onClose,
           {/* Image */}
           <div>
             <label className="text-sm font-medium text-foreground mb-1.5 block">
-              {isArabic ? 'صورة مرفقة (اختياري)' : 'Attached Image (optional)'}
+              {t('clientMessages.attachedImage')}
             </label>
             <div className="flex items-center gap-3">
               {form.image_url && (
@@ -148,13 +150,13 @@ export default function EditTemplateModal({ config, template, isArabic, onClose,
               )}
               <label className="flex items-center gap-2 px-4 py-2.5 border-2 border-dashed rounded-xl cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors text-sm text-muted-foreground">
                 {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Image className="w-4 h-4" />}
-                {uploading ? (isArabic ? 'جاري الرفع...' : 'Uploading...') : (isArabic ? 'رفع صورة' : 'Upload Image')}
+                {uploading ? t('clientMessages.uploading') : t('clientMessages.uploadImage')}
                 <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
               </label>
               {form.image_url && (
                 <button onClick={() => setForm(f => ({ ...f, image_url: '' }))}
                   className="text-xs text-destructive hover:underline">
-                  {isArabic ? 'حذف' : 'Remove'}
+                  {t('clientMessages.remove')}
                 </button>
               )}
             </div>
@@ -163,10 +165,10 @@ export default function EditTemplateModal({ config, template, isArabic, onClose,
 
         {/* Footer */}
         <div className="flex justify-end gap-3 px-6 py-4 border-t bg-muted/30">
-          <Button variant="outline" onClick={onClose}>{isArabic ? 'إلغاء' : 'Cancel'}</Button>
+          <Button variant="outline" onClick={onClose}>{t('clientMessages.cancel')}</Button>
           <Button onClick={handleSave} disabled={saving} className="gap-2">
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            {saving ? (isArabic ? 'جاري الحفظ...' : 'Saving...') : (isArabic ? 'حفظ القالب' : 'Save Template')}
+            {saving ? t('clientMessages.saving') : t('clientMessages.saveTemplate')}
           </Button>
         </div>
       </div>

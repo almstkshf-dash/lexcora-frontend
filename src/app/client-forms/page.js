@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { useLanguage } from "@/contexts/LanguageContext"
+import { useTranslations } from "@/hooks/useTranslations"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { toast } from 'react-toastify'
@@ -24,10 +25,8 @@ const MESSAGE_CONFIGS = [
     bg: 'bg-blue-50 dark:bg-blue-950/40',
     border: 'border-blue-200 dark:border-blue-800',
     badge: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-    labelAr: 'رسالة الترحيب بالعميل',
-    labelEn: 'Client Welcome',
-    descAr: 'مع تعليمات الوصول للبوابة',
-    descEn: 'With portal access instructions',
+    labelKey: 'welcomeClient',
+    descKey: 'welcomeClientDesc',
   },
   {
     type: 'acquittal',
@@ -36,10 +35,8 @@ const MESSAGE_CONFIGS = [
     bg: 'bg-emerald-50 dark:bg-emerald-950/40',
     border: 'border-emerald-200 dark:border-emerald-800',
     badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300',
-    labelAr: 'تهنئة بالبراءة',
-    labelEn: 'Acquittal Congratulations',
-    descAr: 'قابل للتخصيص برقم القضية والحكم',
-    descEn: 'Customizable with case & verdict',
+    labelKey: 'acquittal',
+    descKey: 'acquittalDesc',
     hasVariables: ['case_number', 'verdict_summary'],
   },
   {
@@ -49,10 +46,8 @@ const MESSAGE_CONFIGS = [
     bg: 'bg-purple-50 dark:bg-purple-950/40',
     border: 'border-purple-200 dark:border-purple-800',
     badge: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
-    labelAr: 'تهنئة عيد الفطر',
-    labelEn: 'Eid Al-Fitr',
-    descAr: 'تهاني عيد الفطر المبارك',
-    descEn: 'Eid Al-Fitr congratulations',
+    labelKey: 'eidAlFitr',
+    descKey: 'eidAlFitrDesc',
   },
   {
     type: 'eid_al_adha',
@@ -61,10 +56,8 @@ const MESSAGE_CONFIGS = [
     bg: 'bg-amber-50 dark:bg-amber-950/40',
     border: 'border-amber-200 dark:border-amber-800',
     badge: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
-    labelAr: 'تهنئة عيد الأضحى',
-    labelEn: 'Eid Al-Adha',
-    descAr: 'تهاني عيد الأضحى المبارك',
-    descEn: 'Eid Al-Adha congratulations',
+    labelKey: 'eidAlAdha',
+    descKey: 'eidAlAdhaDesc',
   },
   {
     type: 'national_day',
@@ -73,10 +66,8 @@ const MESSAGE_CONFIGS = [
     bg: 'bg-green-50 dark:bg-green-950/40',
     border: 'border-green-200 dark:border-green-800',
     badge: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-    labelAr: 'اليوم الوطني',
-    labelEn: 'National Day',
-    descAr: 'قابل للتخصيص حسب الدولة',
-    descEn: 'Customizable by country',
+    labelKey: 'nationalDay',
+    descKey: 'nationalDayDesc',
     hasVariables: ['country_name'],
   },
   {
@@ -86,10 +77,8 @@ const MESSAGE_CONFIGS = [
     bg: 'bg-indigo-50 dark:bg-indigo-950/40',
     border: 'border-indigo-200 dark:border-indigo-800',
     badge: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300',
-    labelAr: 'رأس السنة الهجرية',
-    labelEn: 'Islamic New Year',
-    descAr: 'تهاني العام الهجري الجديد',
-    descEn: 'Islamic New Year greetings',
+    labelKey: 'islamicNewYear',
+    descKey: 'islamicNewYearDesc',
   },
   {
     type: 'gregorian_new_year',
@@ -98,10 +87,8 @@ const MESSAGE_CONFIGS = [
     bg: 'bg-rose-50 dark:bg-rose-950/40',
     border: 'border-rose-200 dark:border-rose-800',
     badge: 'bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300',
-    labelAr: 'رأس السنة الميلادية',
-    labelEn: 'Gregorian New Year',
-    descAr: 'تهاني العام الميلادي الجديد',
-    descEn: 'New Year congratulations',
+    labelKey: 'gregorianNewYear',
+    descKey: 'gregorianNewYearDesc',
     hasVariables: ['year'],
   },
   {
@@ -111,10 +98,8 @@ const MESSAGE_CONFIGS = [
     bg: 'bg-pink-50 dark:bg-pink-950/40',
     border: 'border-pink-200 dark:border-pink-800',
     badge: 'bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-300',
-    labelAr: 'عيد الميلاد',
-    labelEn: 'Birthday',
-    descAr: 'رسالة تهنئة بعيد ميلاد العميل',
-    descEn: 'Client birthday message',
+    labelKey: 'birthday',
+    descKey: 'birthdayDesc',
   },
   {
     type: 'ramadan',
@@ -123,14 +108,13 @@ const MESSAGE_CONFIGS = [
     bg: 'bg-yellow-50 dark:bg-yellow-950/40',
     border: 'border-yellow-200 dark:border-yellow-800',
     badge: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
-    labelAr: 'رمضان كريم',
-    labelEn: 'Ramadan',
-    descAr: 'تهاني شهر رمضان المبارك',
-    descEn: 'Ramadan Mubarak greetings',
+    labelKey: 'ramadan',
+    descKey: 'ramadanDesc',
   },
 ]
 
 export default function ClientFormsPage() {
+  const t = useTranslations()
   const { language } = useLanguage()
   const isArabic = language === 'ar'
 
@@ -200,16 +184,14 @@ export default function ClientFormsPage() {
                 <MessageCircle className="w-6 h-6 text-blue-300" />
               </div>
               <Badge className="bg-blue-500/20 text-blue-200 border-blue-400/30 backdrop-blur-sm">
-                {isArabic ? 'مركز التواصل مع العملاء' : 'Client Communications Hub'}
+                {t('clientMessages.hub')}
               </Badge>
             </div>
             <h1 className="text-3xl font-bold tracking-tight mb-1">
-              {isArabic ? 'رسائل العملاء' : 'Client Messages'}
+              {t('clientMessages.title')}
             </h1>
             <p className="text-blue-200/80 text-sm">
-              {isArabic
-                ? 'أرسل رسائل مخصصة لعملائك عبر البريد الإلكتروني أو واتساب'
-                : 'Send personalized messages to your clients via Email or WhatsApp'}
+              {t('clientMessages.subtitle')}
             </p>
           </div>
           <div className="flex gap-3">
@@ -219,7 +201,7 @@ export default function ClientFormsPage() {
               onClick={() => window.location.href = '/settings/integrations'}
             >
               <Settings className="w-4 h-4" />
-              {isArabic ? 'الإعدادات' : 'Settings'}
+              {t('clientMessages.settings')}
             </Button>
           </div>
         </div>
@@ -227,9 +209,9 @@ export default function ClientFormsPage() {
         {/* Stats row */}
         <div className="relative mt-6 grid grid-cols-3 gap-4">
           {[
-            { label: isArabic ? 'قوالب الرسائل' : 'Message Templates', value: MESSAGE_CONFIGS.length },
-            { label: isArabic ? 'قنوات الإرسال' : 'Send Channels', value: 2 },
-            { label: isArabic ? 'اللغات المدعومة' : 'Supported Languages', value: 2 },
+            { label: t('clientMessages.templates'), value: MESSAGE_CONFIGS.length },
+            { label: t('clientMessages.sendChannels'), value: 2 },
+            { label: t('clientMessages.supportedLangs'), value: 2 },
           ].map((s, i) => (
             <div key={i} className="bg-white/5 backdrop-blur rounded-xl p-4 border border-white/10 text-center">
               <div className="text-2xl font-bold text-white">{s.value}</div>
@@ -242,8 +224,8 @@ export default function ClientFormsPage() {
       {/* ── Tabs ── */}
       <div className="flex gap-2 border-b border-border pb-0">
         {[
-          { id: 'messages', labelAr: 'رسائل التواصل', labelEn: 'Communications', icon: MessageCircle },
-          { id: 'quotes', labelAr: 'عروض الأسعار', labelEn: 'Price Quotes', icon: DollarSign },
+          { id: 'messages', labelKey: 'communications', icon: MessageCircle },
+          { id: 'quotes', labelKey: 'priceQuotes', icon: DollarSign },
         ].map(tab => (
           <button
             key={tab.id}
@@ -255,7 +237,7 @@ export default function ClientFormsPage() {
             }`}
           >
             <tab.icon className="w-4 h-4" />
-            {isArabic ? tab.labelAr : tab.labelEn}
+            {t(`clientMessages.${tab.labelKey}`)}
           </button>
         ))}
       </div>
@@ -266,7 +248,7 @@ export default function ClientFormsPage() {
           {loading ? (
             <div className="flex items-center justify-center h-64 gap-3">
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
-              <span className="text-muted-foreground">{isArabic ? 'جاري التحميل...' : 'Loading...'}</span>
+              <span className="text-muted-foreground">{t('clientMessages.loading')}</span>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
@@ -276,7 +258,7 @@ export default function ClientFormsPage() {
                 return (
                   <div
                     key={config.type}
-                    className={`group relative rounded-2xl border-2 ${config.border} ${config.bg} p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5`}
+                    className={`group relative rounded-2xl border-2 ${config.border} ${config.bg} p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 flex flex-col`}
                   >
                     {/* Top row */}
                     <div className="flex items-start justify-between mb-4">
@@ -284,16 +266,16 @@ export default function ClientFormsPage() {
                         <Icon className="w-5 h-5" />
                       </div>
                       <Badge className={`text-xs font-medium ${config.badge} border-0`}>
-                        {isArabic ? 'قالب' : 'Template'}
+                        {t('clientMessages.templateBadge')}
                       </Badge>
                     </div>
 
                     {/* Title */}
                     <h3 className="font-bold text-base mb-1 text-foreground">
-                      {isArabic ? config.labelAr : config.labelEn}
+                      {t(`clientMessages.${config.labelKey}`)}
                     </h3>
                     <p className="text-xs text-muted-foreground mb-4">
-                      {isArabic ? config.descAr : config.descEn}
+                      {t(`clientMessages.${config.descKey}`)}
                     </p>
 
                     {/* Preview snippet */}
@@ -315,23 +297,23 @@ export default function ClientFormsPage() {
                     )}
 
                     {/* Actions */}
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 mt-auto">
                       <Button
                         size="sm"
-                        variant="outline"
-                        className="flex-1 gap-1.5 text-xs"
+                        variant="secondary"
+                        className="flex-1 bg-white/50 hover:bg-white dark:bg-black/20 dark:hover:bg-black/40 text-xs shadow-sm"
                         onClick={() => openEdit(config)}
                       >
-                        <Edit3 className="w-3 h-3" />
-                        {isArabic ? 'تعديل' : 'Edit'}
+                        <Edit3 className="w-3 h-3 me-2" />
+                        {t('clientMessages.edit')}
                       </Button>
                       <Button
                         size="sm"
-                        className={`flex-1 gap-1.5 text-xs bg-gradient-to-r ${config.gradient} border-0 text-white hover:opacity-90`}
+                        className={`flex-1 bg-gradient-to-r ${config.gradient} text-white hover:opacity-90 text-xs shadow-md`}
                         onClick={() => openSend(config)}
                       >
-                        <Send className="w-3 h-3" />
-                        {isArabic ? 'إرسال' : 'Send'}
+                        <Send className="w-3 h-3 me-2" />
+                        {t('clientMessages.send')}
                       </Button>
                     </div>
                   </div>
@@ -355,7 +337,7 @@ export default function ClientFormsPage() {
           ) : forms.length === 0 ? (
             <div className="text-center py-16 text-muted-foreground">
               <FileText className="w-12 h-12 mx-auto mb-3 opacity-30" />
-              <p>{isArabic ? 'لا توجد عروض أسعار بعد' : 'No price quotes yet'}</p>
+              <p>{t('clientMessages.noPriceQuotes')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -372,7 +354,7 @@ export default function ClientFormsPage() {
                   </p>
                   <Button size="sm" variant="outline" className="w-full gap-2 text-xs" onClick={() => downloadPartiesForm(form.id)}>
                     <Eye className="w-3 h-3" />
-                    {isArabic ? 'عرض وتحميل' : 'View & Download'}
+                    {t('clientMessages.viewAndDownload')}
                   </Button>
                 </div>
               ))}

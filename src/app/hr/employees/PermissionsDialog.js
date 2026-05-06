@@ -27,7 +27,9 @@ export default function PermissionsModal({ trigger,id }) {
         }
     );
 
-    const permissions = permissionsData?.data || [];
+    const permissions = useMemo(() => {
+        return permissionsData?.data || [];
+    }, [permissionsData]);
 
     // Group permissions by permission_group_name
     const groupedPermissions = useMemo(() => {
@@ -44,7 +46,45 @@ export default function PermissionsModal({ trigger,id }) {
 
     // Helper function to get translated group name
     const getGroupNameTranslation = (groupName) => {
-        return t(`permissions.${groupName}`) || groupName
+        const translations = {
+            'annual_leaves': { ar: 'الإجازات السنوية', en: 'Annual Leaves' },
+            'attendance': { ar: 'الحضور', en: 'Attendance' },
+            'case_classifications': { ar: 'تصنيفات القضايا', en: 'Case Classifications' },
+            'case_degrees': { ar: 'درجات التقاضي', en: 'Court Degrees' },
+            'case_documents': { ar: 'مستندات القضايا', en: 'Case Documents' },
+            'case_parties': { ar: 'أطراف القضية', en: 'Case Parties' },
+            'case_types': { ar: 'أنواع القضايا', en: 'Case Types' },
+            'cases': { ar: 'القضايا', en: 'Cases' },
+            'client_deals': { ar: 'الاتفاقيات', en: 'Deals' },
+            'courts': { ar: 'المحاكم', en: 'Courts' },
+            'deductions': { ar: 'الخصومات', en: 'Deductions' },
+            'employee_documents': { ar: 'مستندات الموظفين', en: 'Employee Documents' },
+            'employee_requests': { ar: 'طلبات الموظفين', en: 'Employee Requests' },
+            'executions': { ar: 'التنفيذات', en: 'Executions' },
+            'forms': { ar: 'النماذج', en: 'Forms' },
+            'hr_notifications': { ar: 'تنبيهات الموارد البشرية', en: 'HR Notifications' },
+            'judicial_notices': { ar: 'الإشعارات القضائية', en: 'Judicial Notices' },
+            'meetings': { ar: 'الاجتماعات', en: 'Meetings' },
+            'memos': { ar: 'المذكرات', en: 'Memos' },
+            'other_leaves': { ar: 'إجازات أخرى', en: 'Other Leaves' },
+            'parties': { ar: 'الموكلين', en: 'Parties' },
+            'party_documents': { ar: 'مستندات الموكلين', en: 'Party Documents' },
+            'party_orders': { ar: 'طلبات الموكلين', en: 'Party Orders' },
+            'performance': { ar: 'الأداء', en: 'Performance' },
+            'petitions': { ar: 'العرائض', en: 'Petitions' },
+            'reviews': { ar: 'التقييمات', en: 'Reviews' },
+            'sessions': { ar: 'الجلسات', en: 'Sessions' },
+            'sick_leaves': { ar: 'الإجازات المرضية', en: 'Sick Leaves' },
+            'tasks': { ar: 'المهام', en: 'Tasks' },
+            'trainings': { ar: 'التدريبات', en: 'Trainings' },
+        };
+
+        const translation = translations[groupName];
+        if (translation) {
+            return isRTL ? translation.ar : translation.en;
+        }
+
+        return groupName
             .split('_')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');

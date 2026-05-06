@@ -45,10 +45,14 @@ export default function EmployeeTablePage() {
   });
 
   // Extract employees data from API response
-  const employees = employeesResponse?.success ? employeesResponse.data : [];
+  const employees = useMemo(() => {
+    return employeesResponse?.success ? employeesResponse.data : [];
+  }, [employeesResponse]);
   
   // Extract roles data from API response
-  const roles = rolesResponse?.success ? rolesResponse.data : [];
+  const roles = useMemo(() => {
+    return rolesResponse?.success ? rolesResponse.data : [];
+  }, [rolesResponse]);
 
   // Filter and sort data
   const filteredAndSortedData = useMemo(() => {

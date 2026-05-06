@@ -1,5 +1,5 @@
 import { User, Eye, Shield, List, Edit, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next-intl/client';
 import PermissionsDialog from './PermissionsDialog';
 import EditEmployeeDialog from './edit/EditEmployeeDialog';
 import ActivityLogModal from './ActivityLogModal';

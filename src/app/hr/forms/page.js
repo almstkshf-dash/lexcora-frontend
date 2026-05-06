@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useLanguage } from "@/contexts/LanguageContext"
 import { useTranslations } from "@/hooks/useTranslations"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
@@ -101,7 +101,7 @@ export default function FormsPage() {
   const [isDeleting, setIsDeleting] = useState(false)
 
   // Fetch forms data
-  const fetchForms = async () => {
+  const fetchForms = useCallback(async () => {
     try {
       setLoading(true)
       const response = await getForms()
@@ -116,12 +116,11 @@ export default function FormsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [t])
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchForms()
-  }, [])
+  }, [fetchForms])
 
   // Handle form download
   const handleDownload = async (form) => {
@@ -176,7 +175,7 @@ export default function FormsPage() {
   const filteredForms = forms.filter(form => {
     const matchesSearch = !searchTerm || 
       form.document_for.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      t(`forms.types.${form.document_for.replace(/ /g, '_')}`).toLowerCase().includes(searchTerm.toLowerCase())
+      t(`forms.types.${form.document_for.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`, { defaultValue: form.document_for }).toLowerCase().includes(searchTerm.toLowerCase())
     
     const matchesType = !selectedType || selectedType === 'all' || form.document_for === selectedType
     
@@ -251,7 +250,7 @@ export default function FormsPage() {
                   <SelectItem value="all">{t('forms.allTypes')}</SelectItem>
                   {uniqueTypes.map(type => (
                     <SelectItem key={type} value={type}>
-                      {t(`forms.types.${type.replace(/ /g, '_')}`)}
+                      {t(`forms.types.${type.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`, { defaultValue: type })}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -303,7 +302,7 @@ export default function FormsPage() {
                         {/* Title */}
                         <div>
                           <h3 className="font-semibold text-sm mb-1">
-                            {t(`forms.types.${documentFor.replace(/ /g, '_')}`)}
+                            {t(`forms.types.${documentFor.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`, { defaultValue: documentFor })}
                           </h3>
                           <p className="text-xs opacity-75">
                             {isArabic ? 'انقر للتحميل' : 'Click to download'}
@@ -342,8 +341,8 @@ export default function FormsPage() {
             </AlertDialogTitle>
             <AlertDialogDescription>
               {isArabic 
-                ? `هل أنت متأكد من حذف نموذج "${formToDelete ? t(`forms.types.${formToDelete.document_for.replace(/ /g, '_')}`) : ''}"؟ هذا الإجراء لا يمكن التراجع عنه وسيتم حذف الملف من التخزين السحابي.`
-                : `Are you sure you want to delete the "${formToDelete ? t(`forms.types.${formToDelete.document_for.replace(/ /g, '_')}`) : ''}" form? This action cannot be undone and will delete the file from cloud storage.`
+                ? `هل أنت متأكد من حذف نموذج "${formToDelete ? t(`forms.types.${formToDelete.document_for.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`, { defaultValue: formToDelete.document_for }) : ''}"؟ هذا الإجراء لا يمكن التراجع عنه وسيتم حذف الملف من التخزين السحابي.`
+                : `Are you sure you want to delete the "${formToDelete ? t(`forms.types.${formToDelete.document_for.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`, { defaultValue: formToDelete.document_for }) : ''}" form? This action cannot be undone and will delete the file from cloud storage.`
               }
             </AlertDialogDescription>
           </AlertDialogHeader>

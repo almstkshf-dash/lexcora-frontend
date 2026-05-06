@@ -40,7 +40,7 @@ const PermissionsTab = ({ employeeId }) => {
   const error = employeeError || permissionsError;
 
   const employee = employeeData?.data;
-  const permissions = permissionsData?.data || [];
+  const permissions = useMemo(() => permissionsData?.data || [], [permissionsData?.data]);
 
   // Initialize local permissions when data is loaded
   React.useEffect(() => {

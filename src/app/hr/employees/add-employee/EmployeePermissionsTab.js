@@ -11,7 +11,7 @@ export default function EmployeePermissionsTab({ form, setForm }) {
 
   // Fetch permissions directly using SWR
   const { data: permissionsData, error: permissionsError, isLoading: permissionsLoading } = useSWR('/permissions', getPermissions);
-  const permissions = permissionsData?.success ? permissionsData.data : [];
+  const permissions = useMemo(() => permissionsData?.success ? permissionsData.data : [], [permissionsData]);
 
   // Group permissions by permission_group_name
   const groupedPermissions = useMemo(() => {

@@ -55,30 +55,38 @@ export default function ActivityLogModal({ trigger, employee }) {
   );
 
   const getActionLabel = (action) => {
-    const actionKeyMap = {
-      login: "login",
-      logout: "logout",
-      add: "add",
-      update: "update",
-      delete: "delete",
-      error: "error",
-      failed_login: "failedLogin",
-      warning: "warning",
-      other: "other",
-    };
-
-    const actionKey = actionKeyMap[action];
-    return actionKey ? t(`activityLog.${actionKey}`) : action;
+    switch (action) {
+      case "login":
+        return t("activityLog.login");
+      case "logout":
+        return t("activityLog.logout");
+      case "add":
+        return t("activityLog.add");
+      case "update":
+        return t("activityLog.update");
+      case "delete":
+        return t("activityLog.delete");
+      case "error":
+        return t("activityLog.error");
+      case "failed_login":
+        return t("activityLog.failedLogin");
+      case "warning":
+        return t("activityLog.warning");
+      case "other":
+        return t("activityLog.other");
+      default:
+        return action;
+    }
   };
 
-  const logs = data?.data || [];
   const filteredLogs = useMemo(() => {
+    const logs = data?.data || [];
     return [...logs].sort((a, b) => {
       const dateA = new Date(a.created_at);
       const dateB = new Date(b.created_at);
       return sortBy === "newest" ? dateB - dateA : dateA - dateB;
     });
-  }, [logs, sortBy]);
+  }, [data, sortBy]);
 
 
   const isClient = useIsClient();

@@ -3666,16 +3666,7 @@
     "relatedCasesTitle": "القضايا ذات الصلة ({count})",
     "noRelatedCases": "لا توجد قضايا مرتبطة بعد."
   },
-  "clientForms": {
-    "title": "مركز التواصل مع العملاء",
-    "browseAndDownload": "إدارة قوالب الرسائل والإرسال للعملاء",
-    "noFormsFound": "لا توجد نماذج",
-    "clickToDownload": "اضغط للتحميل",
-    "createdBy": "أنشئ بواسطة",
-    "deleteForm": "حذف النموذج",
-    "formDeleted": "تم حذف النموذج بنجاح",
-    "errorDeleting": "خطأ في حذف النموذج"
-  },
+
   "clientMessages": {
     "templateSaved": "تم حفظ القالب",
     "sendSuccess": "تم إرسال الرسالة بنجاح",

@@ -63,6 +63,7 @@ const MobileHeader = ({ onMenuToggle }) => {
           className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label={t('navigation.openMenu')}
         >
+          <span className="sr-only">{t('navigation.openMenu')}</span>
           <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
         </button>
 
@@ -93,6 +94,7 @@ const MobileHeader = ({ onMenuToggle }) => {
             aria-controls="mobile-search-panel"
             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
+            <span className="sr-only">{t('navigation.toggleSearch')}</span>
             <Search className="w-5 h-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
           </button>
 

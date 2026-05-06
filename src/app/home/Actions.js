@@ -56,6 +56,7 @@ function Actions({ theme = 'blue', onEdit, sessionId, caseId }) {
           aria-label={t('home.editAction')}
           className={`p-1 rounded text-gray-400 ${hoverColor} cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2`}
         >
+          <span className="sr-only">{t('home.editAction')}</span>
           <Edit className="w-4 h-4" aria-hidden="true" />
         </button>
         {/* Future actions can be added here */}

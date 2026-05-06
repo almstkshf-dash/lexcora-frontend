@@ -47,6 +47,7 @@ const MenuItem = React.memo(({
             : 'hover:bg-sidebar-accent'
           }
         `}
+        aria-label={item.label}
         aria-current={isActive ? 'page' : undefined}
       >
         <IconComponent className={`
@@ -59,6 +60,9 @@ const MenuItem = React.memo(({
             : 'text-sidebar-foreground/70 group-hover:text-sidebar-foreground'
           }
         `} />
+        {isCollapsed && (
+          <span className="sr-only">{item.label}</span>
+        )}
         {!isCollapsed && (
           <>
             <span className="font-medium transition-colors">{item.label}</span>
@@ -106,6 +110,7 @@ const MenuItem = React.memo(({
               : 'hover:bg-sidebar-accent'
           }
         `}
+        aria-label={item.label}
         aria-expanded={isOpen}
         aria-haspopup="menu"
         aria-current={isCategoryActive ? 'page' : undefined}
@@ -125,6 +130,9 @@ const MenuItem = React.memo(({
                 : 'text-sidebar-foreground/70 group-hover:text-sidebar-foreground'
             }
           `} />
+          {isCollapsed && (
+            <span className="sr-only">{item.label}</span>
+          )}
           {!isCollapsed && (
             <span className={`font-medium transition-colors ${
               item.type === 'category' ? 'text-sidebar-foreground/90' : ''

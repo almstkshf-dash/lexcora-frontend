@@ -248,7 +248,7 @@ export default function PayrollPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-              <Clock className="w-4 h-4 text-orange-500" />
+              <Clock className="w-4 h-4 text-orange-600" />
               {t('payroll.pendingPayments')}
             </CardTitle>
           </CardHeader>

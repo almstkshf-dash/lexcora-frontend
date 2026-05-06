@@ -87,7 +87,7 @@ const NotificationsSettingsPage = () => {
       title: t('settings.systemUpdates'),
       description: t('settings.systemNotificationsDesc'),
       icon: AlertTriangle,
-      color: 'text-orange-600',
+      color: 'text-orange-700',
       settings: ['emailSystemUpdates', 'emailMaintenanceAlerts']
     }
   ];

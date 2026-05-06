@@ -184,9 +184,12 @@ export default function Page() {
                       onClick={() => setShowPassword(!showPassword)}
                       className={`absolute top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors ${isRTL ? 'left-3' : 'right-3'}`}
                       disabled={authLoading}
-                      aria-label={showPassword ? t('auth.hidePassword') || 'Hide password' : t('auth.showPassword') || 'Show password'}
+                      aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      <span className="sr-only">
+                        {showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
+                      </span>
                     </button>
                   </div>
                   {errors.password && (

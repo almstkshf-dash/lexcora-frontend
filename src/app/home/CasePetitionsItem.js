@@ -69,7 +69,7 @@ const CasePetitionsItem = React.memo(function CasePetitionsItem({ petition }) {
 
           {/* File Number */}
           <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-            <FileText className="w-4 h-4 flex-shrink-0 text-orange-500 dark:text-orange-400" aria-hidden="true" />
+            <FileText className="w-4 h-4 flex-shrink-0 text-orange-600 dark:text-orange-300" aria-hidden="true" />
             <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.fileNumber')}:</span>
             <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{petition.file_number}</span>
           </div>
@@ -125,7 +125,7 @@ const CasePetitionsItem = React.memo(function CasePetitionsItem({ petition }) {
                   >
                     {Math.abs(daysInfo.days)}
                   </div>
-                  <span className={`text-xs font-semibold truncate ${daysInfo.isOverdue ? 'text-red-600' : daysInfo.isUrgent ? 'text-orange-600' : 'text-green-700'}`}>
+                  <span className={`text-xs font-semibold truncate ${daysInfo.isOverdue ? 'text-red-600' : daysInfo.isUrgent ? 'text-orange-700' : 'text-green-700'}`}>
                     {Math.abs(daysInfo.days) === 1 ? t('home.day') : t('home.days')} {daysInfo.isOverdue ? t('home.overdue') : t('home.remaining')}
                   </span>
                 </div>
@@ -142,8 +142,10 @@ const CasePetitionsItem = React.memo(function CasePetitionsItem({ petition }) {
               href={`/cases/${petition.case_id}/edit`}
               className="p-1.5 bg-blue-50/50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded transition-all duration-200 text-blue-600 dark:text-blue-400 flex-shrink-0 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30"
               title={t('home.viewDetails')}
+              aria-label={t('home.viewDetails')}
             >
               <Info className="w-3.5 h-3.5" aria-hidden="true" />
+              <span className="sr-only">{t('home.viewDetails')}</span>
             </Link>
           </div>
 

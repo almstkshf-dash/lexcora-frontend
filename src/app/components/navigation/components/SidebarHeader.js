@@ -56,6 +56,7 @@ const SidebarHeader = ({ isRTL, isMobile, onClose, isCollapsed, onToggleCollapse
             className={`absolute ${isRTL ? 'left-[-1rem]' : 'right-[-1rem]'} top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-sidebar-accent border border-sidebar-border shadow-md flex items-center justify-center text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/80 transition-all z-50`}
             aria-label={isCollapsed ? (isRTL ? "توسيع القائمة" : "Expand Menu") : (isRTL ? "طي القائمة" : "Collapse Menu")}
           >
+            <span className="sr-only">{isCollapsed ? (isRTL ? "توسيع القائمة" : "Expand Menu") : (isRTL ? "طي القائمة" : "Collapse Menu")}</span>
             {isRTL ? (
               isCollapsed ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
             ) : (
@@ -71,6 +72,7 @@ const SidebarHeader = ({ isRTL, isMobile, onClose, isCollapsed, onToggleCollapse
             className="relative p-2.5 rounded-xl text-sidebar-foreground/70 hover:text-sidebar-foreground bg-sidebar-accent/50 hover:bg-sidebar-accent transition-all duration-300 hover:scale-110 active:scale-95 group shadow-sm"
             aria-label={isRTL ? "إغلاق القائمة" : "Close Menu"}
           >
+            <span className="sr-only">{isRTL ? "إغلاق القائمة" : "Close Menu"}</span>
             <CircleX className="w-5 h-5 transition-transform group-hover:rotate-90 duration-300" />
           </button>
         )}

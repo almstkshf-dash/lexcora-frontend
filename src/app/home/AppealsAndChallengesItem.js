@@ -62,7 +62,7 @@ const AppealsAndChallengesItem = React.memo(function AppealsAndChallengesItem({ 
           {/* File Number */}
           {displayFileNumber && (
             <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-              <File className="w-4 h-4 flex-shrink-0 text-orange-500 dark:text-orange-400" aria-hidden="true" />
+              <File className="w-4 h-4 flex-shrink-0 text-orange-600 dark:text-orange-300" aria-hidden="true" />
               <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.fileNumber')}:</span>
               <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayFileNumber}</span>
             </div>

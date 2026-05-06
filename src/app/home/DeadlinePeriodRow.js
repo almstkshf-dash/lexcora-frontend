@@ -35,7 +35,7 @@ const URGENCY_STYLES = {
   urgent: {
     circle: 'bg-orange-600',
     pulse: 'bg-orange-200/50 dark:bg-orange-900/30',
-    text: 'text-orange-600 dark:text-orange-400',
+    text: 'text-orange-700 dark:text-orange-300',
   },
   safe: {
     circle: 'bg-green-700',
@@ -100,6 +100,7 @@ function DeadlinePeriodRow({ color = 'blue', Icon, label, endDate, info }) {
             >
               {Math.abs(info.days)}
             </div>
+            <span className="sr-only">{statusLabel}</span>
             <div
               className={`absolute inset-[-4px] rounded-full animate-pulse ${urgency.pulse}`}
               aria-hidden="true"

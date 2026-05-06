@@ -26,7 +26,7 @@ const WIDGET_THEMES = {
   orange: {
     header: 'bg-gradient-to-r from-orange-50/50 to-orange-100/50 dark:from-orange-900/10 dark:to-orange-800/10 border-b border-orange-100 dark:border-orange-900/30',
     title: 'text-orange-900 dark:text-orange-100',
-    badge: 'bg-orange-500',
+    badge: 'bg-orange-700',
   },
 }
 
@@ -118,8 +118,8 @@ function DashboardWidgetCard({
           {count > 0 && (
             <span
               className={`relative flex items-center justify-center min-w-[24px] h-[24px] px-1.5 text-xs font-bold ${colors.badge} text-white rounded-full shadow-sm ring-2 ring-white dark:ring-gray-900`}
-              aria-label={badgeAriaLabel}
             >
+              <span className="sr-only">{badgeAriaLabel}</span>
               <span className="relative z-10" aria-hidden="true">{count}</span>
             </span>
           )}

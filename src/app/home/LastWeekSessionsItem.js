@@ -35,7 +35,7 @@ function LastWeekSessionsItem({
     
     const degreeConfig = {
       appeal: { label: t('home.appeal'), color: 'bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-400' },
-      first_instance: { label: t('home.firstInstance'), color: 'bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400' },
+      first_instance: { label: t('home.firstInstance'), color: 'bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-300' },
       cassation: { label: t('home.cassation'), color: 'bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400' }
     }
     
@@ -74,7 +74,7 @@ function LastWeekSessionsItem({
         <div className="grid grid-cols-1 gap-2">
           {displayFileNumber && (
             <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-              <FileText className="w-4 h-4 flex-shrink-0 text-orange-500 dark:text-orange-400" />
+              <FileText className="w-4 h-4 flex-shrink-0 text-orange-600 dark:text-orange-300" />
               <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.fileNumber')}: </span>
               <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayFileNumber}</span>
             </div>
@@ -88,9 +88,9 @@ function LastWeekSessionsItem({
           
           {displayTime && (
             <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-              <Clock className="w-4 h-4 flex-shrink-0 text-orange-500 dark:text-orange-400" />
+              <Clock className="w-4 h-4 flex-shrink-0 text-orange-600 dark:text-orange-300" />
               <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.sessionTime')}: </span>
-              <span className="font-semibold text-orange-600 dark:text-orange-400 truncate">{displayTime}</span>
+              <span className="font-semibold text-orange-700 dark:text-orange-300 truncate">{displayTime}</span>
             </div>
           )}
 
@@ -113,8 +113,10 @@ function LastWeekSessionsItem({
               onClick={() => setIsEditModalOpen(true)}
               className="p-1.5 bg-blue-50/50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded transition-all duration-200 text-blue-600 dark:text-blue-400 flex-shrink-0 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30"
               title={t('home.editSession')}
+              aria-label={t('home.editSession')}
             >
               <Pen className="w-3.5 h-3.5" />
+              <span className="sr-only">{t('home.editSession')}</span>
             </button>
           </div>
         </div>

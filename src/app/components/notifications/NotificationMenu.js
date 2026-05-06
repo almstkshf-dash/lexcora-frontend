@@ -119,6 +119,7 @@ function NotificationMenu() {
           className="relative h-10 w-10 rounded-full hover:bg-primary/10 transition-all duration-300 group"
           aria-label={isArabic ? 'التنبيهات' : 'Notifications'}
         >
+          <span className="sr-only">{isArabic ? 'التنبيهات' : 'Notifications'}</span>
           <Bell className={cn(
             "h-5 w-5 transition-transform duration-300 group-hover:scale-110", 
             isPending && "opacity-50",

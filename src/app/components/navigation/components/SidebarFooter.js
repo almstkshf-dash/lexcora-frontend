@@ -58,6 +58,7 @@ const SidebarFooter = ({ user, userRole, isRTL, onLogout, isCollapsed }) => {
                   className={`relative p-2 rounded-xl text-sidebar-foreground/40 hover:text-red-500 hover:bg-red-500/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/20 ${isCollapsed ? 'mt-2' : ''}`}
                   aria-label={t('buttons.logout') || (isRTL ? "تسجيل الخروج" : "Logout")}
                 >
+                  <span className="sr-only">{t('buttons.logout') || (isRTL ? "تسجيل الخروج" : "Logout")}</span>
                   <LogOut className="w-5 h-5 transition-transform group-hover:translate-x-0.5" />
                 </button>
               </TooltipTrigger>

@@ -72,7 +72,7 @@ const SearchResultItem = ({
         <>
           <div className="flex items-center gap-3 flex-1">
             <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-              <User className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+              <User className="w-4 h-4 text-orange-700 dark:text-orange-300" />
             </div>
             <div className="flex flex-col gap-0.5 min-w-0">
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">

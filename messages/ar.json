@@ -134,6 +134,13 @@
     "allStatus": "جميع الحالات",
     "noDataFound": "لا توجد بيانات"
   },
+  "pagination": {
+    "firstPage": "الصفحة الأولى",
+    "previousPage": "الصفحة السابقة",
+    "nextPage": "الصفحة التالية",
+    "lastPage": "الصفحة الأخيرة",
+    "summary": "عرض {currentPage} من {totalPages}"
+  },
   "navigation": {
     "dashboard": "لوحة التحكم",
     "casesManagement": "إدارة القضايا",
@@ -3203,7 +3210,6 @@
     "focusing": "يعمل",
     "breakTime": "وقت الاستراحة"
   },
-
   "cashFlowCsv": {
     "fileNamePrefix": "cash_flow",
     "metric": "المؤشر",

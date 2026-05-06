@@ -518,6 +518,7 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
           className={`absolute top-2 ${isRTL ? 'left-2' : 'right-2'} z-10 h-8 w-8 rounded-full bg-background/80 hover:bg-accent border shadow-sm`}
           aria-label="Close chat"
         >
+          <span className="sr-only">Close chat</span>
           <X size={18} />
         </Button>
 
@@ -652,6 +653,7 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
                       aria-label="Copy message"
                       title={isRTL ? 'نسخ الرسالة' : 'Copy message'}
                     >
+                      <span className="sr-only">{isRTL ? 'نسخ الرسالة' : 'Copy message'}</span>
                       {copiedId === message.id ? (
                         <Check size={14} className="text-green-600" />
                       ) : (
@@ -744,6 +746,7 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
                     className="text-muted-foreground hover:text-foreground"
                     aria-label={isRTL ? 'حذف' : 'Remove'}
                   >
+                    <span className="sr-only">{isRTL ? 'حذف' : 'Remove'}</span>
                     <Trash2 size={12} />
                   </button>
                 </div>
@@ -769,6 +772,7 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
               size="icon"
               aria-label="Send message"
             >
+              <span className="sr-only">Send message</span>
               {(isLoading || isUploading || isStreaming) ? <Loader2 className="animate-spin" size={20} /> : <Send size={18} className={isRTL ? 'rotate-180' : ''} />}
             </Button>
           </div>

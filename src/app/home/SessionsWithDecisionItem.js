@@ -143,7 +143,7 @@ function SessionsWithDecisionItem({
           {/* File Number */}
           {session?.file_number && (
             <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-              <File className="w-4 h-4 flex-shrink-0 text-orange-500 dark:text-orange-400" />
+              <File className="w-4 h-4 flex-shrink-0 text-orange-600 dark:text-orange-300" />
               <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.fileNumber')}: </span>
               <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{session.file_number}</span>
             </div>
@@ -185,7 +185,7 @@ function SessionsWithDecisionItem({
 
           {/* Legal Periods */}
           <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-            <Calendar className={`w-4 h-4 flex-shrink-0 ${deadlineInfo?.isUrgent ? 'animate-pulse text-orange-500' : 'text-purple-500'}`} />
+            <Calendar className={`w-4 h-4 flex-shrink-0 ${deadlineInfo?.isUrgent ? 'animate-pulse text-orange-600 dark:text-orange-300' : 'text-purple-500'}`} />
             <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.legalPeriodsSpecified')}: </span>
             <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">
               {deadlineInfo ? `(${deadlineInfo.deadlineDate})` : tSessions('labels.notCalculated')}
@@ -195,7 +195,7 @@ function SessionsWithDecisionItem({
                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0 ${deadlineInfo.isOverdue ? 'bg-red-600' : deadlineInfo.isUrgent ? 'bg-orange-600' : 'bg-green-700'}`}>
                    {Math.abs(deadlineInfo.daysRemaining)}
                  </div>
-                 <span className={`text-xs font-semibold truncate ${deadlineInfo.isOverdue ? 'text-red-600' : deadlineInfo.isUrgent ? 'text-orange-600' : 'text-green-700'}`}>
+                 <span className={`text-xs font-semibold truncate ${deadlineInfo.isOverdue ? 'text-red-600' : deadlineInfo.isUrgent ? 'text-orange-700' : 'text-green-700'}`}>
                    {deadlineInfo.isOverdue ? tSessions('labels.overdue') : tSessions('labels.remaining')}
                  </span>
                </div>

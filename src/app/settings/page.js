@@ -62,7 +62,7 @@ const SettingsPage = () => {
       description: t('settings.notificationsDescription'),
       icon: Bell,
       href: '/settings/notifications',
-      color: 'text-orange-600',
+      color: 'text-orange-700',
       bgColor: 'bg-orange-50 dark:bg-orange-950'
     },
     {

@@ -129,7 +129,9 @@ export default function FocusCycleBar() {
           onClick={() => setIsMinimized(!isMinimized)}
           className="h-5 w-5 flex items-center justify-center rounded-full bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground border border-border shadow-sm transition-transform active:scale-95"
           title={isMinimized ? t("focusCycle.showTimer") : t("focusCycle.minimize")}
+          aria-label={isMinimized ? t("focusCycle.showTimer") : t("focusCycle.minimize")}
         >
+          <span className="sr-only">{isMinimized ? t("focusCycle.showTimer") : t("focusCycle.minimize")}</span>
           {isMinimized ? <Play size={10} /> : <X size={10} />}
         </button>
       </div>
@@ -169,6 +171,7 @@ export default function FocusCycleBar() {
                 className="flex h-7 w-7 items-center justify-center rounded-full bg-muted/60 text-foreground hover:bg-muted transition-colors"
                 aria-label={isRunning ? t("focusCycle.pause") : t("focusCycle.resume")}
               >
+                <span className="sr-only">{isRunning ? t("focusCycle.pause") : t("focusCycle.resume")}</span>
                 {isRunning ? <Pause size={14} /> : <Play size={14} />}
               </button>
               <button
@@ -176,6 +179,7 @@ export default function FocusCycleBar() {
                 className="flex h-7 w-7 items-center justify-center rounded-full bg-muted/60 text-foreground hover:bg-muted transition-colors"
                 aria-label={t("focusCycle.reset")}
               >
+                <span className="sr-only">{t("focusCycle.reset")}</span>
                 <RefreshCw size={14} />
               </button>
             </div>

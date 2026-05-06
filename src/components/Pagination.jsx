@@ -64,6 +64,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
           aria-label={t("pagination.firstPage")}
         >
           <ChevronsLeft className="h-4 w-4" />
+          <span className="sr-only">{t("pagination.firstPage")}</span>
         </Button>
         
         <Button
@@ -74,6 +75,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
           aria-label={t("pagination.previousPage")}
         >
           <ChevronLeft className="h-4 w-4" />
+          <span className="sr-only">{t("pagination.previousPage")}</span>
         </Button>
 
         <div className="flex gap-1">
@@ -103,6 +105,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
           aria-label={t("pagination.nextPage")}
         >
           <ChevronRight className="h-4 w-4" />
+          <span className="sr-only">{t("pagination.nextPage")}</span>
         </Button>
         
         <Button
@@ -113,6 +116,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
           aria-label={t("pagination.lastPage")}
         >
           <ChevronsRight className="h-4 w-4" />
+          <span className="sr-only">{t("pagination.lastPage")}</span>
         </Button>
       </div>
     </div>

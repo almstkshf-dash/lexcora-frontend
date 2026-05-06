@@ -61,6 +61,7 @@ const SearchInput = ({
               className="text-muted-foreground hover:text-foreground transition-colors focus:outline-none p-1 rounded-sm hover:bg-accent"
               aria-label={t('search.clearSearch')}
             >
+              <span className="sr-only">{t('search.clearSearch')}</span>
               <X className="h-4 w-4" />
             </button>
           </>

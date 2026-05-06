@@ -196,7 +196,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
           </div>
           
           <div className="flex items-center gap-4 text-sm font-medium">
-            <div className="flex items-center gap-1 text-orange-600">
+            <div className="flex items-center gap-1 text-orange-700">
               <AlertCircle className="h-4 w-4" />
               {statementLines.length} {t('unreconciledLines')}
             </div>

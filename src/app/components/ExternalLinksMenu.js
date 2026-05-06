@@ -148,8 +148,10 @@ function ExternalLinksMenu() {
           <Button 
             variant="ghost" 
             size="icon"
+            aria-label={t('externalLinks.title')}
           >
-            <LinkIcon className="h-5 w-5" />
+            <LinkIcon className="h-5 w-5" aria-hidden="true" />
+            <span className="sr-only">{t('externalLinks.title')}</span>
           </Button>
         </DropdownMenuTrigger>
         
@@ -212,9 +214,11 @@ function ExternalLinksMenu() {
                       size="icon"
                       className="absolute top-2 right-2 h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity z-10"
                       onClick={(e) => openDeleteDialog(link.id, e)}
-                      title={isArabic ? "حذف" : "Delete"}
+                      aria-label={t('common.delete')}
+                      title={t('common.delete')}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      <span className="sr-only">{t('common.delete')}</span>
                     </Button>
                   </div>
                 ))}

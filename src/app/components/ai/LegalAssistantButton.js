@@ -19,6 +19,7 @@ function LegalAssistantButton() {
         className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-primary/20 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 p-0"
         aria-label="Open Rased Assistant"
       >
+        <span className="sr-only">Open Rased Assistant</span>
         <Image
           src="/images/rased-icon.jpg"
           alt="Rased"

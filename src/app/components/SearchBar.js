@@ -305,6 +305,7 @@ const SearchBar = () => {
               focus:outline-none
             `}
           >
+            <span className="sr-only">{t('common.clearSearch')}</span>
             <X className="h-4 w-4" />
           </button>
         )}

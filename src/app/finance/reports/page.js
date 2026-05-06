@@ -138,7 +138,7 @@ const AgingCard = ({ party, isRTL, commonT }) => (
         </div>
         <div className="p-2 rounded bg-orange-500/10">
           <p className="text-muted-foreground mb-1">61-90</p>
-          <p className="font-bold text-orange-600">{party['61-90'].toLocaleString()}</p>
+          <p className="font-bold text-orange-700">{party['61-90'].toLocaleString()}</p>
         </div>
         <div className="p-2 rounded bg-red-500/10">
           <p className="text-muted-foreground mb-1">90+</p>

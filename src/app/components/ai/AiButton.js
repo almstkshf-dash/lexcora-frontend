@@ -19,6 +19,7 @@ function AiButton() {
         className={`fixed bottom-6 ${isRTL ? 'left-6' : 'right-6'} z-40 bg-background hover:bg-muted text-foreground p-1.5 rounded-full shadow-2xl hover:shadow-primary/25 transition-all duration-300 hover:scale-105 flex items-center gap-3 group border border-border/50 ring-1 ring-primary/10`}
         aria-label={isRTL ? "راصد" : "Rased Assistant"}
       >
+        <span className="sr-only">{isRTL ? "راصد" : "Rased Assistant"}</span>
         <div className="relative h-14 w-14 rounded-full overflow-hidden border border-primary/20 shadow-md bg-background shrink-0">
           <Image src="/images/rased-icon.jpg" alt="Rased" width={56} height={56} className="h-full w-full object-cover" />
         </div>

@@ -44,7 +44,7 @@ function NotificationsPage() {
       case 'critical':
         return <AlertTriangle className="h-4 w-4 text-red-600" />
       case 'warning':
-        return <Clock className="h-4 w-4 text-orange-500" />
+        return <Clock className="h-4 w-4 text-orange-600 dark:text-orange-300" />
       default:
         return <Bell className="h-4 w-4 text-blue-500" />
     }
@@ -158,10 +158,10 @@ function NotificationsPage() {
           </Card>
           <Card className="p-3">
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-orange-500" />
+              <Clock className="h-4 w-4 text-orange-600 dark:text-orange-300" />
               <div>
                 <p className="text-sm text-gray-600">{isArabic ? 'تحذير' : 'Warning'}</p>
-                <p className="text-xl font-bold text-orange-600">{summary.warning || 0}</p>
+                <p className="text-xl font-bold text-orange-700 dark:text-orange-300">{summary.warning || 0}</p>
               </div>
             </div>
           </Card>

@@ -149,7 +149,7 @@ const PerformanceSettingsPage = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-3 rounded-lg bg-orange-50 dark:bg-orange-950">
-                  <HardDrive className="h-6 w-6 text-orange-600" />
+                  <HardDrive className="h-6 w-6 text-orange-700" />
                 </div>
                 <div>
                   <CardTitle className="text-lg">
@@ -176,7 +176,7 @@ const PerformanceSettingsPage = () => {
                 <span className="text-muted-foreground">
                   {language === 'ar' ? 'الحجم التقريبي' : 'Estimated Size'}
                 </span>
-                <span className="font-medium text-orange-600">
+                <span className="font-medium text-orange-700">
                   {loading ? '...' : formatBytes(stats.notificationsCount)}
                 </span>
               </div>

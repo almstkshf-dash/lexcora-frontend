@@ -524,7 +524,7 @@ const EmployeeStatementModal = ({
               </div>
               <div className={`p-4 rounded-sg border ${balance >= 0 ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'}`}>
                 <div className={`text-sm mb-1 ${balance >= 0 ? 'text-blue-700' : 'text-orange-700'}`}>{t('balance')}</div>
-                <div className={`text-2xl font-bold ${balance >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>
+                <div className={`text-2xl font-bold ${balance >= 0 ? 'text-blue-600' : 'text-orange-700'}`}>
                   {formatCurrency(balance)}
                 </div>
               </div>

@@ -333,7 +333,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
               background: #f9fafb;
             }
             .amount-cell {
-              text-align: left;
+              text-align: end;
               font-family: monospace;
               font-weight: 600;
             }
@@ -487,7 +487,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
         {loading ? (
           <div className="flex items-center justify-center p-12">
             <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-            <span className="mr-3">{t('loadingData')}</span>
+            <span className="me-3">{t('loadingData')}</span>
           </div>
         ) : invoice ? (
           <>
@@ -601,7 +601,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                   background: #f9fafb;
                 }
                 .amount-cell {
-                  text-align: left;
+                  text-align: end;
                   font-family: monospace;
                   font-weight: 600;
                 }
@@ -902,3 +902,4 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
     </>
   );
 }
+

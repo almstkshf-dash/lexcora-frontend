@@ -100,7 +100,7 @@ function EditLogModal({ isOpen, onClose, log, onSuccess }) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50" onClick={onClose}>
       <div 
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-[90vw] max-w-5xl max-h-[90vh] overflow-hidden"
+        className="bg-white dark:bg-gray-800 rounded-sg shadow-xl w-[90vw] max-w-5xl max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -200,7 +200,7 @@ function EditLogModal({ isOpen, onClose, log, onSuccess }) {
           {/* New Attachments */}
           <div className="space-y-2">
             <Label>{t('addNewAttachments')}</Label>
-            <div className="border-2 border-dashed rounded-lg p-4">
+            <div className="border-2 border-dashed rounded-sg p-4">
               <Input
                 type="file"
                 multiple
@@ -264,3 +264,4 @@ function EditLogModal({ isOpen, onClose, log, onSuccess }) {
 }
 
 export default EditLogModal;
+

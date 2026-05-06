@@ -291,7 +291,7 @@ const RequestModal = ({
           {isLeaveType && (
             <>
               <Separator />
-              <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-4 space-y-3">
+              <div className="rounded-sg border border-blue-200 bg-blue-50/50 p-4 space-y-3">
                 <h4 className="font-semibold text-blue-900 flex items-center gap-2 text-sm">
                   <DollarSign className="h-4 w-4" />
                   {isArabic ? 'الربط المالي — قانون العمل الإماراتي' : 'Financial Link — UAE Labour Law'}
@@ -497,3 +497,4 @@ const RequestModal = ({
 }
 
 export default RequestModal
+

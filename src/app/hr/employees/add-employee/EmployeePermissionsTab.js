@@ -100,7 +100,7 @@ export default function EmployeePermissionsTab({ form, setForm }) {
   return (
     <>
       {/* Select All Checkbox */}
-      <div className="mb-4 p-3 rounded-lg border border-border">
+      <div className="mb-4 p-3 rounded-sg border border-border">
         <label className="flex items-center gap-2 cursor-pointer font-medium">
           <Checkbox
             checked={form.permissions.length === permissions.length}
@@ -120,7 +120,7 @@ export default function EmployeePermissionsTab({ form, setForm }) {
       {/* Grouped Permissions */}
       <div className="space-y-6">
         {Object.entries(groupedPermissions).map(([groupName, groupPermissions]) => (
-          <div key={groupName} className="border border-border rounded-lg p-4 bg-muted/20">
+          <div key={groupName} className="border border-border rounded-sg p-4 bg-muted/20">
             {/* Group Header */}
             <h3 className="text-base font-semibold text-foreground mb-4 pb-2 border-b border-border">
               {getGroupNameTranslation(groupName)}
@@ -150,3 +150,4 @@ export default function EmployeePermissionsTab({ form, setForm }) {
     </>
   );
 }
+

@@ -86,7 +86,7 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
         {Icon && <Icon className="w-4 h-4" />}
         {label}
       </div>
-      <div className="text-sm font-medium text-right">{value || t('common.notSpecified')}</div>
+      <div className="text-sm font-medium text-end">{value || t('common.notSpecified')}</div>
     </div>
   );
 
@@ -152,28 +152,28 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
         <div className="flex-1 overflow-y-auto p-6">
           {!employeeId && (
             <div className="flex items-center justify-center py-8 text-red-600">
-              <AlertCircle className="w-6 h-6 mr-2" />
+              <AlertCircle className="w-6 h-6 me-2" />
               {t('employees.missingEmployeeId')}
             </div>
           )}
 
           {employeeId && isLoading && (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin mr-2" />
+              <Loader2 className="w-6 h-6 animate-spin me-2" />
               {t('employees.loadingEmployeeDetails')}
             </div>
           )}
 
           {employeeId && error && (
             <div className="flex items-center justify-center py-8 text-red-600">
-              <AlertCircle className="w-6 h-6 mr-2" />
+              <AlertCircle className="w-6 h-6 me-2" />
               {t('employees.errorLoadingDetails')}
             </div>
           )}
 
           {employeeId && !isLoading && !error && !employee && open && (
             <div className="flex items-center justify-center py-8 text-muted-foreground">
-              <AlertCircle className="w-6 h-6 mr-2" />
+              <AlertCircle className="w-6 h-6 me-2" />
               {t('employees.noEmployeeFound')}
             </div>
           )}
@@ -181,7 +181,7 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
           {employeeId && employee && (
             <div className="space-y-6">
               {/* Header with name and status */}
-              <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-muted rounded-sg">
                 <div>
                   <h3 className="text-xl font-semibold">{employee.name || t('common.notSpecified')}</h3>
                   <p className="text-muted-foreground">
@@ -320,3 +320,4 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
 };
 
 export default ViewEmployeeDialog;
+

@@ -111,7 +111,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               value={formik.values.bank_name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.bank_name && formik.errors.bank_name ? 'border-red-500' : ''}
+              className={formik.touched.bank_name && formik.errors.bank_name ? 'border-eed-500' : ''}
               placeholder={t('bankNamePlaceholder')}
             />
             {formik.touched.bank_name && formik.errors.bank_name && (
@@ -128,7 +128,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               value={formik.values.account_name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.account_name && formik.errors.account_name ? 'border-red-500' : ''}
+              className={formik.touched.account_name && formik.errors.account_name ? 'border-eed-500' : ''}
               placeholder={t('accountNamePlaceholder')}
             />
             {formik.touched.account_name && formik.errors.account_name && (
@@ -145,7 +145,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               value={formik.values.account_number}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.account_number && formik.errors.account_number ? 'border-red-500' : ''}
+              className={formik.touched.account_number && formik.errors.account_number ? 'border-eed-500' : ''}
               placeholder={t('accountNumberPlaceholder')}
             />
             {formik.touched.account_number && formik.errors.account_number && (
@@ -198,7 +198,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               value={formik.values.current_balance}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.current_balance && formik.errors.current_balance ? 'border-red-500' : ''}
+              className={formik.touched.current_balance && formik.errors.current_balance ? 'border-eed-500' : ''}
               placeholder={t('balancePlaceholder')}
             />
             {formik.touched.current_balance && formik.errors.current_balance && (
@@ -248,3 +248,4 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
 };
 
 export default AddAccountModal;
+

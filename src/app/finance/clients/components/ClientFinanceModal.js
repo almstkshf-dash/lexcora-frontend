@@ -24,19 +24,19 @@ export default function ClientFinanceModal({ isOpen, onClose, clientId, clientNa
       <Tabs dir={isRTL ? "rtl" : "ltr"} defaultValue="deposits" className="w-full min-h-[90vh]">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="deposits">
-            <Wallet className="h-4 w-4 mr-2" />
+            <Wallet className="h-4 w-4 me-2" />
             {t("clientFinance.deposits")}
           </TabsTrigger>
           <TabsTrigger value="expenses">
-            <TrendingDown className="h-4 w-4 mr-2" />
+            <TrendingDown className="h-4 w-4 me-2" />
             {t("clientFinance.expenses")}
           </TabsTrigger>
           <TabsTrigger value="invoices">
-            <FileText className="h-4 w-4 mr-2" />
+            <FileText className="h-4 w-4 me-2" />
             {t("clientFinance.invoices")}
           </TabsTrigger>
           <TabsTrigger value="statement">
-            <Receipt className="h-4 w-4 mr-2" />
+            <Receipt className="h-4 w-4 me-2" />
             {t("clientFinance.accountStatement") || "كشف الحساب"}
           </TabsTrigger>
         </TabsList>
@@ -60,3 +60,4 @@ export default function ClientFinanceModal({ isOpen, onClose, clientId, clientNa
     </CustomModal>
   );
 }
+

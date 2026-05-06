@@ -60,17 +60,17 @@ export default function ExpensesTab({ clientId, clientName, clientBalance }) {
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">{t("clientFinance.expenses")}</h3>
         <Button onClick={() => setIsAddModalOpen(true)} size="sm">
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="h-4 w-4 me-2" />
           {t("clientFinance.addExpense")}
         </Button>
       </div>
 
       {expensesList.length === 0 ? (
-        <div className="border rounded-lg p-8 text-center text-gray-500">
+        <div className="border rounded-sg p-8 text-center text-gray-500">
           {t("clientFinance.noExpenses")}
         </div>
       ) : (
-        <div className="border rounded-lg">
+        <div className="border rounded-sg">
           <Table>
             <TableHeader>
               <TableRow>
@@ -200,3 +200,5 @@ export default function ExpensesTab({ clientId, clientName, clientBalance }) {
     </div>
   );
 }
+
+

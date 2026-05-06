@@ -57,6 +57,7 @@ export const CustomModal = ({
       
       {/* Modal Content */}
       <div 
+        dir="auto"
         className={`
           relative bg-white dark:bg-gray-800 rounded-lg shadow-2xl 
           w-full ${sizeClasses[size]} 

@@ -151,7 +151,7 @@ export default function PayrollPage() {
             className="w-40"
           />
           <Button onClick={() => setIsProcessingModalOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-4 h-4 me-2" />
             {t('payroll.processBatch')}
           </Button>
         </div>
@@ -224,7 +224,7 @@ export default function PayrollPage() {
                 {t('common.cancel')}
               </Button>
               <Button onClick={handleProcessBatch} disabled={isProcessing}>
-                {isProcessing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle className="w-4 h-4 mr-2" />}
+                {isProcessing ? <Loader2 className="w-4 h-4 animate-spin me-2" /> : <CheckCircle className="w-4 h-4 me-2" />}
                 {t('payroll.confirmProcess')}
               </Button>
             </div>
@@ -355,12 +355,12 @@ export default function PayrollPage() {
                               onClick={() => handlePaySalary(salary.id)}
                               className="bg-green-600 hover:bg-green-700"
                             >
-                              <CreditCard className="w-4 h-4 mr-2" />
+                              <CreditCard className="w-4 h-4 me-2" />
                               {t('payroll.payNow')}
                             </Button>
                           )}
                           <Button size="sm" variant="outline">
-                            <FileText className="w-4 h-4 mr-2" />
+                            <FileText className="w-4 h-4 me-2" />
                             {t('payroll.viewSlip')}
                           </Button>
                         </div>

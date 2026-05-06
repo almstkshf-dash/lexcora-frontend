@@ -84,7 +84,7 @@ function NotificationsPage() {
     return (
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-        <span className="ml-2 text-gray-600">
+        <span className="ms-2 text-gray-600">
           {isArabic ? 'جاري تحميل التنبيهات...' : 'Loading notifications...'}
         </span>
       </div>
@@ -255,7 +255,7 @@ function NotificationsPage() {
                           </p>
                         </div>
                       </div>
-                      <div className="text-right">
+                      <div className="text-end">
                         <p className="text-sm font-medium">
                           {new Date(notification.expiry_date).toLocaleDateString(isArabic ? 'ar-AE' : 'en-US')}
                         </p>
@@ -305,3 +305,4 @@ function NotificationsPage() {
 }
 
 export default NotificationsPage
+

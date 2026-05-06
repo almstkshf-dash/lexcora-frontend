@@ -65,11 +65,11 @@ const ExportButtons = ({
         let columnName
         let value
         
-        // Determine column name based on language or force English for PDF
-        if (forPDF || language === 'en') {
-          columnName = config.en || config.label || key
-        } else {
+        // Determine column name based on language
+        if (language === 'ar') {
           columnName = config.ar || config.label || key
+        } else {
+          columnName = config.en || config.label || key
         }
         
         // Get value using dataKey or default to key
@@ -86,11 +86,11 @@ const ExportButtons = ({
         } else if (config.type === 'status') {
           // Handle status with custom mapping
           if (config.statusMap && config.statusMap[value]) {
-            value = forPDF || language === 'en' ? config.statusMap[value].en : config.statusMap[value].ar
+            value = language === 'ar' ? config.statusMap[value].ar : config.statusMap[value].en
           }
         } else if (config.formatter && typeof config.formatter === 'function') {
           // Use custom formatter
-          value = config.formatter(value, item, forPDF ? 'en' : language)
+          value = config.formatter(value, item, language)
         }
 
         // Convert to string and handle null/undefined
@@ -140,7 +140,7 @@ const ExportButtons = ({
   const handleExportPDF = async () => {
     if (!showPDF) return
 
-    const exportData = prepareExportData(true)
+    const exportData = prepareExportData() // Use current language
     if (!exportData.length) {
       alert(language === 'ar' ? 'لا توجد بيانات للتصدير' : 'No data to export')
       return
@@ -170,8 +170,8 @@ const ExportButtons = ({
   }
 
   return (
-    <div className={`flex flex-wrap items-center gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-      <div className={`flex items-center gap-2 text-sm font-medium text-muted-foreground ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+    <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
         <Download className="h-4 w-4" />
       </div>
       
@@ -179,7 +179,7 @@ const ExportButtons = ({
         variant="outline"
         size="sm"
         onClick={handleExportExcel}
-        className={`gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}
+        className="gap-2"
       >
         <FileSpreadsheet className="h-4 w-4 text-green-600" />
         <span>{language === 'ar' ? 'Excel' : 'Excel'}</span>
@@ -190,7 +190,7 @@ const ExportButtons = ({
           variant="outline"
           size="sm"
           onClick={handleExportPDF}
-          className={`gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}
+          className="gap-2"
         >
           <FileText className="h-4 w-4 text-red-600" />
           <span>{language === 'ar' ? 'PDF' : 'PDF'}</span>

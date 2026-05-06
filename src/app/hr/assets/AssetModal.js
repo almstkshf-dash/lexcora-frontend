@@ -691,7 +691,7 @@ const AssetModal = ({
           {/* File Upload */}
           <div className="space-y-2">
             <Label>{isArabic ? 'إضافة مستندات' : 'Add Documents'}</Label>
-            <div className="border-2 border-dashed rounded-lg p-4">
+            <div className="border-2 border-dashed rounded-sg p-4">
               <input
                 type="file"
                 multiple
@@ -746,7 +746,7 @@ const AssetModal = ({
             <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <Loader2 className={`h-4 w-4 animate-spin ${isArabic ? 'ml-2' : 'mr-2'}`} />
+                  <Loader2 className={`h-4 w-4 animate-spin me-2`} />
                   {isUploading 
                     ? (isArabic ? 'جاري رفع الملفات...' : 'Uploading files...')
                     : (isArabic ? 'جاري الحفظ...' : 'Saving...')
@@ -764,3 +764,5 @@ const AssetModal = ({
 }
 
 export default AssetModal
+
+

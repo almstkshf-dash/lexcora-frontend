@@ -76,7 +76,7 @@ const FormField = ({ label, children, required = false }) => (
     {label && (
       <Label className="text-sm font-medium">
         {label}
-        {required && <span className="text-red-500 mr-1">*</span>}
+        {required && <span className="text-red-500 me-1">*</span>}
       </Label>
     )}
     {children}
@@ -515,3 +515,4 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
     </div>
   );
 }
+

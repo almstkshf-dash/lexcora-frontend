@@ -109,7 +109,7 @@ function EventsCalendar({ events, isLoading, onSelectEvent }) {
 
   if (isLoading) {
     return (
-      <div className="bg-card rounded-lg border shadow-sm p-8 flex items-center justify-center h-[600px]">
+      <div className="bg-card rounded-sg border shadow-sm p-8 flex items-center justify-center h-[600px]">
         <div className="text-muted-foreground">
           {isArabic ? 'جاري التحميل...' : 'Loading...'}
         </div>
@@ -118,7 +118,7 @@ function EventsCalendar({ events, isLoading, onSelectEvent }) {
   }
 
   return (
-    <div className="bg-card rounded-lg border shadow-sm p-4" style={{ minHeight: '600px' }}>
+    <div className="bg-card rounded-sg border shadow-sm p-4" style={{ minHeight: '600px' }}>
       <Calendar
         localizer={localizer}
         events={calendarEvents}
@@ -143,3 +143,4 @@ function EventsCalendar({ events, isLoading, onSelectEvent }) {
 }
 
 export default EventsCalendar
+

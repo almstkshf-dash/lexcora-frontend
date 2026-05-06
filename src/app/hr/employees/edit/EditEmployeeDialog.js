@@ -188,7 +188,7 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
         <div className="flex-1 overflow-y-auto p-6 bg-card">
           {!employeeId && (
             <div className="flex items-center justify-center py-8 text-destructive">
-              <AlertCircle className="w-6 h-6 mr-2" />
+              <AlertCircle className="w-6 h-6 me-2" />
               {t('employees.missingEmployeeId')}
             </div>
           )}
@@ -201,14 +201,14 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
 
           {employeeId && error && (
             <div className="flex items-center justify-center py-8 text-destructive">
-              <AlertCircle className="w-6 h-6 mr-2" />
+              <AlertCircle className="w-6 h-6 me-2" />
               {t('employees.errorLoadingDetails')}
             </div>
           )}
 
           {employeeId && !isLoading && !error && !employee && open && (
             <div className="flex items-center justify-center py-8 text-muted-foreground">
-              <AlertCircle className="w-6 h-6 mr-2" />
+              <AlertCircle className="w-6 h-6 me-2" />
               {t('employees.noEmployeeFound')}
             </div>
           )}
@@ -216,7 +216,7 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
           {employeeId && employee && (
             <form onSubmit={handleSubmit} className="space-y-6">
               {submitError && (
-                <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-sg">
                   <div className="flex items-center gap-2 text-destructive">
                     <AlertCircle className="w-5 h-5" />
                     <span>{submitError}</span>
@@ -325,3 +325,4 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
 };
 
 export default EditEmployeeDialog;
+

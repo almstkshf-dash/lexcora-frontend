@@ -95,7 +95,7 @@ const ResourcesTab = ({ resources, onMutate }) => {
     <>
       <div className="flex justify-end mb-4">
         <Button onClick={handleAddResource}>
-          <Plus className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
+          <Plus className={`h-4 w-4 me-2`} />
           {isArabic ? 'إضافة مورد' : 'Add Resource'}
         </Button>
       </div>
@@ -218,3 +218,4 @@ const ResourcesTab = ({ resources, onMutate }) => {
 }
 
 export default ResourcesTab
+

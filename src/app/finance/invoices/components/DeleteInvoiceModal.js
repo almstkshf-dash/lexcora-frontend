@@ -93,7 +93,7 @@ export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSucce
       {loading ? (
         <div className="flex items-center justify-center p-8">
           <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <span className="mr-3">{t('loadingData')}</span>
+          <span className="me-3">{t('loadingData')}</span>
         </div>
       ) : invoice ? (
         <>
@@ -103,7 +103,7 @@ export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSucce
               </p>
 
               {/* Invoice Details */}
-              <div className="p-4  rounded-lg space-y-2">
+              <div className="p-4  rounded-sg space-y-2">
                 <div className="flex justify-between">
                   <span className="font-medium ">{t('invoiceNumber')}:</span>
                   <span className="font-bold font-mono">{invoice.invoice_number}</span>
@@ -129,7 +129,7 @@ export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSucce
 
               {/* Warning for paid invoices */}
               {invoice.status === 'paid' && (
-                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-sg">
                   <p className="text-yellow-800 dark:text-yellow-200 text-sm font-medium">
                     {t('paidInvoiceWarning')}
                   </p>
@@ -152,7 +152,7 @@ export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSucce
             >
               {deleting ? (
                 <>
-                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="ms-2 h-4 w-4 animate-spin" />
                   {t('deletingInvoice')}
                 </>
               ) : (
@@ -169,3 +169,5 @@ export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSucce
     </CustomModal>
   );
 }
+
+

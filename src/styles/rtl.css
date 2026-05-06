@@ -7,10 +7,8 @@
   transform: scaleX(-1);
 }
 
-/* General RTL styling for flex containers */
-.rtl .flex-row {
-  flex-direction: row-reverse;
-}
+/* General RTL styling for flex containers - Removed row-reverse as it conflicts with dir="rtl" */
+
 
 .rtl .ml-auto {
   margin-right: auto;

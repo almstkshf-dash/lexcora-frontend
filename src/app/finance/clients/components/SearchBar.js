@@ -20,17 +20,17 @@ export default function SearchBar({
     <Card>
       <CardContent className="flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-md">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+          <Search className="pointer-events-none absolute inset-inline-start-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
           <Input
             type="text"
             placeholder={placeholder}
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="h-12 w-full pl-10 pr-10"
+            className="h-12 w-full ps-10 pe-10"
             aria-busy={isRefreshing}
           />
           {isRefreshing && (
-            <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 transform animate-spin text-blue-500" />
+            <Loader2 className="absolute inset-inline-end-3 top-1/2 h-4 w-4 -translate-y-1/2 transform animate-spin text-blue-500" />
           )}
         </div>
         {hasData && (
@@ -46,3 +46,4 @@ export default function SearchBar({
     </Card>
   );
 }
+

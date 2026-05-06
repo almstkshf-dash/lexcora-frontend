@@ -72,7 +72,7 @@ const DeleteEventDialog = ({
             disabled={isLoading}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+            {isLoading && <Loader2 className="ms-2 h-4 w-4 animate-spin" />}
             {isArabic ? 'حذف' : 'Delete'}
           </AlertDialogAction>
         </AlertDialogFooter>
@@ -82,3 +82,4 @@ const DeleteEventDialog = ({
 }
 
 export default DeleteEventDialog
+

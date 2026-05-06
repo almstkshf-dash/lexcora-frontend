@@ -246,7 +246,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
       <div 
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-[95vw] max-w-7xl max-h-[95vh] overflow-hidden"
+        className="bg-white dark:bg-gray-800 rounded-sg shadow-xl w-[95vw] max-w-7xl max-h-[95vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -278,7 +278,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
 
           {/* Add New Log Form */}
           {showAddForm && (
-            <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+            <div className="border rounded-sg p-4 bg-gray-50 dark:bg-gray-900">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">{t('addNewLog')}</h3>
                 <Button
@@ -344,7 +344,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
                 {/* Attachments */}
                 <div className="space-y-2">
                   <Label>{t('attachments')}</Label>
-                  <div className="border-2 border-dashed rounded-lg p-4">
+                  <div className="border-2 border-dashed rounded-sg p-4">
                     <Input
                       type="file"
                       multiple
@@ -408,7 +408,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
           )}
 
           {/* Logs Table */}
-          <div className="border rounded-lg">
+          <div className="border rounded-sg">
             <div className="p-4 border-b bg-gray-50 dark:bg-gray-900">
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
                 <h3 className="text-lg font-semibold">{t('operationLogs')}</h3>
@@ -460,7 +460,7 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
               {loading ? (
                 <div className="flex items-center justify-center p-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                  <span className="mr-3">{t('loadingLogs')}</span>
+                  <span className="me-3">{t('loadingLogs')}</span>
                 </div>
               ) : logs.length === 0 ? (
                 <div className="text-center p-8 text-gray-500">
@@ -602,3 +602,4 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
 }
 
 export default BankAccountLogsModal;
+

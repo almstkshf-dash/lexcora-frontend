@@ -108,7 +108,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
               value={formik.values.code}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.code && formik.errors.code ? 'border-red-500' : ''}
+              className={formik.touched.code && formik.errors.code ? 'border-eed-500' : ''}
             />
           </div>
 
@@ -120,7 +120,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
               value={formik.values.name_ar}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.name_ar && formik.errors.name_ar ? 'border-red-500' : ''}
+              className={formik.touched.name_ar && formik.errors.name_ar ? 'border-eed-500' : ''}
             />
           </div>
 
@@ -132,7 +132,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
               value={formik.values.name_en}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.name_en && formik.errors.name_en ? 'border-red-500' : ''}
+              className={formik.touched.name_en && formik.errors.name_en ? 'border-eed-500' : ''}
             />
           </div>
 
@@ -217,3 +217,4 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
 };
 
 export default AddAccountModal;
+

@@ -46,7 +46,7 @@ function EventsTable({ events, isLoading, onView, onEdit, onDelete, onCreate }) 
   }
 
   return (
-    <div className="bg-card rounded-lg border shadow-sm">
+    <div className="bg-card rounded-sg border shadow-sm">
       <Table>
         <TableHeader>
           <TableRow>
@@ -77,7 +77,7 @@ function EventsTable({ events, isLoading, onView, onEdit, onDelete, onCreate }) 
                 {isArabic ? 'الحضور' : 'Attendees'}
               </div>
             </TableHead>
-            <TableHead className="text-right">
+            <TableHead className="text-end">
               {isArabic ? 'الإجراءات' : 'Actions'}
             </TableHead>
           </TableRow>
@@ -152,7 +152,7 @@ function EventsTable({ events, isLoading, onView, onEdit, onDelete, onCreate }) 
                   <Calendar className="h-12 w-12 opacity-20" />
                   <p>{isArabic ? 'لا توجد أحداث' : 'No events found'}</p>
                   <Button onClick={onCreate} variant="outline" size="sm">
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="h-4 w-4 me-2" />
                     {isArabic ? 'إضافة أول حدث' : 'Add first event'}
                   </Button>
                 </div>
@@ -166,3 +166,5 @@ function EventsTable({ events, isLoading, onView, onEdit, onDelete, onCreate }) 
 }
 
 export default EventsTable
+
+

@@ -77,17 +77,17 @@ export default function InvoicesTab({ clientId, clientName }) {
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">{t("clientFinance.invoices")}</h3>
         <Button onClick={() => setShowAddModal(true)} size="sm">
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="h-4 w-4 me-2" />
           {t("invoices.addNewInvoice")}
         </Button>
       </div>
 
       {invoicesList.length === 0 ? (
-        <div className="border rounded-lg p-8 text-center ">
+        <div className="border rounded-sg p-8 text-center ">
           {t("invoices.noInvoices")}
         </div>
       ) : (
-        <div className="border rounded-lg">
+        <div className="border rounded-sg">
           <Table>
             <TableHeader>
               <TableRow>
@@ -265,3 +265,5 @@ export default function InvoicesTab({ clientId, clientName }) {
     </div>
   );
 }
+
+

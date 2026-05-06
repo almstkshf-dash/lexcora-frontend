@@ -57,13 +57,19 @@ export const exportTableToPDF = async ({
   }
 
   // Table
-  const head = [columns.map((col) => col.label)];
-  const body = rows.map((row) =>
+  let head = [columns.map((col) => col.label)];
+  let body = rows.map((row) =>
     columns.map((col) => {
       const value = row[col.id];
       return value === null || value === undefined ? '' : value;
     })
   );
+
+  // For Arabic (RTL), we need to reverse the order of columns so they read Right-to-Left
+  if (language === 'ar') {
+    head = [head[0].reverse()];
+    body = body.map(row => row.reverse());
+  }
 
   autoTable(doc, {
     head,

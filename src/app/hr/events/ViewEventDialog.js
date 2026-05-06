@@ -57,7 +57,7 @@ const ViewEventDialog = ({
             <Skeleton className="h-32 w-full" />
           </div>
         ) : event ? (
-          <ScrollArea dir={isArabic ? 'rtl' : 'ltr'}  className="max-h-[70vh] pr-4">
+          <ScrollArea dir={isArabic ? 'rtl' : 'ltr'}  className="max-h-[70vh] pe-4">
             <div className="space-y-6">
               {/* Title */}
               <div>
@@ -139,7 +139,7 @@ const ViewEventDialog = ({
                     {event.attendees.map((attendee) => (
                       <div
                         key={attendee.employee_id}
-                        className="flex items-center gap-2 p-3 border rounded-lg bg-muted/50"
+                        className="flex items-center gap-2 p-3 border rounded-sg bg-muted/50"
                       >
                         <div className="flex-1">
                           <p className="font-medium">{attendee.employee_name}</p>
@@ -178,3 +178,4 @@ const ViewEventDialog = ({
 }
 
 export default ViewEventDialog
+

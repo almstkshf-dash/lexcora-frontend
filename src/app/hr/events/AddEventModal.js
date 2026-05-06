@@ -309,7 +309,7 @@ const AddEventModal = ({
               {isArabic ? 'إلغاء' : 'Cancel'}
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+              {isLoading && <Loader2 className="ms-2 h-4 w-4 animate-spin" />}
               {isArabic ? 'إضافة' : 'Create'}
             </Button>
           </DialogFooter>
@@ -320,3 +320,4 @@ const AddEventModal = ({
 }
 
 export default AddEventModal
+

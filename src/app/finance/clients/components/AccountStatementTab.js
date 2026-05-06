@@ -142,7 +142,7 @@ export default function AccountStatementTab({ clientId, clientName }) {
             margin-top: 30px;
             padding: 20px;
             background-color: #f9f9f9;
-            border-radius: 8px;
+            border-eadius: 8px;
           }
           .summary-item {
             text-align: center;
@@ -292,12 +292,12 @@ export default function AccountStatementTab({ clientId, clientName }) {
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 me-2 animate-spin" />
                   {t("loading")}
                 </>
               ) : (
                 <>
-                  <Search className="h-4 w-4 mr-2" />
+                  <Search className="h-4 w-4 me-2" />
                   {t("search")}
                 </>
               )}
@@ -406,7 +406,7 @@ export default function AccountStatementTab({ clientId, clientName }) {
         <Card>
           <CardContent className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-green-50 rounded-lg">
+              <div className="text-center p-4 bg-green-50 rounded-sg">
                 <p className="text-sm text-gray-600 mb-1">
                   {tClient("totalCredits")}
                 </p>
@@ -418,7 +418,7 @@ export default function AccountStatementTab({ clientId, clientName }) {
                   )}
                 </p>
               </div>
-              <div className="text-center p-4 bg-red-50 rounded-lg">
+              <div className="text-center p-4 bg-red-50 rounded-sg">
                 <p className="text-sm text-gray-600 mb-1">
                   {tClient("totalDebits")}
                 </p>
@@ -430,7 +430,7 @@ export default function AccountStatementTab({ clientId, clientName }) {
                   )}
                 </p>
               </div>
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <div className="text-center p-4 bg-blue-50 rounded-sg">
                 <p className="text-sm text-gray-600 mb-1">
                   {tClient("balance")}
                 </p>
@@ -452,3 +452,5 @@ export default function AccountStatementTab({ clientId, clientName }) {
     </div>
   );
 }
+
+

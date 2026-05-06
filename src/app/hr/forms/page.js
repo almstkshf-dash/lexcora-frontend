@@ -72,7 +72,7 @@ const getFormColor = (documentFor) => {
     'car acknowledgement letter': 'bg-blue-100 border-blue-200 text-blue-800',
     'annual leave encashment': 'bg-green-100 border-green-200 text-green-800',
     'employee information': 'bg-purple-100 border-purple-200 text-purple-800',
-    'emergency leave': 'bg-red-100 border-red-200 text-red-800',
+    'emergency leave': 'bg-red-100 border-eed-200 text-red-800',
     'email acknowledgement': 'bg-cyan-100 border-cyan-200 text-cyan-800',
     'acknowledgement letter': 'bg-teal-100 border-teal-200 text-teal-800',
     'end of service acknowledgement': 'bg-gray-100 border-gray-200 text-gray-800',
@@ -198,7 +198,7 @@ export default function FormsPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className={`${isArabic ? 'mr-3' : 'ml-3'}`}>{t('common.loading')}</span>
+        <span className={`${isArabic ? 'me-3' : 'ms-3'}`}>{t('common.loading')}</span>
       </div>
     )
   }
@@ -232,18 +232,18 @@ export default function FormsPage() {
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className={`absolute ${isArabic ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2  w-4 h-4`} />
+              <Search className={`absolute ${isArabic ? 'inset-inline-end-3' : 'inset-inline-start-3'} top-1/2 transform -translate-y-1/2  w-4 h-4`} />
               <Input
                 placeholder={isArabic ? 'البحث في النماذج...' : 'Search forms...'}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`${isArabic ? 'pr-10' : 'pl-10'}`}
+                className={`${isArabic ? 'pe-10' : 'ps-10'}`}
               />
             </div>
             <div className="relative min-w-[200px]">
-              <Filter className={`absolute ${isArabic ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2  w-4 h-4 pointer-events-none z-10`} />
+              <Filter className={`absolute ${isArabic ? 'inset-inline-end-3' : 'inset-inline-start-3'} top-1/2 transform -translate-y-1/2  w-4 h-4 pointer-events-none z-10`} />
               <Select value={selectedType} onValueChange={setSelectedType}>
-                <SelectTrigger className={`w-full ${isArabic ? 'pr-10' : 'pl-10'}`}>
+                <SelectTrigger className={`w-full ${isArabic ? 'pe-10' : 'ps-10'}`}>
                   <SelectValue placeholder={t('forms.allTypes')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -285,7 +285,7 @@ export default function FormsPage() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="absolute top-2 right-2 h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full z-10"
+                      className="absolute top-2 inset-inline-end-2 h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full z-10"
                       onClick={(e) => handleDeleteClick(form, e)}
                       title={isArabic ? 'حذف النموذج' : 'Delete Form'}
                     >
@@ -319,7 +319,7 @@ export default function FormsPage() {
                             handleDownload(form)
                           }}
                         >
-                          <Download className="w-4 h-4 mr-2" />
+                          <Download className="w-4 h-4 me-2" />
                           {isArabic ? 'تحميل' : 'Download'}
                         </Button>
                       </div>
@@ -366,3 +366,4 @@ export default function FormsPage() {
     </div>
   )
 }
+

@@ -158,7 +158,7 @@ export default function ActivityLogModal({ trigger, employee }) {
           ) : (
             <div className="space-y-3">
               {filteredLogs.map((log) => (
-                <div key={log.id} className="bg-muted/30 rounded-lg p-4 border border-border hover:bg-muted/50 transition-colors">
+                <div key={log.id} className="bg-muted/30 rounded-sg p-4 border border-border hover:bg-muted/50 transition-colors">
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -218,3 +218,4 @@ function formatTime(dateString, locale) {
     minute: "2-digit",
   });
 }
+

@@ -48,7 +48,7 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
           <User className="w-6 h-6 text-muted-foreground" />
-          <div className="mr-4">
+          <div className="ms-4">
             <div className="text-sm font-medium text-foreground">{employee.name}</div>
           </div>
         </div>
@@ -90,7 +90,7 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
           trigger={
             <button
               type="button"
-              className="flex items-center gap-2 px-2 py-1 hover:bg-muted rounded text-right cursor-pointer border-none bg-transparent"
+              className="flex items-center gap-2 px-2 py-1 hover:bg-muted rounded text-start cursor-pointer border-none bg-transparent"
               title={t('employees.permissions')}
             >
               <Shield className="w-4 h-4 text-muted-foreground" />
@@ -102,7 +102,7 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
           employee={employee}
           trigger={
             <div 
-              className="flex items-center gap-2 px-2 py-1 hover:bg-muted rounded text-right cursor-pointer"
+              className="flex items-center gap-2 px-2 py-1 hover:bg-muted rounded text-start cursor-pointer"
               title={t('employees.activityLog')}
             >
               <List className="w-4 h-4 text-muted-foreground" />

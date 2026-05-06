@@ -224,7 +224,7 @@ export default function LogsPage() {
               {filteredLogs.map((log) => (
                 <div
                   key={log.id}
-                  className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:bg-gray-100 transition-colors"
+                  className="bg-gray-50 rounded-sg p-4 border border-gray-200 hover:bg-gray-100 transition-colors"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
@@ -283,3 +283,4 @@ export default function LogsPage() {
     </div>
   );
 }
+

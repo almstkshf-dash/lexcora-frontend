@@ -64,7 +64,7 @@ const AccountRow = ({ account, level = 0 }) => {
             </Badge>
           )}
         </TableCell>
-        <TableCell className="text-right font-mono">
+        <TableCell className="text-end font-mono">
            {/* Balances could be added here if we join with ledger summary */}
         </TableCell>
       </TableRow>
@@ -132,7 +132,7 @@ export default function AccountsPage() {
                       <TableHead>{commonT('type')}</TableHead>
                       <TableHead>{accT('reconcilable')}</TableHead>
                       <TableHead>{accT('allowManualPosting')}</TableHead>
-                      <TableHead className="text-right">{commonT('balance')}</TableHead>
+                      <TableHead className="text-end">{commonT('balance')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -154,3 +154,4 @@ export default function AccountsPage() {
     </div>
   );
 }
+

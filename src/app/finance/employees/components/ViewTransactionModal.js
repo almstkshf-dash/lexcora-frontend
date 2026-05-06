@@ -18,12 +18,12 @@ function AttachmentItem({ attachment, deletingAttachment, onDownload, onDelete, 
   const handleDownload = useCallback(() => onDownload(attachment.attachment_url, attachment.attachment_name), [onDownload, attachment.attachment_url, attachment.attachment_name]);
   const handleDelete = useCallback(() => onDelete(attachment.id, attachment.attachment_name), [onDelete, attachment.id, attachment.attachment_name]);
   return (
-    <div className="flex items-center justify-between p-3  rounded-lg border  transition-colors">
+    <div className="flex items-center justify-between p-3  rounded-sg border  transition-colors">
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium truncate">{attachment.attachment_name}</p>
         <p className="text-xs ">{formatDateTime(attachment.created_at)}</p>
       </div>
-      <div className="flex gap-2 mr-3">
+      <div className="flex gap-2 me-3">
         <Button type="button" variant="ghost" size="sm" onClick={handleDownload} className="hover:bg-blue-50" title={t('download')}>
           <Download className="h-4 w-4 text-blue-600" />
         </Button>
@@ -242,7 +242,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
         {loading ? (
           <div className="flex items-center justify-center p-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <span className="mr-3">{t('loading')}</span>
+            <span className="me-3">{t('loading')}</span>
           </div>
         ) : transaction ? (
           <div className="space-y-4">
@@ -313,7 +313,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
                     asChild
                   >
                     <span>
-                      <Upload className="h-4 w-4 ml-2" />
+                      <Upload className="h-4 w-4 ms-2" />
                       {uploading ? t('uploading') : t('addFiles')}
                     </span>
                   </Button>
@@ -364,3 +364,5 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
 };
 
 export default ViewTransactionModal;
+
+

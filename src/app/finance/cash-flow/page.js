@@ -92,7 +92,7 @@ export default function CashFlowPage() {
       />
 
       <div className="flex justify-between items-center">
-        <div className="flex bg-muted p-1 rounded-lg">
+        <div className="flex bg-muted p-1 rounded-sg">
           {PERIOD_OPTIONS.map((p) => (
             <Button
               key={p}
@@ -172,3 +172,4 @@ export default function CashFlowPage() {
     </div>
   );
 }
+

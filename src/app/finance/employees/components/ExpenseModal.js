@@ -148,7 +148,7 @@ const ExpenseModal = ({ isOpen, onClose, onSuccess, expenseId = null, expenseDat
       <Check
         className={cn(
           "h-4 w-4",
-          isRTL ? "ml-2" : "mr-2",
+          isRTL ? "ms-2" : "me-2",
           formik.values.client_id?.toString() === option.value?.toString() ? "opacity-100" : "opacity-0"
         )}
       />
@@ -281,3 +281,4 @@ const ExpenseModal = ({ isOpen, onClose, onSuccess, expenseId = null, expenseDat
 };
 
 export default ExpenseModal;
+

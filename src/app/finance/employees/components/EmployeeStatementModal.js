@@ -184,7 +184,7 @@ const EmployeeStatementModal = ({
             margin: 20px 0;
             padding: 15px;
             background-color: #f5f5f5;
-            border-radius: 8px;
+            border-eadius: 8px;
           }
           .summary-item {
             text-align: center;
@@ -421,7 +421,7 @@ const EmployeeStatementModal = ({
         <div className="flex-1 overflow-y-auto px-6 py-4">
           <div className={`space-y-4 ${isRTL ? 'rtl' : 'ltr'}`}>
           {/* Date Range Filter */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4  rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4  rounded-sg">
             <div className="space-y-2">
               <Label htmlFor="dateFrom" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
@@ -432,12 +432,12 @@ const EmployeeStatementModal = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal",
+                      "w-full justify-start text-start font-normal",
                       !dateFrom && "text-muted-foreground"
                     )}
                   >
                     {dateFrom ? format(new Date(dateFrom), "PPP") : t('dateFrom')}
-                    <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
+                    <ChevronDown className="ms-auto h-4 w-4 opacity-50" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -460,12 +460,12 @@ const EmployeeStatementModal = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal",
+                      "w-full justify-start text-start font-normal",
                       !dateTo && "text-muted-foreground"
                     )}
                   >
                     {dateTo ? format(new Date(dateTo), "PPP") : t('dateTo')}
-                    <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
+                    <ChevronDown className="ms-auto h-4 w-4 opacity-50" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -514,15 +514,15 @@ const EmployeeStatementModal = ({
           {/* Summary Cards */}
           {transactions.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+              <div className="p-4 bg-green-50 rounded-sg border border-green-200">
                 <div className="text-sm text-green-700 mb-1">{t('totalCredit')}</div>
                 <div className="text-2xl font-bold text-green-600">{formatCurrency(totalCredit)}</div>
               </div>
-              <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+              <div className="p-4 bg-red-50 rounded-sg border border-eed-200">
                 <div className="text-sm text-red-700 mb-1">{t('totalDebit')}</div>
                 <div className="text-2xl font-bold text-red-600">{formatCurrency(totalDebit)}</div>
               </div>
-              <div className={`p-4 rounded-lg border ${balance >= 0 ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'}`}>
+              <div className={`p-4 rounded-sg border ${balance >= 0 ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'}`}>
                 <div className={`text-sm mb-1 ${balance >= 0 ? 'text-blue-700' : 'text-orange-700'}`}>{t('balance')}</div>
                 <div className={`text-2xl font-bold ${balance >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>
                   {formatCurrency(balance)}
@@ -534,7 +534,7 @@ const EmployeeStatementModal = ({
           {/* Transactions Table */}
           {loading ? (
             <div className="text-center p-8">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
               <p className="mt-2 ">{t('loading')}</p>
             </div>
           ) : transactions.length === 0 ? (
@@ -542,7 +542,7 @@ const EmployeeStatementModal = ({
               <p className="">{t('noTransactions')}</p>
             </div>
           ) : (
-            <div className="border rounded-lg overflow-hidden">
+            <div className="border rounded-sg overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -714,3 +714,4 @@ const EmployeeStatementModal = ({
 };
 
 export default EmployeeStatementModal;
+

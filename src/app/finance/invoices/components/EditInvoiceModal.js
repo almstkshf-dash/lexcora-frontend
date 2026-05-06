@@ -210,7 +210,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
       {loading ? (
         <div className="flex items-center justify-center p-12">
           <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <span className="mr-3">{t('loading')}</span>
+          <span className="me-3">{t('loading')}</span>
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
@@ -224,12 +224,12 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal",
+                      "w-full justify-start text-start font-normal",
                       !invoiceDate && "text-muted-foreground"
                     )}
                     disabled={isSubmitting}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    <CalendarIcon className="me-2 h-4 w-4" />
                     {invoiceDate ? format(invoiceDate, "PPP", { locale: ar }) : t('selectDate')}
                   </Button>
                 </PopoverTrigger>
@@ -404,7 +404,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
             </div>
 
             {/* Total Amount with VAT breakdown */}
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-2">
+            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-sg space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span>{t('subtotal')}</span>
                 <span className="font-medium">
@@ -441,7 +441,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
-                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                <Loader2 className="ms-2 h-4 w-4 animate-spin" />
                 {t('saving')}
               </>
             ) : (
@@ -454,3 +454,5 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
     </CustomModal>
   );
 }
+
+

@@ -3,16 +3,11 @@
 import { useCallback, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-// Lazy-load JSON to avoid Turbopack HMR pattern-matching errors with large files
-let _cachedMessages = null;
 function getMessages() {
-  if (!_cachedMessages) {
-    _cachedMessages = {
-      ar: require("../../messages/ar.json"),
-      en: require("../../messages/en.json"),
-    };
-  }
-  return _cachedMessages;
+  return {
+    ar: require("../../messages/ar.json"),
+    en: require("../../messages/en.json"),
+  };
 }
 
 const hardcodedFallbacks = {

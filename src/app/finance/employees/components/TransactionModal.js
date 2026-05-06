@@ -167,7 +167,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
                 value={formik.values.employee_id} 
                 onValueChange={(value) => formik.setFieldValue('employee_id', value)}
               >
-                <SelectTrigger className={formik.touched.employee_id && formik.errors.employee_id ? 'border-red-500' : ''}>
+                <SelectTrigger className={formik.touched.employee_id && formik.errors.employee_id ? 'border-eed-500' : ''}>
                   <SelectValue placeholder={t('selectEmployee')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -195,7 +195,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
               value={formik.values.amount}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.amount && formik.errors.amount ? 'border-red-500' : ''}
+              className={formik.touched.amount && formik.errors.amount ? 'border-eed-500' : ''}
               placeholder={t('amountPlaceholder')}
             />
             {formik.touched.amount && formik.errors.amount && (
@@ -213,7 +213,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
                 value={formik.values.bank_account_id} 
                 onValueChange={(value) => formik.setFieldValue('bank_account_id', value)}
               >
-                <SelectTrigger className={formik.touched.bank_account_id && formik.errors.bank_account_id ? 'border-red-500' : ''}>
+                <SelectTrigger className={formik.touched.bank_account_id && formik.errors.bank_account_id ? 'border-eed-500' : ''}>
                   <SelectValue placeholder={t('selectBankAccount')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -248,7 +248,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
           {!isEditMode && (
             <div className="space-y-2">
               <Label>{t('attachments')}</Label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+              <div className="border-2 border-dashed border-gray-300 rounded-sg p-4">
                 <input
                   type="file"
                   multiple
@@ -322,3 +322,4 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
 };
 
 export default TransactionModal;
+

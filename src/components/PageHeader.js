@@ -53,8 +53,8 @@ const PageHeader = ({
       className={cn(
         'hero-motion rounded-xl overflow-hidden',
         sticky
-          ? 'sticky top-0 z-30 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/60 py-3 mb-4'
-          : 'mb-6 px-6 py-5 bg-card/40 border border-border/50 shadow-sm'
+          ? 'sticky top-0 z-30 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/60 py-3 mb-4 print:relative print:bg-transparent print:border-none'
+          : 'mb-6 px-6 py-5 bg-card/40 border border-border/50 shadow-sm print:shadow-none print:border-none print:px-0'
       )}
       style={heroStyle}
     >
@@ -63,8 +63,8 @@ const PageHeader = ({
           <nav
             aria-label={t('pageHeader.breadcrumb')}
             className={cn(
-              'text-xs text-muted-foreground flex items-center flex-wrap gap-1 mb-1',
-              isRTL ? 'justify-end' : 'justify-start'
+              "text-xs text-muted-foreground flex items-center flex-wrap gap-1 mb-1",
+              isRTL ? "justify-end" : "justify-start"
             )}
           >
             {breadcrumbs.map((crumb, index) => {
@@ -90,14 +90,17 @@ const PageHeader = ({
           </nav>
         )}
 
-        <div className="flex items-center justify-between gap-4">
+        <div className={cn(
+          "flex items-center justify-between gap-4",
+          isRTL && "flex-row-reverse"
+        )}>
           <div className="flex items-center gap-4">
             {Icon && (
               <div className="p-3 rounded-xl bg-primary/10 text-primary border border-primary/10 shadow-inner">
                 <Icon className="h-6 w-6" />
               </div>
             )}
-            <div className={isRTL ? 'text-right' : 'text-left'}>
+            <div className="text-start">
               <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight leading-none">{title}</h1>
               {description && (
                 <p className="text-sm text-muted-foreground mt-1.5 font-medium opacity-90">{description}</p>
@@ -106,7 +109,10 @@ const PageHeader = ({
           </div>
 
           {actionContent && (
-            <div className="flex items-center gap-3 flex-wrap justify-end">
+            <div className={cn(
+              "flex items-center gap-3 flex-wrap",
+              isRTL ? "justify-start" : "justify-end"
+            )}>
               {actionContent}
             </div>
           )}

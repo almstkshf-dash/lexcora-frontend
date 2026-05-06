@@ -143,7 +143,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
       <div 
-        className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl w-[98vw] max-w-7xl h-[90vh] flex flex-col overflow-hidden"
+        className="bg-white dark:bg-gray-900 rounded-sg shadow-2xl w-[98vw] max-w-7xl h-[90vh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
         dir={t('common.direction') === 'rtl' ? 'rtl' : 'ltr'}
       >
@@ -180,7 +180,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
                 disabled={importing}
               >
                 <label htmlFor="statement-upload">
-                  <Upload className="h-4 w-4 mr-2" />
+                  <Upload className="h-4 w-4 me-2" />
                   {importing ? t('importing') : t('importStatement')}
                 </label>
               </Button>
@@ -190,7 +190,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
               disabled={matching || statementLines.length === 0}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              <CheckCircle2 className="h-4 w-4 mr-2" />
+              <CheckCircle2 className="h-4 w-4 me-2" />
               {matching ? t('matching') : t('autoMatch')}
             </Button>
           </div>
@@ -210,7 +210,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
         {/* Main Content: Split View */}
         <div className="flex-1 flex overflow-hidden">
           {/* Left: Statement Lines */}
-          <div className="w-1/2 border-r flex flex-col overflow-hidden">
+          <div className="w-1/2 border-e flex flex-col overflow-hidden">
             <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b font-semibold flex justify-between items-center">
               <span>{t('statementLines')}</span>
               <Badge variant="outline">{statementLines.length}</Badge>
@@ -221,7 +221,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
                   <TableRow>
                     <TableHead>{t('common.date') || 'Date'}</TableHead>
                     <TableHead>{t('common.description') || 'Description'}</TableHead>
-                    <TableHead className="text-right">{t('common.amount') || 'Amount'}</TableHead>
+                    <TableHead className="text-end">{t('common.amount') || 'Amount'}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -244,7 +244,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
                         <TableCell className="text-sm font-medium max-w-[200px] truncate">
                           {line.description}
                         </TableCell>
-                        <TableCell className={`text-right font-bold ${line.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                        <TableCell className={`text-end font-bold ${line.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>
                           {formatCurrency(line.amount)}
                         </TableCell>
                       </TableRow>
@@ -268,7 +268,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
                     <TableHead>{t('common.date') || 'Date'}</TableHead>
                     <TableHead>{t('common.type') || 'Type'}</TableHead>
                     <TableHead>{t('common.description') || 'Description'}</TableHead>
-                    <TableHead className="text-right">{t('common.amount') || 'Amount'}</TableHead>
+                    <TableHead className="text-end">{t('common.amount') || 'Amount'}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -296,7 +296,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
                         <TableCell className="text-sm max-w-[150px] truncate">
                           {log.description || t('noDescription')}
                         </TableCell>
-                        <TableCell className={`text-right font-bold ${log.type === 'withdrawal' ? 'text-red-600' : 'text-green-600'}`}>
+                        <TableCell className={`text-end font-bold ${log.type === 'withdrawal' ? 'text-red-600' : 'text-green-600'}`}>
                           {log.type === 'withdrawal' ? '-' : ''}{formatCurrency(log.amount)}
                         </TableCell>
                       </TableRow>
@@ -336,7 +336,7 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
             >
               {reconciling ? t('matching') : (
                 <>
-                  <Check className="h-4 w-4 mr-2" />
+                  <Check className="h-4 w-4 me-2" />
                   {t('confirmMatch')}
                 </>
               )}
@@ -350,3 +350,5 @@ function BankReconciliationModal({ isOpen, onClose, accountId, accountName }) {
 }
 
 export default BankReconciliationModal;
+
+

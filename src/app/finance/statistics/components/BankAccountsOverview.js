@@ -39,7 +39,7 @@ const BankAccountsOverview = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className={isRTL ? 'text-right' : 'text-left'}>
+        <CardTitle className={isRTL ? 'text-end' : 'text-start'}>
           {t('bankAccountsOverview')}
         </CardTitle>
       </CardHeader>
@@ -55,8 +55,8 @@ const BankAccountsOverview = () => {
         ) : (
           <>
             {/* Total Balance Card */}
-            <div className="mb-6 p-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg text-white">
-              <div className={isRTL ? 'text-right' : 'text-left'}>
+            <div className="mb-6 p-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-sg text-white">
+              <div className={isRTL ? 'text-end' : 'text-start'}>
                 <p className="text-sm opacity-90 mb-2">
                   {t('totalBalance')}
                 </p>
@@ -74,14 +74,14 @@ const BankAccountsOverview = () => {
               {accounts.map((account) => (
                 <div
                   key={account.id}
-                  className="p-4 border rounded-lg hover:shadow-md transition-shadow"
+                  className="p-4 border rounded-sg hover:shadow-md transition-shadow"
                 >
                   <div className={`flex items-start justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <div className="p-2 rounded-full bg-blue-100">
                         <Building2 className="h-5 w-5 text-blue-600" />
                       </div>
-                      <div className={isRTL ? 'text-right' : 'text-left'}>
+                      <div className={isRTL ? 'text-end' : 'text-start'}>
                         <p className="font-semibold">{account.bank_name}</p>
                         <p className="text-sm text-gray-500" dir="ltr">
                           {account.account_number}
@@ -103,7 +103,7 @@ const BankAccountsOverview = () => {
                     </Badge>
                   </div>
                   
-                  <div className={`mt-4 pt-4 border-t ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <div className={`mt-4 pt-4 border-t ${isRTL ? 'text-end' : 'text-start'}`}>
                     <p className="text-sm text-gray-500 mb-1">
                       {t('currentBalance')}
                     </p>
@@ -122,3 +122,4 @@ const BankAccountsOverview = () => {
 };
 
 export default BankAccountsOverview;
+

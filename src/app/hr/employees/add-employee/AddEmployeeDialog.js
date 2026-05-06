@@ -295,7 +295,7 @@ export default function AddEmployeeModal({ onAdd }) {
             disabled={isSaving}
             className="px-6"
           >
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
             {isSaving ? (t('buttons.saving') || 'Saving...') : t('buttons.save')}
           </Button>
         </div>

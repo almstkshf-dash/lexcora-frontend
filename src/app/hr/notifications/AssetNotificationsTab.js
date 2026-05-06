@@ -89,7 +89,7 @@ function AssetNotificationsTab({ notifications, isArabic, getStatusIcon, getStat
                     </p>
                   </div>
                   
-                  <div className="text-right">
+                  <div className="text-end">
                     <p className={`text-xs font-medium ${
                       notification.days_remaining < 0 
                         ? 'text-red-600' 

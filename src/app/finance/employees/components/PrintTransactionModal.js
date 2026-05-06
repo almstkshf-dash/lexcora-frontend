@@ -477,7 +477,7 @@ const PrintTransactionModal = ({ isOpen, onClose, transactionId }) => {
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div 
-          className="bg-white rounded-lg shadow-2xl w-full max-w-5xl max-h-[95vh] flex flex-col"
+          className="bg-white rounded-sg shadow-2xl w-full max-w-5xl max-h-[95vh] flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header - Fixed */}
@@ -647,7 +647,7 @@ const PrintTransactionModal = ({ isOpen, onClose, transactionId }) => {
             {loading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-                <span className="mr-3 text-lg">{t('loading')}</span>
+                <span className="me-3 text-lg">{t('loading')}</span>
               </div>
             ) : transaction ? (
               <div ref={printRef} className="bg-white shadow-lg" dir="rtl">
@@ -769,3 +769,4 @@ const PrintTransactionModal = ({ isOpen, onClose, transactionId }) => {
 };
 
 export default PrintTransactionModal;
+

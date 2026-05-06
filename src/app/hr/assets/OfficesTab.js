@@ -95,7 +95,7 @@ const OfficesTab = ({ offices, onMutate }) => {
     <>
       <div className="flex justify-end mb-4">
         <Button onClick={handleAddOffice}>
-          <Plus className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
+          <Plus className={`h-4 w-4 me-2`} />
           {isArabic ? 'إضافة مستند' : 'Add Document'}
         </Button>
       </div>
@@ -218,3 +218,4 @@ const OfficesTab = ({ offices, onMutate }) => {
 }
 
 export default OfficesTab
+

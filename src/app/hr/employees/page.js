@@ -229,18 +229,18 @@ export default function EmployeeTablePage() {
 
         {/* Filters and Search - Only show when not loading */}
         {!isLoading && !error && (
-          <div className="bg-card rounded-lg shadow-sm border border-border p-6 mb-6">
+          <div className="bg-card rounded-sg shadow-sm border border-border p-6 mb-6">
             <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 {/* Search */}
                 <div className="relative flex-1 w-full">
-                  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Search className="absolute inset-inline-end-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
                     type="text"
                     placeholder={t('employees.searchPlaceholder')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pr-10 pl-4 py-2"
+                    className="w-full pe-10 ps-4 py-2"
                   />
                 </div>
 
@@ -299,13 +299,13 @@ export default function EmployeeTablePage() {
 
         {/* Table - Only show when not loading */}
         {!isLoading && !error && (
-          <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+          <div className="bg-card rounded-sg shadow-sm border border-border overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-muted border-b border-border">
                   <tr>
                     <th 
-                      className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80"
+                      className="px-6 py-3 text-start text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80"
                       onClick={() => handleSort('name')}
                     >
                       <div className="flex items-center gap-1 cursor-pointer">
@@ -314,7 +314,7 @@ export default function EmployeeTablePage() {
                       </div>
                     </th>
                     <th 
-                      className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80"
+                      className="px-6 py-3 text-start text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80"
                       onClick={() => handleSort('role')}
                     >
                       <div className="flex items-center gap-1 cursor-pointer">
@@ -323,7 +323,7 @@ export default function EmployeeTablePage() {
                       </div>
                     </th>
                     <th 
-                      className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80"
+                      className="px-6 py-3 text-start text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80"
                       onClick={() => handleSort('department')}
                     >
                       <div className="flex items-center gap-1 cursor-pointer">
@@ -331,11 +331,11 @@ export default function EmployeeTablePage() {
                         <SortIcon column="department" />
                       </div>
                     </th> 
-                    <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="px-6 py-3 text-start text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('employees.status')}
                     </th>
                     {/* <th 
-                      className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80"
+                      className="px-6 py-3 text-start text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80"
                       onClick={() => handleSort('lastLogin')}
                     >
                       <div className="flex items-center gap-1 cursor-pointer">
@@ -343,7 +343,7 @@ export default function EmployeeTablePage() {
                         <SortIcon column="lastLogin" />
                       </div>
                     </th> */}
-                    <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="px-6 py-3 text-start text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('employees.actions')}
                     </th>
                   </tr>
@@ -366,7 +366,7 @@ export default function EmployeeTablePage() {
 
         {/* Empty State */}
         {!isLoading && !error && filteredAndSortedData.length === 0 && (
-          <div className=" rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+          <div className=" rounded-sg shadow-sm border border-gray-200 p-12 text-center">
             <div className="w-12 h-12 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
               <Search className="w-6 h-6 text-gray-400" />
             </div>
@@ -378,3 +378,4 @@ export default function EmployeeTablePage() {
     </div>
   );
 }
+

@@ -199,12 +199,12 @@ const AddFormModal = ({ onFormAdded }) => {
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 me-2 animate-spin" />
                   {isArabic ? 'جاري الإضافة...' : 'Adding...'}
                 </>
               ) : (
                 <>
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="w-4 h-4 me-2" />
                   {isArabic ? 'إضافة' : 'Add'}
                 </>
               )}
@@ -217,3 +217,4 @@ const AddFormModal = ({ onFormAdded }) => {
 }
 
 export default AddFormModal
+

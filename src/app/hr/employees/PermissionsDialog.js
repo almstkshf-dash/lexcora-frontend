@@ -146,7 +146,7 @@ export default function PermissionsModal({ trigger,id }) {
                 </div>
             ) : (
                 <button
-                    className="flex items-center gap-2 w-full px-2 py-1 hover:bg-muted rounded text-right cursor-pointer"
+                    className="flex items-center gap-2 w-full px-2 py-1 hover:bg-muted rounded text-end cursor-pointer"
                     onClick={() => setOpen(true)}
                 >
                     <Shield className="w-4 h-4 text-muted-foreground" />
@@ -200,7 +200,7 @@ export default function PermissionsModal({ trigger,id }) {
                     ) : (
                         <div className="space-y-6">
                             {Object.entries(groupedPermissions).map(([groupName, groupPermissions]) => (
-                                <div key={groupName} className="border border-border rounded-lg p-4 bg-muted/20">
+                                <div key={groupName} className="border border-border rounded-sg p-4 bg-muted/20">
                                     {/* Group Header */}
                                     <h3 className="text-base font-semibold text-foreground mb-4 pb-2 border-b border-border">
                                         {getGroupNameTranslation(groupName)}
@@ -247,7 +247,7 @@ export default function PermissionsModal({ trigger,id }) {
                         disabled={isSaving}
                         className="cursor-pointer min-w-[100px]"
                     >
-                        {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
                         {isSaving ? (t('buttons.saving') || 'Saving...') : t('buttons.save')}
                     </Button>
                 </div>
@@ -264,7 +264,7 @@ export default function PermissionsModal({ trigger,id }) {
                 </div>
             ) : (
                 <button
-                    className="flex items-center gap-2 w-full px-2 py-1 hover:bg-muted rounded text-right cursor-pointer"
+                    className="flex items-center gap-2 w-full px-2 py-1 hover:bg-muted rounded text-end cursor-pointer"
                     onClick={() => setOpen(true)}
                 >
                     <Shield className="w-4 h-4 text-muted-foreground" />
@@ -276,3 +276,4 @@ export default function PermissionsModal({ trigger,id }) {
         </>
     );
 }
+

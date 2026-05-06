@@ -66,7 +66,7 @@ const HierarchicalRow = ({ node, level = 0, isRTL, accT }) => {
         )}
         onClick={() => hasChildren && setIsOpen(!isOpen)}
       >
-        <TableCell className="py-3" style={{ [isRTL ? 'paddingRight' : 'paddingLeft']: `${level * 24 + 12}px` }}>
+        <TableCell className="py-3" style={{ paddingInlineStart: `${level * 24 + 12}px` }}>
           <div className="flex items-center gap-2">
             {hasChildren ? (
               isOpen ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className={cn("h-4 w-4 text-muted-foreground", isRTL && "rotate-180")} />
@@ -77,7 +77,7 @@ const HierarchicalRow = ({ node, level = 0, isRTL, accT }) => {
             <span className="text-xs text-muted-foreground font-mono ms-2">({node.code})</span>
           </div>
         </TableCell>
-        <TableCell className="text-right font-mono">
+        <TableCell className="text-end font-mono">
           <span className={cn(
             node.total_balance < 0 ? "text-red-500" : (node.total_balance > 0 ? "text-green-600" : "")
           )}>
@@ -99,7 +99,7 @@ const HierarchicalTable = ({ data, isRTL, commonT, accT }) => (
       <TableHeader className="bg-muted/50">
         <TableRow>
           <TableHead>{commonT('account')}</TableHead>
-          <TableHead className="text-right">{commonT('balance')}</TableHead>
+          <TableHead className="text-end">{commonT('balance')}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -120,7 +120,7 @@ const HierarchicalTable = ({ data, isRTL, commonT, accT }) => (
 
 const AgingCard = ({ party, isRTL, commonT }) => (
   <Card className="overflow-hidden border-none shadow-md bg-card/60 backdrop-blur-md">
-    <CardHeader className="pb-2">
+    <CardHeader className="pb-2 text-start">
       <CardTitle className="text-lg flex justify-between items-center">
         {party.party_name}
         <span className="text-sm font-bold text-primary">{party.total_balance.toLocaleString()} {commonT('currencySymbol')}</span>
@@ -178,7 +178,7 @@ const CashFlowSection = ({ title, data, type, isRTL, accT, commonT }) => (
                 <p className="font-medium text-sm">{isRTL ? acc.name_ar : acc.name_en}</p>
                 <p className="text-xs text-muted-foreground font-mono">{acc.code}</p>
               </TableCell>
-              <TableCell className="text-right font-mono">
+              <TableCell className="text-end font-mono">
                 {parseFloat(acc.balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </TableCell>
             </TableRow>
@@ -235,7 +235,7 @@ export default function ReportsPage() {
   const formatCurrency = (val) => (val || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
   return (
-    <div className="p-6 space-y-8 animate-in fade-in duration-700" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="p-6 space-y-8 animate-in fade-in duration-700 print:p-0 print:space-y-4" dir={isRTL ? 'rtl' : 'ltr'}>
       <PageHeader
         title={navT('reports')}
         icon={FileBarChart}
@@ -256,30 +256,30 @@ export default function ReportsPage() {
         }
       />
 
-      <Tabs defaultValue="pl" className="w-full">
-        <TabsList className="flex w-full overflow-x-auto bg-muted/20 p-1 mb-8 rounded-xl border border-border/50">
-          <TabsTrigger value="pl" className="flex-1 gap-2 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">
+      <Tabs defaultValue="pl" className="w-full" dir={isRTL ? 'rtl' : 'ltr'}>
+        <TabsList className="flex w-full overflow-x-auto bg-muted/20 p-1 mb-8 rounded-xl border border-border/50 justify-start">
+          <TabsTrigger value="pl" className="flex-1 gap-2 rounded-sg data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <TrendingUp className="h-4 w-4" /> {accT('profitLoss')}
           </TabsTrigger>
-          <TabsTrigger value="bs" className="flex-1 gap-2 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">
+          <TabsTrigger value="bs" className="flex-1 gap-2 rounded-sg data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <Landmark className="h-4 w-4" /> {accT('balanceSheet')}
           </TabsTrigger>
-          <TabsTrigger value="tb" className="flex-1 gap-2 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">
+          <TabsTrigger value="tb" className="flex-1 gap-2 rounded-sg data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <BarChartIcon className="h-4 w-4" /> {accT('trialBalance')}
           </TabsTrigger>
-          <TabsTrigger value="cf" className="flex-1 gap-2 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">
+          <TabsTrigger value="cf" className="flex-1 gap-2 rounded-sg data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <DollarSign className="h-4 w-4" /> {accT('cashFlowStatement')}
           </TabsTrigger>
-          <TabsTrigger value="budget" className="flex-1 gap-2 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">
+          <TabsTrigger value="budget" className="flex-1 gap-2 rounded-sg data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <Target className="h-4 w-4" /> {accT('budgeting')}
           </TabsTrigger>
-          <TabsTrigger value="aging" className="flex-1 gap-2 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">
+          <TabsTrigger value="aging" className="flex-1 gap-2 rounded-sg data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <PieChartIcon className="h-4 w-4" /> {accT('aging')}
           </TabsTrigger>
-          <TabsTrigger value="assets" className="flex-1 gap-2 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">
+          <TabsTrigger value="assets" className="flex-1 gap-2 rounded-sg data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <Package className="h-4 w-4" /> {isRTL ? 'سجل الأصول' : 'Assets Register'}
           </TabsTrigger>
-          <TabsTrigger value="profitability" className="flex-1 gap-2 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">
+          <TabsTrigger value="profitability" className="flex-1 gap-2 rounded-sg data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <Briefcase className="h-4 w-4" /> {accT('profitability')}
           </TabsTrigger>
         </TabsList>
@@ -371,7 +371,7 @@ export default function ReportsPage() {
             </Card>
             <Card className={cn(
               "border-none shadow-md",
-              bsData?.data?.isBalanced ? "bg-green-500/10 border-l-4 border-l-green-500" : "bg-red-500/10 border-l-4 border-l-red-500"
+              bsData?.data?.isBalanced ? "bg-green-500/10 border-s-4 border-s-green-500" : "bg-red-500/10 border-s-4 border-s-red-500"
             )}>
               <CardContent className="p-6 flex justify-between items-center">
                 <div>
@@ -409,7 +409,7 @@ export default function ReportsPage() {
                           <Progress value={Math.min(percentage, 100)} className={cn("h-3", isOverBudget ? "bg-red-100" : "bg-primary/10")} 
                                     indicatorClassName={isOverBudget ? "bg-red-500" : "bg-primary"} />
                        </div>
-                       <div className="w-full md:w-1/4 grid grid-cols-2 gap-4 text-center md:text-right">
+                       <div className="w-full md:w-1/4 grid grid-cols-2 gap-4 text-center md:text-end">
                           <div>
                              <p className="text-xs text-muted-foreground uppercase">{accT('budget')}</p>
                              <p className="font-mono font-bold">{item.budget_amount.toLocaleString()}</p>
@@ -456,7 +456,7 @@ export default function ReportsPage() {
         {/* Trial Balance */}
         <TabsContent value="tb" className="space-y-6">
            <Card className="border-none shadow-lg">
-              <CardHeader>
+              <CardHeader className="text-start">
                  <CardTitle>{accT('trialBalance')}</CardTitle>
                  <CardDescription>{accT('trialBalanceDescription')}</CardDescription>
               </CardHeader>
@@ -466,9 +466,9 @@ export default function ReportsPage() {
                        <TableHeader className="bg-muted/50">
                           <TableRow>
                              <TableHead>{commonT('account')}</TableHead>
-                             <TableHead className="text-right">{accT('debit')}</TableHead>
-                             <TableHead className="text-right">{accT('credit')}</TableHead>
-                             <TableHead className="text-right">{commonT('balance')}</TableHead>
+                             <TableHead className="text-end">{accT('debit')}</TableHead>
+                             <TableHead className="text-end">{accT('credit')}</TableHead>
+                             <TableHead className="text-end">{commonT('balance')}</TableHead>
                           </TableRow>
                        </TableHeader>
                        <TableBody>
@@ -478,10 +478,10 @@ export default function ReportsPage() {
                                   <div className="font-medium">{isRTL ? acc.name_ar : acc.name_en}</div>
                                   <div className="text-xs text-muted-foreground font-mono">{acc.code}</div>
                                </TableCell>
-                               <TableCell className="text-right font-mono">{formatCurrency(acc.total_debit)}</TableCell>
-                               <TableCell className="text-right font-mono">{formatCurrency(acc.total_credit)}</TableCell>
+                               <TableCell className="text-end font-mono">{formatCurrency(acc.total_debit)}</TableCell>
+                               <TableCell className="text-end font-mono">{formatCurrency(acc.total_credit)}</TableCell>
                                <TableCell className={cn(
-                                 "text-right font-bold font-mono",
+                                 "text-end font-bold font-mono",
                                  acc.balance > 0 ? "text-green-600" : (acc.balance < 0 ? "text-red-600" : "")
                                )}>
                                   {formatCurrency(Math.abs(acc.balance))}
@@ -544,13 +544,13 @@ export default function ReportsPage() {
                  {isRTL ? 'سجل الأصول الثابتة' : 'Fixed Assets Register'}
               </h3>
               <div className="flex gap-4">
-                 <div className="text-right">
+                 <div className="text-end">
                     <p className="text-xs text-muted-foreground uppercase">{isRTL ? 'إجمالي التكلفة' : 'Total Cost'}</p>
                     <p className="text-lg font-bold">
                        {assetsData?.data?.reduce((sum, a) => sum + parseFloat(a.purchase_cost || 0), 0).toLocaleString()} AED
                     </p>
                  </div>
-                 <div className="text-right">
+                 <div className="text-end">
                     <p className="text-xs text-muted-foreground uppercase">{isRTL ? 'القيمة الحالية' : 'Current Value'}</p>
                     <p className="text-lg font-bold text-primary">
                        {assetsData?.data?.reduce((sum, a) => sum + parseFloat(a.current_value || 0), 0).toLocaleString()} AED
@@ -563,8 +563,8 @@ export default function ReportsPage() {
 
         {/* Profitability Analysis */}
         <TabsContent value="profitability" className="space-y-12">
-           <Tabs defaultValue="case-p" className="w-full">
-              <TabsList className="bg-muted/30 p-1 rounded-lg mb-8">
+           <Tabs defaultValue="case-p" className="w-full" dir={isRTL ? 'rtl' : 'ltr'}>
+              <TabsList className="flex w-full bg-muted/30 p-1 rounded-sg mb-8 justify-start">
                  <TabsTrigger value="case-p" className="px-8">{accT('caseProfitability')}</TabsTrigger>
                  <TabsTrigger value="dept-p" className="px-8">{accT('costCenterProfitability')}</TabsTrigger>
               </TabsList>
@@ -572,7 +572,7 @@ export default function ReportsPage() {
               <TabsContent value="case-p" className="space-y-8">
                  <div className="max-w-xl mx-auto">
                     <Card className="border-none shadow-lg bg-card/80 backdrop-blur-xl">
-                       <CardHeader>
+                       <CardHeader className="text-start">
                           <CardTitle>{accT('selectCase')}</CardTitle>
                           <CardDescription>{accT('caseProfitabilityDescription')}</CardDescription>
                        </CardHeader>
@@ -598,7 +598,7 @@ export default function ReportsPage() {
               <TabsContent value="dept-p" className="space-y-8">
                  <div className="max-w-xl mx-auto">
                     <Card className="border-none shadow-lg bg-card/80 backdrop-blur-xl">
-                       <CardHeader>
+                       <CardHeader className="text-start">
                           <CardTitle>{accT('selectDepartment')}</CardTitle>
                           <CardDescription>{accT('costCenterProfitabilityDescription')}</CardDescription>
                        </CardHeader>
@@ -629,9 +629,9 @@ const AssetsRegister = ({ data, isRTL, commonT, accT }) => (
         <TableRow>
           <TableHead>{isRTL ? 'الأصل' : 'Asset'}</TableHead>
           <TableHead>{isRTL ? 'الحساب' : 'Account'}</TableHead>
-          <TableHead className="text-right">{isRTL ? 'تكلفة الشراء' : 'Purchase Cost'}</TableHead>
-          <TableHead className="text-right">{isRTL ? 'نسبة الإهلاك' : 'Depreciation %'}</TableHead>
-          <TableHead className="text-right">{isRTL ? 'القيمة الحالية' : 'Current Value'}</TableHead>
+          <TableHead className="text-end">{isRTL ? 'تكلفة الشراء' : 'Purchase Cost'}</TableHead>
+          <TableHead className="text-end">{isRTL ? 'نسبة الإهلاك' : 'Depreciation %'}</TableHead>
+          <TableHead className="text-end">{isRTL ? 'القيمة الحالية' : 'Current Value'}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -651,13 +651,13 @@ const AssetsRegister = ({ data, isRTL, commonT, accT }) => (
                 <span className="text-muted-foreground italic text-xs">{isRTL ? 'غير مربوط' : 'Not linked'}</span>
               )}
             </TableCell>
-            <TableCell className="text-right font-mono">
+            <TableCell className="text-end font-mono">
               {asset.purchase_cost?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </TableCell>
-            <TableCell className="text-right font-mono">
+            <TableCell className="text-end font-mono">
               {asset.depreciation_rate}%
             </TableCell>
-            <TableCell className="text-right font-mono font-bold text-primary">
+            <TableCell className="text-end font-mono font-bold text-primary">
               {asset.current_value?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </TableCell>
           </TableRow>
@@ -677,12 +677,15 @@ const AssetsRegister = ({ data, isRTL, commonT, accT }) => (
 const ProfitabilityView = ({ title, subtitle, data, accT, formatCurrency }) => (
   <div className="animate-in slide-in-from-bottom-4 duration-500 space-y-6">
      <Card className="border-primary/20 shadow-xl overflow-hidden">
-        <CardHeader className="bg-primary/5">
+        <CardHeader className="bg-primary/5 text-start">
            <CardTitle className="text-2xl">{title}</CardTitle>
            <CardDescription>{subtitle}</CardDescription>
         </CardHeader>
         <CardContent className="p-0">
-           <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x border-b">
+           <div className={cn(
+             "grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x border-b",
+             isRTL && "md:divide-x-reverse"
+           )}>
               <div className="p-8 text-center group transition-colors hover:bg-green-50/30">
                  <p className="text-sm text-muted-foreground uppercase mb-2">{accT('income')}</p>
                  <p className="text-3xl font-black text-green-600 font-mono">{formatCurrency(data?.income)}</p>
@@ -724,3 +727,4 @@ const ProfitabilityView = ({ title, subtitle, data, accT, formatCurrency }) => (
      </Card>
   </div>
 );
+

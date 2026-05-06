@@ -67,7 +67,7 @@ const AccountBudgetRow = ({ account, level, fiscalYear, isRTL, accT, commonT }) 
             {accT(account.type) || account.type}
           </Badge>
         </TableCell>
-        <TableCell className="text-right">
+        <TableCell className="text-end">
           {!isCategory && (
             <div className="flex items-center justify-end gap-2 max-w-[200px] ms-auto">
               <Input
@@ -77,7 +77,7 @@ const AccountBudgetRow = ({ account, level, fiscalYear, isRTL, accT, commonT }) 
                   setAmount(e.target.value);
                   setHasChanged(true);
                 }}
-                className="h-8 text-right font-mono text-sm border-muted-foreground/20 focus:border-primary"
+                className="h-8 text-end font-mono text-sm border-muted-foreground/20 focus:border-primary"
               />
               {hasChanged && (
                 <Button 
@@ -98,7 +98,7 @@ const AccountBudgetRow = ({ account, level, fiscalYear, isRTL, accT, commonT }) 
              </span>
           )}
         </TableCell>
-        <TableCell className="text-right">
+        <TableCell className="text-end">
           {!isCategory && !hasChanged && (
             <div className="h-8 w-8 inline-flex items-center justify-center opacity-20">
               <Check className="h-4 w-4 text-green-600" />
@@ -157,7 +157,7 @@ export default function BudgetingPage() {
         ]}
       />
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" dir={isRTL ? 'rtl' : 'ltr'}>
         <TabsList className="grid w-full grid-cols-3 mb-8">
           <TabsTrigger value="periods" className="gap-2"><Calendar className="h-4 w-4" /> {accT('fiscalPeriods')}</TabsTrigger>
           <TabsTrigger value="planning" className="gap-2"><Plus className="h-4 w-4" /> {accT('budgeting')}</TabsTrigger>
@@ -183,7 +183,7 @@ export default function BudgetingPage() {
                     <TableHead>{commonT('startDate')}</TableHead>
                     <TableHead>{commonT('endDate')}</TableHead>
                     <TableHead>{commonT('status')}</TableHead>
-                    <TableHead className="text-right">{commonT('actions')}</TableHead>
+                    <TableHead className="text-end">{commonT('actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -199,7 +199,7 @@ export default function BudgetingPage() {
                           <Badge variant="secondary" className="gap-1"><Lock className="h-3 w-3" /> {commonT('closed')}</Badge>
                         )}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-end">
                         <Button 
                           variant="ghost" 
                           size="sm" 
@@ -244,8 +244,8 @@ export default function BudgetingPage() {
                      <TableRow>
                        <TableHead className="w-[40%]">{commonT('account')}</TableHead>
                        <TableHead className="w-[20%]">{commonT('type')}</TableHead>
-                       <TableHead className="w-[30%] text-right">{accT('budgetAmount')}</TableHead>
-                       <TableHead className="w-[10%] text-right"></TableHead>
+                       <TableHead className="w-[30%] text-end">{accT('budgetAmount')}</TableHead>
+                       <TableHead className="w-[10%] text-end"></TableHead>
                      </TableRow>
                    </TableHeader>
                    <TableBody>
@@ -278,22 +278,22 @@ export default function BudgetingPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>{commonT('name')}</TableHead>
-                    <TableHead className="text-right">{accT('budgetAmount')}</TableHead>
-                    <TableHead className="text-right">{accT('actualAmount')}</TableHead>
-                    <TableHead className="text-right">{accT('variance')}</TableHead>
-                    <TableHead className="text-right">%</TableHead>
+                    <TableHead className="text-end">{accT('budgetAmount')}</TableHead>
+                    <TableHead className="text-end">{accT('actualAmount')}</TableHead>
+                    <TableHead className="text-end">{accT('variance')}</TableHead>
+                    <TableHead className="text-end">%</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {budgetData?.data?.map((row) => (
                     <TableRow key={row.id}>
                       <TableCell className="font-medium">{isRTL ? row.name_ar : row.name_en}</TableCell>
-                      <TableCell className="text-right font-mono">{row.amount?.toLocaleString()}</TableCell>
-                      <TableCell className="text-right font-mono">{row.actual_amount?.toLocaleString()}</TableCell>
-                      <TableCell className={cn("text-right font-mono", row.variance >= 0 ? "text-green-600" : "text-red-600")}>
+                      <TableCell className="text-end font-mono">{row.amount?.toLocaleString()}</TableCell>
+                      <TableCell className="text-end font-mono">{row.actual_amount?.toLocaleString()}</TableCell>
+                      <TableCell className={cn("text-end font-mono", row.variance >= 0 ? "text-green-600" : "text-red-600")}>
                         {row.variance?.toLocaleString()}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-end">
                          <div className="w-full bg-muted rounded-full h-2 max-w-[100px] ms-auto">
                             <div 
                               className={cn("h-2 rounded-full", row.performance_pct > 100 ? "bg-red-500" : "bg-primary")} 
@@ -320,3 +320,4 @@ export default function BudgetingPage() {
     </div>
   );
 }
+

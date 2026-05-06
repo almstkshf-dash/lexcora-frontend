@@ -72,7 +72,7 @@ function EmployeeNotificationsTab({ notifications, isArabic, getStatusIcon, getS
             {empNotifications.map((notification) => (
               <div 
                 key={notification.id} 
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center justify-between p-3 bg-gray-50 rounded-sg hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   {getStatusIcon(notification.status)}
@@ -90,7 +90,7 @@ function EmployeeNotificationsTab({ notifications, isArabic, getStatusIcon, getS
                   <Badge variant={getStatusBadgeVariant(notification.status)}>
                     {getStatusText(notification.status, isArabic)}
                   </Badge>
-                  <div className="text-right">
+                  <div className="text-end">
                     <p className={`text-xs font-medium ${
                       notification.days_remaining < 0 
                         ? 'text-red-600' 

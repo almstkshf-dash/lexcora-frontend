@@ -14,7 +14,7 @@ export default function ConfirmDeleteDialog({ trigger, onConfirm }) {
             <span className="text-lg text-center font-bold">{t('admins.confirmDelete')}</span>
           </DialogTitle>
         </DialogHeader>
-        <div className="py-4 text-right">{t('admins.confirmDeleteMessage')}</div>
+        <div className="py-4 text-end">{t('admins.confirmDeleteMessage')}</div>
         <DialogFooter className="flex flex-row-reverse gap-2">
           <DialogClose asChild>
             <Button variant="outline" type="button">
@@ -31,3 +31,4 @@ export default function ConfirmDeleteDialog({ trigger, onConfirm }) {
     </Dialog>
   );
 }
+

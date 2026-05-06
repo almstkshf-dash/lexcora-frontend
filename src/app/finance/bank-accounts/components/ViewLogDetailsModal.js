@@ -34,7 +34,7 @@ function ViewLogDetailsModal({ isOpen, onClose, log }) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50" onClick={onClose}>
       <div 
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-[90vw] max-w-4xl max-h-[90vh] overflow-hidden"
+        className="bg-white dark:bg-gray-800 rounded-sg shadow-xl w-[90vw] max-w-4xl max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -92,7 +92,7 @@ function ViewLogDetailsModal({ isOpen, onClose, log }) {
           {log.description && (
             <div>
               <label className="text-sm font-medium text-gray-500">{t('description')}</label>
-              <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+              <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-900 rounded-sg">
                 {log.description}
               </div>
             </div>
@@ -111,7 +111,7 @@ function ViewLogDetailsModal({ isOpen, onClose, log }) {
                     href={attachment.document_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+                    className="flex items-center gap-3 p-3 border rounded-sg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
                   >
                     <Download className="h-5 w-5 text-blue-600" />
                     <div className="flex-1 min-w-0">
@@ -145,3 +145,4 @@ function ViewLogDetailsModal({ isOpen, onClose, log }) {
 }
 
 export default ViewLogDetailsModal;
+

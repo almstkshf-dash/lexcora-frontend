@@ -123,7 +123,7 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
         <DialogContent className="sm:max-w-[700px]" dir={isRTL ? 'rtl' : 'ltr'}>
           <div className="flex items-center justify-center p-8">
             <Loader2 className="h-8 w-8 animate-spin " />
-            <span className="mr-3">{tCommon('loading') || 'جاري التحميل...'}</span>
+            <span className="me-3">{tCommon('loading') || 'جاري التحميل...'}</span>
           </div>
         </DialogContent>
       </Dialog>
@@ -154,13 +154,13 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
 
           {/* Amount and Balance */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+            <div className="p-4 bg-red-50 rounded-sg border border-eed-200">
               <Label className="text-sm font-medium text-red-700">{t('amount')}</Label>
               <p className="mt-1 text-2xl font-bold text-red-600">
                 - {formatCurrency(expense.amount)}
               </p>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="p-4 bg-gray-50 rounded-sg border border-gray-200">
               <Label className="text-sm font-medium ">{t('currentBalance')}</Label>
               <p className={`mt-1 text-2xl font-bold ${
                 expense.employee_balance > 0 
@@ -178,7 +178,7 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
           {expense.description && (
             <div>
               <Label className="text-sm font-medium ">{t('description')}</Label>
-              <p className="mt-1 p-3 bg-gray-50 rounded-lg border">{expense.description}</p>
+              <p className="mt-1 p-3 bg-gray-50 rounded-sg border">{expense.description}</p>
             </div>
           )}
 
@@ -205,7 +205,7 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
                 {expense.attachments.map((attachment) => (
                   <div
                     key={attachment.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border hover:bg-gray-100 transition-colors"
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-sg border hover:bg-gray-100 transition-colors"
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <FileText className="h-5 w-5 text-blue-600 flex-shrink-0" />
@@ -233,7 +233,7 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
                 ))}
               </div>
             ) : (
-              <p className="text-sm  p-4  rounded-lg text-center">
+              <p className="text-sm  p-4  rounded-sg text-center">
                 {tCommon('noAttachments') || 'لا توجد مرفقات'}
               </p>
             )}
@@ -245,7 +245,7 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
               {tCommon('addNewAttachments') || 'إضافة مرفقات جديدة'}
             </Label>
             
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+            <div className="border-2 border-dashed border-gray-300 rounded-sg p-4">
               <input
                 type="file"
                 multiple
@@ -298,12 +298,12 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
                 >
                   {uploading ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <Loader2 className="h-4 w-4 me-2 animate-spin" />
                       {tCommon('uploading') || 'جاري الرفع...'}
                     </>
                   ) : (
                     <>
-                      <Upload className="h-4 w-4 mr-2" />
+                      <Upload className="h-4 w-4 me-2" />
                       {tCommon('uploadFiles') || 'رفع المرفقات'}
                     </>
                   )}
@@ -325,3 +325,5 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
 };
 
 export default ExpenseDetailsModal;
+
+

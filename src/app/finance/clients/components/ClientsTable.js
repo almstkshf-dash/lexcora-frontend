@@ -130,7 +130,7 @@ export default function ClientsTable({ clients, onViewClient, translations: t })
                       onClick={() => onViewClient(client)}
                       className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
                     >
-                      <Eye className="h-4 w-4 mr-2" />
+                      <Eye className="h-4 w-4 me-2" />
                       {t("view")}
                     </Button>
                   </TableCell>
@@ -143,3 +143,4 @@ export default function ClientsTable({ clients, onViewClient, translations: t })
     </Card>
   );
 }
+

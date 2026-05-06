@@ -384,7 +384,7 @@ function RequestsPage() {
       )
     } else if (status === 'rejected') {
       return (
-        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+        <Badge variant="outline" className="bg-red-50 text-red-700 border-eed-200">
           {isArabic ? 'مرفوض' : 'Rejected'}
         </Badge>
       )
@@ -408,7 +408,7 @@ function RequestsPage() {
             {isArabic ? 'موافق مالياً' : 'Finance OK'}
           </Badge>
         ) : status === 'rejected' ? (
-          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+          <Badge variant="outline" className="bg-red-50 text-red-700 border-eed-200">
             {isArabic ? 'مرفوض مالياً' : 'Finance Rejected'}
           </Badge>
         ) : (
@@ -488,7 +488,7 @@ function RequestsPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-lg">
+            <div className="p-2 bg-primary/10 rounded-sg">
               <FileText className="h-6 w-6 text-primary" />
             </div>
             <div>
@@ -504,7 +504,7 @@ function RequestsPage() {
             </div>
           </div>
           <Button onClick={handleAddRequest}>
-            <Plus className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
+            <Plus className={`h-4 w-4 me-2`} />
             {isArabic ? 'إضافة طلب' : 'Add Request'}
           </Button>
         </CardHeader>
@@ -539,13 +539,13 @@ function RequestsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
                   {/* Search Input */}
                   <div className="relative lg:col-span-2">
-                    <Search className={`absolute ${isArabic ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400`} />
+                    <Search className={`absolute ${isArabic ? 'inset-inline-end-3' : 'inset-inline-start-3'} top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400`} />
                     <Input
                       placeholder={isArabic ? 'ابحث عن موظف أو نوع...' : 'Search employee or type...'}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      className={`${isArabic ? 'pr-10' : 'pl-10'}`}
+                      className={`${isArabic ? 'pe-10' : 'ps-10'}`}
                     />
                   </div>
 
@@ -593,7 +593,7 @@ function RequestsPage() {
                   {/* Action Buttons */}
                   <div className="flex gap-2">
                     <Button onClick={handleApplyFilters} className="flex-1">
-                      <Search className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
+                      <Search className={`h-4 w-4 me-2`} />
                       {isArabic ? 'بحث' : 'Search'}
                     </Button>
                     <Button variant="outline" onClick={handleResetFilters}>
@@ -714,13 +714,13 @@ function RequestsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                   {/* Search Input */}
                   <div className="relative lg:col-span-2">
-                    <Search className={`absolute ${isArabic ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400`} />
+                    <Search className={`absolute ${isArabic ? 'inset-inline-end-3' : 'inset-inline-start-3'} top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400`} />
                     <Input
                       placeholder={isArabic ? 'ابحث عن موظف أو نوع...' : 'Search employee or type...'}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      className={`${isArabic ? 'pr-10' : 'pl-10'}`}
+                      className={`${isArabic ? 'pe-10' : 'ps-10'}`}
                     />
                   </div>
 
@@ -755,7 +755,7 @@ function RequestsPage() {
                   {/* Action Buttons */}
                   <div className="flex gap-2">
                     <Button onClick={handleApplyFilters} className="flex-1">
-                      <Search className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
+                      <Search className={`h-4 w-4 me-2`} />
                       {isArabic ? 'بحث' : 'Search'}
                     </Button>
                     <Button variant="outline" onClick={handleResetFilters}>
@@ -885,3 +885,5 @@ function RequestsPage() {
 }
 
 export default RequestsPage
+
+

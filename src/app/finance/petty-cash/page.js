@@ -254,7 +254,7 @@ export default function PettyCashPage() {
                       setSelectedFund(fund);
                       fetchTransactions(fund.id);
                     }}
-                    className={`w-full flex flex-col items-start p-3 rounded-lg text-sm transition-colors ${
+                    className={`w-full flex flex-col items-start p-3 rounded-sg text-sm transition-colors ${
                       selectedFund?.id === fund.id 
                         ? 'bg-primary text-primary-foreground' 
                         : 'hover:bg-muted'
@@ -302,7 +302,7 @@ export default function PettyCashPage() {
                         <TableHead>{commonT('date')}</TableHead>
                         <TableHead>{commonT('type')}</TableHead>
                         <TableHead>{commonT('description')}</TableHead>
-                        <TableHead className="text-right">{commonT('amount')}</TableHead>
+                        <TableHead className="text-end">{commonT('amount')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -327,7 +327,7 @@ export default function PettyCashPage() {
                               </div>
                             </TableCell>
                             <TableCell>{tx.description}</TableCell>
-                            <TableCell className={`text-right font-medium ${
+                            <TableCell className={`text-end font-medium ${
                               tx.type === LOG_TYPE.REPLENISHMENT ? 'text-green-600' : 'text-red-600'
                             }`}>
                               {tx.type === LOG_TYPE.REPLENISHMENT ? '+' : '-'}
@@ -342,7 +342,7 @@ export default function PettyCashPage() {
               </Card>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-lg text-muted-foreground">
+            <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-sg text-muted-foreground">
               <Wallet className="h-12 w-12 mb-4 opacity-20" />
               <p>{commonT('noData')}</p>
             </div>
@@ -352,3 +352,4 @@ export default function PettyCashPage() {
     </div>
   );
 }
+

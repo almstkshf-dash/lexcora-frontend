@@ -212,13 +212,13 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
       {loading ? (
         <div className="flex items-center justify-center p-12">
           <Loader2 className="h-8 w-8 animate-spin " />
-          <span className="mr-3">{t('loadingData')}</span>
+          <span className="me-3">{t('loadingData')}</span>
         </div>
       ) : invoice ? (
         <>
           <CustomModalBody>
             {/* Invoice Header Info */}
-            <div className="grid grid-cols-2 gap-4 p-4  rounded-lg">
+            <div className="grid grid-cols-2 gap-4 p-4  rounded-sg">
               <div>
                 <label className="text-sm font-medium ">{t('invoiceNumber')}</label>
                 <p className="text-lg font-bold font-mono">{invoice.invoice_number}</p>
@@ -285,7 +285,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                         <span className="font-medium ">{index + 1}. </span>
                         <span>{item.description}</span>
                       </div>
-                      <div className="font-semibold  mr-4">
+                      <div className="font-semibold  me-4">
                         {formatCurrency(item.amount, invoice.currency)}
                       </div>
                     </div>
@@ -406,3 +406,4 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
     </CustomModal>
   );
 }
+

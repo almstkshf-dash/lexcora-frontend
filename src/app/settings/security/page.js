@@ -138,7 +138,7 @@ const SecuritySettingsPage = () => {
   const passwordStrength = getPasswordStrength(passwordData.newPassword);
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <PageHeader
         title={t('navigation.security')}
         description={t('settings.securityDescription')}
@@ -182,7 +182,7 @@ const SecuritySettingsPage = () => {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className={`absolute ${isRTL ? 'left-0' : 'right-0'} top-0 h-full px-3 py-2 hover:bg-transparent`}
+                  className="absolute inset-inline-end-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                 >
                   {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -206,7 +206,7 @@ const SecuritySettingsPage = () => {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className={`absolute ${isRTL ? 'left-0' : 'right-0'} top-0 h-full px-3 py-2 hover:bg-transparent`}
+                  className="absolute inset-inline-end-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowNewPassword(!showNewPassword)}
                 >
                   {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -243,7 +243,7 @@ const SecuritySettingsPage = () => {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className={`absolute ${isRTL ? 'left-0' : 'right-0'} top-0 h-full px-3 py-2 hover:bg-transparent`}
+                  className="absolute inset-inline-end-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -273,7 +273,7 @@ const SecuritySettingsPage = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className={`flex items-center ${isRTL ? 'flex-row-reverse justify-between' : 'justify-between'}`}>
+            <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label>{t('settings.enableTwoFactor')}</Label>
                 <p className="text-sm text-muted-foreground">
@@ -364,7 +364,7 @@ const SecuritySettingsPage = () => {
                     onClick={() => handleTerminateSession(session.id)}
                     className="text-destructive hover:text-destructive"
                   >
-                    <Trash2 className="h-4 w-4 mr-2" />
+                    <Trash2 className="h-4 w-4 me-2" />
                     {t('settings.terminate')}
                   </Button>
                 )}

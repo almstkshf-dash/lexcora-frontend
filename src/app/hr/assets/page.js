@@ -105,7 +105,7 @@ function AssetsPage() {
   if (error) {
     return (
       <div className="text-center p-8 text-red-500">
-        {isArabic ? 'حدث خطأ أثناء تحميل البيانات' : 'Error loading data'}
+        {t('common.errorLoading')}
       </div>
     )
   }
@@ -113,16 +113,16 @@ function AssetsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{isArabic ? 'الأصول' : 'Assets'}</CardTitle>
+        <CardTitle>{t('assets.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs dir={isArabic ? 'rtl' : 'ltr'} value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="offices">
-              {isArabic ? 'المكاتب' : 'Offices'}
+              {t('assets.offices') || (isArabic ? 'المكاتب' : 'Offices')}
             </TabsTrigger>
             <TabsTrigger value="resources">
-              {isArabic ? 'الموارد' : 'Resources'}
+              {t('assets.resources') || (isArabic ? 'الموارد' : 'Resources')}
             </TabsTrigger>
           </TabsList>
 
@@ -135,7 +135,7 @@ function AssetsPage() {
                   columnConfig={assetsColumnConfig}
                   language={language}
                   exportName="office-assets"
-                  sheetName={language === 'ar' ? 'أصول المكاتب' : 'Office Assets'}
+                  sheetName={t('assets.officeAssets') || (isArabic ? 'أصول المكاتب' : 'Office Assets')}
                 />
               </div>
             )}
@@ -151,7 +151,7 @@ function AssetsPage() {
                   columnConfig={assetsColumnConfig}
                   language={language}
                   exportName="resource-assets"
-                  sheetName={language === 'ar' ? 'أصول الموارد' : 'Resource Assets'}
+                  sheetName={t('assets.resourceAssets') || (isArabic ? 'أصول الموارد' : 'Resource Assets')}
                 />
               </div>
             )}

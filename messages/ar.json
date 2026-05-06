@@ -215,7 +215,8 @@
     "appSubtitle": "نظام الإدارة القانونية",
     "userGuide": "دليل المستخدم",
     "profileSettings": "إعدادات الملف الشخصي",
-    "appLogoSuffix": " شعار"
+    "appLogoSuffix": " شعار",
+    "generalSettings": "الإعدادات العامة"
   },
   "cases": {
     "createFailed": "لم يتم إنشاء القضية. يرجى المحاولة مجدداً.",
@@ -1737,7 +1738,30 @@
     "alphaChannel": "ألفا",
     "currentVersion": "الإصدار الحالي",
     "checkUpdates": "فحص التحديثات",
-    "monthly": "شهري"
+    "monthly": "شهري",
+    "generalSettingsDesc": "إدارة معلومات شركتك وإعدادات ضريبة القيمة المضافة والشروط القانونية المستخدمة في المستندات المالية.",
+    "loadingSettings": "جاري تحميل الإعدادات...",
+    "errorFetchingSettings": "فشل تحميل الإعدادات. يرجى المحاولة مرة أخرى.",
+    "settingsUpdatedSuccessfully": "تم تحديث الإعدادات بنجاح",
+    "errorUpdatingSettings": "فشل تحديث الإعدادات. يرجى المحاولة مرة أخرى.",
+    "back": "رجوع",
+    "companyInfo": "معلومات الشركة",
+    "companyInformation": "معلومات الشركة",
+    "companyInformationDesc": "تظهر هذه المعلومات على جميع المستندات المالية والفواتير.",
+    "companyNameAr": "اسم الشركة (بالعربية)",
+    "companyNameEn": "اسم الشركة (بالإنجليزية)",
+    "companyPhone": "رقم الهاتف",
+    "companyEmail": "البريد الإلكتروني",
+    "trn": "رقم التسجيل الضريبي (TRN)",
+    "defaultVatRate": "نسبة ضريبة القيمة المضافة الافتراضية",
+    "addressAr": "العنوان (بالعربية)",
+    "addressEn": "العنوان (بالإنجليزية)",
+    "saving": "جاري الحفظ...",
+    "saveChanges": "حفظ التغييرات",
+    "termsAndConditions": "الشروط والأحكام",
+    "termsAndConditionsDesc": "تظهر هذه الشروط في أسفل الفواتير والمستندات المالية.",
+    "textAr": "النص العربي",
+    "textEn": "النص الإنجليزي"
   },
   "colors": {
     "blue": "أزرق",

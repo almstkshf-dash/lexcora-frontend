@@ -61,7 +61,7 @@ const LastInvoices = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className={isRTL ? 'text-end' : 'text-start'}>
+        <CardTitle className="text-start">
           {t('recentInvoices')}
         </CardTitle>
       </CardHeader>
@@ -79,19 +79,19 @@ const LastInvoices = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b">
-                  <th className={`py-3 px-2 text-sm font-medium ${isRTL ? 'text-end' : 'text-start'}`}>
+                  <th className="py-3 px-2 text-sm font-medium text-start">
                     {t('invoiceNumber')}
                   </th>
-                  <th className={`py-3 px-2 text-sm font-medium ${isRTL ? 'text-end' : 'text-start'}`}>
+                  <th className="py-3 px-2 text-sm font-medium text-start">
                     {t('client')}
                   </th>
-                  <th className={`py-3 px-2 text-sm font-medium ${isRTL ? 'text-end' : 'text-start'}`}>
+                  <th className="py-3 px-2 text-sm font-medium text-start">
                     {t('date')}
                   </th>
-                  <th className={`py-3 px-2 text-sm font-medium ${isRTL ? 'text-end' : 'text-start'}`}>
+                  <th className="py-3 px-2 text-sm font-medium text-start">
                     {t('amount')}
                   </th>
-                  <th className={`py-3 px-2 text-sm font-medium ${isRTL ? 'text-end' : 'text-start'}`}>
+                  <th className="py-3 px-2 text-sm font-medium text-start">
                     {t('status')}
                   </th>
                 </tr>
@@ -102,26 +102,26 @@ const LastInvoices = () => {
                     key={invoice.id}
                     className="border-b hover:bg-gray-50 transition-colors"
                   >
-                    <td className={`py-3 px-2 ${isRTL ? 'text-end' : 'text-start'}`}>
-                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <td className="py-3 px-2 text-start">
+                      <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-blue-600" />
                         <span className="font-medium text-sm">
                           {invoice.invoice_number || `INV-${invoice.id}`}
                         </span>
                       </div>
                     </td>
-                    <td className={`py-3 px-2 text-sm ${isRTL ? 'text-end' : 'text-start'}`}>
+                    <td className="py-3 px-2 text-sm text-start">
                       {invoice.client_name || '-'}
                     </td>
-                    <td className={`py-3 px-2 text-sm text-gray-600 ${isRTL ? 'text-end' : 'text-start'}`}>
+                    <td className="py-3 px-2 text-sm text-gray-600 text-start">
                       {formatDate(invoice.invoice_date)}
                     </td>
-                    <td className={`py-3 px-2 ${isRTL ? 'text-end' : 'text-start'}`}>
+                    <td className="py-3 px-2 text-start">
                       <span className="font-semibold text-blue-600">
                         {formatCurrency(invoice.amount)}
                       </span>
                     </td>
-                    <td className={`py-3 px-2 ${isRTL ? 'text-end' : 'text-start'}`}>
+                    <td className="py-3 px-2 text-start">
                       {getStatusBadge(invoice.status)}
                     </td>
                   </tr>
@@ -136,4 +136,3 @@ const LastInvoices = () => {
 };
 
 export default LastInvoices;
-

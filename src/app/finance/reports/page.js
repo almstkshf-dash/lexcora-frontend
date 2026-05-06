@@ -43,7 +43,8 @@ import {
   getDepartmentFinancialSummary,
   getTrialBalance,
   getAccountingCashFlow,
-  getAssetsReport
+  getAssetsReport,
+  getVatReturn
 } from '@/app/services/api/accounting';
 import { getDepartments } from '@/app/services/api/departments';
 import { searchCases } from '@/app/services/api/cases';
@@ -120,7 +121,7 @@ const HierarchicalTable = ({ data, isRTL, commonT, accT }) => (
 
 const AgingCard = ({ party, isRTL, commonT }) => (
   <Card className="overflow-hidden border-none shadow-md bg-card/60 backdrop-blur-md">
-    <CardHeader className="pb-2 text-start">
+    <CardHeader className="pb-2 text-start rtl:text-right">
       <CardTitle className="text-lg flex justify-between items-center">
         {party.party_name}
         <span className="text-sm font-bold text-primary">{party.total_balance.toLocaleString()} {commonT('currencySymbol')}</span>
@@ -201,6 +202,7 @@ export default function ReportsPage() {
   const navT = useTranslations('navigation');
   const accT = useTranslations('Accounting');
   const commonT = useTranslations('common');
+  const vatT = useTranslations('vat');
 
   const [selectedCase, setSelectedCase] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -215,6 +217,7 @@ export default function ReportsPage() {
   const { data: apData } = useSWR('/accounting/reports/aging-payables', () => getAgingPayables());
   const { data: budgetData } = useSWR('/accounting/reports/budget-vs-actual', () => getBudgetVsActual());
   const { data: assetsData } = useSWR('/accounting/reports/assets', () => getAssetsReport());
+  const { data: vatData } = useSWR('/accounting/reports/vat-return', () => getVatReturn());
   const { data: deptsData } = useSWR('/departments', () => getDepartments());
 
   const { data: caseSummary } = useSWR(
@@ -282,7 +285,28 @@ export default function ReportsPage() {
           <TabsTrigger value="profitability" className="flex-1 gap-2 rounded-sg data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <Briefcase className="h-4 w-4" /> {accT('profitability')}
           </TabsTrigger>
+          <TabsTrigger value="vat" className="flex-1 gap-2 rounded-sg data-[state=active]:bg-card data-[state=active]:shadow-sm">
+            <DollarSign className="h-4 w-4" /> {vatT('reportTitle')}
+          </TabsTrigger>
         </TabsList>
+
+        {/* VAT Return Tab */}
+        <TabsContent value="vat" className="space-y-6">
+          {vatData?.success ? (
+            <VatReturnView 
+              data={vatData.data} 
+              isRTL={isRTL} 
+              commonT={commonT} 
+              accT={accT} 
+              vatT={vatT}
+              formatCurrency={formatCurrency} 
+            />
+          ) : (
+            <div className="text-center py-20">
+              <Skeleton className="h-64 w-full rounded-xl" />
+            </div>
+          )}
+        </TabsContent>
 
         {/* Profit & Loss */}
         <TabsContent value="pl" className="space-y-6">
@@ -456,7 +480,7 @@ export default function ReportsPage() {
         {/* Trial Balance */}
         <TabsContent value="tb" className="space-y-6">
            <Card className="border-none shadow-lg">
-              <CardHeader className="text-start">
+              <CardHeader className="text-start rtl:text-right">
                  <CardTitle>{accT('trialBalance')}</CardTitle>
                  <CardDescription>{accT('trialBalanceDescription')}</CardDescription>
               </CardHeader>
@@ -591,14 +615,14 @@ export default function ReportsPage() {
                  </div>
 
                  {selectedCase && (
-                   <ProfitabilityView title={selectedCase.topic} subtitle={`File: ${selectedCase.file_number}`} data={caseSummary?.data} accT={accT} formatCurrency={formatCurrency} />
+                   <ProfitabilityView title={selectedCase.topic} subtitle={`File: ${selectedCase.file_number}`} data={caseSummary?.data} accT={accT} formatCurrency={formatCurrency} isRTL={isRTL} />
                  )}
               </TabsContent>
 
               <TabsContent value="dept-p" className="space-y-8">
                  <div className="max-w-xl mx-auto">
                     <Card className="border-none shadow-lg bg-card/80 backdrop-blur-xl">
-                       <CardHeader className="text-start">
+                       <CardHeader className="text-start rtl:text-right">
                           <CardTitle>{accT('selectDepartment')}</CardTitle>
                           <CardDescription>{accT('costCenterProfitabilityDescription')}</CardDescription>
                        </CardHeader>
@@ -613,11 +637,16 @@ export default function ReportsPage() {
                  </div>
 
                  {selectedDept && (
-                   <ProfitabilityView title={isRTL ? selectedDept.name_ar : selectedDept.name_en} subtitle={accT('costCenterProfitabilityDescription')} data={deptSummary?.data} accT={accT} formatCurrency={formatCurrency} />
+                   <ProfitabilityView title={isRTL ? selectedDept.name_ar : selectedDept.name_en} subtitle={accT('costCenterProfitabilityDescription')} data={deptSummary?.data} accT={accT} formatCurrency={formatCurrency} isRTL={isRTL} />
                  )}
-              </TabsContent>
-           </Tabs>
-        </TabsContent>
+               </TabsContent>
+            </Tabs>
+         </TabsContent>
+         
+         {/* VAT Return */}
+         <TabsContent value="vat" className="space-y-6">
+            <VatReturnView data={vatData?.data} isRTL={isRTL} commonT={commonT} accT={accT} formatCurrency={formatCurrency} />
+         </TabsContent>
       </Tabs>
     </div>
   );
@@ -674,10 +703,10 @@ const AssetsRegister = ({ data, isRTL, commonT, accT }) => (
   </div>
 );
 
-const ProfitabilityView = ({ title, subtitle, data, accT, formatCurrency }) => (
+const ProfitabilityView = ({ title, subtitle, data, accT, formatCurrency, isRTL }) => (
   <div className="animate-in slide-in-from-bottom-4 duration-500 space-y-6">
      <Card className="border-primary/20 shadow-xl overflow-hidden">
-        <CardHeader className="bg-primary/5 text-start">
+        <CardHeader className="bg-primary/5 text-start rtl:text-right">
            <CardTitle className="text-2xl">{title}</CardTitle>
            <CardDescription>{subtitle}</CardDescription>
         </CardHeader>
@@ -725,6 +754,123 @@ const ProfitabilityView = ({ title, subtitle, data, accT, formatCurrency }) => (
            </div>
         </CardContent>
      </Card>
+  </div>
+);
+
+const VatReturnView = ({ data, isRTL, commonT, accT, vatT, formatCurrency }) => (
+  <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <h3 className="text-2xl font-black">{vatT('reportTitle')}</h3>
+        <p className="text-muted-foreground">{vatT('reportSubtitle')}</p>
+      </div>
+      <Badge variant="outline" className="px-4 py-2 border-primary/20 bg-primary/5">
+        {vatT('taxPeriod')}: {data?.reportingPeriod?.start_date || 'N/A'} - {data?.reportingPeriod?.end_date || 'N/A'}
+      </Badge>
+    </div>
+
+    {/* Output Tax Section */}
+    <div className="space-y-4">
+      <div className="bg-primary/5 p-4 rounded-xl border-s-4 border-s-primary">
+        <h4 className="font-bold text-lg">{vatT('outputTax')}</h4>
+      </div>
+      <div className="rounded-xl border overflow-hidden">
+        <Table>
+          <TableHeader className="bg-muted/50">
+            <TableRow>
+              <TableHead>{vatT('descriptionEmirates')}</TableHead>
+              <TableHead className="text-end">{vatT('taxableAmount')}</TableHead>
+              <TableHead className="text-end">{vatT('vatAmount')}</TableHead>
+              <TableHead className="text-end">{vatT('adjustments')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data?.outputTax?.standardRatedSupplies?.map((row, i) => (
+              <TableRow key={i}>
+                <TableCell className="font-medium">{row.emirate}</TableCell>
+                <TableCell className="text-end font-mono">{formatCurrency(row.amount)}</TableCell>
+                <TableCell className="text-end font-mono">{formatCurrency(row.vat_amount)}</TableCell>
+                <TableCell className="text-end font-mono">0.00</TableCell>
+              </TableRow>
+            ))}
+            <TableRow className="bg-muted/20">
+              <TableCell className="font-bold">{vatT('zeroRatedSupplies')}</TableCell>
+              <TableCell className="text-end font-mono">{formatCurrency(data?.outputTax?.zeroRatedSupplies)}</TableCell>
+              <TableCell className="text-end font-mono">0.00</TableCell>
+              <TableCell className="text-end font-mono">-</TableCell>
+            </TableRow>
+            <TableRow className="bg-muted/20">
+              <TableCell className="font-bold">{vatT('exemptSupplies')}</TableCell>
+              <TableCell className="text-end font-mono">{formatCurrency(data?.outputTax?.exemptSupplies)}</TableCell>
+              <TableCell className="text-end font-mono">0.00</TableCell>
+              <TableCell className="text-end font-mono">-</TableCell>
+            </TableRow>
+            <TableRow className="bg-primary/10 font-black">
+              <TableCell>{vatT('totalOutputTax')}</TableCell>
+              <TableCell className="text-end font-mono">{formatCurrency(data?.outputTax?.totalOutputAmount)}</TableCell>
+              <TableCell className="text-end font-mono text-primary">{formatCurrency(data?.outputTax?.totalOutputVat)}</TableCell>
+              <TableCell className="text-end font-mono">0.00</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+
+    {/* Input Tax Section */}
+    <div className="space-y-4">
+      <div className="bg-red-500/5 p-4 rounded-xl border-s-4 border-s-red-500">
+        <h4 className="font-bold text-lg">{vatT('inputTax')}</h4>
+      </div>
+      <div className="rounded-xl border overflow-hidden">
+        <Table>
+          <TableHeader className="bg-muted/50">
+            <TableRow>
+              <TableHead>{vatT('description')}</TableHead>
+              <TableHead className="text-end">{vatT('taxableAmount')}</TableHead>
+              <TableHead className="text-end">{vatT('recoverableVat')}</TableHead>
+              <TableHead className="text-end">{vatT('adjustments')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className="font-medium">{vatT('standardRatedExpenses')}</TableCell>
+              <TableCell className="text-end font-mono">{formatCurrency(data?.inputTax?.standardRatedExpenses)}</TableCell>
+              <TableCell className="text-end font-mono">{formatCurrency(data?.inputTax?.recoverableVat)}</TableCell>
+              <TableCell className="text-end font-mono">0.00</TableCell>
+            </TableRow>
+            <TableRow className="bg-red-500/10 font-black">
+              <TableCell>{vatT('totalInputTax')}</TableCell>
+              <TableCell className="text-end font-mono">{formatCurrency(data?.inputTax?.standardRatedExpenses)}</TableCell>
+              <TableCell className="text-end font-mono text-red-600">{formatCurrency(data?.inputTax?.recoverableVat)}</TableCell>
+              <TableCell className="text-end font-mono">0.00</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+
+    {/* Summary Section */}
+    <Card className="bg-primary/5 border-none shadow-2xl">
+      <CardContent className="p-10 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div className="space-y-2 text-center md:text-start">
+          <p className="text-sm text-muted-foreground uppercase tracking-widest">{vatT('netVatPayable')}</p>
+          <h2 className={cn(
+            "text-5xl font-black font-mono",
+            data?.netVat >= 0 ? "text-primary" : "text-green-600"
+          )}>
+            {formatCurrency(Math.abs(data?.netVat || 0))} <span className="text-xl font-sans">{commonT('currencySymbol')}</span>
+          </h2>
+          <p className="text-xs italic text-muted-foreground">
+            {data?.netVat >= 0 ? vatT('payableToFta') : vatT('creditBalance')}
+          </p>
+        </div>
+        <div className="flex gap-4">
+           <Button className="h-12 px-8 rounded-full shadow-lg hover:shadow-primary/20 transition-all gap-2">
+              <Download className="h-5 w-5" /> {vatT('downloadDeclaration')}
+           </Button>
+        </div>
+      </CardContent>
+    </Card>
   </div>
 );
 

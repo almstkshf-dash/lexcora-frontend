@@ -197,7 +197,7 @@ const CreateClientDealModal = ({ children, clientId, onDealCreated }) => {
             </div>
           </div>
 
-          <DialogFooter className={cn("gap-2", isRTL && "flex-row-reverse")}>
+          <DialogFooter className="gap-2">
             <Button 
               type="button" 
               variant="outline" 
@@ -214,7 +214,7 @@ const CreateClientDealModal = ({ children, clientId, onDealCreated }) => {
                 </div>
               ) : (
                 <>
-                  <Plus className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+                  <Plus className="w-4 h-4 me-2" />
                   {language === 'ar' ? 'إنشاء اتفاقية' : 'Create Deal'}
                 </>
               )}

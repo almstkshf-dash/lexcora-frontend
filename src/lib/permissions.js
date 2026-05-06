@@ -19,16 +19,18 @@ export const PERMISSION_REQUIREMENTS = {
   hrNotifications: ['hr:notifications:view', 'hr notifications', 'hr'],
   payroll: ['payroll:view', 'process payroll', 'pay salary', 'hr', 'human resources'],
   financeClients: ['finance:clients:view', 'finance clients', 'finance'],
-  invoices: ['finance:invoices:view', 'invoices', 'finance'],
-  bankAccounts: ['finance:bank-accounts:view', 'bank accounts', 'finance'],
-  financeLedger: ['finance:ledger:view', 'ledger', 'finance'],
-  pettyCash: ['finance:petty-cash:view', 'petty cash', 'finance'],
-  cashFlow: ['finance:cash-flow:view', 'cash flow', 'finance'],
-  financeStatistics: ['finance:statistics:view', 'finance statistics', 'finance'],
-  financeEmployees: ['finance:employees:view', 'employee statements', 'payroll', 'finance'],
+  invoices: ['finance:invoices:view', 'invoices', 'finance', 'view_invoices'],
+  bankAccounts: ['finance:bank-accounts:view', 'bank accounts', 'finance', 'view_bank_accounts'],
+  financeLedger: ['finance:ledger:view', 'ledger', 'finance', 'view_accounts', 'view_journal_entries'],
+  pettyCash: ['finance:petty-cash:view', 'petty cash', 'finance', 'view_petty_cash'],
+  cashFlow: ['finance:cash-flow:view', 'cash flow', 'finance', 'view_financial_reports'],
+  financeStatistics: ['finance:statistics:view', 'finance statistics', 'finance', 'view_financial_reports', 'view_vat_reports'],
+  financeEmployees: ['finance:employees:view', 'employee statements', 'payroll', 'finance', 'view_employee_statements'],
   settingsAppearance: ['settings:appearance:view', 'appearance', 'settings'],
-  settingsBranches: ['settings:branches:view', 'branches', 'settings'],
-  logs: ['logs:view', 'activity logs', 'settings'],
+  settingsBranches: ['settings:branches:view', 'branches', 'settings', 'view_branches', 'Add Branch'],
+  logs: ['logs:view', 'activity logs', 'settings', 'view_logs'],
+  security: ['manage_security', 'view_roles', 'view_permissions', 'settings'],
+  settingsGeneral: ['settings:general:view', 'general settings', 'manage_settings', 'settings'],
 };
 
 export const ROUTE_PERMISSIONS = {
@@ -65,6 +67,7 @@ export const ROUTE_PERMISSIONS = {
   '/finance/employees': PERMISSION_REQUIREMENTS.financeEmployees,
   '/settings/appearance': PERMISSION_REQUIREMENTS.settingsAppearance,
   '/settings/branches': PERMISSION_REQUIREMENTS.settingsBranches,
+  '/settings/general': PERMISSION_REQUIREMENTS.settingsGeneral,
   '/logs': PERMISSION_REQUIREMENTS.logs,
 };
 

@@ -31,7 +31,7 @@ const ViewAssetModal = ({
   if (!asset) return null
 
   const handleDeleteDocument = async (documentId) => {
-    if (!window.confirm(isArabic ? 'هل أنت متأكد من حذف هذا المستند؟' : 'Are you sure you want to delete this document?')) {
+    if (!window.confirm(t('assets.confirmDeleteDoc'))) {
       return
     }
 
@@ -40,16 +40,15 @@ const ViewAssetModal = ({
     try {
       const response = await deleteAssetDocument(asset.id, documentId)
       if (response.success) {
-        toast.success(isArabic ? 'تم حذف المستند بنجاح' : 'Document deleted successfully')
+        toast.success(t('assets.deleteDocSuccess'))
         if (onDocumentDeleted) {
           onDocumentDeleted()
         }
       } else {
-        toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
+        toast.error(response.message || t('common.error'))
       }
     } catch (error) {
-
-      toast.error(isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document')
+      toast.error(t('assets.deleteDocError'))
     } finally {
       setDeletingDocId(null)
     }
@@ -57,7 +56,7 @@ const ViewAssetModal = ({
 
   const loadDepreciationPreview = async () => {
     if (!asset.purchase_cost || Number(asset.purchase_cost) <= 0) {
-      setPreviewError(isArabic ? 'لا يمكن إنشاء معاينة بدون تكلفة شراء صحيحة' : 'Cannot create preview without valid purchase cost')
+      setPreviewError(t('assets.invalidPurchaseCost'))
       setPreviewSchedule(null)
       return
     }
@@ -79,10 +78,10 @@ const ViewAssetModal = ({
       if (response.success) {
         setPreviewSchedule(response.data.schedule)
       } else {
-        setPreviewError(response.message || (isArabic ? 'حدث خطأ أثناء تحميل المعاينة' : 'Unable to load preview'))
+        setPreviewError(response.message || t('assets.errorLoadingPreview'))
       }
     } catch (error) {
-      setPreviewError(isArabic ? 'حدث خطأ أثناء تحميل المعاينة' : 'Unable to load preview')
+      setPreviewError(t('assets.errorLoadingPreview'))
     } finally {
       setIsPreviewLoading(false)
     }
@@ -98,7 +97,7 @@ const ViewAssetModal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isArabic ? 'تفاصيل الأصل' : 'Asset Details'}</DialogTitle>
+          <DialogTitle>{t('assets.assetDetails')}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -106,56 +105,56 @@ const ViewAssetModal = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                {isArabic ? 'اسم الأصل' : 'Asset Name'}
+                {t('assets.assetName')}
               </p>
               <p className="text-base font-semibold">{asset.name}</p>
             </div>
 
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                {isArabic ? 'النوع' : 'Type'}
+                {t('assets.type')}
               </p>
               <Badge variant="secondary">{asset.type}</Badge>
             </div>
 
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                {isArabic ? 'الفرع' : 'Branch'}
+                {t('assets.branch')}
               </p>
               <p className="text-base">{asset.branch_name || '-'}</p>
             </div>
 
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                {isArabic ? 'أنشئ بواسطة' : 'Created By'}
+                {t('assets.createdBy')}
               </p>
               <p className="text-base">{asset.created_by_name || '-'}</p>
             </div>
 
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                {isArabic ? 'الفئة' : 'Category'}
+                {t('assets.category')}
               </p>
               <p className="text-base">{asset.category || '-'}</p>
             </div>
 
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                {isArabic ? 'المسؤول' : 'Custodian'}
+                {t('assets.custodian')}
               </p>
               <p className="text-base">{asset.custodian_name || '-'}</p>
             </div>
 
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                {isArabic ? 'الرقم التسلسلي' : 'Serial Number'}
+                {t('assets.serialNumber')}
               </p>
               <p className="text-base">{asset.serial_number || '-'}</p>
             </div>
 
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                {isArabic ? 'الموقع الفعلي' : 'Physical Location'}
+                {t('assets.physicalLocation')}
               </p>
               <p className="text-base">{asset.physical_location || '-'}</p>
             </div>
@@ -167,7 +166,7 @@ const ViewAssetModal = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                {isArabic ? 'تاريخ الإصدار' : 'Issue Date'}
+                {t('assets.issueDate')}
               </p>
               <p className="text-base">
                 {asset.issue_date 
@@ -179,7 +178,7 @@ const ViewAssetModal = ({
 
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                {isArabic ? 'تاريخ الانتهاء' : 'Expiry Date'}
+                {t('assets.expiryDate')}
               </p>
               <p className="text-base">
                 {asset.expiry_date 
@@ -191,7 +190,7 @@ const ViewAssetModal = ({
 
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                {isArabic ? 'تاريخ الإنشاء' : 'Created At'}
+                {t('assets.createdAt')}
               </p>
               <p className="text-base">
                 {asset.created_at 
@@ -206,11 +205,11 @@ const ViewAssetModal = ({
 
           {/* Financial Information */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">{isArabic ? 'المعلومات المالية' : 'Financial Information'}</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('assets.financialInfo')}</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">
-                  {isArabic ? 'تكلفة الشراء' : 'Purchase Cost'}
+                  {t('assets.purchaseCost')}
                 </p>
                 <p className="text-base font-semibold">
                   {asset.purchase_cost ? Number(asset.purchase_cost).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00'}
@@ -219,7 +218,7 @@ const ViewAssetModal = ({
 
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">
-                  {isArabic ? 'تاريخ الشراء' : 'Purchase Date'}
+                  {t('assets.purchaseDate')}
                 </p>
                 <p className="text-base">
                   {asset.purchase_date 
@@ -231,7 +230,7 @@ const ViewAssetModal = ({
 
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">
-                  {isArabic ? 'الحساب المرتبط' : 'Linked Account'}
+                  {t('assets.linkedAccount')}
                 </p>
                 <p className="text-base">
                   {asset.account_code ? `${asset.account_code} - ${isArabic ? asset.account_name_ar : asset.account_name_en}` : '-'}
@@ -240,7 +239,7 @@ const ViewAssetModal = ({
 
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">
-                  {isArabic ? 'الميزانية' : 'Budget'}
+                  {t('assets.budget')}
                 </p>
                 <p className="text-base">
                   {isArabic
@@ -256,28 +255,28 @@ const ViewAssetModal = ({
 
                   <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">
-                  {isArabic ? 'نسبة الإهلاك' : 'Depreciation Rate'}
+                  {t('assets.depreciationRate')}
                 </p>
                 <p className="text-base">{asset.depreciation_rate || 0}%</p>
               </div>
 
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">
-                  {isArabic ? 'طريقة الإهلاك' : 'Depreciation Method'}
+                  {t('assets.depreciationMethod')}
                 </p>
-                <p className="text-base">{asset.depreciation_method ? asset.depreciation_method.replace('_', ' ') : '-'}</p>
+                <p className="text-base">{asset.depreciation_method ? t(`assets.${asset.depreciation_method}`) : '-'}</p>
               </div>
 
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">
-                  {isArabic ? 'العمر الافتراضي (سنوات)' : 'Useful Life (years)'}
+                  {t('assets.usefulLife')}
                 </p>
                 <p className="text-base">{asset.useful_life || '-'}</p>
               </div>
 
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">
-                  {isArabic ? 'القيمة المتبقية' : 'Salvage Value'}
+                  {t('assets.salvageValue')}
                 </p>
                 <p className="text-base">
                   {asset.salvage_value ? Number(asset.salvage_value).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00'}
@@ -286,7 +285,7 @@ const ViewAssetModal = ({
 
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">
-                  {isArabic ? 'القيمة الحالية' : 'Current Value'}
+                  {t('assets.currentValue')}
                 </p>
                 <p className="text-base font-semibold text-green-600">
                   {asset.current_value ? Number(asset.current_value).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00'}
@@ -298,9 +297,9 @@ const ViewAssetModal = ({
           <Separator />
 
           <div>
-            <h3 className="text-lg font-semibold mb-4">{isArabic ? 'جدول الإهلاك' : 'Depreciation Schedule'}</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('assets.depreciationSchedule')}</h3>
             {isPreviewLoading && (
-              <div className="text-sm text-gray-500">{isArabic ? 'جارٍ تحميل المعاينة...' : 'Loading preview...'}</div>
+              <div className="text-sm text-gray-500">{t('common.loading')}</div>
             )}
             {previewError && (
               <div className="text-sm text-red-500">{previewError}</div>
@@ -308,7 +307,7 @@ const ViewAssetModal = ({
             {previewSchedule && previewSchedule.length > 0 ? (
               <DepreciationSchedule schedule={previewSchedule} />
             ) : !isPreviewLoading && !previewError ? (
-              <div className="text-sm text-gray-500">{isArabic ? 'لا توجد بيانات جدول الإهلاك لعرضها.' : 'No depreciation schedule data to display.'}</div>
+              <div className="text-sm text-gray-500">{t('assets.noScheduleData')}</div>
             ) : null}
           </div>
 
@@ -318,7 +317,7 @@ const ViewAssetModal = ({
               <Separator />
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-2">
-                  {isArabic ? 'ملاحظات' : 'Notes'}
+                  {t('assets.notes')}
                 </p>
                 <p className="text-base whitespace-pre-wrap bg-gray-50 p-3 rounded">
                   {asset.note}
@@ -333,7 +332,7 @@ const ViewAssetModal = ({
               <Separator />
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-3">
-                  {isArabic ? 'المستندات' : 'Documents'} ({asset.documents.length})
+                  {t('assets.documents')} ({asset.documents.length})
                 </p>
                 <div className="space-y-2">
                   {asset.documents.map((doc) => (
@@ -353,7 +352,7 @@ const ViewAssetModal = ({
                             {doc.document_name}
                           </a>
                           <p className="text-xs text-gray-500">
-                            {isArabic ? 'أضيف بواسطة' : 'Added by'}: {doc.created_by_name || '-'}
+                            {t('assets.addedBy')}: {doc.created_by_name || '-'}
                             {' • '}
                             {doc.created_at 
                               ? format(new Date(doc.created_at), 'yyyy-MM-dd')
@@ -403,7 +402,7 @@ const ViewAssetModal = ({
               <div className="text-center py-8">
                 <FileText className="h-12 w-12 text-gray-300 mx-auto mb-2" />
                 <p className="text-gray-500">
-                  {isArabic ? 'لا توجد مستندات' : 'No documents'}
+                  {t('assets.noDocs')}
                 </p>
               </div>
             </>

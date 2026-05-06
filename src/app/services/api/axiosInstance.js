@@ -76,6 +76,10 @@ api.interceptors.response.use(
         console.warn('401 error with valid token - might be a permission issue');
       }
     }
+    // Enrich error message with backend response if available
+    if (error.response && error.response.data && error.response.data.message) {
+      error.message = error.response.data.message;
+    }
     return Promise.reject(error);
   }
 );

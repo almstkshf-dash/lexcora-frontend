@@ -160,7 +160,7 @@ const DataTable = ({
     }
 
     return (
-      <Pagination className={cn(dir === "rtl" ? "flex-row-reverse" : "")}>
+      <Pagination className={cn("")}>
         <PaginationContent className="flex items-center gap-1">
           <PaginationItem>
             <PaginationPrevious

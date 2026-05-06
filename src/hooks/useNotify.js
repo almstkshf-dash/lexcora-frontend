@@ -46,15 +46,16 @@ export const useNotify = () => {
     const status = error?.response?.status
 
     if (status === 401) {
-      return showError(t("notify.unauthorized") || fallback)
+      return showError(t("notify.unauthorized") || specific || fallback)
     }
 
     if (status === 403) {
-      return showError(t("notify.forbidden") || fallback)
+      return showError(t("notify.forbidden") || specific || fallback)
     }
 
     if (status >= 500) {
-      return showError(t("notify.serverError") || fallback)
+      // Prioritize specific message even for 500 if the backend provided one
+      return showError(specific || t("notify.serverError") || fallback)
     }
 
     if (!error?.response && error?.message && /network/i.test(error.message)) {

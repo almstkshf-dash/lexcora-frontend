@@ -67,7 +67,7 @@ const PageHeader = ({
             aria-label={t('pageHeader.breadcrumb')}
             className={cn(
               "text-xs text-muted-foreground flex items-center flex-wrap gap-1 mb-1",
-              isRTL ? "justify-end" : "justify-start"
+              "justify-start"
             )}
           >
             {breadcrumbs.map((crumb, index) => {
@@ -94,8 +94,7 @@ const PageHeader = ({
         )}
 
         <div className={cn(
-          "flex items-center justify-between gap-4",
-          isRTL && "flex-row-reverse"
+          "flex items-center justify-between gap-4"
         )}>
           <div className="flex items-center gap-4">
             {Icon && (
@@ -114,7 +113,7 @@ const PageHeader = ({
           {actionContent && (
             <div className={cn(
               "flex items-center gap-3 flex-wrap",
-              isRTL ? "justify-start" : "justify-end"
+              "justify-end"
             )}>
               {actionContent}
             </div>

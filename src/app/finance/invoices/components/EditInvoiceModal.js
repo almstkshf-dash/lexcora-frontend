@@ -19,7 +19,7 @@ import { useTranslations } from "@/hooks/useTranslations";
 import useSWR from "swr";
 import { format, parseISO } from "date-fns";
 import { ar } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { DEFAULT_VAT, DEFAULT_CURRENCY, STATUS, VAT_CATEGORY, VAT_RATES } from '@/app/finance/constants';
 
 export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess }) {
   const t = useTranslations('invoices');
@@ -30,6 +30,8 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
     branch_id: "",
     bank_account_id: "",
     vat: "5.00",
+    vat_category: VAT_CATEGORY.STANDARD,
+    customer_trn: "",
     currency: "AED",
   });
   const [items, setItems] = useState([{ description: "", amount: "" }]);
@@ -79,6 +81,8 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
           branch_id: invoice.branch_id?.toString() || "",
           bank_account_id: invoice.bank_account_id?.toString() || "",
           vat: invoice.vat?.toString() || "5.00",
+          vat_category: invoice.vat_category || VAT_CATEGORY.STANDARD,
+          customer_trn: invoice.customer_trn || "",
           currency: invoice.currency || "AED",
         });
         
@@ -171,6 +175,8 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
         bank_account_id: formData.bank_account_id || null,
         status: "pending",
         vat: parseFloat(formData.vat) || 0,
+        vat_category: formData.vat_category,
+        customer_trn: formData.customer_trn,
         currency: formData.currency || "AED",
         items: validItems,
       };
@@ -304,21 +310,60 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
               </Select>
             </div>
 
-            {/* VAT Percentage */}
+            {/* Customer TRN */}
             <div className="space-y-2">
-              <Label htmlFor="vat">{t('vatPercentage')}</Label>
+              <Label htmlFor="customer_trn">{t('customerTrn')}</Label>
               <Input
-                id="vat"
-                name="vat"
-                type="number"
-                step="0.01"
-                min="0"
-                max="100"
-                value={formData.vat}
+                id="customer_trn"
+                name="customer_trn"
+                value={formData.customer_trn}
                 onChange={handleInputChange}
-                placeholder="5.00"
+                placeholder="100xxxxxxxxxxxx"
                 disabled={isSubmitting}
               />
+            </div>
+
+            {/* VAT Category and Percentage */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="vat_category">{t('vatCategory')}</Label>
+                <Select
+                  value={formData.vat_category}
+                  onValueChange={(value) => {
+                    setFormData(prev => ({ 
+                      ...prev, 
+                      vat_category: value,
+                      vat: VAT_RATES[value].toString()
+                    }));
+                  }}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={VAT_CATEGORY.STANDARD}>{t('vatStandard')}</SelectItem>
+                    <SelectItem value={VAT_CATEGORY.ZERO}>{t('vatZero')}</SelectItem>
+                    <SelectItem value={VAT_CATEGORY.EXEMPT}>{t('vatExempt')}</SelectItem>
+                    <SelectItem value={VAT_CATEGORY.OUT_OF_SCOPE}>{t('vatOutOfScope')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="vat">{t('vatPercentage')}</Label>
+                <Input
+                  id="vat"
+                  name="vat"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="100"
+                  value={formData.vat}
+                  onChange={handleInputChange}
+                  placeholder="5.00"
+                  disabled={isSubmitting || formData.vat_category !== VAT_CATEGORY.STANDARD}
+                />
+              </div>
             </div>
 
             {/* Currency */}

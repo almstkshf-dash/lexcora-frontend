@@ -20,7 +20,7 @@ import useSWR from "swr";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import { DEFAULT_VAT, DEFAULT_CURRENCY, STATUS } from '@/app/finance/constants';
+import { DEFAULT_VAT, DEFAULT_CURRENCY, STATUS, VAT_CATEGORY, VAT_RATES, EMIRATES } from '@/app/finance/constants';
 
 function InvoiceItemRow({ item, index, isSubmitting, onItemChange, onRemove, showRemove, t }) {
   const handleDescChange = useCallback((e) => onItemChange(index, 'description', e.target.value), [onItemChange, index]);
@@ -64,7 +64,10 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
     branch_id: "",
     bank_account_id: "",
     vat: DEFAULT_VAT,
+    vat_category: VAT_CATEGORY.STANDARD,
+    customer_trn: "",
     currency: DEFAULT_CURRENCY,
+    emirate: EMIRATES[1].id, // Default to Dubai
   });
   const [items, setItems] = useState([{ description: "", amount: "" }]);
   const [attachments, setAttachments] = useState([]);
@@ -186,19 +189,31 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
       return;
     }
 
-    // Filter valid items
-    const validItems = items.filter(item => item.description && item.amount);
+    // Filter valid items and add VAT details
+    const validItems = items
+      .filter(item => item.description && item.amount)
+      .map(item => ({
+        description: item.description,
+        amount: item.amount,
+        vat_rate: vatRate,
+        vat_amount: ((parseFloat(item.amount) || 0) * vatRate / 100).toFixed(2)
+      }));
 
     setIsSubmitting(true);
     try {
       const payload = {
         invoice_date: format(invoiceDate, "yyyy-MM-dd"),
         amount: totalAmount.toFixed(2),
+        taxable_amount: subtotal.toFixed(2),
+        vat_amount: vatAmount.toFixed(2),
         client_id: formData.client_id || null,
         branch_id: formData.branch_id || null,
         bank_account_id: formData.bank_account_id || null,
         status: STATUS.PENDING,
-        vat: parseFloat(formData.vat) || 0,
+        vat: vatRate,
+        vat_category: formData.vat_category,
+        customer_trn: formData.customer_trn,
+        emirate: formData.emirate,
         currency: formData.currency || DEFAULT_CURRENCY,
         items: validItems,
         attachments: attachments,
@@ -343,21 +358,83 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
               </Select>
             </div>
 
-            {/* VAT Percentage */}
+            {/* Customer TRN */}
             <div className="space-y-2">
-              <Label htmlFor="vat">{t('vatPercentage')}</Label>
+              <Label htmlFor="customer_trn">{t('customerTrn')}</Label>
               <Input
-                id="vat"
-                name="vat"
-                type="number"
-                step="0.01"
-                min="0"
-                max="100"
-                value={formData.vat}
+                id="customer_trn"
+                name="customer_trn"
+                value={formData.customer_trn}
                 onChange={handleInputChange}
-                placeholder="5.00"
+                placeholder="100xxxxxxxxxxxx"
                 disabled={isSubmitting}
               />
+            </div>
+
+            {/* VAT Category and Percentage */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="vat_category">{t('vatCategory')}</Label>
+                <Select
+                  value={formData.vat_category}
+                  onValueChange={(value) => {
+                    setFormData(prev => ({ 
+                      ...prev, 
+                      vat_category: value,
+                      vat: VAT_RATES[value].toString()
+                    }));
+                  }}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={VAT_CATEGORY.STANDARD}>{t('vatStandard')}</SelectItem>
+                    <SelectItem value={VAT_CATEGORY.ZERO}>{t('vatZero')}</SelectItem>
+                    <SelectItem value={VAT_CATEGORY.EXEMPT}>{t('vatExempt')}</SelectItem>
+                    <SelectItem value={VAT_CATEGORY.OUT_OF_SCOPE}>{t('vatOutOfScope')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>{t('emirate') || (language === 'ar' ? 'الإمارة' : 'Emirate')}</Label>
+                <Select 
+                  value={formData.emirate} 
+                  onValueChange={(val) => setFormData({ ...formData, emirate: val })}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={language === 'ar' ? 'اختر الإمارة' : 'Select Emirate'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EMIRATES.map(e => (
+                      <SelectItem key={e.id} value={e.id}>
+                        {language === 'ar' ? e.ar : e.en}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="vat">{t('vatPercentage')}</Label>
+                <Input
+                  id="vat"
+                  name="vat"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="100"
+                  value={formData.vat}
+                  onChange={handleInputChange}
+                  placeholder="5.00"
+                  disabled={isSubmitting || formData.vat_category !== VAT_CATEGORY.STANDARD}
+                />
+              </div>
             </div>
 
             {/* Currency */}

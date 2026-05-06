@@ -17,7 +17,7 @@ const FinanceStatisticsPage = () => {
   const commonT = useTranslations('common');
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <div className="container mx-auto py-6 space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <PageHeader
         title={t('title')}
         description={t('description')}

@@ -169,7 +169,7 @@ export default function AddEmployeeModal({ onAdd }) {
       const response = await createEmployee(form);
       
       if (response.success) {
-        toast.success(t('messages.employeeCreatedSuccessfully') || 'Employee created successfully!');
+        toast.success(response.message || t('messages.employeeCreatedSuccessfully') || 'Employee created successfully!');
         
         if (onAdd) onAdd(response);
         
@@ -217,8 +217,7 @@ export default function AddEmployeeModal({ onAdd }) {
         toast.error(t('messages.errorCreatingEmployee') || 'Error creating employee. Please try again.');
       }
     } catch (error) {
-
-      toast.error(t('messages.errorCreatingEmployee') || 'Error creating employee. Please try again.');
+      toast.error(error.message || t('messages.errorCreatingEmployee') || 'Error creating employee. Please try again.');
     } finally {
       setIsSaving(false);
     }

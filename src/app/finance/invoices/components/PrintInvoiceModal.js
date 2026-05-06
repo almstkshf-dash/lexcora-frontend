@@ -11,17 +11,19 @@ import { format, parseISO } from "date-fns";
 import { ar } from "date-fns/locale";
 import { useTranslations } from "@/hooks/useTranslations";
 import { DEFAULT_CURRENCY, CURRENCY_NAMES } from '@/app/finance/constants';
+import { getGlobalSettings } from "@/app/services/api/settings";
 
 export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
   const t = useTranslations('invoices');
   const [invoice, setInvoice] = useState(null);
+  const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(false);
   const printRef = useRef();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isOpen && invoiceId) {
-      loadInvoiceData();
+      loadData();
     }
   }, [isOpen, invoiceId]);
 
@@ -184,19 +186,25 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
     return CURRENCY_NAMES[currency] || { ar: currency, en: currency };
   };
 
-  const loadInvoiceData = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
-      const response = await getInvoiceById(invoiceId);
+      const [invoiceRes, settingsRes] = await Promise.all([
+        getInvoiceById(invoiceId),
+        getGlobalSettings()
+      ]);
       
-      if (response.success) {
-        setInvoice(response.data);
+      if (invoiceRes.success) {
+        setInvoice(invoiceRes.data);
       } else {
         toast.error(t('errorLoadingInvoice'));
         onClose();
       }
-    } catch (error) {
 
+      if (settingsRes.success) {
+        setSettings(settingsRes.data);
+      }
+    } catch (error) {
       toast.error(t('errorLoadingInvoice'));
       onClose();
     } finally {
@@ -703,21 +711,26 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                 {/* Header Section */}
                 <div className="header-section">
                   <div className="company-info">
-                    <div className="company-name">{t('companyNameAr')}</div>
-                    <div style={{ fontSize: '12px', marginBottom: '15px' }}>
-                      {t('companyNameEn')}
+                    <div className="company-name">{settings?.company_name_ar || t('companyNameAr')}</div>
+                    <div style={{ fontSize: '12px', marginBottom: '5px' }}>
+                      {settings?.company_name_en || t('companyNameEn')}
                     </div>
+                    {settings?.company_trn && (
+                      <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '15px' }}>
+                        {t('trn')}: {settings.company_trn}
+                      </div>
+                    )}
                     <div className="invoice-title">
-                      فاتورة / INVOICE
+                      {t('taxInvoiceTitle')}
                     </div>
                   </div>
                   <div className="invoice-details">
                     <div>
-                      <div style={{ fontSize: '11px', marginBottom: '3px' }}>رقم الفاتورة / Invoice No.</div>
+                      <div style={{ fontSize: '11px', marginBottom: '3px' }}>{t('invoiceNoLabel')}</div>
                       <div className="invoice-number">{invoice.invoice_number}</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: '11px', marginBottom: '3px' }}>التاريخ / Date</div>
+                      <div style={{ fontSize: '11px', marginBottom: '3px' }}>{t('dateLabel')}</div>
                       <div className="invoice-number">{formatDate(invoice.invoice_date)}</div>
                     </div>
                   </div>
@@ -727,19 +740,24 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                 <div className="info-grid">
                   <div className="info-box">
                     <div className="bilingual-label">
-                      <span className="label-ar">إلى / To</span>
+                      <span className="label-ar">{t('toLabel')}</span>
                     </div>
-                    <div className="info-value">{invoice.client_name || 'غير محدد / Not Specified'}</div>
+                    <div className="info-value">{invoice.client_name || t('notSpecified')}</div>
+                    {invoice.customer_trn && (
+                      <div className="info-value" style={{ marginTop: '5px', fontSize: '12px', fontWeight: 'bold' }}>
+                        {t('trn')}: {invoice.customer_trn}
+                      </div>
+                    )}
                   </div>
                   <div className="info-box">
                     <div className="bilingual-label">
-                      <span className="label-ar">الفرع / Branch</span>
+                      <span className="label-ar">{t('branchLabel')}</span>
                     </div>
                     <div className="info-value">{invoice.branch_name || '-'}</div>
                   </div>
                   <div className="info-box">
                     <div className="bilingual-label">
-                      <span className="label-ar">العملة / Currency</span>
+                      <span className="label-ar">{t('currencyLabel')}</span>
                     </div>
                     <div className="info-value">{getCurrencyName(invoice.currency || 'AED').ar} / {getCurrencyName(invoice.currency || 'AED').en}</div>
                   </div>
@@ -747,13 +765,13 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                     <>
                       <div className="info-box">
                         <div className="bilingual-label">
-                          <span className="label-ar">البنك / Bank</span>
+                          <span className="label-ar">{t('bankLabel')}</span>
                         </div>
                         <div className="info-value">{invoice.bank_name}</div>
                       </div>
                       <div className="info-box">
                         <div className="bilingual-label">
-                          <span className="label-ar">رقم الحساب / Account No.</span>
+                          <span className="label-ar">{t('accountNoLabel')}</span>
                         </div>
                         <div className="info-value">{invoice.account_number}</div>
                       </div>
@@ -766,16 +784,22 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                   <thead>
                     <tr>
                       <th style={{ width: '50px' }}>
-                        #<br/>
-                        <span style={{ fontSize: '9px', fontWeight: 'normal' }}>No.</span>
+                        {t('noLabel')}
                       </th>
                       <th>
-                        الوصف<br/>
-                        <span style={{ fontSize: '9px', fontWeight: 'normal' }}>Description</span>
+                        {t('descriptionLabel')}
                       </th>
-                      <th style={{ width: '150px' }}>
-                        المبلغ<br/>
-                        <span style={{ fontSize: '9px', fontWeight: 'normal' }}>Amount ({invoice.currency || 'AED'})</span>
+                      <th style={{ width: '100px' }}>
+                        {t('amountLabel')}
+                      </th>
+                      <th style={{ width: '80px' }}>
+                        {t('vatRateLabel')}
+                      </th>
+                      <th style={{ width: '100px' }}>
+                        {t('vatAmountLabel')}
+                      </th>
+                      <th style={{ width: '120px' }}>
+                        {t('totalWithCurrency', { currency: invoice.currency || 'AED' })}
                       </th>
                     </tr>
                   </thead>
@@ -786,7 +810,16 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                           <td style={{ textAlign: 'center' }}>{index + 1}</td>
                           <td>{item.description}</td>
                           <td className="amount-cell">
-                            {formatCurrency(item.amount, invoice.currency)}
+                            {formatCurrency(item.amount, '')}
+                          </td>
+                          <td style={{ textAlign: 'center' }}>
+                            {item.vat_rate || invoice.vat || 0}%
+                          </td>
+                          <td className="amount-cell">
+                            {formatCurrency(item.vat_amount || (item.amount * (item.vat_rate || invoice.vat || 0) / 100), '')}
+                          </td>
+                          <td className="amount-cell">
+                            {formatCurrency(parseFloat(item.amount) + parseFloat(item.vat_amount || (item.amount * (item.vat_rate || invoice.vat || 0) / 100)), invoice.currency)}
                           </td>
                         </tr>
                       ))
@@ -804,7 +837,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                 <div className="totals-section">
                   <div className="totals-box">
                     <div className="total-row subtotal">
-                      <span>المجموع الفرعي / Subtotal</span>
+                      <span>{t('subtotalLabel')}</span>
                       <span className="amount-cell">
                         {formatCurrency(
                           invoice.items?.reduce((sum, item) => sum + parseFloat(item.amount), 0) || 0,
@@ -814,7 +847,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                     </div>
                     {invoice.vat > 0 && (
                       <div className="total-row vat">
-                        <span>ضريبة القيمة المضافة ({invoice.vat}%) / VAT</span>
+                        <span>{t('vatLabelWithRate', { rate: invoice.vat })}</span>
                         <span className="amount-cell">
                           {formatCurrency(
                             ((invoice.items?.reduce((sum, item) => sum + parseFloat(item.amount), 0) || 0) * invoice.vat) / 100,
@@ -824,9 +857,9 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                       </div>
                     )}
                     <div className="total-row grand-total">
-                      <span>الإجمالي / TOTAL</span>
+                      <span>{t('totalLabel')}</span>
                       <span className="amount-cell" style={{ fontSize: '18px' }}>
-                        {formatCurrency(invoice.amount, invoice.currency)}
+                        {formatCurrency(invoice.total_amount || invoice.amount, invoice.currency)}
                       </span>
                     </div>
                   </div>
@@ -834,7 +867,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
 
                 {/* Amount in Words */}
                 <div className="amount-in-words">
-                  <div className="words-title">المبلغ بالحروف / Amount in Words</div>
+                  <div className="words-title">{isRTL ? 'المبلغ بالحروف' : 'Amount in Words'}</div>
                   <div className="words-ar">
                     {numberToArabicWords(invoice.amount)} {getCurrencyName(invoice.currency || 'AED').ar}
                   </div>

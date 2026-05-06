@@ -180,7 +180,7 @@ const AssetModal = ({
 
   const handleDepreciationPreview = async () => {
     if (!formData.purchase_cost || Number(formData.purchase_cost) <= 0) {
-      toast.error(isArabic ? 'يرجى إدخال تكلفة الشراء الصحيحة' : 'Please enter a valid purchase cost')
+      toast.error(t('assets.invalidPurchaseCost'))
       return
     }
 
@@ -200,10 +200,10 @@ const AssetModal = ({
       if (response.success) {
         setPreviewSchedule(response.data.schedule)
       } else {
-        toast.error(response.message || (isArabic ? 'حدث خطأ في المعاينة' : 'Preview error occurred'))
+        toast.error(response.message || t('assets.errorLoadingPreview'))
       }
     } catch (error) {
-      toast.error(isArabic ? 'حدث خطأ أثناء جلب المعاينة' : 'Error loading preview')
+      toast.error(t('assets.errorLoadingPreview'))
     } finally {
       setIsPreviewLoading(false)
     }
@@ -223,7 +223,7 @@ const AssetModal = ({
   }
 
   const handleDeleteExistingDocument = async (documentId) => {
-    if (!window.confirm(isArabic ? 'هل أنت متأكد من حذف هذا المستند؟' : 'Are you sure you want to delete this document?')) {
+    if (!window.confirm(t('assets.confirmDeleteDoc'))) {
       return
     }
 
@@ -246,17 +246,17 @@ const AssetModal = ({
 
     // Validation
     if (!formData.name?.trim()) {
-      toast.error(isArabic ? 'يرجى إدخال اسم الأصل' : 'Please enter asset name')
+      toast.error(t('assets.enterAssetName'))
       return
     }
 
     if (!formData.type?.trim()) {
-      toast.error(isArabic ? 'يرجى إدخال نوع الأصل' : 'Please enter asset type')
+      toast.error(t('assets.assetType'))
       return
     }
 
     if (!formData.branch_id) {
-      toast.error(isArabic ? 'يرجى اختيار الفرع' : 'Please select branch')
+      toast.error(t('assets.selectBranch'))
       return
     }
 
@@ -272,7 +272,7 @@ const AssetModal = ({
           uploadedDocuments = await uploadFiles(selectedFiles, 'assets')
         } catch (uploadError) {
 
-          toast.error(isArabic ? 'حدث خطأ أثناء رفع الملفات' : 'Error uploading files')
+          toast.error(t('assets.uploadError'))
           setIsLoading(false)
           setIsUploading(false)
           return
@@ -313,17 +313,17 @@ const AssetModal = ({
       if (response.success) {
         toast.success(
           isEditMode
-            ? (isArabic ? 'تم تحديث الأصل بنجاح' : 'Asset updated successfully')
-            : (isArabic ? 'تم إضافة الأصل بنجاح' : 'Asset created successfully')
+            ? t('assets.updateSuccess')
+            : t('assets.saveSuccess')
         )
         onSuccess()
         onClose()
       } else {
-        toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
+        toast.error(response.message || t('common.error'))
       }
     } catch (error) {
 
-      toast.error(isArabic ? 'حدث خطأ أثناء الحفظ' : 'Error saving asset')
+      toast.error(t('assets.saveError') || t('common.error'))
     } finally {
       setIsLoading(false)
     }
@@ -335,8 +335,8 @@ const AssetModal = ({
         <DialogHeader>
           <DialogTitle>
             {isEditMode 
-              ? (isArabic ? 'تعديل الأصل' : 'Edit Asset')
-              : (isArabic ? 'إضافة أصل جديد' : 'Add New Asset')
+              ? t('assets.editAsset')
+              : t('assets.addAsset')
             }
           </DialogTitle>
         </DialogHeader>
@@ -344,24 +344,24 @@ const AssetModal = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Asset Name */}
           <div className="space-y-2">
-            <Label htmlFor="name">{isArabic ? 'اسم الأصل' : 'Asset Name'} *</Label>
+            <Label htmlFor="name">{t('assets.assetName')} *</Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
-              placeholder={isArabic ? 'أدخل اسم الأصل' : 'Enter asset name'}
+              placeholder={t('assets.enterAssetName')}
               disabled={isLoading}
             />
           </div>
 
           {/* Asset Type */}
           <div className="space-y-2">
-            <Label htmlFor="type">{isArabic ? 'نوع الأصل' : 'Asset Type'} *</Label>
+            <Label htmlFor="type">{t('assets.assetType')} *</Label>
             <Input
               id="type"
               value={formData.type}
               onChange={(e) => handleInputChange('type', e.target.value)}
-              placeholder={isArabic ? 'مثال: سيارة، معدات، عقار' : 'e.g., Vehicle, Equipment, Property'}
+              placeholder={t('assets.assetTypePlaceholder')}
               disabled={isLoading}
             />
           </div>
@@ -369,26 +369,26 @@ const AssetModal = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Category */}
             <div className="space-y-2">
-              <Label htmlFor="category">{isArabic ? 'الفئة' : 'Category'}</Label>
+              <Label htmlFor="category">{t('assets.category')}</Label>
               <Input
                 id="category"
                 value={formData.category}
                 onChange={(e) => handleInputChange('category', e.target.value)}
-                placeholder={isArabic ? 'مثال: أصول ثابتة' : 'e.g., Fixed Assets'}
+                placeholder={t('assets.categoryPlaceholder')}
                 disabled={isLoading}
               />
             </div>
 
             {/* Custodian */}
             <div className="space-y-2">
-              <Label htmlFor="custodian_id">{isArabic ? 'المسؤول' : 'Custodian'}</Label>
+              <Label htmlFor="custodian_id">{t('assets.custodian')}</Label>
               <Select
                 value={formData.custodian_id?.toString()}
                 onValueChange={(value) => handleInputChange('custodian_id', parseInt(value))}
                 disabled={isLoading}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={isArabic ? 'اختر المسؤول' : 'Select custodian'} />
+                  <SelectValue placeholder={t('assets.selectCustodian')} />
                 </SelectTrigger>
                 <SelectContent>
                   {employees.map((employee) => (
@@ -402,14 +402,14 @@ const AssetModal = ({
 
             {/* Branch */}
             <div className="space-y-2">
-              <Label htmlFor="branch">{isArabic ? 'الفرع' : 'Branch'} *</Label>
+              <Label htmlFor="branch">{t('assets.branch')} *</Label>
               <Select
                 value={formData.branch_id?.toString()}
                 onValueChange={(value) => handleInputChange('branch_id', parseInt(value))}
                 disabled={isLoading}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={isArabic ? 'اختر الفرع' : 'Select branch'} />
+                  <SelectValue placeholder={t('assets.selectBranch')} />
                 </SelectTrigger>
                 <SelectContent>
                   {branches.map((branch) => (
@@ -423,14 +423,14 @@ const AssetModal = ({
 
             {/* Budget */}
             <div className="space-y-2">
-              <Label htmlFor="budget_id">{isArabic ? 'الميزانية' : 'Budget'}</Label>
+              <Label htmlFor="budget_id">{t('assets.budget')}</Label>
               <Select
                 value={formData.budget_id?.toString()}
                 onValueChange={(value) => handleInputChange('budget_id', parseInt(value))}
                 disabled={isLoading}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={isArabic ? 'اختر الميزانية' : 'Select budget'} />
+                  <SelectValue placeholder={t('assets.selectBudget')} />
                 </SelectTrigger>
                 <SelectContent>
                   {budgets.map((budget) => (
@@ -444,24 +444,24 @@ const AssetModal = ({
 
             {/* Serial Number */}
             <div className="space-y-2">
-              <Label htmlFor="serial_number">{isArabic ? 'الرقم التسلسلي' : 'Serial Number'}</Label>
+              <Label htmlFor="serial_number">{t('assets.serialNumber')}</Label>
               <Input
                 id="serial_number"
                 value={formData.serial_number}
                 onChange={(e) => handleInputChange('serial_number', e.target.value)}
-                placeholder={isArabic ? 'أدخل الرقم التسلسلي' : 'Enter serial number'}
+                placeholder={t('assets.enterSerialNumber')}
                 disabled={isLoading}
               />
             </div>
 
             {/* Physical Location */}
             <div className="space-y-2">
-              <Label htmlFor="physical_location">{isArabic ? 'الموقع الفعلي' : 'Physical Location'}</Label>
+              <Label htmlFor="physical_location">{t('assets.physicalLocation')}</Label>
               <Input
                 id="physical_location"
                 value={formData.physical_location}
                 onChange={(e) => handleInputChange('physical_location', e.target.value)}
-                placeholder={isArabic ? 'أدخل الموقع' : 'Enter location'}
+                placeholder={t('assets.enterLocation')}
                 disabled={isLoading}
               />
             </div>
@@ -469,46 +469,46 @@ const AssetModal = ({
 
           {/* Issue Date */}
           <div className="space-y-2">
-            <Label>{isArabic ? 'تاريخ الإصدار' : 'Issue Date'}</Label>
+            <Label>{t('assets.issueDate')}</Label>
             <DatePicker
               date={formData.issue_date}
               onDateChange={(date) => handleInputChange('issue_date', date)}
-              placeholder={isArabic ? 'اختر التاريخ' : 'Select date'}
+              placeholder={t('assets.selectDate')}
               disabled={isLoading}
             />
           </div>
 
           {/* Expiry Date */}
           <div className="space-y-2">
-            <Label>{isArabic ? 'تاريخ الانتهاء' : 'Expiry Date'}</Label>
+            <Label>{t('assets.expiryDate')}</Label>
             <DatePicker
               date={formData.expiry_date}
               onDateChange={(date) => handleInputChange('expiry_date', date)}
-              placeholder={isArabic ? 'اختر التاريخ' : 'Select date'}
+              placeholder={t('assets.selectDate')}
               disabled={isLoading}
             />
           </div>
 
           {/* Note */}
           <div className="space-y-2">
-            <Label htmlFor="note">{isArabic ? 'ملاحظات' : 'Notes'}</Label>
+            <Label htmlFor="note">{t('assets.notes')}</Label>
             <Textarea
               id="note"
               value={formData.note}
               onChange={(e) => handleInputChange('note', e.target.value)}
-              placeholder={isArabic ? 'أدخل ملاحظات إضافية' : 'Enter additional notes'}
+              placeholder={t('assets.enterNotes')}
               rows={3}
               disabled={isLoading}
             />
           </div>
 
           <div className="border-t pt-4 mt-4">
-            <h3 className="text-lg font-semibold mb-4">{isArabic ? 'المعلومات المالية' : 'Financial Information'}</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('assets.financialInfo')}</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Purchase Cost */}
               <div className="space-y-2">
-                <Label htmlFor="purchase_cost">{isArabic ? 'تكلفة الشراء' : 'Purchase Cost'}</Label>
+                <Label htmlFor="purchase_cost">{t('assets.purchaseCost')}</Label>
                 <Input
                   id="purchase_cost"
                   type="number"
@@ -522,25 +522,25 @@ const AssetModal = ({
 
               {/* Purchase Date */}
               <div className="space-y-2">
-                <Label>{isArabic ? 'تاريخ الشراء' : 'Purchase Date'}</Label>
+                <Label>{t('assets.purchaseDate')}</Label>
                 <DatePicker
                   date={formData.purchase_date}
                   onDateChange={(date) => handleInputChange('purchase_date', date)}
-                  placeholder={isArabic ? 'اختر التاريخ' : 'Select date'}
+                  placeholder={t('assets.selectDate')}
                   disabled={isLoading}
                 />
               </div>
 
               {/* Account Link (Chart of Accounts) */}
               <div className="space-y-2">
-                <Label htmlFor="account_id">{isArabic ? 'الحساب المرتبط' : 'Linked Account'}</Label>
+                <Label htmlFor="account_id">{t('assets.linkedAccount')}</Label>
                 <Select
                   value={formData.account_id?.toString()}
                   onValueChange={(value) => handleInputChange('account_id', parseInt(value))}
                   disabled={isLoading}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={isArabic ? 'اختر حساباً' : 'Select an account'} />
+                    <SelectValue placeholder={t('assets.selectAccount')} />
                   </SelectTrigger>
                   <SelectContent>
                     {accounts.map((account) => (
@@ -554,19 +554,19 @@ const AssetModal = ({
 
               {/* Depreciation Method */}
               <div className="space-y-2">
-                <Label htmlFor="depreciation_method">{isArabic ? 'طريقة الإهلاك' : 'Depreciation Method'}</Label>
+                <Label htmlFor="depreciation_method">{t('assets.depreciationMethod')}</Label>
                 <Select
                   value={formData.depreciation_method}
                   onValueChange={(value) => handleInputChange('depreciation_method', value)}
                   disabled={isLoading}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={isArabic ? 'اختر طريقة' : 'Select method'} />
+                    <SelectValue placeholder={t('assets.selectMethod')} />
                   </SelectTrigger>
                   <SelectContent>
                     {depreciationMethods.map((method) => (
                       <SelectItem key={method.value} value={method.value}>
-                        {method.label}
+                        {t(`assets.${method.value}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -575,7 +575,7 @@ const AssetModal = ({
 
               {/* Useful Life */}
               <div className="space-y-2">
-                <Label htmlFor="useful_life">{isArabic ? 'العمر الافتراضي (سنوات)' : 'Useful Life (years)'}</Label>
+                <Label htmlFor="useful_life">{t('assets.usefulLife')}</Label>
                 <Input
                   id="useful_life"
                   type="number"
@@ -583,14 +583,14 @@ const AssetModal = ({
                   min="0"
                   value={formData.useful_life}
                   onChange={(e) => handleInputChange('useful_life', e.target.value)}
-                  placeholder={isArabic ? '0' : '0'}
+                  placeholder="0"
                   disabled={isLoading}
                 />
               </div>
 
               {/* Depreciation Rate */}
               <div className="space-y-2">
-                <Label htmlFor="depreciation_rate">{isArabic ? 'نسبة الإهلاك (%)' : 'Depreciation Rate (%)'}</Label>
+                <Label htmlFor="depreciation_rate">{t('assets.depreciationRate')}</Label>
                 <Input
                   id="depreciation_rate"
                   type="number"
@@ -604,7 +604,7 @@ const AssetModal = ({
 
               {/* Salvage Value */}
               <div className="space-y-2">
-                <Label htmlFor="salvage_value">{isArabic ? 'القيمة المتبقية' : 'Salvage Value'}</Label>
+                <Label htmlFor="salvage_value">{t('assets.salvageValue')}</Label>
                 <Input
                   id="salvage_value"
                   type="number"
@@ -618,7 +618,7 @@ const AssetModal = ({
 
               {/* Current Value */}
               <div className="space-y-2">
-                <Label htmlFor="current_value">{isArabic ? 'القيمة الحالية' : 'Current Value'}</Label>
+                <Label htmlFor="current_value">{t('assets.currentValue')}</Label>
                 <Input
                   id="current_value"
                   type="number"
@@ -633,7 +633,7 @@ const AssetModal = ({
 
             <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div className="text-sm text-muted-foreground">
-                {isArabic ? 'يمكنك معاينة جدول الإهلاك قبل حفظ الأصل.' : 'Preview the depreciation schedule before saving the asset.'}
+                {t('assets.previewDepreciationHint') || t('assets.previewDepreciation')}
               </div>
               <Button
                 type="button"
@@ -642,15 +642,15 @@ const AssetModal = ({
                 disabled={isLoading || isPreviewLoading}
               >
                 {isPreviewLoading
-                  ? (isArabic ? 'جارٍ التحميل...' : 'Loading preview...')
-                  : (isArabic ? 'معاينة الإهلاك' : 'Preview Depreciation')}
+                  ? t('common.loading')
+                  : t('assets.previewDepreciation')}
               </Button>
             </div>
           </div>
 
           {previewSchedule && (
             <div className="border-t pt-4 mt-4">
-              <h3 className="text-lg font-semibold mb-4">{isArabic ? 'معاينة جدول الإهلاك' : 'Depreciation Preview'}</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('assets.previewSchedule')}</h3>
               <DepreciationSchedule schedule={previewSchedule} />
             </div>
           )}
@@ -658,7 +658,7 @@ const AssetModal = ({
           {/* Existing Documents (Edit Mode) */}
           {isEditMode && existingDocuments.length > 0 && (
             <div className="space-y-2">
-              <Label>{isArabic ? 'المستندات الحالية' : 'Existing Documents'}</Label>
+              <Label>{t('assets.existingDocuments')}</Label>
               <div className="space-y-2">
                 {existingDocuments.map((doc) => (
                   <div key={doc.id} className="flex items-center justify-between p-2 border rounded">
@@ -690,7 +690,7 @@ const AssetModal = ({
 
           {/* File Upload */}
           <div className="space-y-2">
-            <Label>{isArabic ? 'إضافة مستندات' : 'Add Documents'}</Label>
+            <Label>{t('assets.addDocuments')}</Label>
             <div className="border-2 border-dashed rounded-sg p-4">
               <input
                 type="file"
@@ -706,7 +706,7 @@ const AssetModal = ({
               >
                 <Upload className="h-8 w-8 text-gray-400 mb-2" />
                 <span className="text-sm text-gray-600">
-                  {isArabic ? 'اضغط لاختيار الملفات' : 'Click to select files'}
+                  {t('assets.clickToSelect')}
                 </span>
               </label>
             </div>
@@ -741,19 +741,19 @@ const AssetModal = ({
               onClick={onClose}
               disabled={isLoading}
             >
-              {isArabic ? 'إلغاء' : 'Cancel'}
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className={`h-4 w-4 animate-spin me-2`} />
                   {isUploading 
-                    ? (isArabic ? 'جاري رفع الملفات...' : 'Uploading files...')
-                    : (isArabic ? 'جاري الحفظ...' : 'Saving...')
+                    ? t('assets.uploading')
+                    : t('assets.saving')
                   }
                 </>
               ) : (
-                isArabic ? 'حفظ' : 'Save'
+                t('buttons.save')
               )}
             </Button>
           </DialogFooter>

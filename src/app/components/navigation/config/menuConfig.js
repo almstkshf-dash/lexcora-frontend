@@ -180,6 +180,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       type: 'category',
       submenu: [
         { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette, requiredPermissions: PERMISSION_REQUIREMENTS.settingsAppearance },
+        { id: 'settings/general', label: t('navigation.generalSettings') || 'الإعدادات العامة', icon: Building2, requiredPermissions: PERMISSION_REQUIREMENTS.settingsGeneral },
         { id: 'settings/branches', label: t('navigation.branches'), icon: Building2, requiredPermissions: PERMISSION_REQUIREMENTS.settingsBranches },
         { id: 'settings/user-guide', label: t('navigation.userGuide'), icon: FileText },
         // { id: 'settings/performance', label: t('navigation.performance'), icon: Gauge },

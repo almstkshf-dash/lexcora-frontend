@@ -191,6 +191,11 @@ export const getAssetsReport = async (params) => {
   return response.data;
 };
 
+export const getVatReturn = async (params) => {
+  const response = await api.get('/accounting/reports/vat-return', { params });
+  return response.data;
+};
+
 export const accountingService = {
   getCashFlow,
   getDailyCashFlow,
@@ -212,5 +217,6 @@ export const accountingService = {
   setBudget,
   getBudgets,
   getBudgetVsActual,
-  getAssetsReport
+  getAssetsReport,
+  getVatReturn
 };

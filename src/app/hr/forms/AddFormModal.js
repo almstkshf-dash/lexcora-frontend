@@ -187,7 +187,7 @@ const AddFormModal = ({ onFormAdded }) => {
             )}
           </div>
 
-          <DialogFooter className={isArabic ? 'flex-row-reverse' : ''}>
+          <DialogFooter>
             <Button
               type="button"
               variant="outline"

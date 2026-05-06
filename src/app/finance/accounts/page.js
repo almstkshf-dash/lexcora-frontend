@@ -26,7 +26,7 @@ const AccountRow = ({ account, level = 0 }) => {
     <>
       <TableRow className={cn(level > 0 ? "bg-muted/30" : "font-semibold")}>
         <TableCell className="py-2">
-          <div className="flex items-center" style={{ [isRTL ? 'marginRight' : 'marginLeft']: `${level * 24}px` }}>
+          <div className="flex items-center" style={{ marginInlineStart: `${level * 24}px` }}>
             {hasChildren ? (
               <Button 
                 variant="ghost" 

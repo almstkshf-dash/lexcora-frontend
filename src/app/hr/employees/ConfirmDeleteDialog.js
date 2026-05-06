@@ -15,7 +15,7 @@ export default function ConfirmDeleteDialog({ trigger, onConfirm }) {
           </DialogTitle>
         </DialogHeader>
         <div className="py-4 text-end">{t('admins.confirmDeleteMessage')}</div>
-        <DialogFooter className="flex flex-row-reverse gap-2">
+        <DialogFooter className="flex justify-end gap-2">
           <DialogClose asChild>
             <Button variant="outline" type="button">
               {t('buttons.cancel')}

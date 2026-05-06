@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useTransition, lazy, Suspense } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Hash, FileText, User, Clock, Calendar, Pen } from 'lucide-react'
 import { useTranslations } from '@/hooks/useTranslations'
-import EditSessionModal from '@/app/cases/sessions/EditSessionModal'
 import { formatDate, formatTime } from '@/lib/dateUtils'
 
-function SessionWithNoDecisionItem({ 
+// Lazy-load the heavy modal so it doesn't block the initial main thread
+// when mounting multiple list items.
+const EditSessionModal = lazy(() => import('@/app/cases/sessions/EditSessionModal'))
+
+const SessionWithNoDecisionItem = React.memo(function SessionWithNoDecisionItem({ 
   session,
   title, 
   date, 
@@ -17,6 +18,7 @@ function SessionWithNoDecisionItem({
 }) {
   const { t } = useTranslations()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [, startTransition] = useTransition()
   
   // Handle both direct props (for backward compatibility) and session object
   const sessionData = session || {
@@ -27,29 +29,18 @@ function SessionWithNoDecisionItem({
     time
   }
 
-  const getDegreeBadge = (degree) => {
-    if (!degree || degree === "0") {
-      return null
-    }
-    
-    const degreeConfig = {
-      appeal: { label: t('home.appeal'), color: 'bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-400' },
-      first_instance: { label: t('home.firstInstance'), color: 'bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-300' },
-      cassation: { label: t('home.cassation'), color: 'bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400' }
-    }
-    
-    return degreeConfig[degree] || { label: degree, color: 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300' }
-  }
-
   // Extract data from API response or use props
   const displayDate = session ? formatDate(session.session_date) : sessionData.date
   const displayTime = session ? formatTime(session.session_date) : sessionData.time
   const displayCaseNumber = session ? session.case_number : sessionData.caseNumber
   const displayClientName = session ? (session.clientParties?.[0] || t('home.notSpecified')) : sessionData.clientName
-  const displayDegree = session ? session.degree : sessionData.degree
   const displayFileNumber = session ? session.file_number : sessionData.fileNumber
 
-  const degreeInfo = getDegreeBadge(displayDegree)
+  const handleEditClick = () => {
+    // startTransition keeps the click instant; React schedules the
+    // modal mount as low-priority work.
+    startTransition(() => setIsEditModalOpen(true))
+  }
 
   return (
     <>
@@ -95,7 +86,7 @@ function SessionWithNoDecisionItem({
                   {session.is_judgment_deferred ? t('home.judgmentDeferred') : session.is_judgment_reserved ? t('home.judgmentReserved') : t('home.noDecisionYet')}
                 </span>
                 <button
-                  onClick={() => setIsEditModalOpen(true)}
+                  onClick={handleEditClick}
                   className="ml-auto p-1.5 bg-orange-50/50 dark:bg-orange-900/10 hover:bg-orange-100 dark:hover:bg-orange-900/30 rounded transition-colors group-hover:bg-orange-100 dark:group-hover:bg-orange-900/30"
                   title={t('home.editSession')}
                   aria-label={t('home.editSession')}
@@ -108,15 +99,17 @@ function SessionWithNoDecisionItem({
         </CardContent>
       </Card>
       
-      {session?.id && (
-        <EditSessionModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          sessionId={session.id}
-        />
+      {session?.id && isEditModalOpen && (
+        <Suspense fallback={null}>
+          <EditSessionModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            sessionId={session.id}
+          />
+        </Suspense>
       )}
     </>
   )
-}
+})
 
-export default SessionWithNoDecisionItem
+export default SessionWithNoDecisionItem

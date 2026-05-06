@@ -79,7 +79,7 @@ const DeletePotentialClientModal = ({ clientId, clientName, onClientDeleted, chi
             }
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className={cn(isRTL && "flex-row-reverse")}>
+        <AlertDialogFooter>
           <AlertDialogCancel disabled={loading}>
             {language === 'ar' ? 'إلغاء' : 'Cancel'}
           </AlertDialogCancel>
@@ -90,7 +90,7 @@ const DeletePotentialClientModal = ({ clientId, clientName, onClientDeleted, chi
           >
             {loading ? (
               <>
-                <Loader2 className={cn("h-4 w-4 animate-spin", isRTL ? "ml-2" : "mr-2")} />
+                <Loader2 className="h-4 w-4 animate-spin me-2" />
                 {language === 'ar' ? 'جاري الحذف...' : 'Deleting...'}
               </>
             ) : (

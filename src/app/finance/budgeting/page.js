@@ -23,6 +23,15 @@ import {
 import { toast } from 'react-toastify';
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger,
+  DialogFooter 
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 
 const AccountBudgetRow = ({ account, level, fiscalYear, isRTL, accT, commonT }) => {
   const [amount, setAmount] = useState(account.budget_amount || 0);
@@ -130,6 +139,15 @@ export default function BudgetingPage() {
   const [activeTab, setActiveTab] = useState('periods');
   const [fiscalYear, setFiscalYear] = useState(new Date().getFullYear());
 
+  // Add Period State
+  const [isAddPeriodOpen, setIsAddPeriodOpen] = useState(false);
+  const [newPeriod, setNewPeriod] = useState({
+    name: '',
+    start_date: '',
+    end_date: ''
+  });
+  const [creatingPeriod, setCreatingPeriod] = useState(false);
+
   const { data: periodsData, mutate: mutatePeriods } = useSWR('/accounting/fiscal-periods', () => getFiscalPeriods());
   const { data: budgetData } = useSWR(activeTab === 'bva' ? [`/accounting/reports/budget-vs-actual`, fiscalYear] : null, () => getBudgetVsActual({ fiscal_year: fiscalYear }));
   const { data: accountsData } = useSWR(activeTab === 'planning' ? '/accounting/accounts/tree' : null, () => getAccountsTree());
@@ -142,6 +160,27 @@ export default function BudgetingPage() {
       mutatePeriods();
     } catch (error) {
       toast.error(commonT('error'));
+    }
+  };
+
+  const handleCreatePeriod = async (e) => {
+    e.preventDefault();
+    if (!newPeriod.name || !newPeriod.start_date || !newPeriod.end_date) {
+      toast.error(commonT('pleaseFillAllFields') || 'Please fill all fields');
+      return;
+    }
+
+    try {
+      setCreatingPeriod(true);
+      await createFiscalPeriod(newPeriod);
+      toast.success(commonT('success'));
+      setIsAddPeriodOpen(false);
+      setNewPeriod({ name: '', start_date: '', end_date: '' });
+      mutatePeriods();
+    } catch (error) {
+      toast.error(commonT('error'));
+    } finally {
+      setCreatingPeriod(false);
     }
   };
 
@@ -171,9 +210,59 @@ export default function BudgetingPage() {
                 <CardTitle>{accT('fiscalPeriods')}</CardTitle>
                 <CardDescription>{accT('fiscalPeriodsDescription')}</CardDescription>
               </div>
-              <Button size="sm" className="gap-2">
-                <Plus className="h-4 w-4" /> {commonT('add')}
-              </Button>
+              
+              <Dialog open={isAddPeriodOpen} onOpenChange={setIsAddPeriodOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="gap-2">
+                    <Plus className="h-4 w-4" /> {commonT('add')}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>{accT('addFiscalPeriod')}</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleCreatePeriod} className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label>{commonT('name')}</Label>
+                      <Input 
+                        value={newPeriod.name} 
+                        onChange={(e) => setNewPeriod({...newPeriod, name: e.target.value})}
+                        placeholder={commonT('name')}
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>{commonT('startDate')}</Label>
+                        <Input 
+                          type="date"
+                          value={newPeriod.start_date} 
+                          onChange={(e) => setNewPeriod({...newPeriod, start_date: e.target.value})}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>{commonT('endDate')}</Label>
+                        <Input 
+                          type="date"
+                          value={newPeriod.end_date} 
+                          onChange={(e) => setNewPeriod({...newPeriod, end_date: e.target.value})}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter className="pt-4">
+                      <Button type="button" variant="outline" onClick={() => setIsAddPeriodOpen(false)}>
+                        {commonT('cancel')}
+                      </Button>
+                      <Button type="submit" disabled={creatingPeriod}>
+                        {creatingPeriod ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                        {commonT('save')}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </CardHeader>
             <CardContent>
               <Table>

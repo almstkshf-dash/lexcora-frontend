@@ -1,11 +1,9 @@
 "use client"
 
-import React, { useState, useCallback, useTransition, useEffect, useRef } from 'react'
+import React, { useState, useCallback, useTransition, useEffect, useRef, lazy, Suspense } from 'react'
 import { Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -21,11 +19,12 @@ import {
   deleteNotification 
 } from '@/app/services/api/appNotifications'
 import useSWR from 'swr'
-import NotificationHeader from './NotificationHeader'
-import NotificationItem from './NotificationItem'
-import NotificationEmpty from './NotificationEmpty'
 import { REFRESH_INTERVALS, FETCH_LIMITS } from './constants'
 import { playNotificationSound } from './utils'
+
+// Lazy-load the heavy list component so it doesn't block the initial main thread
+// when the dropdown opens.
+const NotificationList = lazy(() => import('./NotificationList'))
 
 function NotificationMenu() {
   const { language } = useLanguage()
@@ -37,6 +36,8 @@ function NotificationMenu() {
   const prevUnreadCountRef = useRef(0)
 
   const handleOpenChange = useCallback((open) => {
+    // startTransition keeps the click/open interaction instant
+    // while React handles the potentially expensive re-render at lower priority.
     startTransition(() => {
       setIsOpen(open)
     })
@@ -47,7 +48,7 @@ function NotificationMenu() {
   }, [])
 
   // Fetch notifications
-  const { data: notificationsData, error, mutate } = useSWR(
+  const { data: notificationsData, mutate } = useSWR(
     ['app-notifications', filter],
     () => getAppNotifications({
       limit: FETCH_LIMITS.DEFAULT,
@@ -145,52 +146,25 @@ function NotificationMenu() {
         className="w-[320px] sm:w-[400px] p-0 overflow-hidden rounded-2xl shadow-2xl border-border/50 bg-background/95 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200"
         dir={isArabic ? 'rtl' : 'ltr'}
       >
-        <Card className="border-0 shadow-none bg-transparent">
-          <CardHeader className="p-6 pb-5 bg-slate-50/50 dark:bg-slate-900/30 border-b border-border/50">
-            <NotificationHeader
+        <Suspense fallback={
+          <div className="p-8 flex items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          </div>
+        }>
+          {isOpen && (
+            <NotificationList
               isArabic={isArabic}
               unreadCount={unreadCount}
               filter={filter}
               onFilterChange={handleFilterChange}
               onMarkAllAsRead={handleMarkAllAsRead}
+              notifications={notifications}
+              handleMarkAsRead={handleMarkAsRead}
+              handleDelete={handleDelete}
+              onClose={() => handleOpenChange(false)}
             />
-          </CardHeader>
-
-          <CardContent dir={isArabic ? 'rtl' : 'ltr'} className="p-0">
-            <ScrollArea dir={isArabic ? 'rtl' : 'ltr'} className="h-[450px]">
-              {notifications.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full py-20 px-6 opacity-60">
-                   <NotificationEmpty isArabic={isArabic} />
-                </div>
-              ) : (
-                <div className="divide-y divide-border/30">
-                  {notifications.map((notification) => (
-                    <NotificationItem
-                      key={notification.id}
-                      notification={notification}
-                      isArabic={isArabic}
-                      onMarkAsRead={handleMarkAsRead}
-                      onDelete={handleDelete}
-                    />
-                  ))}
-                </div>
-              )}
-            </ScrollArea>
-          </CardContent>
-          
-          {notifications.length > 0 && (
-            <div className="p-2 border-t border-border/50 bg-muted/20">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="w-full text-xs font-medium hover:text-primary transition-colors"
-                onClick={() => handleOpenChange(false)}
-              >
-                {isArabic ? 'إغلاق' : 'Close'}
-              </Button>
-            </div>
           )}
-        </Card>
+        </Suspense>
       </DropdownMenuContent>
     </DropdownMenu>
   )

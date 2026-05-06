@@ -1,6 +1,8 @@
 "use client"
 
 import { format } from 'date-fns'
+import { useTranslations } from "@/hooks/useTranslations"
+import { useLanguage } from "@/contexts/LanguageContext"
 import {
   Table,
   TableHeader,
@@ -12,21 +14,25 @@ import {
 } from '@/components/ui/table'
 
 const DepreciationSchedule = ({ schedule }) => {
+  const { t } = useTranslations()
+  const { language } = useLanguage()
+  const isArabic = language === 'ar'
+
   if (!schedule || schedule.length === 0) {
     return null
   }
 
   return (
     <div className="mt-4">
-      <Table className="border">
-        <TableCaption>{`Depreciation schedule (${schedule.length} periods)`}</TableCaption>
+      <Table className="border" dir={isArabic ? 'rtl' : 'ltr'}>
+        <TableCaption>{t('assets.scheduleCaption', { count: schedule.length })}</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>Period</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Depreciation</TableHead>
-            <TableHead>Total Depreciation</TableHead>
-            <TableHead>Book Value</TableHead>
+            <TableHead className={isArabic ? 'text-right' : 'text-left'}>{t('assets.period')}</TableHead>
+            <TableHead className={isArabic ? 'text-right' : 'text-left'}>{t('assets.purchaseDate')}</TableHead>
+            <TableHead className={isArabic ? 'text-right' : 'text-left'}>{t('assets.depreciation')}</TableHead>
+            <TableHead className={isArabic ? 'text-right' : 'text-left'}>{t('assets.totalDepreciation')}</TableHead>
+            <TableHead className={isArabic ? 'text-right' : 'text-left'}>{t('assets.bookValue')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -34,9 +40,9 @@ const DepreciationSchedule = ({ schedule }) => {
             <TableRow key={row.period}>
               <TableCell>{row.period}</TableCell>
               <TableCell>{format(new Date(row.date), 'yyyy-MM-dd')}</TableCell>
-              <TableCell>{row.depreciation.toFixed(2)}</TableCell>
-              <TableCell>{row.totalDepreciation.toFixed(2)}</TableCell>
-              <TableCell>{row.bookValue.toFixed(2)}</TableCell>
+              <TableCell>{row.depreciation.toLocaleString(undefined, { minimumFractionDigits: 2 })}</TableCell>
+              <TableCell>{row.totalDepreciation.toLocaleString(undefined, { minimumFractionDigits: 2 })}</TableCell>
+              <TableCell>{row.bookValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -46,3 +52,4 @@ const DepreciationSchedule = ({ schedule }) => {
 }
 
 export default DepreciationSchedule
+

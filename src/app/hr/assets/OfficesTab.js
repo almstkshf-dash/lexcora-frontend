@@ -49,30 +49,28 @@ const OfficesTab = ({ offices, onMutate }) => {
         setViewAsset(response.data)
         setIsViewModalOpen(true)
       } else {
-        toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
+        toast.error(response.message || t('common.error'))
       }
     } catch (error) {
-
-      toast.error(isArabic ? 'حدث خطأ أثناء جلب بيانات الأصل' : 'Error fetching asset details')
+      toast.error(t('assets.errorFetchingDetails') || t('common.error'))
     }
   }
 
   const handleDeleteAsset = async (assetId) => {
-    if (!window.confirm(isArabic ? 'هل أنت متأكد من حذف هذا المستند وجميع مستنداته؟' : 'Are you sure you want to delete this document and all its files?')) {
+    if (!window.confirm(t('assets.confirmDeleteAsset'))) {
       return
     }
 
     try {
       const response = await deleteAsset(assetId)
       if (response.success) {
-        toast.success(isArabic ? 'تم حذف المستند بنجاح' : 'Document deleted successfully')
+        toast.success(t('assets.deleteSuccess'))
         onMutate()
       } else {
-        toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
+        toast.error(response.message || t('common.error'))
       }
     } catch (error) {
-
-      toast.error(isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document')
+      toast.error(t('assets.deleteError') || t('common.error'))
     }
   }
 
@@ -96,13 +94,13 @@ const OfficesTab = ({ offices, onMutate }) => {
       <div className="flex justify-end mb-4">
         <Button onClick={handleAddOffice}>
           <Plus className={`h-4 w-4 me-2`} />
-          {isArabic ? 'إضافة مستند' : 'Add Document'}
+          {t('assets.addOffice')}
         </Button>
       </div>
 
       {offices.length === 0 ? (
         <div className="text-center p-8 text-gray-500">
-          {isArabic ? 'لا توجد مستندات' : 'No documents found'}
+          {t('assets.noOffices')}
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -110,14 +108,14 @@ const OfficesTab = ({ offices, onMutate }) => {
             <TableHeader>
               <TableRow>
                 <TableHead>{isArabic ? '#' : '#'}</TableHead>
-                <TableHead>{isArabic ? 'الاسم' : 'Name'}</TableHead>
-                <TableHead>{isArabic ? 'النوع' : 'Type'}</TableHead>
-                <TableHead>{isArabic ? 'الفرع' : 'Branch'}</TableHead>
-                <TableHead>{isArabic ? 'تاريخ الإصدار' : 'Issue Date'}</TableHead>
-                <TableHead>{isArabic ? 'تاريخ الانتهاء' : 'Expiry Date'}</TableHead>
-                <TableHead>{isArabic ? 'الملاحظات' : 'Notes'}</TableHead>
-                <TableHead>{isArabic ? 'المستندات' : 'Documents'}</TableHead>
-                <TableHead className="text-center">{isArabic ? 'الإجراءات' : 'Actions'}</TableHead>
+                <TableHead>{t('assets.assetName')}</TableHead>
+                <TableHead>{t('assets.type')}</TableHead>
+                <TableHead>{t('assets.branch')}</TableHead>
+                <TableHead>{t('assets.issueDate')}</TableHead>
+                <TableHead>{t('assets.expiryDate')}</TableHead>
+                <TableHead>{t('assets.notes')}</TableHead>
+                <TableHead>{t('assets.documents')}</TableHead>
+                <TableHead className="text-center">{t('common.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -154,7 +152,7 @@ const OfficesTab = ({ offices, onMutate }) => {
                       </div>
                     ) : (
                       <span className="text-gray-400 text-sm">
-                        {isArabic ? 'لا يوجد' : 'None'}
+                        {t('assets.none')}
                       </span>
                     )}
                   </TableCell>

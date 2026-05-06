@@ -77,6 +77,11 @@ export default function PermissionsModal({ trigger,id }) {
             'sick_leaves': { ar: 'الإجازات المرضية', en: 'Sick Leaves' },
             'tasks': { ar: 'المهام', en: 'Tasks' },
             'trainings': { ar: 'التدريبات', en: 'Trainings' },
+            'accounting': { ar: 'المحاسبة', en: 'Accounting' },
+            'invoices': { ar: 'الفواتير', en: 'Invoices' },
+            'bank_accounts': { ar: 'الحسابات البنكية', en: 'Bank Accounts' },
+            'settings': { ar: 'الإعدادات', en: 'Settings' },
+            'logs': { ar: 'السجلات', en: 'Logs' },
         };
 
         const translation = translations[groupName];

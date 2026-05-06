@@ -1063,14 +1063,14 @@
 
 @layer components {
   .sidebar,
-  aside[data-slot="sidebar"] {
+  [data-slot="sidebar"] {
     background: var(--sidebar);
     border-color: var(--sidebar-border);
     color: var(--sidebar-foreground);
   }
   
   .sidebar [data-active="true"],
-  aside[data-slot="sidebar"] [data-active="true"] {
+  [data-slot="sidebar"] [data-active="true"] {
     background: color-mix(in oklch, var(--primary) 10%, transparent);
     border-left: 3px solid var(--primary);
     font-weight: 500;
@@ -1361,7 +1361,7 @@
     size: A4;
   }
   
-  aside, header, nav, .sidebar, .navigation, .print-hide {
+  [role="navigation"], aside, header, nav, .sidebar, .navigation, .print-hide {
     display: none !important;
   }
   

@@ -134,7 +134,7 @@ function SessionsWithDecisionItem({
           
           {/* Ruling Date */}
           <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-            <Clock className="w-4 h-4 flex-shrink-0 text-purple-500 dark:text-purple-400" />
+            <Clock className="w-4 h-4 flex-shrink-0 text-purple-500 dark:text-purple-400" aria-hidden="true" />
             <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.rulingDate')}: </span>
             <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayDate}</span>
             {displayTime && <span className="text-purple-600 dark:text-purple-400 font-semibold truncate">• {displayTime}</span>}
@@ -143,7 +143,7 @@ function SessionsWithDecisionItem({
           {/* File Number */}
           {session?.file_number && (
             <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-              <File className="w-4 h-4 flex-shrink-0 text-orange-600 dark:text-orange-300" />
+              <File className="w-4 h-4 flex-shrink-0 text-orange-600 dark:text-orange-300" aria-hidden="true" />
               <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.fileNumber')}: </span>
               <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{session.file_number}</span>
             </div>
@@ -152,7 +152,7 @@ function SessionsWithDecisionItem({
           {/* Case Number */}
           {session?.case_number && (
             <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-              <FileText className="w-4 h-4 flex-shrink-0 text-blue-500 dark:text-blue-400" />
+              <FileText className="w-4 h-4 flex-shrink-0 text-blue-500 dark:text-blue-400" aria-hidden="true" />
               <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.caseNo')}: </span>
               <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayCaseNumber}</span>
               {degreeInfo && (
@@ -165,7 +165,7 @@ function SessionsWithDecisionItem({
           
           {/* Client Names */}
           <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-            <User className="w-4 h-4 flex-shrink-0 text-amber-500 dark:text-amber-400" />
+            <User className="w-4 h-4 flex-shrink-0 text-amber-500 dark:text-amber-400" aria-hidden="true" />
             <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.clientNames')}: </span>
             <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">
               {displayClientParties.length > 0 ? displayClientParties.join('، ') : t('common.notSpecified')}
@@ -175,7 +175,7 @@ function SessionsWithDecisionItem({
           {/* Ruling */}
           {session?.decision && (
             <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap pb-2 border-b border-gray-100 dark:border-gray-800">
-              <FileText className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+              <FileText className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" aria-hidden="true" />
               <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.ruling')}: </span>
               <span className="font-semibold text-green-900 dark:text-green-300 truncate bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded">
                 {session.decision}
@@ -185,17 +185,26 @@ function SessionsWithDecisionItem({
 
           {/* Legal Periods */}
           <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-            <Calendar className={`w-4 h-4 flex-shrink-0 ${deadlineInfo?.isUrgent ? 'animate-pulse text-orange-600 dark:text-orange-300' : 'text-purple-500'}`} />
+            <Calendar className={`w-4 h-4 flex-shrink-0 ${deadlineInfo?.isUrgent ? 'animate-pulse text-orange-600 dark:text-orange-300' : 'text-purple-500'}`} aria-hidden="true" />
             <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.legalPeriodsSpecified')}: </span>
             <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">
               {deadlineInfo ? `(${deadlineInfo.deadlineDate})` : tSessions('labels.notCalculated')}
             </span>
             {deadlineInfo && (
                <div className="flex items-center gap-1.5 ml-2">
-                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0 ${deadlineInfo.isOverdue ? 'bg-red-600' : deadlineInfo.isUrgent ? 'bg-orange-600' : 'bg-green-700'}`}>
+                 <div 
+                   className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0 ${deadlineInfo.isOverdue ? 'bg-red-600' : deadlineInfo.isUrgent ? 'bg-orange-600' : 'bg-green-700'}`}
+                   aria-hidden="true"
+                 >
                    {Math.abs(deadlineInfo.daysRemaining)}
                  </div>
-                 <span className={`text-xs font-semibold truncate ${deadlineInfo.isOverdue ? 'text-red-600' : deadlineInfo.isUrgent ? 'text-orange-700' : 'text-green-700'}`}>
+                 <span className="sr-only">
+                    {Math.abs(deadlineInfo.daysRemaining)} {t('home.days')} {deadlineInfo.isOverdue ? tSessions('labels.overdue') : tSessions('labels.remaining')}
+                 </span>
+                 <span 
+                   className={`text-xs font-semibold truncate ${deadlineInfo.isOverdue ? 'text-red-600' : deadlineInfo.isUrgent ? 'text-orange-700' : 'text-green-700'}`}
+                   aria-hidden="true"
+                 >
                    {deadlineInfo.isOverdue ? tSessions('labels.overdue') : tSessions('labels.remaining')}
                  </span>
                </div>

@@ -33,7 +33,7 @@ const MobileSidebar = ({
           aria-hidden="true"
         >
           {/* Mobile Sidebar */}
-          <aside
+          <div
             role="dialog"
             aria-modal="true"
             aria-label={isRTL ? 'قائمة التنقل' : 'Navigation Menu'}
@@ -48,10 +48,11 @@ const MobileSidebar = ({
             `}
             onClick={(e) => e.stopPropagation()}
             ref={sidebarRef}
+            data-slot="sidebar"
           >
             {/* Mobile Sidebar Header */}
             <SidebarHeader isRTL={isRTL} isMobile={true} onClose={onClose} />
-
+    
             {/* Mobile Navigation Menu */}
             <NavigationMenu 
               menuItems={menuItems}
@@ -61,7 +62,7 @@ const MobileSidebar = ({
               onToggleSubmenu={onToggleSubmenu}
               isRTL={isRTL}
             />
-
+    
             {/* Mobile User Profile Section */}
             <SidebarFooter 
               user={user}
@@ -69,7 +70,7 @@ const MobileSidebar = ({
               isRTL={isRTL}
               onLogout={onLogout}
             />
-          </aside>
+          </div>
         </div>
       )}
     </div>

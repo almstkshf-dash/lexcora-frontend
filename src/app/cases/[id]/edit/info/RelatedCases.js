@@ -31,19 +31,6 @@ function RelatedCases({ caseId }) {
   const [availableCases, setAvailableCases] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Debounced search effect
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (searchTerm.length >= 3) {
-        searchCases(searchTerm);
-      } else {
-        setAvailableCases([]);
-      }
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm, searchCases]);
-
   const searchCases = useCallback(async (term) => {
     try {
       setLoading(true);
@@ -63,6 +50,19 @@ function RelatedCases({ caseId }) {
       setLoading(false);
     }
   }, [caseId]);
+
+  // Debounced search effect
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchTerm.length >= 3) {
+        searchCases(searchTerm);
+      } else {
+        setAvailableCases([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, searchCases]);
 
   // Handle adding a case to the related_cases array
   const handleSelectCase = (selectedCase) => {

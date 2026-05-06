@@ -164,7 +164,7 @@ const MenuItem = React.memo(({
             isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
           }`}
         >
-          <ul className={`${isRTL ? 'mr-4' : 'ml-4'} mt-2 space-y-1`} role="group">
+          <ul className={`${isRTL ? 'mr-4' : 'ml-4'} mt-2 space-y-1`}>
           {item.submenu?.map((subItem) => {
             const SubIconComponent = subItem.icon;
             const isSubActive = activeItem === subItem.id;

@@ -74,28 +74,28 @@ function LastWeekSessionsItem({
         <div className="grid grid-cols-1 gap-2">
           {displayFileNumber && (
             <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-              <FileText className="w-4 h-4 flex-shrink-0 text-orange-600 dark:text-orange-300" />
+              <FileText className="w-4 h-4 flex-shrink-0 text-orange-600 dark:text-orange-300" aria-hidden="true" />
               <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.fileNumber')}: </span>
               <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayFileNumber}</span>
             </div>
           )}
 
           <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-            <Calendar className="w-4 h-4 flex-shrink-0 text-blue-500 dark:text-blue-400" />
+            <Calendar className="w-4 h-4 flex-shrink-0 text-blue-500 dark:text-blue-400" aria-hidden="true" />
             <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.sessionDate')}: </span>
             <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayDate}</span>
           </div>
           
           {displayTime && (
             <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-              <Clock className="w-4 h-4 flex-shrink-0 text-orange-600 dark:text-orange-300" />
+              <Clock className="w-4 h-4 flex-shrink-0 text-orange-600 dark:text-orange-300" aria-hidden="true" />
               <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.sessionTime')}: </span>
               <span className="font-semibold text-orange-700 dark:text-orange-300 truncate">{displayTime}</span>
             </div>
           )}
 
           <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap">
-            <Hash className="w-4 h-4 flex-shrink-0 text-gray-400" />
+            <Hash className="w-4 h-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
             <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.caseNo')}: </span>
             <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayCaseNumber}</span>
             {degreeInfo && (
@@ -106,7 +106,7 @@ function LastWeekSessionsItem({
           </div>
           
           <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400 overflow-hidden whitespace-nowrap pt-2 border-t border-gray-100 dark:border-gray-800">
-            <User className="w-4 h-4 flex-shrink-0 text-amber-500 dark:text-amber-400" />
+            <User className="w-4 h-4 flex-shrink-0 text-amber-500 dark:text-amber-400" aria-hidden="true" />
             <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.client')}: </span>
             <span className="font-semibold text-gray-900 dark:text-gray-100 truncate flex-1">{displayClientName}</span>
             <button
@@ -115,7 +115,7 @@ function LastWeekSessionsItem({
               title={t('home.editSession')}
               aria-label={t('home.editSession')}
             >
-              <Pen className="w-3.5 h-3.5" />
+              <Pen className="w-3.5 h-3.5" aria-hidden="true" />
               <span className="sr-only">{t('home.editSession')}</span>
             </button>
           </div>

@@ -24,7 +24,7 @@ const DesktopSidebar = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <aside
+    <div
       dir={isRTL ? "rtl" : "ltr"}
       ref={sidebarRef}
       className={`
@@ -44,6 +44,7 @@ const DesktopSidebar = ({
       `}
       role="navigation"
       aria-label="Main navigation"
+      data-slot="sidebar"
     >
       {/* Logo Section */}
       <SidebarHeader 
@@ -71,7 +72,7 @@ const DesktopSidebar = ({
         onLogout={onLogout}
         isCollapsed={isCollapsed}
       />
-    </aside>
+    </div>
   );
 };
 

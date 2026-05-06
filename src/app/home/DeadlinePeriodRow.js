@@ -89,10 +89,7 @@ function DeadlinePeriodRow({ color = 'blue', Icon, label, endDate, info }) {
 
       {/* Days-remaining badge */}
       {info && (
-        <div
-          className="flex flex-col items-center gap-1.5 flex-shrink-0"
-          aria-label={statusLabel}
-        >
+        <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
           <div className="relative">
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-sm relative z-10 transition-colors ${urgency.circle}`}
@@ -106,7 +103,10 @@ function DeadlinePeriodRow({ color = 'blue', Icon, label, endDate, info }) {
               aria-hidden="true"
             />
           </div>
-          <span className={`text-[10px] font-bold uppercase tracking-wider whitespace-nowrap text-center ${urgency.text}`}>
+          <span 
+            className={`text-[10px] font-bold uppercase tracking-wider whitespace-nowrap text-center ${urgency.text}`}
+            aria-hidden="true"
+          >
             {info.isOverdue ? t('home.overdue') : t('home.remaining')}
           </span>
         </div>

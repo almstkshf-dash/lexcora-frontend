@@ -45,40 +45,41 @@ export const ThemeProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // Apply theme to document
+    // Apply theme to document without blocking the main thread.
+    //
+    // OLD approach: inject a <style>*{transition:none}</style> then call
+    // window.getComputedStyle() to force a synchronous style recalc before
+    // removing it. That recalc was the 200ms main-thread block.
+    //
+    // NEW approach:
+    //  1. Add a CSS class that suppresses transitions via globals.css.
+    //  2. Swap theme classes in the same microtask (no layout triggered).
+    //  3. Remove the no-transition class after ONE rAF so the browser can
+    //     repaint the new theme without any animated flash, then re-enable
+    //     transitions for subsequent interactions.
     const root = document.documentElement;
-    
-    // Temporarily disable all transitions to prevent slow repaints during theme change
-    const css = document.createElement('style');
-    css.appendChild(
-      document.createTextNode(
-        `* {
-          -webkit-transition: none !important;
-          -moz-transition: none !important;
-          -o-transition: none !important;
-          -ms-transition: none !important;
-          transition: none !important;
-        }`
-      )
-    );
-    document.head.appendChild(css);
 
-    // Remove all theme classes
-    Object.values(themes).forEach(t => {
-      root.classList.remove(t);
-    });
-    
-    // Add current theme class
+    // Step 1 — freeze transitions via a class (defined in globals.css)
+    root.classList.add('theme-switching');
+
+    // Step 2 — swap theme classes (pure class-list mutation, no reflow)
+    Object.values(themes).forEach(t => root.classList.remove(t));
     if (theme !== themes.light) {
       root.classList.add(theme);
     }
-    
-    // Save theme to localStorage
+
+    // Save preference
     localStorage.setItem("theme", theme);
 
-    // Force a reflow so the theme applies instantly without transition
-    const _ = window.getComputedStyle(css).opacity;
-    document.head.removeChild(css);
+    // Step 3 — unfreeze after the browser has painted the new theme.
+    // Double-rAF ensures the new frame is committed before transitions resume.
+    const rafId = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        root.classList.remove('theme-switching');
+      });
+    });
+
+    return () => cancelAnimationFrame(rafId);
   }, [theme]);
 
   useEffect(() => {

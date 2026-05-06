@@ -118,7 +118,7 @@ export default function IntegrationsSettingsPage() {
             <div className="relative">
               <input type={showPass ? 'text' : 'password'} className="w-full border rounded-xl px-4 py-2.5 text-sm bg-background focus:ring-2 focus:ring-primary outline-none pe-10"
                 value={settings.outlook_password || ''} onChange={e => set('outlook_password', e.target.value)} placeholder="••••••••••••" />
-              <button className="absolute inset-y-0 end-3 flex items-center text-muted-foreground" onClick={() => setShowPass(v => !v)}>
+              <button className="absolute inset-y-0 end-3 flex items-center justify-center min-w-6 min-h-6 p-2 text-muted-foreground" onClick={() => setShowPass(v => !v)}>
                 {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
@@ -152,7 +152,7 @@ export default function IntegrationsSettingsPage() {
             <div className="relative">
               <input type={showToken ? 'text' : 'password'} className="w-full border rounded-xl px-4 py-2.5 text-sm bg-background focus:ring-2 focus:ring-primary outline-none pe-10 font-mono"
                 value={settings.whatsapp_api_token || ''} onChange={e => set('whatsapp_api_token', e.target.value)} placeholder="EAABsbC..." />
-              <button className="absolute inset-y-0 end-3 flex items-center text-muted-foreground" onClick={() => setShowToken(v => !v)}>
+              <button className="absolute inset-y-0 end-3 flex items-center justify-center min-w-6 min-h-6 p-2 text-muted-foreground" onClick={() => setShowToken(v => !v)}>
                 {showToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>

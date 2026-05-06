@@ -34,8 +34,11 @@ const PageHeader = ({
     };
 
     updateParallax();
+    // Both listeners are passive — they never call preventDefault(),
+    // so marking them passive lets the browser optimise scroll/resize
+    // handling without waiting for the JS thread.
     window.addEventListener('scroll', updateParallax, { passive: true });
-    window.addEventListener('resize', updateParallax);
+    window.addEventListener('resize', updateParallax, { passive: true });
     return () => {
       window.removeEventListener('scroll', updateParallax);
       window.removeEventListener('resize', updateParallax);
@@ -143,4 +146,3 @@ const PageHeader = ({
 };
 
 export default PageHeader;
-

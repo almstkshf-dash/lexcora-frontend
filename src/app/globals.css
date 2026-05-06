@@ -794,6 +794,28 @@
     letter-spacing: 0.01em;
   }
 
+  /**
+   * Theme-switching guard — suppresses all CSS transitions while the
+   * ThemeContext is swapping theme classes on <html>.
+   *
+   * ThemeContext adds this class BEFORE the swap and removes it after
+   * two requestAnimationFrame ticks (double-rAF), which guarantees:
+   *  - No transition-animated flash during the theme change.
+   *  - No synchronous style recalculation (the old getComputedStyle hack).
+   *  - Normal transitions resume the very next frame after the new theme paints.
+   *
+   * Using !important here is intentional — we need to win over every
+   * component's local transition declarations during the swap window.
+   */
+  html.theme-switching,
+  html.theme-switching *,
+  html.theme-switching *::before,
+  html.theme-switching *::after {
+    transition: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
   html.reader-mode p,
   html.reader-mode li,
   html.reader-mode td,

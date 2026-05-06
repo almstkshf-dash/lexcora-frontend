@@ -1,12 +1,18 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 /**
- * Custom hook for keyboard navigation
- * Handles Alt+ArrowUp and Alt+ArrowDown for menu navigation.
+ * useKeyboardNavigation (sidebar/navigation)
  *
- * Fix: removed redundant setActiveItem calls — handleNavClick already owns
- * that responsibility, so calling it twice was causing two React state updates
- * per keypress. Navigation now also traverses submenu items.
+ * Performance fix: the previous implementation re-registered the global
+ * `window` keydown listener whenever `flatItems`, `activeItem`, or
+ * `handleNavClick` changed — which happens on every navigation and every
+ * menu-item render cycle. Multiple overlapping listeners accumulated,
+ * firing redundant work on every Alt+Arrow keypress.
+ *
+ * Fix: register the listener exactly once (on mount) and keep a ref to the
+ * latest values so the handler always reads fresh state without needing to
+ * be re-created. The flatItems list is still memoized to avoid rebuilding
+ * it on every render.
  */
 export const useKeyboardNavigation = (menuItems, activeItem, handleNavClick) => {
   // Flatten top-level items + their submenus into one navigable list
@@ -21,10 +27,16 @@ export const useKeyboardNavigation = (menuItems, activeItem, handleNavClick) => 
     return result;
   }, [menuItems]);
 
+  // Stable ref so the single listener always sees the latest values
+  const stateRef = useRef({});
+  stateRef.current = { flatItems, activeItem, handleNavClick };
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!e.altKey) return;
       if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+
+      const { flatItems, activeItem, handleNavClick } = stateRef.current;
 
       e.preventDefault();
       const currentIndex = flatItems.findIndex((item) => item.id === activeItem);
@@ -43,7 +55,9 @@ export const useKeyboardNavigation = (menuItems, activeItem, handleNavClick) => 
       }
     };
 
+    // Single registration for the lifetime of the sidebar component.
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [flatItems, activeItem, handleNavClick]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentionally empty — stateRef keeps flatItems/activeItem/handleNavClick fresh
 };

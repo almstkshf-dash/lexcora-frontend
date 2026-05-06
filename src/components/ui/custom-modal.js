@@ -25,14 +25,17 @@ export const CustomModal = ({
   }, [isOpen])
 
   useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose()
-      }
-    }
+    // Only attach the listener when the modal is open.
+    // Attaching unconditionally (even when isOpen is false) means a global
+    // keydown handler exists even when there is nothing to dismiss.
+    if (!isOpen) return;
 
-    document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose])
 
   if (!isOpen) return null

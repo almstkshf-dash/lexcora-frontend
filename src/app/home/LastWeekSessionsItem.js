@@ -1,12 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo, useTransition, lazy, Suspense } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Hash, FileText, User, Clock, Calendar, Pen } from 'lucide-react'
 import { useTranslations } from '@/hooks/useTranslations'
-import EditSessionModal from '@/app/cases/sessions/EditSessionModal'
 import { formatDate, formatTime } from '@/lib/dateUtils'
 
-function LastWeekSessionsItem({ 
+// Lazy-load the 50 KB EditSessionModal (Formik + Yup + Calendar + SWR).
+// This keeps it out of the initial bundle so mounting N list items doesn't
+// evaluate the module N times — it loads only when first opened.
+const EditSessionModal = lazy(() => import('@/app/cases/sessions/EditSessionModal'))
+
+const LastWeekSessionsItem = React.memo(function LastWeekSessionsItem({ 
   session,
   title, 
   date, 
@@ -17,6 +21,9 @@ function LastWeekSessionsItem({
 }) {
   const { t } = useTranslations()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  // startTransition defers the modal open state so the click handler
+  // returns immediately — React schedules the render as low-priority.
+  const [isPending, startTransition] = useTransition()
   
   // Handle both direct props (for backward compatibility) and session object
   const sessionData = session || {
@@ -64,7 +71,8 @@ function LastWeekSessionsItem({
   const displayDegree = session ? session.degree : sessionData.degree
   const displayFileNumber = session ? session.file_number : sessionData.fileNumber
 
-  const degreeInfo = getDegreeBadge(displayDegree)
+  // Memoize so the config object is only computed when degree changes
+  const degreeInfo = useMemo(() => getDegreeBadge(displayDegree), [displayDegree])
 
   return (
     <>
@@ -110,10 +118,11 @@ function LastWeekSessionsItem({
             <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">{t('home.client')}: </span>
             <span className="font-semibold text-gray-900 dark:text-gray-100 truncate flex-1">{displayClientName}</span>
             <button
-              onClick={() => setIsEditModalOpen(true)}
+              onClick={() => startTransition(() => setIsEditModalOpen(true))}
               className="p-1.5 bg-blue-50/50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded transition-all duration-200 text-blue-600 dark:text-blue-400 flex-shrink-0 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30"
               title={t('home.editSession')}
               aria-label={t('home.editSession')}
+              aria-disabled={isPending}
             >
               <Pen className="w-3.5 h-3.5" aria-hidden="true" />
               <span className="sr-only">{t('home.editSession')}</span>
@@ -123,15 +132,17 @@ function LastWeekSessionsItem({
       </CardContent>
     </Card>
     
-    {session?.id && (
-      <EditSessionModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        sessionId={session.id}
-      />
+    {session?.id && isEditModalOpen && (
+      <Suspense fallback={null}>
+        <EditSessionModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          sessionId={session.id}
+        />
+      </Suspense>
     )}
     </>
   )
-}
+})
 
 export default LastWeekSessionsItem

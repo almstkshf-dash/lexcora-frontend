@@ -1,13 +1,12 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Hash, FileText, User, Clock, Calendar, AlertTriangle, File } from 'lucide-react'
 import Actions from './Actions'
 import { useTranslations } from '@/hooks/useTranslations'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { se } from 'date-fns/locale'
 
-function SessionsWithDecisionItem({ 
+const SessionsWithDecisionItem = React.memo(function SessionsWithDecisionItem({ 
   session,
   title, 
   date, 
@@ -112,8 +111,16 @@ function SessionsWithDecisionItem({
   const displayCaseType = session ? session.case_type_en : sessionData.caseType
   const displayCaseTypeTranslated = getCaseTypeTranslation(displayCaseType)
 
-  const degreeInfo = getDegreeBadge(displayDegree)
-  const deadlineInfo = session ? calculateDeadline(session.session_date, session.case_type_en) : null
+  // Memoize expensive derived values — deadline math + badge config run
+  // on every render otherwise, multiplied across every list item.
+  const degreeInfo = useMemo(
+    () => getDegreeBadge(displayDegree),
+    [displayDegree] // eslint-disable-line react-hooks/exhaustive-deps
+  )
+  const deadlineInfo = useMemo(
+    () => session ? calculateDeadline(session.session_date, session.case_type_en) : null,
+    [session?.session_date, session?.case_type_en] // eslint-disable-line react-hooks/exhaustive-deps
+  )
 
   // Create title with deadline information
   const createDeadlineTitle = () => {
@@ -216,6 +223,6 @@ function SessionsWithDecisionItem({
       </CardContent>
     </Card>
   )
-}
+})
 
 export default SessionsWithDecisionItem

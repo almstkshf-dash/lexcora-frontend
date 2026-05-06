@@ -1,9 +1,12 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useTransition, lazy, Suspense } from 'react'
 import { Edit } from 'lucide-react'
 import { useTranslations } from '@/hooks/useTranslations'
-import AppealDecisionModal from './AppealDecisionModal'
+
+// Lazy-load so the Calendar/Popover/Formik bundle only evaluates on first open,
+// not at list-item mount time.
+const AppealDecisionModal = lazy(() => import('./AppealDecisionModal'))
 
 /**
  * Actions
@@ -20,6 +23,7 @@ import AppealDecisionModal from './AppealDecisionModal'
 function Actions({ theme = 'blue', onEdit, sessionId, caseId }) {
   const { t } = useTranslations()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [, startTransition] = useTransition()
 
   const themeColors = {
     blue: 'hover:text-blue-600 focus-visible:ring-blue-500',
@@ -34,9 +38,11 @@ function Actions({ theme = 'blue', onEdit, sessionId, caseId }) {
     if (onEdit) {
       onEdit()
     } else if (caseId) {
-      setIsModalOpen(true)
+      // startTransition keeps the click instant; React schedules the
+      // modal mount as low-priority work.
+      startTransition(() => setIsModalOpen(true))
     }
-  }, [onEdit, caseId])
+  }, [onEdit, caseId, startTransition])
 
   const handleModalClose = useCallback(() => {
     setIsModalOpen(false)
@@ -62,13 +68,15 @@ function Actions({ theme = 'blue', onEdit, sessionId, caseId }) {
         {/* Future actions can be added here */}
       </div>
 
-      {caseId && (
-        <AppealDecisionModal
-          isOpen={isModalOpen}
-          onClose={handleModalClose}
-          caseId={caseId}
-          onSuccess={handleSuccess}
-        />
+      {caseId && isModalOpen && (
+        <Suspense fallback={null}>
+          <AppealDecisionModal
+            isOpen={isModalOpen}
+            onClose={handleModalClose}
+            caseId={caseId}
+            onSuccess={handleSuccess}
+          />
+        </Suspense>
       )}
     </>
   )

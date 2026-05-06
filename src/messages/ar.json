@@ -1150,5 +1150,31 @@
     "cancel": "إلغاء",
     "saving": "saving",
     "save": "حفظ"
+  },
+  "payroll": {
+    "title": "إدارة الرواتب",
+    "processBatch": "معالجة الرواتب",
+    "processFor": "معالجة الرواتب لشهر",
+    "confirmProcess": "تأكيد المعالجة",
+    "history": "سجل الرواتب",
+    "totalEmployees": "إجمالي الموظفين",
+    "pendingPayments": "دفعات معلقة",
+    "paidThisMonth": "مدفوع هذا الشهر",
+    "incentives": "الحوافز",
+    "bonuses": "المكافآت",
+    "overtime": "الإضافي",
+    "period": "الفترة",
+    "baseSalary": "الراتب الأساسي",
+    "allowances": "البدلات",
+    "deductions": "الاستقطاعات",
+    "netSalary": "صافي الراتب",
+    "statusProcessed": "تمت المعالجة",
+    "statusPaid": "تم الدفع",
+    "payNow": "دفع الآن",
+    "viewSlip": "كشف الراتب",
+    "salaryPaid": "تم دفع الراتب بنجاح",
+    "errorPayingSalary": "خطأ في معالجة الدفع",
+    "payrollProcessed": "تمت معالجة الرواتب لـ {count} موظف",
+    "errorProcessingPayroll": "خطأ في معالجة الرواتب"
   }
 }

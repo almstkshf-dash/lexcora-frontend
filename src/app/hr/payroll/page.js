@@ -73,10 +73,10 @@ export default function PayrollPage() {
   const handlePaySalary = async (salaryId) => {
     try {
       await paySalary(salaryId, { paymentDate: new Date() });
-      toast.success(t('messages.salaryPaid') || "Salary marked as paid");
+      toast.success(t('payroll.salaryPaid'));
       mutateSalaries();
     } catch (error) {
-      toast.error(t('messages.errorPayingSalary') || "Error processing payment");
+      toast.error(t('payroll.errorPayingSalary'));
     }
   };
 
@@ -117,11 +117,11 @@ export default function PayrollPage() {
         }
       }
       
-      toast.success(`Processed payroll for ${successCount} employees`);
+      toast.success(t('payroll.payrollProcessed', { count: successCount }));
       mutateSalaries();
       setIsProcessingModalOpen(false);
     } catch (error) {
-      toast.error("Error processing payroll");
+      toast.error(t('payroll.errorProcessingPayroll'));
     } finally {
       setIsProcessing(false);
     }
@@ -140,7 +140,7 @@ export default function PayrollPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <DollarSign className="w-8 h-8 text-primary" />
-          {t('payroll.title') || 'إدارة الرواتب'}
+          {t('payroll.title')}
         </h1>
         
         <div className="flex gap-3">
@@ -152,7 +152,7 @@ export default function PayrollPage() {
           />
           <Button onClick={() => setIsProcessingModalOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
-            {t('payroll.processBatch') || 'معالجة الرواتب'}
+            {t('payroll.processBatch')}
           </Button>
         </div>
       </div>
@@ -163,16 +163,16 @@ export default function PayrollPage() {
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsProcessingModalOpen(false)} />
           <Card className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
             <CardHeader>
-              <CardTitle>{t('payroll.processFor') || 'معالجة الرواتب لشهر'}: {processingPeriod}</CardTitle>
+              <CardTitle>{t('payroll.processFor')}: {processingPeriod}</CardTitle>
             </CardHeader>
             <CardContent className="overflow-y-auto flex-1">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t('employees.employee')}</TableHead>
-                    <TableHead>{t('payroll.incentives') || 'الحوافز'}</TableHead>
-                    <TableHead>{t('payroll.bonuses') || 'المكافآت'}</TableHead>
-                    <TableHead>{t('payroll.overtime') || 'الإضافي'}</TableHead>
+                    <TableHead>{t('payroll.incentives')}</TableHead>
+                    <TableHead>{t('payroll.bonuses')}</TableHead>
+                    <TableHead>{t('payroll.overtime')}</TableHead>
                     <TableHead>{t('common.notes')}</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -225,7 +225,7 @@ export default function PayrollPage() {
               </Button>
               <Button onClick={handleProcessBatch} disabled={isProcessing}>
                 {isProcessing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle className="w-4 h-4 mr-2" />}
-                {t('payroll.confirmProcess') || 'تأكيد المعالجة'}
+                {t('payroll.confirmProcess')}
               </Button>
             </div>
           </Card>
@@ -237,7 +237,7 @@ export default function PayrollPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
               <Users className="w-4 h-4" />
-              {t('payroll.totalEmployees') || 'إجمالي الموظفين'}
+              {t('payroll.totalEmployees')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -249,7 +249,7 @@ export default function PayrollPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
               <Clock className="w-4 h-4 text-orange-500" />
-              {t('payroll.pendingPayments') || 'دفعات معلقة'}
+              {t('payroll.pendingPayments')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -263,7 +263,7 @@ export default function PayrollPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
               <CheckCircle className="w-4 h-4 text-green-500" />
-              {t('payroll.paidThisMonth') || 'مدفوع هذا الشهر'}
+              {t('payroll.paidThisMonth')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -277,7 +277,7 @@ export default function PayrollPage() {
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle>{t('payroll.history') || 'سجل الرواتب'}</CardTitle>
+            <CardTitle>{t('payroll.history')}</CardTitle>
             <div className="flex gap-3">
               <Input 
                 type="month" 
@@ -344,7 +344,7 @@ export default function PayrollPage() {
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           salary.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
                         }`}>
-                          {salary.status === 'paid' ? (t('payroll.statusPaid') || 'مدفوع') : (t('payroll.statusProcessed') || 'معالج')}
+                          {salary.status === 'paid' ? t('payroll.statusPaid') : t('payroll.statusProcessed')}
                         </span>
                       </TableCell>
                       <TableCell className="text-center">
@@ -356,12 +356,12 @@ export default function PayrollPage() {
                               className="bg-green-600 hover:bg-green-700"
                             >
                               <CreditCard className="w-4 h-4 mr-2" />
-                              {t('payroll.payNow') || 'دفع الآن'}
+                              {t('payroll.payNow')}
                             </Button>
                           )}
                           <Button size="sm" variant="outline">
                             <FileText className="w-4 h-4 mr-2" />
-                            {t('payroll.viewSlip') || 'كشف الراتب'}
+                            {t('payroll.viewSlip')}
                           </Button>
                         </div>
                       </TableCell>

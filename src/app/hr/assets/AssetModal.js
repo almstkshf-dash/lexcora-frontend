@@ -14,10 +14,12 @@ import { DatePicker } from "@/components/ui/date-picker"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Loader2, Upload, X, FileText } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { createAsset, updateAsset, deleteAssetDocument } from '@/app/services/api/assets'
+import { createAsset, updateAsset, deleteAssetDocument, getDepreciationMethods, getDepreciationPreview } from '@/app/services/api/assets'
 import { getBranches } from '@/app/services/api/branches'
-import { getAccounts } from '@/app/services/api/accounting'
+import { getAccounts, getBudgets } from '@/app/services/api/accounting'
+import { getEmployees } from '@/app/services/api/employees'
 import { uploadFiles } from '../../../../utils/fileUpload'
+import DepreciationSchedule from './DepreciationSchedule'
 
 const AssetModal = ({ 
   isOpen, 
@@ -33,28 +35,50 @@ const AssetModal = ({
 
   const [isLoading, setIsLoading] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false)
+  const [previewSchedule, setPreviewSchedule] = useState(null)
+  const currentYear = new Date().getFullYear()
   const [formData, setFormData] = useState({
     name: '',
     type: '',
+    category: '',
     branch_id: '',
+    custodian_id: '',
+    budget_id: '',
+    serial_number: '',
+    physical_location: '',
     issue_date: null,
     expiry_date: null,
     note: '',
     purchase_cost: '',
     purchase_date: null,
     account_id: '',
+    depreciation_method: 'straight_line',
     depreciation_rate: '',
-    salvage_value: ''
+    useful_life: '',
+    salvage_value: '',
+    current_value: ''
   })
   const [selectedFiles, setSelectedFiles] = useState([])
   const [existingDocuments, setExistingDocuments] = useState([])
 
-  // Fetch branches
+  const { data: branchesData } = useSWR('branches', getBranches)
   const branches = branchesData?.data || []
-  
-  // Fetch accounts
+
   const { data: accountsData } = useSWR('accounts', () => getAccounts({ type: 'asset' }))
   const accounts = accountsData?.data || []
+
+  const { data: depreciationMethodsData } = useSWR('depreciation-methods', getDepreciationMethods)
+  const depreciationMethods = depreciationMethodsData?.data || []
+
+  const { data: employeesData } = useSWR('employees', getEmployees)
+  const employees = employeesData?.data || []
+
+  const { data: budgetsData } = useSWR(
+    ['accounting/budgets', currentYear],
+    () => getBudgets({ fiscal_year: currentYear })
+  )
+  const budgets = budgetsData?.data || []
 
   // Populate form when editing
   useEffect(() => {
@@ -62,30 +86,46 @@ const AssetModal = ({
       setFormData({
         name: asset.name || '',
         type: asset.type || '',
+        category: asset.category || '',
         branch_id: asset.branch_id || '',
+        custodian_id: asset.custodian_id || '',
+        budget_id: asset.budget_id || '',
+        serial_number: asset.serial_number || '',
+        physical_location: asset.physical_location || '',
         issue_date: asset.issue_date ? new Date(asset.issue_date) : null,
         expiry_date: asset.expiry_date ? new Date(asset.expiry_date) : null,
         note: asset.note || '',
         purchase_cost: asset.purchase_cost || '',
         purchase_date: asset.purchase_date ? new Date(asset.purchase_date) : null,
         account_id: asset.account_id || '',
+        depreciation_method: asset.depreciation_method || 'straight_line',
         depreciation_rate: asset.depreciation_rate || '',
-        salvage_value: asset.salvage_value || ''
+        useful_life: asset.useful_life || '',
+        salvage_value: asset.salvage_value || '',
+        current_value: asset.current_value || ''
       })
       setExistingDocuments(asset.documents || [])
     } else {
       setFormData({
         name: '',
         type: '',
+        category: '',
         branch_id: '',
+        custodian_id: '',
+        budget_id: '',
+        serial_number: '',
+        physical_location: '',
         issue_date: null,
         expiry_date: null,
         note: '',
         purchase_cost: '',
         purchase_date: null,
         account_id: '',
+        depreciation_method: 'straight_line',
         depreciation_rate: '',
-        salvage_value: ''
+        useful_life: '',
+        salvage_value: '',
+        current_value: ''
       })
       setExistingDocuments([])
     }
@@ -98,15 +138,23 @@ const AssetModal = ({
       setFormData({
         name: '',
         type: '',
+        category: '',
         branch_id: '',
+        custodian_id: '',
+        budget_id: '',
+        serial_number: '',
+        physical_location: '',
         issue_date: null,
         expiry_date: null,
         note: '',
         purchase_cost: '',
         purchase_date: null,
         account_id: '',
+        depreciation_method: 'straight_line',
         depreciation_rate: '',
-        salvage_value: ''
+        useful_life: '',
+        salvage_value: '',
+        current_value: ''
       })
       setSelectedFiles([])
       setExistingDocuments([])
@@ -118,6 +166,47 @@ const AssetModal = ({
       ...prev,
       [field]: value
     }))
+    if ([
+      'purchase_cost',
+      'salvage_value',
+      'depreciation_rate',
+      'useful_life',
+      'depreciation_method',
+      'purchase_date'
+    ].includes(field)) {
+      setPreviewSchedule(null)
+    }
+  }
+
+  const handleDepreciationPreview = async () => {
+    if (!formData.purchase_cost || Number(formData.purchase_cost) <= 0) {
+      toast.error(isArabic ? 'يرجى إدخال تكلفة الشراء الصحيحة' : 'Please enter a valid purchase cost')
+      return
+    }
+
+    setIsPreviewLoading(true)
+    setPreviewSchedule(null)
+
+    try {
+      const response = await getDepreciationPreview({
+        purchase_cost: Number(formData.purchase_cost),
+        salvage_value: Number(formData.salvage_value) || 0,
+        depreciation_rate: Number(formData.depreciation_rate) || 0,
+        useful_life: Number(formData.useful_life) || 0,
+        depreciation_method: formData.depreciation_method,
+        purchase_date: formData.purchase_date ? format(formData.purchase_date, 'yyyy-MM-dd') : null
+      })
+
+      if (response.success) {
+        setPreviewSchedule(response.data.schedule)
+      } else {
+        toast.error(response.message || (isArabic ? 'حدث خطأ في المعاينة' : 'Preview error occurred'))
+      }
+    } catch (error) {
+      toast.error(isArabic ? 'حدث خطأ أثناء جلب المعاينة' : 'Error loading preview')
+    } finally {
+      setIsPreviewLoading(false)
+    }
   }
 
   const handleFileSelect = (e) => {
@@ -195,15 +284,23 @@ const AssetModal = ({
       const assetData = {
         name: formData.name,
         type: formData.type,
+        category: formData.category || null,
         branch_id: formData.branch_id,
+        custodian_id: formData.custodian_id || null,
+        budget_id: formData.budget_id || null,
+        serial_number: formData.serial_number || null,
+        physical_location: formData.physical_location || null,
         issue_date: formData.issue_date ? format(formData.issue_date, 'yyyy-MM-dd') : null,
         expiry_date: formData.expiry_date ? format(formData.expiry_date, 'yyyy-MM-dd') : null,
         note: formData.note || null,
-        purchase_cost: formData.purchase_cost || 0,
+        purchase_cost: Number(formData.purchase_cost) || 0,
         purchase_date: formData.purchase_date ? format(formData.purchase_date, 'yyyy-MM-dd') : null,
         account_id: formData.account_id || null,
-        depreciation_rate: formData.depreciation_rate || 0,
-        salvage_value: formData.salvage_value || 0,
+        depreciation_method: formData.depreciation_method || 'straight_line',
+        depreciation_rate: Number(formData.depreciation_rate) || 0,
+        useful_life: formData.useful_life !== '' ? Number(formData.useful_life) : null,
+        salvage_value: Number(formData.salvage_value) || 0,
+        current_value: formData.current_value !== '' ? Number(formData.current_value) : null,
         documents: uploadedDocuments,
         record_type: recordType
       }
@@ -269,25 +366,105 @@ const AssetModal = ({
             />
           </div>
 
-          {/* Branch */}
-          <div className="space-y-2">
-            <Label htmlFor="branch">{isArabic ? 'الفرع' : 'Branch'} *</Label>
-            <Select
-              value={formData.branch_id?.toString()}
-              onValueChange={(value) => handleInputChange('branch_id', parseInt(value))}
-              disabled={isLoading}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={isArabic ? 'اختر الفرع' : 'Select branch'} />
-              </SelectTrigger>
-              <SelectContent>
-                {branches.map((branch) => (
-                  <SelectItem key={branch.id} value={branch.id.toString()}>
-                    {isArabic ? branch.name_ar : branch.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Category */}
+            <div className="space-y-2">
+              <Label htmlFor="category">{isArabic ? 'الفئة' : 'Category'}</Label>
+              <Input
+                id="category"
+                value={formData.category}
+                onChange={(e) => handleInputChange('category', e.target.value)}
+                placeholder={isArabic ? 'مثال: أصول ثابتة' : 'e.g., Fixed Assets'}
+                disabled={isLoading}
+              />
+            </div>
+
+            {/* Custodian */}
+            <div className="space-y-2">
+              <Label htmlFor="custodian_id">{isArabic ? 'المسؤول' : 'Custodian'}</Label>
+              <Select
+                value={formData.custodian_id?.toString()}
+                onValueChange={(value) => handleInputChange('custodian_id', parseInt(value))}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={isArabic ? 'اختر المسؤول' : 'Select custodian'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {employees.map((employee) => (
+                    <SelectItem key={employee.id} value={employee.id.toString()}>
+                      {isArabic ? employee.name_ar || employee.name : employee.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Branch */}
+            <div className="space-y-2">
+              <Label htmlFor="branch">{isArabic ? 'الفرع' : 'Branch'} *</Label>
+              <Select
+                value={formData.branch_id?.toString()}
+                onValueChange={(value) => handleInputChange('branch_id', parseInt(value))}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={isArabic ? 'اختر الفرع' : 'Select branch'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {branches.map((branch) => (
+                    <SelectItem key={branch.id} value={branch.id.toString()}>
+                      {isArabic ? branch.name_ar : branch.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Budget */}
+            <div className="space-y-2">
+              <Label htmlFor="budget_id">{isArabic ? 'الميزانية' : 'Budget'}</Label>
+              <Select
+                value={formData.budget_id?.toString()}
+                onValueChange={(value) => handleInputChange('budget_id', parseInt(value))}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={isArabic ? 'اختر الميزانية' : 'Select budget'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {budgets.map((budget) => (
+                    <SelectItem key={budget.id} value={budget.id.toString()}>
+                      {budget.code} - {isArabic ? budget.name_ar : budget.name_en} ({budget.fiscal_year}{budget.fiscal_month ? `/${budget.fiscal_month}` : ''})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Serial Number */}
+            <div className="space-y-2">
+              <Label htmlFor="serial_number">{isArabic ? 'الرقم التسلسلي' : 'Serial Number'}</Label>
+              <Input
+                id="serial_number"
+                value={formData.serial_number}
+                onChange={(e) => handleInputChange('serial_number', e.target.value)}
+                placeholder={isArabic ? 'أدخل الرقم التسلسلي' : 'Enter serial number'}
+                disabled={isLoading}
+              />
+            </div>
+
+            {/* Physical Location */}
+            <div className="space-y-2">
+              <Label htmlFor="physical_location">{isArabic ? 'الموقع الفعلي' : 'Physical Location'}</Label>
+              <Input
+                id="physical_location"
+                value={formData.physical_location}
+                onChange={(e) => handleInputChange('physical_location', e.target.value)}
+                placeholder={isArabic ? 'أدخل الموقع' : 'Enter location'}
+                disabled={isLoading}
+              />
+            </div>
           </div>
 
           {/* Issue Date */}
@@ -375,6 +552,42 @@ const AssetModal = ({
                 </Select>
               </div>
 
+              {/* Depreciation Method */}
+              <div className="space-y-2">
+                <Label htmlFor="depreciation_method">{isArabic ? 'طريقة الإهلاك' : 'Depreciation Method'}</Label>
+                <Select
+                  value={formData.depreciation_method}
+                  onValueChange={(value) => handleInputChange('depreciation_method', value)}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={isArabic ? 'اختر طريقة' : 'Select method'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {depreciationMethods.map((method) => (
+                      <SelectItem key={method.value} value={method.value}>
+                        {method.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Useful Life */}
+              <div className="space-y-2">
+                <Label htmlFor="useful_life">{isArabic ? 'العمر الافتراضي (سنوات)' : 'Useful Life (years)'}</Label>
+                <Input
+                  id="useful_life"
+                  type="number"
+                  step="1"
+                  min="0"
+                  value={formData.useful_life}
+                  onChange={(e) => handleInputChange('useful_life', e.target.value)}
+                  placeholder={isArabic ? '0' : '0'}
+                  disabled={isLoading}
+                />
+              </div>
+
               {/* Depreciation Rate */}
               <div className="space-y-2">
                 <Label htmlFor="depreciation_rate">{isArabic ? 'نسبة الإهلاك (%)' : 'Depreciation Rate (%)'}</Label>
@@ -402,8 +615,45 @@ const AssetModal = ({
                   disabled={isLoading}
                 />
               </div>
+
+              {/* Current Value */}
+              <div className="space-y-2">
+                <Label htmlFor="current_value">{isArabic ? 'القيمة الحالية' : 'Current Value'}</Label>
+                <Input
+                  id="current_value"
+                  type="number"
+                  step="0.01"
+                  value={formData.current_value}
+                  onChange={(e) => handleInputChange('current_value', e.target.value)}
+                  placeholder="0.00"
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
+            <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="text-sm text-muted-foreground">
+                {isArabic ? 'يمكنك معاينة جدول الإهلاك قبل حفظ الأصل.' : 'Preview the depreciation schedule before saving the asset.'}
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleDepreciationPreview}
+                disabled={isLoading || isPreviewLoading}
+              >
+                {isPreviewLoading
+                  ? (isArabic ? 'جارٍ التحميل...' : 'Loading preview...')
+                  : (isArabic ? 'معاينة الإهلاك' : 'Preview Depreciation')}
+              </Button>
             </div>
           </div>
+
+          {previewSchedule && (
+            <div className="border-t pt-4 mt-4">
+              <h3 className="text-lg font-semibold mb-4">{isArabic ? 'معاينة جدول الإهلاك' : 'Depreciation Preview'}</h3>
+              <DepreciationSchedule schedule={previewSchedule} />
+            </div>
+          )}
 
           {/* Existing Documents (Edit Mode) */}
           {isEditMode && existingDocuments.length > 0 && (

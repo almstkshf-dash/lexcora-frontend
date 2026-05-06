@@ -1157,5 +1157,31 @@
     "cancel": "Cancel",
     "saving": "Saving",
     "save": "Save"
+  },
+  "payroll": {
+    "title": "Payroll Management",
+    "processBatch": "Process Payroll",
+    "processFor": "Process Payroll for Month",
+    "confirmProcess": "Confirm Processing",
+    "history": "Payroll History",
+    "totalEmployees": "Total Employees",
+    "pendingPayments": "Pending Payments",
+    "paidThisMonth": "Paid This Month",
+    "incentives": "Incentives",
+    "bonuses": "Bonuses",
+    "overtime": "Overtime",
+    "period": "Period",
+    "baseSalary": "Base Salary",
+    "allowances": "Allowances",
+    "deductions": "Deductions",
+    "netSalary": "Net Salary",
+    "statusProcessed": "Processed",
+    "statusPaid": "Paid",
+    "payNow": "Pay Now",
+    "viewSlip": "View Payslip",
+    "salaryPaid": "Salary marked as paid",
+    "errorPayingSalary": "Error processing payment",
+    "payrollProcessed": "Processed payroll for {count} employees",
+    "errorProcessingPayroll": "Error processing payroll"
   }
 }

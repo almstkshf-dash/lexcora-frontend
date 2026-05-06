@@ -176,6 +176,11 @@ export const setBudget = async (data) => {
   return response.data;
 };
 
+export const getBudgets = async (params) => {
+  const response = await api.get('/accounting/budgets', { params });
+  return response.data;
+};
+
 export const getBudgetVsActual = async (params) => {
   const response = await api.get('/accounting/reports/budget-vs-actual', { params });
   return response.data;
@@ -205,6 +210,7 @@ export const accountingService = {
   createFiscalPeriod,
   updateFiscalPeriodStatus,
   setBudget,
+  getBudgets,
   getBudgetVsActual,
   getAssetsReport
 };

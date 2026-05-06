@@ -31,6 +31,16 @@ export const deleteAsset = async (id) => {
   return response.data;
 };
 
+export const getDepreciationMethods = async () => {
+  const response = await api.get('/assets/depreciation/methods');
+  return response.data;
+};
+
+export const getDepreciationPreview = async (previewData) => {
+  const response = await api.post('/assets/depreciation/preview', previewData);
+  return response.data;
+};
+
 export const deleteAssetDocument = async (assetId, documentId) => {
   const response = await api.delete(`/assets/${assetId}/documents/${documentId}`);
   return response.data;

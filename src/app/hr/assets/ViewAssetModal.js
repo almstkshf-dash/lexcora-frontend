@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { useTranslations } from "@/hooks/useTranslations"
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { FileText, Download, Trash2, Loader2 } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { deleteAssetDocument } from '@/app/services/api/assets'
+import { deleteAssetDocument, getDepreciationPreview } from '@/app/services/api/assets'
+import DepreciationSchedule from './DepreciationSchedule'
 
 const ViewAssetModal = ({ 
   isOpen, 
@@ -23,6 +24,9 @@ const ViewAssetModal = ({
   const isArabic = language === 'ar'
 
   const [deletingDocId, setDeletingDocId] = useState(null)
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false)
+  const [previewSchedule, setPreviewSchedule] = useState(null)
+  const [previewError, setPreviewError] = useState('')
 
   if (!asset) return null
 
@@ -50,6 +54,45 @@ const ViewAssetModal = ({
       setDeletingDocId(null)
     }
   }
+
+  const loadDepreciationPreview = async () => {
+    if (!asset.purchase_cost || Number(asset.purchase_cost) <= 0) {
+      setPreviewError(isArabic ? 'لا يمكن إنشاء معاينة بدون تكلفة شراء صحيحة' : 'Cannot create preview without valid purchase cost')
+      setPreviewSchedule(null)
+      return
+    }
+
+    setIsPreviewLoading(true)
+    setPreviewError('')
+    setPreviewSchedule(null)
+
+    try {
+      const response = await getDepreciationPreview({
+        purchase_cost: Number(asset.purchase_cost),
+        salvage_value: Number(asset.salvage_value) || 0,
+        depreciation_rate: Number(asset.depreciation_rate) || 0,
+        useful_life: Number(asset.useful_life) || 0,
+        depreciation_method: asset.depreciation_method || 'straight_line',
+        purchase_date: asset.purchase_date || null
+      })
+
+      if (response.success) {
+        setPreviewSchedule(response.data.schedule)
+      } else {
+        setPreviewError(response.message || (isArabic ? 'حدث خطأ أثناء تحميل المعاينة' : 'Unable to load preview'))
+      }
+    } catch (error) {
+      setPreviewError(isArabic ? 'حدث خطأ أثناء تحميل المعاينة' : 'Unable to load preview')
+    } finally {
+      setIsPreviewLoading(false)
+    }
+  }
+
+  React.useEffect(() => {
+    if (isOpen && asset) {
+      loadDepreciationPreview()
+    }
+  }, [isOpen, asset])
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -87,6 +130,34 @@ const ViewAssetModal = ({
                 {isArabic ? 'أنشئ بواسطة' : 'Created By'}
               </p>
               <p className="text-base">{asset.created_by_name || '-'}</p>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-1">
+                {isArabic ? 'الفئة' : 'Category'}
+              </p>
+              <p className="text-base">{asset.category || '-'}</p>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-1">
+                {isArabic ? 'المسؤول' : 'Custodian'}
+              </p>
+              <p className="text-base">{asset.custodian_name || '-'}</p>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-1">
+                {isArabic ? 'الرقم التسلسلي' : 'Serial Number'}
+              </p>
+              <p className="text-base">{asset.serial_number || '-'}</p>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-1">
+                {isArabic ? 'الموقع الفعلي' : 'Physical Location'}
+              </p>
+              <p className="text-base">{asset.physical_location || '-'}</p>
             </div>
           </div>
 
@@ -169,9 +240,39 @@ const ViewAssetModal = ({
 
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">
+                  {isArabic ? 'الميزانية' : 'Budget'}
+                </p>
+                <p className="text-base">
+                  {isArabic
+                    ? asset.budget_name_ar || asset.budget_name || asset.budget_code
+                    : asset.budget_name_en || asset.budget_name || asset.budget_code || '-'}
+                </p>
+                {asset.budget_fiscal_year && (
+                  <p className="text-xs text-gray-500">
+                    {asset.budget_fiscal_year}{asset.budget_fiscal_month ? `/${asset.budget_fiscal_month}` : ''}
+                  </p>
+                )}
+              </div>
+
+                  <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">
                   {isArabic ? 'نسبة الإهلاك' : 'Depreciation Rate'}
                 </p>
                 <p className="text-base">{asset.depreciation_rate || 0}%</p>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">
+                  {isArabic ? 'طريقة الإهلاك' : 'Depreciation Method'}
+                </p>
+                <p className="text-base">{asset.depreciation_method ? asset.depreciation_method.replace('_', ' ') : '-'}</p>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">
+                  {isArabic ? 'العمر الافتراضي (سنوات)' : 'Useful Life (years)'}
+                </p>
+                <p className="text-base">{asset.useful_life || '-'}</p>
               </div>
 
               <div>
@@ -192,6 +293,23 @@ const ViewAssetModal = ({
                 </p>
               </div>
             </div>
+          </div>
+
+          <Separator />
+
+          <div>
+            <h3 className="text-lg font-semibold mb-4">{isArabic ? 'جدول الإهلاك' : 'Depreciation Schedule'}</h3>
+            {isPreviewLoading && (
+              <div className="text-sm text-gray-500">{isArabic ? 'جارٍ تحميل المعاينة...' : 'Loading preview...'}</div>
+            )}
+            {previewError && (
+              <div className="text-sm text-red-500">{previewError}</div>
+            )}
+            {previewSchedule && previewSchedule.length > 0 ? (
+              <DepreciationSchedule schedule={previewSchedule} />
+            ) : !isPreviewLoading && !previewError ? (
+              <div className="text-sm text-gray-500">{isArabic ? 'لا توجد بيانات جدول الإهلاك لعرضها.' : 'No depreciation schedule data to display.'}</div>
+            ) : null}
           </div>
 
           {/* Notes */}

@@ -4,30 +4,17 @@
     "tagline": "Legal Management System"
   },
   "settings": {
-    "generalSettings": "General Settings",
-    "generalSettingsDesc": "Manage company information, TRN, and contract terms.",
-    "companyInformation": "Company Information",
-    "companyInformationDesc": "Company name, TRN, contact details, and address.",
-    "companyNameAr": "Company Name (Arabic)",
-    "companyNameEn": "Company Name (English)",
-    "companyPhone": "Phone Number",
-    "companyEmail": "Email Address",
-    "trn": "Tax Registration Number (TRN)",
-    "defaultVatRate": "Default VAT Rate",
-    "addressAr": "Address (Arabic)",
-    "addressEn": "Address (English)",
-    "termsAndConditions": "Terms and Conditions",
-    "termsAndConditionsDesc": "Arabic and English text for contract terms and conditions.",
-    "textAr": "Arabic Text",
-    "textEn": "English Text",
-    "saveChanges": "Save Changes",
-    "saving": "Saving...",
-    "back": "Back",
-    "companyInfo": "Company Info",
-    "loadingSettings": "Loading settings...",
-    "errorFetchingSettings": "Error fetching settings",
-    "errorUpdatingSettings": "Error updating settings",
-    "settingsUpdatedSuccessfully": "Settings updated successfully"
+    "appearanceDescription": "Tune language, themes, working hours, and typography.",
+    "resetToDefaults": "Reset to defaults",
+    "theme": "Theme",
+    "themeDescription": "Choose a palette. Ambient themes add a slow, multi-hour gradient drift for long sessions.",
+    "currentTheme": "Current theme",
+    "ambientThemeHint": "Calm, Focus, and Vibrant include subtle gradients and gentle accent shifts over time.",
+    "readerMode": "Reader mode",
+    "readerModeDescription": "Slightly larger type, wider line height, and a muted palette for data-heavy screens.",
+    "readerModeHint": "Ideal for long reading or table review; toggles instantly.",
+    "readerModeOn": "Reader mode is on",
+    "readerModeOff": "Reader mode is off"
   },
   "language": {
     "switch": "Switch language",
@@ -99,19 +86,6 @@
     "language": "Language",
     "pettyCash": "Petty Cash",
     "cashFlow": "Cash Flow"
-  },
-  "settings": {
-    "appearanceDescription": "Tune language, themes, working hours, and typography.",
-    "resetToDefaults": "Reset to defaults",
-    "theme": "Theme",
-    "themeDescription": "Choose a palette. Ambient themes add a slow, multi-hour gradient drift for long sessions.",
-    "currentTheme": "Current theme",
-    "ambientThemeHint": "Calm, Focus, and Vibrant include subtle gradients and gentle accent shifts over time.",
-    "readerMode": "Reader mode",
-    "readerModeDescription": "Slightly larger type, wider line height, and a muted palette for data-heavy screens.",
-    "readerModeHint": "Ideal for long reading or table review; toggles instantly.",
-    "readerModeOn": "Reader mode is on",
-    "readerModeOff": "Reader mode is off"
   },
   "buttons": {
     "add": "Add",
@@ -1398,6 +1372,8 @@
     "netVatPayable": "Net VAT Payable",
     "payableToFta": "* This amount is payable to FTA",
     "creditBalance": "* This amount is a credit balance",
-    "downloadDeclaration": "Download FTA Declaration"
+    "downloadDeclaration": "Download FTA Declaration",
+    "outputTaxDesc": "VAT collected on sales and standard-rated supplies",
+    "inputTaxDesc": "VAT paid on purchases and recoverable expenses"
   }
 }

@@ -19,7 +19,7 @@ const NotificationItem = React.memo(function NotificationItem({
   onMarkAsRead, 
   onDelete 
 }) {
-  const t = useTranslations();
+  const { t } = useTranslations();
   const timeAgo = useMemo(() => formatTimeAgo(notification.created_at, isArabic), [notification.created_at, isArabic]);
 
   return (

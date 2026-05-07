@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { 
@@ -55,7 +55,7 @@ export default function PettyCashPage() {
   const [isAddTxOpen, setIsAddTxOpen] = useState(false);
   
   const [newFund, setNewFund] = useState({ name: '', responsible_employee_id: '', initial_balance: '' });
-  const [newTx, setNewTx] = useState({ fund_id: '', type: LOG_TYPE.DISBURSEMENT, amount: '', description: '', date: new Date().toISOString().split('T')[0] });
+  const [newTx, setNewTx] = useState({ type: LOG_TYPE.DISBURSEMENT, amount: '', description: '', transaction_date: new Date().toISOString().split('T')[0] });
 
   const toArray = (payload) => {
     if (Array.isArray(payload)) return payload;
@@ -74,11 +74,16 @@ export default function PettyCashPage() {
     return new Date(dateString).toLocaleDateString(language === 'ar' ? LOCALE.ar : LOCALE.en);
   };
 
-  useEffect(() => {
-    fetchFunds();
-  }, []);
+  const fetchTransactions = useCallback(async (fundId) => {
+    try {
+      const data = await pettyCashService.getTransactions(fundId);
+      setTransactions(toArray(data));
+    } catch (error) {
+      toast.error(commonT('errorLoading'));
+    }
+  }, [commonT]);
 
-  const fetchFunds = async () => {
+  const fetchFunds = useCallback(async () => {
     try {
       setLoading(true);
       const data = await pettyCashService.getFunds();
@@ -98,16 +103,11 @@ export default function PettyCashPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [commonT, selectedFund?.id, fetchTransactions]);
 
-  const fetchTransactions = async (fundId) => {
-    try {
-      const data = await pettyCashService.getTransactions(fundId);
-      setTransactions(toArray(data));
-    } catch (error) {
-      toast.error(commonT('errorLoading'));
-    }
-  };
+  useEffect(() => {
+    fetchFunds();
+  }, [fetchFunds]);
 
   const handleCreateFund = async () => {
     try {
@@ -126,17 +126,24 @@ export default function PettyCashPage() {
   };
 
   const handleAddTransaction = async () => {
+    const amount = Number(newTx.amount);
+    if (!amount || amount <= 0) {
+      toast.error(commonT('error'));
+      return;
+    }
     try {
       await pettyCashService.createTransaction({
         ...newTx,
-        fund_id: selectedFund.id
+        fund_id: selectedFund.id,
+        amount
       });
       toast.success(commonT('success'));
       setIsAddTxOpen(false);
+      setNewTx({ type: LOG_TYPE.DISBURSEMENT, amount: '', description: '', transaction_date: new Date().toISOString().split('T')[0] });
       fetchTransactions(selectedFund.id);
-      fetchFunds(); // Refresh balance
+      fetchFunds();
     } catch (error) {
-      toast.error(commonT('error'));
+      toast.error(error?.response?.data?.message || error?.response?.data?.error || error?.message || commonT('error'));
     }
   };
 
@@ -233,6 +240,14 @@ export default function PettyCashPage() {
                     onChange={(e) => setNewTx({...newTx, description: e.target.value})} 
                   />
                 </div>
+                <div className="space-y-2">
+                  <label>{commonT('date')}</label>
+                  <Input 
+                    type="date"
+                    value={newTx.transaction_date} 
+                    onChange={(e) => setNewTx({...newTx, transaction_date: e.target.value})} 
+                  />
+                </div>
                 <Button onClick={handleAddTransaction} className="w-full">{commonT('save')}</Button>
               </div>
             </DialogContent>
@@ -323,7 +338,7 @@ export default function PettyCashPage() {
                                 ) : (
                                   <ArrowDownCircle className="me-2 h-4 w-4 text-red-500" />
                                 )}
-                                {t(tx.type)}
+                                {{ [LOG_TYPE.REPLENISHMENT]: t('replenishment'), [LOG_TYPE.DISBURSEMENT]: t('disbursement') }[tx.type]}
                               </div>
                             </TableCell>
                             <TableCell>{tx.description}</TableCell>

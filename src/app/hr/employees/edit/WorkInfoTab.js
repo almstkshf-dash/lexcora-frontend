@@ -20,7 +20,7 @@ const WorkInfoTab = ({ formData, handleInputChange, departments, roles, branches
           value={value?.toString() || ''} 
           onValueChange={(val) => handleInputChange(name, val)}
         >
-          <SelectTrigger>
+          <SelectTrigger id={name}>
             <SelectValue placeholder={placeholder || `${t('common.select')} ${label}`} />
           </SelectTrigger>
           <SelectContent>
@@ -38,7 +38,7 @@ const WorkInfoTab = ({ formData, handleInputChange, departments, roles, branches
           value={value?.toString() || 'none'} 
           onValueChange={(val) => handleInputChange(name, val === 'none' ? null : val)}
         >
-          <SelectTrigger>
+          <SelectTrigger id={name}>
             <SelectValue placeholder={placeholder || t('employees.selectManager')} />
           </SelectTrigger>
           <SelectContent>
@@ -52,7 +52,7 @@ const WorkInfoTab = ({ formData, handleInputChange, departments, roles, branches
         </Select>
       ) : type === 'status-select' ? (
         <Select value={value || ''} onValueChange={(val) => handleInputChange(name, val)}>
-          <SelectTrigger>
+          <SelectTrigger id={name}>
             <SelectValue placeholder={placeholder || `${t('common.select')} ${label}`} />
           </SelectTrigger>
           <SelectContent>

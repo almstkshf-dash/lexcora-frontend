@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus, Trash2, Loader2, CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,23 +16,27 @@ import { getBranches } from "@/app/services/api/branches";
 import { getAllParties } from "@/app/services/api/parties";
 import { getAllBankAccounts } from "@/app/services/api/bankAccounts";
 import { useTranslations } from "@/hooks/useTranslations";
+import { useLanguage } from "@/contexts/LanguageContext";
 import useSWR from "swr";
 import { format, parseISO } from "date-fns";
 import { ar } from "date-fns/locale";
-import { DEFAULT_VAT, DEFAULT_CURRENCY, STATUS, VAT_CATEGORY, VAT_RATES } from '@/app/finance/constants';
+import { cn } from "@/lib/utils";
+import { DEFAULT_VAT, DEFAULT_CURRENCY, STATUS, VAT_CATEGORY, VAT_RATES, EMIRATES, CURRENCY_NAMES } from '@/app/finance/constants';
 
 export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess }) {
   const t = useTranslations('invoices');
+  const { isRTL } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState(null);
   const [formData, setFormData] = useState({
     client_id: "",
     branch_id: "",
     bank_account_id: "",
-    vat: "5.00",
+    vat: DEFAULT_VAT,
     vat_category: VAT_CATEGORY.STANDARD,
     customer_trn: "",
-    currency: "AED",
+    currency: DEFAULT_CURRENCY,
+    emirate: EMIRATES[1].id,
   });
   const [items, setItems] = useState([{ description: "", amount: "" }]);
   const [loading, setLoading] = useState(false);
@@ -55,19 +59,13 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
     getAllBankAccounts
   );
 
-  const clients = clientsData?.data || [];
-  const branches = branchesData?.data || [];
-  const bankAccounts = bankAccountsData?.data || [];
+  const clients = Array.isArray(clientsData?.data) ? clientsData.data : Array.isArray(clientsData) ? clientsData : [];
+  const branches = Array.isArray(branchesData?.data) ? branchesData.data : Array.isArray(branchesData) ? branchesData : [];
+  const bankAccounts = Array.isArray(bankAccountsData?.data) ? bankAccountsData.data : Array.isArray(bankAccountsData) ? bankAccountsData : [];
 
-  // Load invoice data
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (isOpen && invoiceId) {
-      loadInvoiceData();
-    }
-  }, [isOpen, invoiceId]);
+  const dropdownsReady = !!branchesData && !!bankAccountsData;
 
-  const loadInvoiceData = async () => {
+  const loadInvoiceData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getInvoiceById(invoiceId);
@@ -80,10 +78,11 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
           client_id: invoice.client_id?.toString() || "",
           branch_id: invoice.branch_id?.toString() || "",
           bank_account_id: invoice.bank_account_id?.toString() || "",
-          vat: invoice.vat?.toString() || "5.00",
+          vat: invoice.vat?.toString() || DEFAULT_VAT,
           vat_category: invoice.vat_category || VAT_CATEGORY.STANDARD,
           customer_trn: invoice.customer_trn || "",
-          currency: invoice.currency || "AED",
+          currency: invoice.currency || DEFAULT_CURRENCY,
+          emirate: invoice.emirate || EMIRATES[1].id,
         });
         
         // Load items
@@ -106,7 +105,14 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
     } finally {
       setLoading(false);
     }
-  };
+  }, [invoiceId, t, onClose]);
+
+  // Load invoice data
+  useEffect(() => {
+    if (isOpen && invoiceId) {
+      loadInvoiceData();
+    }
+  }, [isOpen, invoiceId, loadInvoiceData]);
 
   // Calculate total from items with VAT
   const subtotal = items.reduce((sum, item) => {
@@ -173,11 +179,12 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
         client_id: formData.client_id || null,
         branch_id: formData.branch_id || null,
         bank_account_id: formData.bank_account_id || null,
-        status: "pending",
+        status: STATUS.PENDING,
         vat: parseFloat(formData.vat) || 0,
         vat_category: formData.vat_category,
         customer_trn: formData.customer_trn,
-        currency: formData.currency || "AED",
+        emirate: formData.emirate,
+        currency: formData.currency || DEFAULT_CURRENCY,
         items: validItems,
       };
 
@@ -213,7 +220,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
       title={t('editInvoice')}
       size="lg"
     >
-      {loading ? (
+      {loading || !dropdownsReady ? (
         <div className="flex items-center justify-center p-12">
           <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
           <span className="me-3">{t('loading')}</span>
@@ -276,13 +283,13 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
                 onValueChange={(value) => setFormData(prev => ({ ...prev, branch_id: value }))}
                 disabled={isSubmitting}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder={t('selectBranch')} />
                 </SelectTrigger>
                 <SelectContent>
                   {branches.map((branch) => (
                     <SelectItem key={branch.id} value={branch.id.toString()}>
-                      {branch.name_ar}
+                      {isRTL ? branch.name_ar : branch.name_en}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -297,7 +304,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
                 onValueChange={(value) => setFormData(prev => ({ ...prev, bank_account_id: value }))}
                 disabled={isSubmitting}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder={t('selectBankAccount')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -323,7 +330,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
               />
             </div>
 
-            {/* VAT Category and Percentage */}
+            {/* VAT Category, Emirate and Percentage */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="vat_category">{t('vatCategory')}</Label>
@@ -349,6 +356,28 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2">
+                <Label>{t('emirate')}</Label>
+                <Select
+                  value={formData.emirate}
+                  onValueChange={(val) => setFormData(prev => ({ ...prev, emirate: val }))}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('emirate')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EMIRATES.map(e => (
+                      <SelectItem key={e.id} value={e.id}>
+                        {isRTL ? e.ar : e.en}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="vat">{t('vatPercentage')}</Label>
                 <Input
@@ -378,7 +407,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="AED">درهم إماراتي (AED)</SelectItem>
+                  <SelectItem value={DEFAULT_CURRENCY}>{isRTL ? CURRENCY_NAMES.AED.ar : CURRENCY_NAMES.AED.en} (AED)</SelectItem>
                   {/* <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
                   <SelectItem value="EUR">يورو (EUR)</SelectItem>
                   <SelectItem value="GBP">جنيه إسترليني (GBP)</SelectItem>

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { getJudicialDecisions } from "@/app/services/api/sessions";
 import { getBranches } from "@/app/services/api/branches";
@@ -102,7 +102,7 @@ export default function JudicialDecisionsPage() {
   );
 
   const decisions = decisionsData?.data || [];
-  const branches = branchesData?.data || [];
+  const branches = Array.isArray(branchesData?.data) ? branchesData.data : Array.isArray(branchesData) ? branchesData : [];
   const totalPages = decisionsData?.totalPages || 1;
   const totalDecisions = decisionsData?.total || 0;
 

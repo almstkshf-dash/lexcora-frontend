@@ -101,7 +101,7 @@ export default function CashFlowPage() {
               onClick={() => setPeriod(p)}
               className="capitalize"
             >
-              {t(p)}
+              {{ monthly: t('monthly'), quarterly: t('quarterly'), yearly: t('yearly') }[p]}
             </Button>
           ))}
         </div>
@@ -152,21 +152,23 @@ export default function CashFlowPage() {
           <CardTitle>{t('cashFlowTrend')}</CardTitle>
           <CardDescription>{t('cashFlowDescription')}</CardDescription>
         </CardHeader>
-        <CardContent className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data?.chartData || []}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="name" />
-              <YAxis tickFormatter={(val) => formatCurrency(val)} />
-              <Tooltip 
-                formatter={(val) => formatCurrency(val)}
-                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-              />
-              <Legend />
-              <Bar dataKey="inflow" fill="#22c55e" radius={[4, 4, 0, 0]} name={t('inflow')} />
-              <Bar dataKey="outflow" fill="#ef4444" radius={[4, 4, 0, 0]} name={t('outflow')} />
-            </BarChart>
-          </ResponsiveContainer>
+        <CardContent className="flex flex-col w-full min-h-[400px]">
+          <div style={{ width: '100%', height: 400 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data?.chartData || []}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="name" />
+                <YAxis tickFormatter={(val) => formatCurrency(val)} />
+                <Tooltip 
+                  formatter={(val) => formatCurrency(val)}
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                />
+                <Legend />
+                <Bar dataKey="inflow" fill="#22c55e" radius={[4, 4, 0, 0]} name={t('inflow')} />
+                <Bar dataKey="outflow" fill="#ef4444" radius={[4, 4, 0, 0]} name={t('outflow')} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </CardContent>
       </Card>
     </div>

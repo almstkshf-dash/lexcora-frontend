@@ -280,7 +280,7 @@ Return concise note text; if ruling is appropriate, include a suggested ruling p
             <div className="space-y-4 py-2">
               {/* Date Picker */}
               <div className="space-y-2">
-                <Label htmlFor="date">{t('sessions.date')}</Label>
+                <Label>{t('sessions.date')}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button type="button"
@@ -401,7 +401,7 @@ Return concise note text; if ruling is appropriate, include a suggested ruling p
                       value={formData.legalPeriodId?.toString()} 
                       onValueChange={(value) => handleInputChange("legalPeriodId", value)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger id="legalPeriod">
                         <SelectValue placeholder={t('sessions.selectLegalPeriod')} />
                       </SelectTrigger>
                       <SelectContent>

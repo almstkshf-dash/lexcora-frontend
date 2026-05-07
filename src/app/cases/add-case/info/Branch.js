@@ -34,7 +34,14 @@ function Branch() {
   const { branchId } = values
   const { language } = useLanguage()
   const { t } = useTranslations()
-  const { data, error, isLoading, mutate } = useSWR('branches', getBranches)
+  const { data: branchesResponse, error, isLoading, mutate } = useSWR('branches', getBranches)
+  const branches = (() => {
+    const raw = branchesResponse?.data ?? branchesResponse
+    if (Array.isArray(raw)) return raw
+    if (Array.isArray(raw?.branches)) return raw.branches
+    if (Array.isArray(raw?.data)) return raw.data
+    return []
+  })()
   
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -102,7 +109,7 @@ function Branch() {
             <SelectValue placeholder={t('branches.selectBranch')} />
           </SelectTrigger>
           <SelectContent>
-            {data?.data?.map((branch) => (
+            {branches.map((branch) => (
               <SelectItem key={branch.id} value={branch.id.toString()}>
                 {language === 'ar' ? branch.name_ar : branch.name_en}
               </SelectItem>

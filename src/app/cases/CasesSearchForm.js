@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
@@ -20,12 +20,6 @@ const CasesSearchForm = ({ onSearch }) => {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
 
-  const resolveCopy = (key, fallbackAr, fallbackEn) => {
-    const val = t(key);
-    const fallback = language === 'ar' ? fallbackAr : fallbackEn;
-    if (!val || val === key || val.toLowerCase() === key.toLowerCase()) return fallback;
-    return val;
-  };
 
   // Form state
   const [fileNumber, setFileNumber] = useState('');
@@ -46,27 +40,25 @@ const CasesSearchForm = ({ onSearch }) => {
 
   // Process branches data
   const branches = React.useMemo(() => {
-    if (!branchesData?.success || !branchesData?.data) return [];
-    return branchesData.data;
+    const raw = branchesData?.data ?? branchesData;
+    if (Array.isArray(raw)) return raw;
+    if (Array.isArray(raw?.branches)) return raw.branches;
+    if (Array.isArray(raw?.data)) return raw.data;
+    return [];
   }, [branchesData]);
 
-  // Helper function to get localized text
-  const getLocalizedText = (arText, enText) => {
-    if (language === 'ar') {
-      return arText || enText || '';
-    } else {
-      return enText || arText || '';
-    }
-  };
+  const getLocalizedText = React.useCallback((arText, enText) => {
+    return language === 'ar' ? (arText || enText || '') : (enText || arText || '');
+  }, [language]);
 
-  const formatDateDisplay = (dateValue) => {
+  const formatDateDisplay = React.useCallback((dateValue) => {
     if (!dateValue) return '';
     try {
       return new Date(dateValue).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-US');
     } catch (e) {
       return dateValue;
     }
-  };
+  }, [language]);
 
   const buildSearchPayload = (overrides = {}) => {
     const nextFileNumber = overrides.fileNumber ?? fileNumber;
@@ -145,28 +137,28 @@ const CasesSearchForm = ({ onSearch }) => {
     if (fileNumber.trim()) {
       list.push({
         key: 'fileNumber',
-        label: resolveCopy('casesTable.fileNumber', 'رقم الملف', 'File Number'),
+        label: t('casesTable.fileNumber'),
         value: fileNumber.trim()
       });
     }
     if (caseNumber.trim()) {
       list.push({
         key: 'caseNumber',
-        label: resolveCopy('casesTable.caseNumber', 'رقم القضية', 'Case Number'),
+        label: t('casesTable.caseNumber'),
         value: caseNumber.trim()
       });
     }
     if (fromDate) {
       list.push({
         key: 'fromDate',
-        label: resolveCopy('casesTable.fromDate', 'من تاريخ', 'From Date'),
+        label: t('casesTable.fromDate'),
         value: formatDateDisplay(fromDate)
       });
     }
     if (toDate) {
       list.push({
         key: 'toDate',
-        label: resolveCopy('casesTable.toDate', 'إلى تاريخ', 'To Date'),
+        label: t('casesTable.toDate'),
         value: formatDateDisplay(toDate)
       });
     }
@@ -177,23 +169,23 @@ const CasesSearchForm = ({ onSearch }) => {
       ) || selectedBranch;
       list.push({
         key: 'branchId',
-        label: resolveCopy('casesTable.branch', 'الفرع', 'Branch'),
+        label: t('casesTable.branch'),
         value: branchLabel
       });
     }
 
     return list;
-  }, [fileNumber, caseNumber, fromDate, toDate, selectedBranch, language, branches]);
+  }, [fileNumber, caseNumber, fromDate, toDate, selectedBranch, branches, t, formatDateDisplay, getLocalizedText]);
 
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <SearchIcon className="h-5 w-5" />
-          {resolveCopy('casesTable.title', 'البحث في القضايا', 'Search Cases')}
+          {t('casesTable.title')}
         </CardTitle>
         <CardDescription>
-          {resolveCopy('casesTable.searchDescription', 'ابحث عن القضايا باستخدام المعايير المختلفة', 'Search for cases using various criteria')}
+          {t('casesTable.searchDescription')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -202,12 +194,12 @@ const CasesSearchForm = ({ onSearch }) => {
           {/* File Number Input */}
           <div className="space-y-2">
             <Label htmlFor="fileNumber" className="text-sm font-medium">
-              {resolveCopy('casesTable.fileNumber', 'رقم الملف', 'File Number')}
+              {t('casesTable.fileNumber')}
             </Label>
             <Input
               id="fileNumber"
               type="text"
-              placeholder={resolveCopy('casesTable.fileNumber', 'أدخل رقم الملف', 'Enter file number')}
+              placeholder={t('casesTable.fileNumber')}
               value={fileNumber}
               onChange={(e) => setFileNumber(e.target.value)}
               className={isRTL ? 'text-right' : 'text-left'}
@@ -217,12 +209,12 @@ const CasesSearchForm = ({ onSearch }) => {
           {/* Case Number Input */}
           <div className="space-y-2">
             <Label htmlFor="caseNumber" className="text-sm font-medium">
-              {resolveCopy('casesTable.caseNumber', 'رقم القضية', 'Case Number')}
+              {t('casesTable.caseNumber')}
             </Label>
             <Input
               id="caseNumber"
               type="text"
-              placeholder={resolveCopy('casesTable.caseNumber', 'أدخل رقم القضية', 'Enter case number')}
+              placeholder={t('casesTable.caseNumber')}
               value={caseNumber}
               onChange={(e) => setCaseNumber(e.target.value)}
               className={isRTL ? 'text-right' : 'text-left'}
@@ -232,7 +224,7 @@ const CasesSearchForm = ({ onSearch }) => {
           {/* From Date */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">
-              {language === 'ar' ? 'من تاريخ' : 'From Date'}
+              {language === 'ar' ? 'Ù…Ù† ØªØ§Ø±ÙŠØ®' : 'From Date'}
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -248,7 +240,7 @@ const CasesSearchForm = ({ onSearch }) => {
                   {fromDate ? (
                     format(fromDate, 'PPP', { locale: language === 'ar' ? undefined : undefined })
                   ) : (
-                    <span>{language === 'ar' ? 'اختر التاريخ' : 'Pick a date'}</span>
+                    <span>{language === 'ar' ? 'Ø§Ø®ØªØ± Ø§Ù„ØªØ§Ø±ÙŠØ®' : 'Pick a date'}</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -266,7 +258,7 @@ const CasesSearchForm = ({ onSearch }) => {
           {/* To Date */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">
-              {language === 'ar' ? 'إلى تاريخ' : 'To Date'}
+              {language === 'ar' ? 'Ø¥Ù„Ù‰ ØªØ§Ø±ÙŠØ®' : 'To Date'}
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -282,7 +274,7 @@ const CasesSearchForm = ({ onSearch }) => {
                   {toDate ? (
                     format(toDate, 'PPP', { locale: language === 'ar' ? undefined : undefined })
                   ) : (
-                    <span>{language === 'ar' ? 'اختر التاريخ' : 'Pick a date'}</span>
+                    <span>{language === 'ar' ? 'Ø§Ø®ØªØ± Ø§Ù„ØªØ§Ø±ÙŠØ®' : 'Pick a date'}</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -300,30 +292,30 @@ const CasesSearchForm = ({ onSearch }) => {
           {/* Branch Select */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">
-              {language === 'ar' ? 'الفرع' : 'Branch'}
+              {language === 'ar' ? 'Ø§Ù„ÙØ±Ø¹' : 'Branch'}
             </Label>
             <Select value={selectedBranch} onValueChange={setSelectedBranch}>
               <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
                 <SelectValue 
                   placeholder={
                     branchesLoading 
-                      ? (language === 'ar' ? 'جاري التحميل...' : 'Loading...')
-                      : (language === 'ar' ? 'اختر الفرع' : 'Select branch')
+                      ? (language === 'ar' ? 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„...' : 'Loading...')
+                      : (language === 'ar' ? 'Ø§Ø®ØªØ± Ø§Ù„ÙØ±Ø¹' : 'Select branch')
                   } 
                 />
               </SelectTrigger>
               <SelectContent>
                 {branchesLoading ? (
                   <SelectItem value="loading" disabled>
-                    {language === 'ar' ? 'جاري التحميل...' : 'Loading...'}
+                    {language === 'ar' ? 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„...' : 'Loading...'}
                   </SelectItem>
                 ) : branchesError ? (
                   <SelectItem value="error" disabled>
-                    {language === 'ar' ? 'خطأ في تحميل الفروع' : 'Error loading branches'}
+                    {language === 'ar' ? 'Ø®Ø·Ø£ ÙÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„ÙØ±ÙˆØ¹' : 'Error loading branches'}
                   </SelectItem>
                 ) : branches.length === 0 ? (
                   <SelectItem value="empty" disabled>
-                    {language === 'ar' ? 'لا توجد فروع متاحة' : 'No branches available'}
+                    {language === 'ar' ? 'Ù„Ø§ ØªÙˆØ¬Ø¯ ÙØ±ÙˆØ¹ Ù…ØªØ§Ø­Ø©' : 'No branches available'}
                   </SelectItem>
                 ) : (
                   branches.map((branch) => (
@@ -344,14 +336,14 @@ const CasesSearchForm = ({ onSearch }) => {
               disabled={branchesLoading}
             >
               <SearchIcon className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-              {language === 'ar' ? 'بحث' : 'Search'}
+              {language === 'ar' ? 'Ø¨Ø­Ø«' : 'Search'}
             </Button>
             <Button 
               onClick={handleReset}
               variant="outline"
               className="w-full"
             >
-              {language === 'ar' ? 'إعادة تعيين' : 'Reset'}
+              {language === 'ar' ? 'Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ†' : 'Reset'}
             </Button>
           </div>
         </div>
@@ -369,7 +361,7 @@ const CasesSearchForm = ({ onSearch }) => {
                   type="button"
                   className="flex items-center justify-center rounded-full p-1 hover:bg-muted transition-colors"
                   onClick={() => handleRemoveFilter(filter.key)}
-                  aria-label={resolveCopy('common.remove', 'إزالة', 'Remove')}
+                  aria-label={t('common.remove')}
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -383,7 +375,7 @@ const CasesSearchForm = ({ onSearch }) => {
               onClick={handleClearAllFilters}
               className="ml-1"
             >
-              {resolveCopy('common.clearAll', 'مسح الكل', 'Clear all')}
+              {t('common.clearAll')}
             </Button>
           </div>
         )}
@@ -393,3 +385,4 @@ const CasesSearchForm = ({ onSearch }) => {
 };
 
 export default CasesSearchForm;
+

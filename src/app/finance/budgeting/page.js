@@ -276,7 +276,7 @@ export default function BudgetingPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {periodsData?.data?.map((period) => (
+                  {(Array.isArray(periodsData?.data) ? periodsData.data : Array.isArray(periodsData) ? periodsData : []).map((period) => (
                     <TableRow key={period.id}>
                       <TableCell className="font-semibold">{period.name}</TableCell>
                       <TableCell>{new Date(period.start_date).toLocaleDateString()}</TableCell>
@@ -338,7 +338,7 @@ export default function BudgetingPage() {
                      </TableRow>
                    </TableHeader>
                    <TableBody>
-                     {accountsData?.data?.map(account => (
+                     {(Array.isArray(accountsData?.data) ? accountsData.data : Array.isArray(accountsData) ? accountsData : []).map(account => (
                        <AccountBudgetRow 
                          key={account.id} 
                          account={account} 
@@ -374,7 +374,7 @@ export default function BudgetingPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {budgetData?.data?.map((row) => (
+                  {(Array.isArray(budgetData?.data) ? budgetData.data : Array.isArray(budgetData) ? budgetData : []).map((row) => (
                     <TableRow key={row.id}>
                       <TableCell className="font-medium">{isRTL ? row.name_ar : row.name_en}</TableCell>
                       <TableCell className="text-end font-mono">{row.amount?.toLocaleString()}</TableCell>

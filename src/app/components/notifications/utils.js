@@ -57,7 +57,9 @@ export const formatTimeAgo = (dateString, isArabic = false) => {
   if (!dateString) return ''
   
   const now = new Date()
-  const date = new Date(dateString)
+  // Ensure UTC parsing — append Z if no timezone info present
+  const normalized = /Z|[+-]\d{2}:?\d{2}$/.test(dateString) ? dateString : dateString + 'Z'
+  const date = new Date(normalized)
   const diffInSeconds = Math.floor((now - date) / 1000)
   
   if (diffInSeconds < 60) {
@@ -75,14 +77,23 @@ export const formatTimeAgo = (dateString, isArabic = false) => {
 }
 
 /**
- * Play notification sound
+ * Play notification sound using Web Audio API (no file required)
  */
 export const playNotificationSound = () => {
   try {
-    const audio = new Audio('/sounds/notification.mp3')
-    audio.volume = 0.5
-    audio.play().catch(e => console.warn('Audio play failed:', e))
+    const ctx = new (window.AudioContext || window.webkitAudioContext)()
+    const oscillator = ctx.createOscillator()
+    const gain = ctx.createGain()
+    oscillator.connect(gain)
+    gain.connect(ctx.destination)
+    oscillator.type = 'sine'
+    oscillator.frequency.setValueAtTime(880, ctx.currentTime)
+    oscillator.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.15)
+    gain.gain.setValueAtTime(0.3, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3)
+    oscillator.start(ctx.currentTime)
+    oscillator.stop(ctx.currentTime + 0.3)
   } catch (err) {
-    console.error('Error playing notification sound:', err)
+    // Silently ignore if AudioContext is unavailable
   }
 }

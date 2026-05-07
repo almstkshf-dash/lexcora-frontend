@@ -71,10 +71,10 @@ const DatePickerField = ({ name, placeholder, value, onChange, isRTL }) => {
 };
 
 // FormField Component with Label
-const FormField = ({ label, children, required = false }) => (
+const FormField = ({ label, children, required = false, htmlFor }) => (
   <div className="space-y-2">
     {label && (
-      <Label className="text-sm font-medium">
+      <Label htmlFor={htmlFor} className="text-sm font-medium">
         {label}
         {required && <span className="text-red-500 me-1">*</span>}
       </Label>
@@ -113,17 +113,20 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
       <div>
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.basicInformationSection')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          <FormField label={t('employees.name')} required>
+          <FormField label={t('employees.name')} required htmlFor="name">
             <Input 
+              id="name"
               name="name" 
+              autoComplete="name"
               placeholder={t('employees.namePlaceholder')} 
               value={form.name} 
               onChange={handleChange} 
             />
           </FormField>
           
-          <FormField label={t('employees.employeeNumber')} required>
+          <FormField label={t('employees.employeeNumber')} required htmlFor="employeeNumber">
             <Input 
+              id="employeeNumber"
               name="employeeNumber" 
               placeholder={t('employees.employeeNumberPlaceholder')} 
               value={form.employeeNumber} 
@@ -134,18 +137,22 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
 
         
         
-          <FormField label={t('employees.email')} >
+          <FormField label={t('employees.email')} htmlFor="email">
             <Input 
+              id="email"
               name="email" 
+              autoComplete="email"
               placeholder={t('employees.emailPlaceholder')} 
               value={form.email} 
               onChange={handleChange} 
             />
           </FormField>
           
-          <FormField label={t('employees.phoneNumber')} required>
+          <FormField label={t('employees.phoneNumber')} required htmlFor="phoneNumber">
             <Input 
+              id="phoneNumber"
               name="phoneNumber" 
+              autoComplete="tel"
               placeholder={t('employees.phonePlaceholder')} 
               type="tel"
               value={form.phoneNumber} 
@@ -159,9 +166,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
       <div>
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.organizationalInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          <FormField label={t('employees.selectRole')} required>
+          <FormField label={t('employees.selectRole')} required htmlFor="roleId">
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.roleId} onValueChange={value => setForm(f => ({ ...f, roleId: value }))}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger id="roleId" className="w-full">
                 <SelectValue placeholder={t('employees.selectRole')} />
               </SelectTrigger>
               <SelectContent>
@@ -182,9 +189,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             </Select>
           </FormField>
           
-          <FormField label={t('employees.selectDepartment')} required>
+          <FormField label={t('employees.selectDepartment')} required htmlFor="departmentId">
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.departmentId} onValueChange={value => setForm(f => ({ ...f, departmentId: value }))}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger id="departmentId" className="w-full">
                 <SelectValue placeholder={t('employees.selectDepartment')} />
               </SelectTrigger>
               <SelectContent>
@@ -203,9 +210,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             </Select>
           </FormField>
           
-          <FormField label={t('employees.selectBranch')} required>
+          <FormField label={t('employees.selectBranch')} required htmlFor="branchId">
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.branchId} onValueChange={value => setForm(f => ({ ...f, branchId: value }))}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger id="branchId" className="w-full">
                 <SelectValue placeholder={t('employees.selectBranch')} />
               </SelectTrigger>
               <SelectContent>
@@ -224,9 +231,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             </Select>
           </FormField>
           
-          <FormField label={t('employees.selectDirectManager')}>
+          <FormField label={t('employees.selectDirectManager')} htmlFor="directManagerId">
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.directManagerId} onValueChange={value => setForm(f => ({ ...f, directManagerId: value }))}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger id="directManagerId" className="w-full">
                 <SelectValue placeholder={t('employees.selectDirectManager')} />
               </SelectTrigger>
               <SelectContent>
@@ -251,9 +258,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
       <div>
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.employmentDetails')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          <FormField label={t('employees.contractType') || 'نوع العقد'}>
+          <FormField label={t('employees.contractType') || 'نوع العقد'} htmlFor="contractType">
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.contractType} onValueChange={value => setForm(f => ({ ...f, contractType: value }))}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger id="contractType" className="w-full">
                 <SelectValue placeholder={t('employees.contractType') || 'نوع العقد'} />
               </SelectTrigger>
               <SelectContent>
@@ -263,9 +270,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             </Select>
           </FormField>
           
-          <FormField label={t('employees.payType') || 'طريقة الدفع'}>
+          <FormField label={t('employees.payType') || 'طريقة الدفع'} htmlFor="payType">
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.payType} onValueChange={value => setForm(f => ({ ...f, payType: value }))}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger id="payType" className="w-full">
                 <SelectValue placeholder={t('employees.payType') || 'طريقة الدفع'} />
               </SelectTrigger>
               <SelectContent>
@@ -328,8 +335,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
       <div>
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.financialInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          <FormField label={t('employees.basicSalary')}>
+          <FormField label={t('employees.basicSalary')} htmlFor="basicSalary">
             <Input 
+              id="basicSalary"
               name="basicSalary" 
               placeholder={t('employees.basicSalaryPlaceholder')} 
               type="number"
@@ -338,8 +346,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             />
           </FormField>
           
-          <FormField label={t('employees.housingAllowance') || 'بدل السكن'}>
+          <FormField label={t('employees.housingAllowance') || 'بدل السكن'} htmlFor="housingAllowance">
             <Input 
+              id="housingAllowance"
               name="housingAllowance" 
               placeholder={t('employees.allowancePlaceholder')} 
               type="number"
@@ -348,8 +357,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             />
           </FormField>
           
-          <FormField label={t('employees.transportationAllowance') || 'بدل المواصلات'}>
+          <FormField label={t('employees.transportationAllowance') || 'بدل المواصلات'} htmlFor="transportationAllowance">
             <Input 
+              id="transportationAllowance"
               name="transportationAllowance" 
               placeholder={t('employees.allowancePlaceholder')} 
               type="number"
@@ -358,8 +368,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             />
           </FormField>
           
-          <FormField label={t('employees.anotherAllowance') || 'بدل آخر'}>
+          <FormField label={t('employees.anotherAllowance') || 'بدل آخر'} htmlFor="anotherAllowance">
             <Input 
+              id="anotherAllowance"
               name="anotherAllowance" 
               placeholder={t('employees.allowancePlaceholder')} 
               type="number"
@@ -368,8 +379,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             />
           </FormField>
 
-          <FormField label={t('employees.hourlyRate') || 'أجر الساعة'}>
+          <FormField label={t('employees.hourlyRate') || 'أجر الساعة'} htmlFor="hourlyRate">
             <Input 
+              id="hourlyRate"
               name="hourlyRate" 
               placeholder={t('employees.hourlyRatePlaceholder') || 'أدخل أجر الساعة'} 
               type="number"
@@ -384,8 +396,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
       <div>
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.bankInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          <FormField label={t('employees.bankName') || 'اسم البنك'}>
+          <FormField label={t('employees.bankName') || 'اسم البنك'} htmlFor="bankName">
             <Input 
+              id="bankName"
               name="bankName" 
               placeholder={t('employees.bankNamePlaceholder')} 
               value={form.bankName} 
@@ -393,8 +406,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             />
           </FormField>
           
-          <FormField label={t('employees.accountNumber') || 'رقم الحساب'}>
+          <FormField label={t('employees.accountNumber') || 'رقم الحساب'} htmlFor="accountNumber">
             <Input 
+              id="accountNumber"
               name="accountNumber" 
               placeholder={t('employees.accountNumberPlaceholder')} 
               value={form.accountNumber} 
@@ -402,8 +416,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             />
           </FormField>
           
-          <FormField label={t('employees.iban') || 'رقم الآيبان'}>
+          <FormField label={t('employees.iban') || 'رقم الآيبان'} htmlFor="iban">
             <Input 
+              id="iban"
               name="iban" 
               placeholder={t('employees.ibanPlaceholder')} 
               value={form.iban} 
@@ -417,8 +432,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
       <div>
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.documentsInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          <FormField label={t('employees.identityNumber')}>
+          <FormField label={t('employees.identityNumber')} htmlFor="identityNumber">
             <Input 
+              id="identityNumber"
               name="identityNumber" 
               placeholder={t('employees.identityNumberPlaceholder')} 
               value={form.identityNumber} 
@@ -426,8 +442,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             />
           </FormField>
           
-          <FormField label={t('employees.passportNumber')}>
+          <FormField label={t('employees.passportNumber')} htmlFor="passportNumber">
             <Input 
+              id="passportNumber"
               name="passportNumber" 
               placeholder={t('employees.passportNumberPlaceholder')} 
               value={form.passportNumber} 

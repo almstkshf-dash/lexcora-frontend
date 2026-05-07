@@ -415,7 +415,7 @@ export default function ReportsPage() {
         {/* Budget vs Actual */}
         <TabsContent value="budget" className="space-y-6">
            <div className="grid grid-cols-1 gap-4">
-             {budgetData?.success ? budgetData.data.map((item, idx) => {
+             {budgetData?.success ? (Array.isArray(budgetData.data) ? budgetData.data : []).map((item, idx) => {
                const percentage = item.budget_amount > 0 ? (item.actual_amount / item.budget_amount) * 100 : 0;
                const isOverBudget = percentage > 100;
                return (
@@ -496,7 +496,7 @@ export default function ReportsPage() {
                           </TableRow>
                        </TableHeader>
                        <TableBody>
-                          {tbData?.success ? tbData.data.map(acc => (
+                          {tbData?.success && Array.isArray(tbData.data) ? tbData.data.map(acc => (
                             <TableRow key={acc.account_id} className="hover:bg-muted/20">
                                <TableCell>
                                   <div className="font-medium">{isRTL ? acc.name_ar : acc.name_en}</div>
@@ -628,7 +628,7 @@ export default function ReportsPage() {
                        </CardHeader>
                        <CardContent>
                           <SearchableCombobox 
-                             options={(deptsData?.data || []).map(d => ({ value: d.id, label: isRTL ? d.name_ar : d.name_en, item: d }))}
+                             options={(() => { const list = Array.isArray(deptsData) ? deptsData : Array.isArray(deptsData?.data) ? deptsData.data : []; return list.map(d => ({ value: d.id, label: isRTL ? d.name_ar : d.name_en, item: d })); })()}
                              onSelect={(val, item) => setSelectedDept(item)}
                              placeholder={commonT('search')}
                           />
@@ -643,10 +643,6 @@ export default function ReportsPage() {
             </Tabs>
          </TabsContent>
          
-         {/* VAT Return */}
-         <TabsContent value="vat" className="space-y-6">
-            <VatReturnView data={vatData?.data} isRTL={isRTL} commonT={commonT} accT={accT} formatCurrency={formatCurrency} />
-         </TabsContent>
       </Tabs>
     </div>
   );

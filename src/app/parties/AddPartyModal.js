@@ -298,13 +298,13 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
 
           {/* Party Type */}
           <div className="space-y-2">
-            <Label>{t('parties.partyType') || 'نوع الطرف'} *</Label>
+            <Label htmlFor="party_type">{t('parties.partyType') || 'نوع الطرف'} *</Label>
             <Select 
               dir={isRTL ? "rtl" : "ltr"}
               value={formData.party_type} 
               onValueChange={(value) => handleInputChange("party_type", value)}
             >
-              <SelectTrigger>
+              <SelectTrigger id="party_type">
                 <SelectValue placeholder={t('parties.choosePartyType') || 'اختر نوع الطرف'} />
               </SelectTrigger>
               <SelectContent>
@@ -316,13 +316,13 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
 
           {/* Category */}
           <div className="space-y-2">
-            <Label>{t('parties.category') || 'الفئة'}</Label>
+            <Label htmlFor="category">{t('parties.category') || 'الفئة'}</Label>
             <Select 
               dir={isRTL ? "rtl" : "ltr"}
               value={formData.category} 
               onValueChange={(value) => handleInputChange("category", value)}
             >
-              <SelectTrigger>
+              <SelectTrigger id="category">
                 <SelectValue placeholder={t('parties.chooseCategory') || 'اختر الفئة'} />
               </SelectTrigger>
               <SelectContent>
@@ -388,13 +388,13 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
 
           {/* Branch */}
           <div className="space-y-2">
-            <Label>{t('parties.branch') || 'الفرع'} *</Label>
+            <Label htmlFor="branch_id">{t('parties.branch') || 'الفرع'} *</Label>
             <Select 
               dir={isRTL ? "rtl" : "ltr"}
               value={formData.branch_id?.toString()} 
               onValueChange={(value) => handleInputChange("branch_id", parseInt(value))}
             >
-              <SelectTrigger>
+              <SelectTrigger id="branch_id">
                 <SelectValue placeholder={t('parties.chooseBranch') || 'اختر الفرع'} />
               </SelectTrigger>
               <SelectContent>
@@ -467,7 +467,7 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
 
           {/* File Upload Section */}
           <div className="space-y-2 md:col-span-2">
-            <Label>{t('files.uploadFiles') || 'رفع الملفات'}</Label>
+            <Label htmlFor="party-file-input">{t('files.uploadFiles') || 'رفع الملفات'}</Label>
             
             {/* Drop Zone */}
             <div

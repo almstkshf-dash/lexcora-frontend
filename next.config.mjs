@@ -12,6 +12,14 @@ const nextConfig = {
   images: {
     domains: ['fonts.gstatic.com', 'fonts.googleapis.com'],
   },
+
+  // Configure favicon and enable source maps for debugging
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.devtool = 'source-map';
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

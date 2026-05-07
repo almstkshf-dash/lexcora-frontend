@@ -128,7 +128,7 @@ export default function SessionsPage() {
   );
 
   const sessions = sessionsData?.data || [];
-  const branches = branchesData?.data || [];
+  const branches = Array.isArray(branchesData?.data) ? branchesData.data : Array.isArray(branchesData) ? branchesData : [];
   const totalPages = sessionsData?.totalPages || 1;
   const totalSessions = sessionsData?.total || 0;
 

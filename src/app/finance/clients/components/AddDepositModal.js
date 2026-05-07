@@ -92,8 +92,8 @@ export default function AddDepositModal({ isOpen, onClose, clientId, clientName,
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label>{t("clientFinance.clientName")}</Label>
-          <Input value={clientName} disabled />
+          <Label htmlFor="clientName">{t("clientFinance.clientName")}</Label>
+          <Input id="clientName" name="clientName" value={clientName} disabled />
         </div>
 
         <div className="space-y-2">

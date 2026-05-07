@@ -16,11 +16,12 @@ import { getBranches } from "@/app/services/api/branches";
 import { getAllParties } from "@/app/services/api/parties";
 import { getAllBankAccounts } from "@/app/services/api/bankAccounts";
 import { useTranslations } from "@/hooks/useTranslations";
+import { useLanguage } from "@/contexts/LanguageContext";
 import useSWR from "swr";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import { DEFAULT_VAT, DEFAULT_CURRENCY, STATUS, VAT_CATEGORY, VAT_RATES, EMIRATES } from '@/app/finance/constants';
+import { DEFAULT_VAT, DEFAULT_CURRENCY, STATUS, VAT_CATEGORY, VAT_RATES, EMIRATES, CURRENCY_NAMES } from '@/app/finance/constants';
 
 function InvoiceItemRow({ item, index, isSubmitting, onItemChange, onRemove, showRemove, t }) {
   const handleDescChange = useCallback((e) => onItemChange(index, 'description', e.target.value), [onItemChange, index]);
@@ -57,6 +58,7 @@ function AttachmentFileRow({ attachment, index, isSubmitting, onRemove }) {
 
 export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultClientId }) {
   const t = useTranslations('invoices');
+  const { isRTL } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState(new Date());
   const [formData, setFormData] = useState({
@@ -90,9 +92,11 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
     getAllBankAccounts
   );
 
-  const clients = clientsData?.data || [];
-  const branches = branchesData?.data || [];
-  const bankAccounts = bankAccountsData?.data || [];
+  const clients = Array.isArray(clientsData?.data) ? clientsData.data : Array.isArray(clientsData) ? clientsData : [];
+  const branches = Array.isArray(branchesData?.data) ? branchesData.data : Array.isArray(branchesData) ? branchesData : [];
+  const bankAccounts = Array.isArray(bankAccountsData?.data) ? bankAccountsData.data : Array.isArray(bankAccountsData) ? bankAccountsData : [];
+
+  const dropdownsReady = !!branchesData && !!bankAccountsData;
 
   // Reset form when modal closes
   useEffect(() => {
@@ -103,7 +107,10 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
         branch_id: "",
         bank_account_id: "",
         vat: DEFAULT_VAT,
+        vat_category: VAT_CATEGORY.STANDARD,
+        customer_trn: "",
         currency: DEFAULT_CURRENCY,
+        emirate: EMIRATES[1].id,
       });
       setItems([{ description: "", amount: "" }]);
       setAttachments([]);
@@ -251,6 +258,12 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
       title={t('addNewInvoice')}
       size="lg"
     >
+      {!dropdownsReady ? (
+        <div className="flex items-center justify-center p-12">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+          <span className="me-3">{t('loading')}</span>
+        </div>
+      ) : (
       <form onSubmit={handleSubmit}>
         <CustomModalBody>
           <div className="space-y-6">
@@ -324,13 +337,13 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
                 onValueChange={(value) => setFormData(prev => ({ ...prev, branch_id: value }))}
                 disabled={isSubmitting}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder={t('selectBranch')} />
                 </SelectTrigger>
                 <SelectContent>
                   {branches.map((branch) => (
                     <SelectItem key={branch.id} value={branch.id.toString()}>
-                      {branch.name_ar}
+                      {isRTL ? branch.name_ar : branch.name_en}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -345,7 +358,7 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
                 onValueChange={(value) => setFormData(prev => ({ ...prev, bank_account_id: value }))}
                 disabled={isSubmitting}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder={t('selectBankAccount')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -399,19 +412,19 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
               </div>
 
               <div className="space-y-2">
-                <Label>{t('emirate') || (language === 'ar' ? 'الإمارة' : 'Emirate')}</Label>
+                <Label>{t('emirate')}</Label>
                 <Select 
                   value={formData.emirate} 
                   onValueChange={(val) => setFormData({ ...formData, emirate: val })}
                   disabled={isSubmitting}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={language === 'ar' ? 'اختر الإمارة' : 'Select Emirate'} />
+                    <SelectValue placeholder={t('emirate')} />
                   </SelectTrigger>
                   <SelectContent>
                     {EMIRATES.map(e => (
                       <SelectItem key={e.id} value={e.id}>
-                        {language === 'ar' ? e.ar : e.en}
+                        {isRTL ? e.ar : e.en}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -449,7 +462,7 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={DEFAULT_CURRENCY}>درهم إماراتي (AED)</SelectItem>
+                  <SelectItem value={DEFAULT_CURRENCY}>{isRTL ? CURRENCY_NAMES.AED.ar : CURRENCY_NAMES.AED.en} (AED)</SelectItem>
                   {/* <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
                   <SelectItem value="EUR">يورو (EUR)</SelectItem>
                   <SelectItem value="GBP">جنيه إسترليني (GBP)</SelectItem>
@@ -578,6 +591,7 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
           </Button>
         </CustomModalFooter>
       </form>
+      )}
     </CustomModal>
   );
 }

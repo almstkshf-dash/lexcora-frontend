@@ -26,9 +26,8 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
     const fetchBranches = async () => {
       try {
         const response = await getBranches();
-        if (response.success) {
-          setBranches(response.data);
-        }
+        const data = Array.isArray(response) ? response : response?.data;
+        if (Array.isArray(data)) setBranches(data);
       } catch (error) {
 
       }
@@ -64,9 +63,10 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
       try {
         const accountData = {
           ...values,
-          branch_id: values.branch_id || null,
-          current_balance: parseFloat(values.current_balance) || 0
+          branch_id: values.branch_id ? parseInt(values.branch_id, 10) : null,
+          initial_balance: parseFloat(values.current_balance) || 0
         };
+        delete accountData.current_balance;
         
         const response = await createBankAccount(accountData);
         
@@ -79,8 +79,8 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
           toast.error(response.message || t('errorAddingAccount'));
         }
       } catch (error) {
-
-        toast.error(t('errorAddingAccountGeneric'));
+        console.error('createBankAccount error:', JSON.stringify(error?.response?.data), 'status:', error?.response?.status, 'message:', error?.message);
+        toast.error(error?.response?.data?.message || error?.message || t('errorAddingAccountGeneric'));
       } finally {
         setIsLoading(false);
       }
@@ -173,7 +173,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               value={formik.values.branch_id} 
               onValueChange={(value) => formik.setFieldValue('branch_id', value === "none" ? "" : value)}
             >
-              <SelectTrigger>
+              <SelectTrigger id="branch_id">
                 <SelectValue placeholder={t('selectBranch')} />
               </SelectTrigger>
               <SelectContent>
@@ -213,7 +213,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               value={formik.values.status} 
               onValueChange={(value) => formik.setFieldValue('status', value)}
             >
-              <SelectTrigger>
+              <SelectTrigger id="status">
                 <SelectValue placeholder={t('selectStatus')} />
               </SelectTrigger>
               <SelectContent>

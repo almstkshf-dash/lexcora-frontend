@@ -25,7 +25,7 @@ export default function SessionBasicInfo({ formik, isRtl }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Session Date Field */}
         <div className="space-y-2">
-          <Label htmlFor="session_date" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
             {isRtl ? "تاريخ الجلسة" : "Session Date"} *
           </Label>
           <Popover>

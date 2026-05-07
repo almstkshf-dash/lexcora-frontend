@@ -84,7 +84,7 @@ export default function AccountsPage() {
   const accT = useTranslations('Accounting');
 
   const { data, error, mutate } = useSWR('/accounting/accounts/tree', () => getAccountsTree());
-  const accountsTree = data?.data || [];
+  const accountsTree = Array.isArray(data?.data) ? data.data : [];
   const loading = !data && !error;
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 

@@ -150,7 +150,7 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
             <div className="space-y-2">
               <Label htmlFor="call_type">{t('callLogs.table.type')} *</Label>
               <Select value={formData.call_type} onValueChange={(value) => handleChange('call_type', value)}>
-                <SelectTrigger>
+                <SelectTrigger id="call_type">
                   <SelectValue placeholder={t('callLogs.placeholders.selectCallType')} />
                 </SelectTrigger>
                 <SelectContent>

@@ -47,7 +47,7 @@ export default function RulingSection({
 
       {/* Ruling Date */}
       <div className="space-y-2">
-        <Label htmlFor="ruling_date" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
           {isRtl ? "تاريخ صدور الحكم" : "Ruling Date"} <span className="text-red-500 dark:text-red-400">*</span>
         </Label>
         <Popover>
@@ -105,7 +105,7 @@ export default function RulingSection({
           value={formik.values.legal_period_id?.toString()}
           onValueChange={(value) => formik.setFieldValue('legal_period_id', value)}
         >
-          <SelectTrigger className={cn(
+          <SelectTrigger id="legal_period_id" className={cn(
             formik.touched.legal_period_id && formik.errors.legal_period_id && "border-red-500"
           )}>
             <SelectValue placeholder={isRtl ? "اختر المدة القانونية" : "Select Legal Period"} />

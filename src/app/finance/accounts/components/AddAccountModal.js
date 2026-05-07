@@ -27,7 +27,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
       try {
         const response = await getBranches();
         if (response.success) {
-          setBranches(response.data);
+          setBranches(Array.isArray(response.data) ? response.data : []);
         }
       } catch (error) {}
     };

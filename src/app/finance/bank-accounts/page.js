@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import { Button } from '@/components/ui/button';
@@ -34,27 +34,27 @@ function BankAccountsPage() {
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   // Fetch bank accounts
-  const fetchBankAccounts = async () => {
+  const fetchBankAccounts = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getAllBankAccounts();
-      if (response.success) {
-        setBankAccounts(response.data);
+      console.log('getAllBankAccounts response:', response);
+      const data = Array.isArray(response) ? response : response?.data;
+      if (Array.isArray(data)) {
+        setBankAccounts(data);
       } else {
         toast.error(t('errorLoadingAccounts'));
       }
     } catch (error) {
-
-      toast.error(t('errorLoadingAccounts'));
+      console.error('fetchBankAccounts error:', error?.response?.status, error?.response?.data ?? error.message);      toast.error(t('errorLoadingAccounts'));
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchBankAccounts();
-  }, []);
+  }, [fetchBankAccounts]);
 
   const handleEdit = (accountId) => {
     setSelectedAccountId(accountId);

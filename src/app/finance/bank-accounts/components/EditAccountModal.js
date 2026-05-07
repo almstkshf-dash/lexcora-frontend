@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -31,6 +31,8 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
     current_balance: Yup.number().min(0, t('balanceNegativeError')).default(0),
     status: Yup.string().oneOf([ACCOUNT_STATUS.ACTIVE, ACCOUNT_STATUS.INACTIVE]).default(ACCOUNT_STATUS.ACTIVE)
   });
+
+  const setValuesRef = useRef(null);
 
   const formik = useFormik({
     initialValues: {
@@ -75,9 +77,8 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
     const fetchBranches = async () => {
       try {
         const response = await getBranches();
-        if (response.success) {
-          setBranches(response.data);
-        }
+        const data = Array.isArray(response) ? response : response?.data;
+        if (Array.isArray(data)) setBranches(data);
       } catch (error) {
 
       }
@@ -88,19 +89,19 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
     }
   }, [isOpen]);
 
+  setValuesRef.current = formik.setValues;
+
   // Fetch account data when modal opens and accountId is available
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const fetchAccountData = async () => {
       if (!accountId || !isOpen) return;
-      
+
       setIsLoadingData(true);
       try {
         const response = await getBankAccountById(accountId);
-        
-        if (response.success) {
-          const accountData = response.data;
-          formik.setValues({
+        const accountData = response?.data ?? response;
+        if (accountData?.bank_name !== undefined) {
+          setValuesRef.current({
             bank_name: accountData.bank_name || '',
             account_name: accountData.account_name || '',
             account_number: accountData.account_number || '',
@@ -113,7 +114,6 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
           toast.error(t('errorLoadingAccount'));
         }
       } catch (error) {
-
         toast.error(t('errorLoadingAccount'));
       } finally {
         setIsLoadingData(false);
@@ -121,7 +121,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
     };
 
     fetchAccountData();
-  }, [accountId, isOpen]);
+  }, [accountId, isOpen, t]);
 
   const handleClose = () => {
     formik.resetForm();

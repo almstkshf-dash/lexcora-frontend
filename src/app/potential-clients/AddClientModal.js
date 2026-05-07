@@ -323,13 +323,13 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
 
           {/* Party Type */}
           <div className="space-y-2">
-            <Label>{t('potentialClientsPage.table.partyType') || 'نوع العميل'} *</Label>
+            <Label htmlFor="party_type">{t('potentialClientsPage.table.partyType') || 'نوع العميل'} *</Label>
             <Select 
               dir={isRTL ? "rtl" : "ltr"}
               value={formData.party_type} 
               onValueChange={(value) => handleInputChange("party_type", value)}
             >
-              <SelectTrigger>
+              <SelectTrigger id="party_type">
                 <SelectValue placeholder={t('potentialClientsPage.addModal.selectPartyType') || 'اختر نوع العميل'} />
               </SelectTrigger>
               <SelectContent>
@@ -344,13 +344,13 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
 
           {/* Source */}
           <div className="space-y-2">
-            <Label>{t('potentialClientsPage.table.source') || 'المصدر'}</Label>
+            <Label htmlFor="source">{t('potentialClientsPage.table.source') || 'المصدر'}</Label>
             <Select 
               dir={isRTL ? "rtl" : "ltr"}
               value={formData.source} 
               onValueChange={(value) => handleInputChange("source", value)}
             >
-              <SelectTrigger>
+              <SelectTrigger id="source">
                 <SelectValue placeholder={t('potentialClientsPage.addModal.selectSource') || 'اختر المصدر'} />
               </SelectTrigger>
               <SelectContent>
@@ -365,13 +365,13 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
 
           {/* Category */}
           <div className="space-y-2">
-            <Label>{t('potentialClientsPage.table.category') || 'الفئة'}</Label>
+            <Label htmlFor="category">{t('potentialClientsPage.table.category') || 'الفئة'}</Label>
             <Select 
               dir={isRTL ? "rtl" : "ltr"}
               value={formData.category} 
               onValueChange={(value) => handleInputChange("category", value)}
             >
-              <SelectTrigger>
+              <SelectTrigger id="category">
                 <SelectValue placeholder={t('potentialClientsPage.addModal.selectCategory') || 'اختر الفئة'} />
               </SelectTrigger>
               <SelectContent>
@@ -386,13 +386,13 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
 
           {/* Consultation Type */}
           <div className="space-y-2">
-            <Label>{t('potentialClientsPage.table.consultationType') || 'نوع الاستشارة'}</Label>
+            <Label htmlFor="consultation_type">{t('potentialClientsPage.table.consultationType') || 'نوع الاستشارة'}</Label>
             <Select 
               dir={isRTL ? "rtl" : "ltr"}
               value={formData.consultation_type} 
               onValueChange={(value) => handleInputChange("consultation_type", value)}
             >
-              <SelectTrigger>
+              <SelectTrigger id="consultation_type">
                 <SelectValue placeholder={t('potentialClientsPage.addModal.selectConsultationType') || 'اختر نوع الاستشارة'} />
               </SelectTrigger>
               <SelectContent>
@@ -407,13 +407,13 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
 
           {/* Branch */}
           <div className="space-y-2">
-            <Label>{t('potentialClientsPage.table.branch') || 'الفرع'} *</Label>
+            <Label htmlFor="branch_id">{t('potentialClientsPage.table.branch') || 'الفرع'} *</Label>
             <Select 
               dir={isRTL ? "rtl" : "ltr"}
               value={formData.branch_id?.toString()} 
               onValueChange={(value) => handleInputChange("branch_id", parseInt(value))}
             >
-              <SelectTrigger>
+              <SelectTrigger id="branch_id">
                 <SelectValue placeholder={t('potentialClientsPage.addModal.selectBranch') || 'اختر الفرع'} />
               </SelectTrigger>
               <SelectContent>
@@ -519,7 +519,7 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
 
           {/* File Upload Section */}
           <div className="space-y-2 md:col-span-2">
-            <Label>{t('potentialClientsPage.files.title') || 'رفع الملفات'}</Label>
+            <Label htmlFor="party-file-input">{t('potentialClientsPage.files.title') || 'رفع الملفات'}</Label>
             
             {/* Drop Zone */}
             <div

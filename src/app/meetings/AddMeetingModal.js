@@ -24,7 +24,29 @@ import AddPartyModal from "../parties/AddPartyModal";
 import { AddClientModal } from "../potential-clients/AddClientModal";
 import RichTextEditor from "@/components/RichTextEditor";
 import { searchCases } from "../services/api/cases";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+
+// Inner component so hooks are called at the top level of a React function
+function MeetingFormEffects({ values, employees, setFieldValue }) {
+  useEffect(() => {
+    if (values.is_consultation && values.employee_ids.length > 0) {
+      const selectedEmployees = employees.filter(emp => values.employee_ids.includes(emp.id));
+      const maxRate = Math.max(...selectedEmployees.map(emp => emp.hourly_rate || 0), 0);
+      if (maxRate > 0) {
+        setFieldValue("hourly_rate", maxRate);
+      }
+    }
+  }, [values.employee_ids, values.is_consultation, employees, setFieldValue]);
+
+  useEffect(() => {
+    if (values.is_consultation && values.hourly_rate && values.duration_minutes) {
+      const fee = (parseFloat(values.hourly_rate) * (parseInt(values.duration_minutes) / 60)).toFixed(2);
+      setFieldValue("consultation_fee", fee);
+    }
+  }, [values.hourly_rate, values.duration_minutes, values.is_consultation, setFieldValue]);
+
+  return null;
+}
 
 export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
   const { t } = useTranslations();
@@ -279,26 +301,9 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
           enableReinitialize
         >
           {({ values, setFieldValue, isSubmitting, errors, touched }) => {
-            // Internal logic for dynamic fields
-            useEffect(() => {
-              if (values.is_consultation && values.employee_ids.length > 0) {
-                const selectedEmployees = employees.filter(emp => values.employee_ids.includes(emp.id));
-                const maxRate = Math.max(...selectedEmployees.map(emp => emp.hourly_rate || 0), 0);
-                if (maxRate > 0) {
-                  setFieldValue("hourly_rate", maxRate);
-                }
-              }
-            }, [values.employee_ids, values.is_consultation, employees, setFieldValue]);
-
-            useEffect(() => {
-              if (values.is_consultation && values.hourly_rate && values.duration_minutes) {
-                const fee = (parseFloat(values.hourly_rate) * (parseInt(values.duration_minutes) / 60)).toFixed(2);
-                setFieldValue("consultation_fee", fee);
-              }
-            }, [values.hourly_rate, values.duration_minutes, values.is_consultation, setFieldValue]);
-
             return (
             <Form className="space-y-4">
+              <MeetingFormEffects values={values} employees={employees} setFieldValue={setFieldValue} />
               {/* Client/Party Selection with SearchableCombobox - Hidden when partyId is provided */}
               {!partyId && (
                 <div className="space-y-2">

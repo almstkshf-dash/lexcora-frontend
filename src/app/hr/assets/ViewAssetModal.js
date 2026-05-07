@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useCallback } from 'react'
 import { format } from 'date-fns'
 import { useTranslations } from "@/hooks/useTranslations"
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -28,33 +28,8 @@ const ViewAssetModal = ({
   const [previewSchedule, setPreviewSchedule] = useState(null)
   const [previewError, setPreviewError] = useState('')
 
-  if (!asset) return null
-
-  const handleDeleteDocument = async (documentId) => {
-    if (!window.confirm(t('assets.confirmDeleteDoc'))) {
-      return
-    }
-
-    setDeletingDocId(documentId)
-
-    try {
-      const response = await deleteAssetDocument(asset.id, documentId)
-      if (response.success) {
-        toast.success(t('assets.deleteDocSuccess'))
-        if (onDocumentDeleted) {
-          onDocumentDeleted()
-        }
-      } else {
-        toast.error(response.message || t('common.error'))
-      }
-    } catch (error) {
-      toast.error(t('assets.deleteDocError'))
-    } finally {
-      setDeletingDocId(null)
-    }
-  }
-
-  const loadDepreciationPreview = async () => {
+  const loadDepreciationPreview = useCallback(async () => {
+    if (!asset) return
     if (!asset.purchase_cost || Number(asset.purchase_cost) <= 0) {
       setPreviewError(t('assets.invalidPurchaseCost'))
       setPreviewSchedule(null)
@@ -85,13 +60,39 @@ const ViewAssetModal = ({
     } finally {
       setIsPreviewLoading(false)
     }
-  }
+  }, [asset, t])
 
   React.useEffect(() => {
     if (isOpen && asset) {
       loadDepreciationPreview()
     }
-  }, [isOpen, asset])
+  }, [isOpen, asset, loadDepreciationPreview])
+
+  if (!asset) return null
+
+  const handleDeleteDocument = async (documentId) => {
+    if (!window.confirm(t('assets.confirmDeleteDoc'))) {
+      return
+    }
+
+    setDeletingDocId(documentId)
+
+    try {
+      const response = await deleteAssetDocument(asset.id, documentId)
+      if (response.success) {
+        toast.success(t('assets.deleteDocSuccess'))
+        if (onDocumentDeleted) {
+          onDocumentDeleted()
+        }
+      } else {
+        toast.error(response.message || t('common.error'))
+      }
+    } catch (error) {
+      toast.error(t('assets.deleteDocError'))
+    } finally {
+      setDeletingDocId(null)
+    }
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -253,7 +254,7 @@ const ViewAssetModal = ({
                 )}
               </div>
 
-                  <div>
+              <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">
                   {t('assets.depreciationRate')}
                 </p>
@@ -362,11 +363,7 @@ const ViewAssetModal = ({
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          asChild
-                        >
+                        <Button size="sm" variant="ghost" asChild>
                           <a 
                             href={doc.document_url} 
                             download

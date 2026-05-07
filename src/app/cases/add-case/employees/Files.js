@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useFormikContext } from '../FormikContext';
 import NextImage from 'next/image';
 import { Plus, File, Minus, FileText, ImageIcon, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
@@ -16,8 +16,10 @@ function Files() {
   const { values, setFieldValue } = useFormikContext();
   const isArabic = language === 'ar';
 
-  // Get files from Formik values
-  const employeeFiles = values.employeeFiles || [];
+  const employeeFiles = useMemo(
+    () => values.employeeFiles || [],
+    [values.employeeFiles]
+  );
 
   const [isDragOver, setIsDragOver] = useState(false);
 

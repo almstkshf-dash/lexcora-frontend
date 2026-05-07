@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useFormikContext } from '../FormikContext';
 import { searchCasesForAddNewCasePage } from '@/app/services/api/cases';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -89,7 +89,10 @@ function RelatedCases() {
   };
 
   const relatedCases = formikProps.values.related_cases || [];
-  const relatedFiles = formikProps.values.relatedFiles || [];
+  const relatedFiles = useMemo(
+    () => formikProps.values.relatedFiles || [],
+    [formikProps.values.relatedFiles]
+  );
 
   const handleFileSelect = useCallback((selectedFiles) => {
     const currentFiles = Array.isArray(relatedFiles) ? [...relatedFiles] : [];

@@ -81,6 +81,5 @@ export const useKeyboardNavigation = ({
     // Single registration — never torn down until the component unmounts.
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // intentionally empty — stateRef keeps values fresh
 };

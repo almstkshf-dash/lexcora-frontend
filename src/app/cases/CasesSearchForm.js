@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
@@ -224,7 +224,7 @@ const CasesSearchForm = ({ onSearch }) => {
           {/* From Date */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">
-              {language === 'ar' ? 'Ù…Ù† ØªØ§Ø±ÙŠØ®' : 'From Date'}
+              {language === 'ar' ? 'من تاريخ' : 'From Date'}
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -240,7 +240,7 @@ const CasesSearchForm = ({ onSearch }) => {
                   {fromDate ? (
                     format(fromDate, 'PPP', { locale: language === 'ar' ? undefined : undefined })
                   ) : (
-                    <span>{language === 'ar' ? 'Ø§Ø®ØªØ± Ø§Ù„ØªØ§Ø±ÙŠØ®' : 'Pick a date'}</span>
+                    <span>{language === 'ar' ? 'اختر التاريخ' : 'Pick a date'}</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -258,7 +258,7 @@ const CasesSearchForm = ({ onSearch }) => {
           {/* To Date */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">
-              {language === 'ar' ? 'Ø¥Ù„Ù‰ ØªØ§Ø±ÙŠØ®' : 'To Date'}
+              {language === 'ar' ? 'إلى تاريخ' : 'To Date'}
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -274,7 +274,7 @@ const CasesSearchForm = ({ onSearch }) => {
                   {toDate ? (
                     format(toDate, 'PPP', { locale: language === 'ar' ? undefined : undefined })
                   ) : (
-                    <span>{language === 'ar' ? 'Ø§Ø®ØªØ± Ø§Ù„ØªØ§Ø±ÙŠØ®' : 'Pick a date'}</span>
+                    <span>{language === 'ar' ? 'اختر التاريخ' : 'Pick a date'}</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -292,30 +292,30 @@ const CasesSearchForm = ({ onSearch }) => {
           {/* Branch Select */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">
-              {language === 'ar' ? 'Ø§Ù„ÙØ±Ø¹' : 'Branch'}
+              {language === 'ar' ? 'الفرع' : 'Branch'}
             </Label>
             <Select value={selectedBranch} onValueChange={setSelectedBranch}>
               <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
                 <SelectValue 
                   placeholder={
                     branchesLoading 
-                      ? (language === 'ar' ? 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„...' : 'Loading...')
-                      : (language === 'ar' ? 'Ø§Ø®ØªØ± Ø§Ù„ÙØ±Ø¹' : 'Select branch')
+                      ? (language === 'ar' ? 'جاري التحميل...' : 'Loading...')
+                      : (language === 'ar' ? 'اختر الفرع' : 'Select branch')
                   } 
                 />
               </SelectTrigger>
               <SelectContent>
                 {branchesLoading ? (
                   <SelectItem value="loading" disabled>
-                    {language === 'ar' ? 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„...' : 'Loading...'}
+                    {language === 'ar' ? 'جاري التحميل...' : 'Loading...'}
                   </SelectItem>
                 ) : branchesError ? (
                   <SelectItem value="error" disabled>
-                    {language === 'ar' ? 'Ø®Ø·Ø£ ÙÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„ÙØ±ÙˆØ¹' : 'Error loading branches'}
+                    {language === 'ar' ? 'خطأ في تحميل الفروع' : 'Error loading branches'}
                   </SelectItem>
                 ) : branches.length === 0 ? (
                   <SelectItem value="empty" disabled>
-                    {language === 'ar' ? 'Ù„Ø§ ØªÙˆØ¬Ø¯ ÙØ±ÙˆØ¹ Ù…ØªØ§Ø­Ø©' : 'No branches available'}
+                    {language === 'ar' ? 'لا توجد فروع متاحة' : 'No branches available'}
                   </SelectItem>
                 ) : (
                   branches.map((branch) => (
@@ -336,14 +336,14 @@ const CasesSearchForm = ({ onSearch }) => {
               disabled={branchesLoading}
             >
               <SearchIcon className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-              {language === 'ar' ? 'Ø¨Ø­Ø«' : 'Search'}
+              {language === 'ar' ? 'بحث' : 'Search'}
             </Button>
             <Button 
               onClick={handleReset}
               variant="outline"
               className="w-full"
             >
-              {language === 'ar' ? 'Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ†' : 'Reset'}
+              {language === 'ar' ? 'إعادة تعيين' : 'Reset'}
             </Button>
           </div>
         </div>

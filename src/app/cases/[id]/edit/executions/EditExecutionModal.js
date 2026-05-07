@@ -90,7 +90,7 @@ const EditExecutionModal = ({
     if (isOpen && executionId) {
       fetchExecutionData()
     }
-  }, [isOpen, executionId])
+  }, [isOpen, executionId, fetchExecutionData])
 
   // Reset form when modal closes
   useEffect(() => {

@@ -58,6 +58,5 @@ export const useKeyboardNavigation = (menuItems, activeItem, handleNavClick) => 
     // Single registration for the lifetime of the sidebar component.
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // intentionally empty — stateRef keeps flatItems/activeItem/handleNavClick fresh
 };

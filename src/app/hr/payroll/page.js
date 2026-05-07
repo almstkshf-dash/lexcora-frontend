@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 import { 
   getSalaries, 
@@ -63,7 +63,7 @@ export default function PayrollPage() {
   );
   
   const { data: employeesData } = useSWR('/employees', getEmployees);
-  const employees = employeesData?.data || [];
+  const employees = useMemo(() => employeesData?.data || [], [employeesData]);
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingPeriod, setProcessingPeriod] = useState(format(new Date(), 'yyyy-MM'));

@@ -35,31 +35,12 @@ const LastWeekSessionsItem = React.memo(function LastWeekSessionsItem({
     time
   }
   
-  const getDegreeBadge = (degree) => {
-    if (!degree || degree === "0") {
-      return null
-    }
-    
-    const degreeConfig = {
-      appeal: { label: t('home.appeal'), color: 'bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-400' },
-      first_instance: { label: t('home.firstInstance'), color: 'bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-300' },
-      cassation: { label: t('home.cassation'), color: 'bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400' }
-    }
-    
-    return degreeConfig[degree] || { label: degree, color: 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300' }
-  }
-
   const getSessionStatus = (sessionDate, decision) => {
     const now = new Date()
     const sessionDateTime = new Date(sessionDate)
-    
-    if (decision) {
-      return 'completed'
-    } else if (sessionDateTime > now) {
-      return 'upcoming'
-    } else {
-      return 'postponed'
-    }
+    if (decision) return 'completed'
+    else if (sessionDateTime > now) return 'upcoming'
+    else return 'postponed'
   }
 
   // Extract data from API response or use props
@@ -72,7 +53,15 @@ const LastWeekSessionsItem = React.memo(function LastWeekSessionsItem({
   const displayFileNumber = session ? session.file_number : sessionData.fileNumber
 
   // Memoize so the config object is only computed when degree changes
-  const degreeInfo = useMemo(() => getDegreeBadge(displayDegree), [displayDegree])
+  const degreeInfo = useMemo(() => {
+    if (!displayDegree || displayDegree === "0") return null;
+    const degreeConfig = {
+      appeal: { label: t('home.appeal'), color: 'bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-400' },
+      first_instance: { label: t('home.firstInstance'), color: 'bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-300' },
+      cassation: { label: t('home.cassation'), color: 'bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400' }
+    };
+    return degreeConfig[displayDegree] || { label: displayDegree, color: 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300' };
+  }, [displayDegree, t])
 
   return (
     <>

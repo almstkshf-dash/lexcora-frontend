@@ -2,14 +2,12 @@
 
 import React from 'react'
 import { FileSpreadsheet, FileText, Download } from 'lucide-react'
+import { toast } from 'react-toastify'
 import { Button } from '@/components/ui/button'
 import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
 import { exportTableToPDF } from '@/utils/exporters/pdfExporter'
 
-/**
- * ExportButtons Component
- * Provides Excel and PDF export functionality for cases data
- */
 const ExportButtons = ({ data = [], t, language = 'ar' }) => {
   const isRTL = language === 'ar'
   const watermarkText = 'Lexcora Cases'
@@ -108,10 +106,12 @@ const ExportButtons = ({ data = [], t, language = 'ar' }) => {
         : `cases_${timestamp}.xlsx`
 
       // Save file
-      XLSX.writeFile(wb, filename)
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+      const blob = new Blob([wbout], { type: 'application/octet-stream' })
+      saveAs(blob, filename)
     } catch (error) {
 
-      alert(language === 'ar' ? 'حدث خطأ أثناء التصدير' : 'Error during export')
+      toast.error(language === 'ar' ? 'حدث خطأ أثناء التصدير' : 'Error during export')
     }
   }
 
@@ -119,7 +119,7 @@ const ExportButtons = ({ data = [], t, language = 'ar' }) => {
   const handleExportPDF = async () => {
     const exportData = prepareExportDataForPDF()
     if (!exportData.length) {
-      alert(language === 'ar' ? 'لا توجد بيانات للتصدير' : 'No data to export')
+      toast.warn(language === 'ar' ? 'لا توجد بيانات للتصدير' : 'No data to export')
       return
     }
 
@@ -139,7 +139,7 @@ const ExportButtons = ({ data = [], t, language = 'ar' }) => {
       })
     } catch (error) {
 
-      alert(language === 'ar' ? 'حدث خطأ أثناء تصدير PDF' : 'Error during PDF export')
+      toast.error(language === 'ar' ? 'حدث خطأ أثناء تصدير PDF' : 'Error during PDF export')
     }
   }
 

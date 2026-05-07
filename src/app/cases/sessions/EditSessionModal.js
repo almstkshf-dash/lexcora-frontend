@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -193,17 +193,17 @@ const EditSessionModal = ({
     has_ruling: Yup.boolean(),
     ruling: Yup.string().when('has_ruling', {
       is: true,
-      then: (schema) => schema.required(isRtl ? "منطوق الحكم مطلوب" : "Ruling text is required"),
+      then: (schema) => schema.required(isRtl ? "????? ????? ?????" : "Ruling text is required"),
       otherwise: (schema) => schema.notRequired(),
     }),
     ruling_date: Yup.date().when('has_ruling', {
       is: true,
-      then: (schema) => schema.required(isRtl ? "تاريخ صدور الحكم مطلوب" : "Ruling date is required"),
+      then: (schema) => schema.required(isRtl ? "????? ???? ????? ?????" : "Ruling date is required"),
       otherwise: (schema) => schema.notRequired(),
     }),
     legal_period_id: Yup.string().when('has_ruling', {
       is: true,
-      then: (schema) => schema.required(isRtl ? "المدة القانونية مطلوبة" : "Legal period is required"),
+      then: (schema) => schema.required(isRtl ? "????? ????????? ??????" : "Legal period is required"),
       otherwise: (schema) => schema.notRequired(),
     }),
   });
@@ -326,7 +326,7 @@ const EditSessionModal = ({
         const isPermissionError = error?.response?.status === 403;
         
         if (isPermissionError) {
-          const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لتحديث الجلسة' : 'You do not have permission to update this session');
+          const permissionMessage = error?.response?.data?.message || (language === 'ar' ? '??? ???? ?????? ?????? ??????' : 'You do not have permission to update this session');
           toast.error(permissionMessage, {
             position: "top-right",
             autoClose: 3000,
@@ -507,7 +507,7 @@ const EditSessionModal = ({
                           {formik.values.session_date ? (
                             format(new Date(formik.values.session_date), "PPP", { locale: isRtl ? ar : undefined })
                           ) : (
-                            <span>{t('sessions.pickSessionDate') || (isRtl ? "اختر تاريخ الجلسة" : "Pick session date")}</span>
+                            <span>{t('sessions.pickSessionDate') || (isRtl ? "???? ????? ??????" : "Pick session date")}</span>
                           )}
                         </Button>
                       </PopoverTrigger>
@@ -622,7 +622,7 @@ const EditSessionModal = ({
                         }
                         {formik.values.is_judgment_reserved && (
                           <span className="block text-red-600 dark:text-red-400 font-medium mt-1">
-                            {isRtl ? "تم تعطيل الجلسة تلقائياً بسبب حجز الحكم" : "Session auto-disabled due to judgment reserved"}
+                            {isRtl ? "?? ????? ?????? ???????? ???? ??? ?????" : "Session auto-disabled due to judgment reserved"}
                           </span>
                         )}
                       </p>
@@ -739,12 +739,12 @@ const EditSessionModal = ({
                           htmlFor="has_ruling" 
                           className="text-sm font-medium text-gray-700 dark:text-gray-300"
                         >
-                          {isRtl ? "حكم صادر" : "Has Ruling"}
+                          {isRtl ? "??? ????" : "Has Ruling"}
                         </Label>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           {formik.values.has_ruling 
-                            ? (isRtl ? "يوجد حكم صادر" : "Ruling has been issued")
-                            : (isRtl ? "لا يوجد حكم" : "No ruling issued")
+                            ? (isRtl ? "???? ??? ????" : "Ruling has been issued")
+                            : (isRtl ? "?? ???? ???" : "No ruling issued")
                           }
                         </p>
                       </div>
@@ -764,7 +764,7 @@ const EditSessionModal = ({
                       {/* Ruling Textarea */}
                       <div className="space-y-2">
                         <Label htmlFor="ruling" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          {isRtl ? "منطوق الحكم" : "Ruling Text"} <span className="text-red-500 dark:text-red-400">*</span>
+                          {isRtl ? "????? ?????" : "Ruling Text"} <span className="text-red-500 dark:text-red-400">*</span>
                         </Label>
                         <Textarea
                           id="ruling"
@@ -772,7 +772,7 @@ const EditSessionModal = ({
                           value={formik.values.ruling}
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
-                          placeholder={isRtl ? "أدخل منطوق الحكم" : "Enter ruling text"}
+                          placeholder={isRtl ? "???? ????? ?????" : "Enter ruling text"}
                           rows={3}
                           className={cn(
                             isRtl ? "text-right" : "text-left",
@@ -788,7 +788,7 @@ const EditSessionModal = ({
                       {/* Ruling Date */}
                       <div className="space-y-2">
                         <Label htmlFor="ruling_date" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          {isRtl ? "تاريخ صدور الحكم" : "Ruling Date"} <span className="text-red-500 dark:text-red-400">*</span>
+                          {isRtl ? "????? ???? ?????" : "Ruling Date"} <span className="text-red-500 dark:text-red-400">*</span>
                         </Label>
                         <Popover>
                           <PopoverTrigger asChild>
@@ -806,7 +806,7 @@ const EditSessionModal = ({
                               {formik.values.ruling_date ? (
                                 format(new Date(formik.values.ruling_date), "PPP", { locale: isRtl ? ar : undefined })
                               ) : (
-                                <span>{isRtl ? "اختر تاريخ صدور الحكم" : "Pick ruling date"}</span>
+                                <span>{isRtl ? "???? ????? ???? ?????" : "Pick ruling date"}</span>
                               )}
                             </Button>
                           </PopoverTrigger>
@@ -827,7 +827,7 @@ const EditSessionModal = ({
                       {/* Legal Period Select */}
                       <div className="space-y-2">
                         <Label htmlFor="legal_period_id" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          {isRtl ? "المدة القانونية" : "Legal Period"} <span className="text-red-500 dark:text-red-400">*</span>
+                          {isRtl ? "????? ?????????" : "Legal Period"} <span className="text-red-500 dark:text-red-400">*</span>
                         </Label>
                         <div className="flex items-center gap-2">
                           <Select
@@ -838,7 +838,7 @@ const EditSessionModal = ({
                               "flex-1",
                               formik.touched.legal_period_id && formik.errors.legal_period_id && "border-red-500"
                             )}>
-                              <SelectValue placeholder={isRtl ? "اختر المدة القانونية" : "Select Legal Period"} />
+                              <SelectValue placeholder={isRtl ? "???? ????? ?????????" : "Select Legal Period"} />
                             </SelectTrigger>
                             <SelectContent className="z-[10001]">
                               {legalPeriods.map((period) => (
@@ -847,9 +847,9 @@ const EditSessionModal = ({
                                     <span className="font-medium">{period.name}</span>
                                     <span className="text-xs text-muted-foreground">
                                       {[
-                                        period.objection_days && `${isRtl ? 'التظلم' : 'Objection'}: ${period.objection_days} ${isRtl ? 'يوم' : 'days'}`,
-                                        period.appeal_days && `${isRtl ? 'الاستئناف' : 'Appeal'}: ${period.appeal_days} ${isRtl ? 'يوم' : 'days'}`,
-                                        period.cassation_days && `${isRtl ? 'الطعن' : 'Cassation'}: ${period.cassation_days} ${isRtl ? 'يوم' : 'days'}`
+                                        period.objection_days && `${isRtl ? '??????' : 'Objection'}: ${period.objection_days} ${isRtl ? '???' : 'days'}`,
+                                        period.appeal_days && `${isRtl ? '?????????' : 'Appeal'}: ${period.appeal_days} ${isRtl ? '???' : 'days'}`,
+                                        period.cassation_days && `${isRtl ? '?????' : 'Cassation'}: ${period.cassation_days} ${isRtl ? '???' : 'days'}`
                                       ].filter(Boolean).join(' - ')}
                                     </span>
                                   </div>
@@ -865,7 +865,7 @@ const EditSessionModal = ({
                             className="h-10 gap-1 shrink-0"
                           >
                             <Plus className="h-4 w-4" />
-                            <span className="text-sm">{isRtl ? "إضافة" : "Add"}</span>
+                            <span className="text-sm">{isRtl ? "?????" : "Add"}</span>
                           </Button>
                         </div>
                         {formik.touched.legal_period_id && formik.errors.legal_period_id && (

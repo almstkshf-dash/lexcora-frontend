@@ -60,8 +60,10 @@ function Employees({ caseId }) {
     errorRetryInterval: 1000
   });
 
-  // Extract employees data from API response
-  const employees = employeesResponse?.success ? employeesResponse.data : [];
+  const employees = useMemo(
+    () => (employeesResponse?.success ? employeesResponse.data : []),
+    [employeesResponse]
+  );
 
   // Filter employees by role (assuming employees have a 'role' field)
   const employeesByRole = useMemo(() => {

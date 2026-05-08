@@ -19,7 +19,7 @@ import {
 import { getPerformanceStats, clearSystemLogs, clearNotifications } from '@/app/services/api/performance';
 
 const PerformanceSettingsPage = () => {
-  const t = useTranslations();
+  const { t } = useTranslations();
   const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({

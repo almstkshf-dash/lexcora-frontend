@@ -21,7 +21,7 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const NotificationsSettingsPage = () => {
-  const t = useTranslations();
+  const { t } = useTranslations();
   const { isRTL } = useLanguage();
   const router = useRouter();
 

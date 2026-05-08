@@ -14,7 +14,7 @@ const SearchResultItem = ({
   isRTL, 
   lang 
 }) => {
-  const t = useTranslations();
+  const { t } = useTranslations();
   const renderContent = () => {
     if (searchType === 'system') {
       return (

@@ -15,7 +15,7 @@ const SearchInput = ({
   inputId = 'global-search',
   inputName = 'global-search'
 }) => {
-  const t = useTranslations();
+  const { t } = useTranslations();
 
   return (
     <div className="relative">

@@ -24,7 +24,7 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const SettingsPage = () => {
-  const t = useTranslations();
+  const { t } = useTranslations();
   const { isRTL, language } = useLanguage();
   const router = useRouter();
 

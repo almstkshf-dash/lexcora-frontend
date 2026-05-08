@@ -100,7 +100,7 @@ function Meetings({ partyId }) {
     )
   }
 
-  const meetings = data?.data || []
+  const meetings = Array.isArray(data?.data) ? data.data : []
 
   const formatDate = (dateString) => {
     if (!dateString) return '-'

@@ -12,7 +12,7 @@ function LastWeekSessions() {
   const { t } = useTranslations()
   const { data, error, isLoading } = useSWR('sessions-this-week', getSessionsThisWeek, SWR_OPTIONS)
 
-  const sessions = data?.success ? data.data : []
+  const sessions = data?.success && Array.isArray(data.data) ? data.data : []
 
   return (
     <DashboardWidgetCard

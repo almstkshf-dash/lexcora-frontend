@@ -73,7 +73,7 @@ function ExternalLinksMenu() {
     }
   )
 
-  const links = linksData?.data || []
+  const links = Array.isArray(linksData?.data) ? linksData.data : []
 
   const handleOpenChange = useCallback((open) => {
     startTransition(() => {

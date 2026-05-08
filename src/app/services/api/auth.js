@@ -31,7 +31,7 @@ export const loginWithRedux = (username, password) => async (dispatch) => {
         type: 'auth/loginSuccess',
         payload: {
           user: data.data.user,
-          permissions: data.data.permissions
+          permissions: Array.isArray(data.data.permissions) ? data.data.permissions : []
         }
       });
       
@@ -94,7 +94,7 @@ export const checkAuthStatus = () => async (dispatch) => {
         type: 'auth/restoreAuth',
         payload: {
           user: response.data.user,
-          permissions: response.data.permissions || [] // Use permissions from inside data
+          permissions: Array.isArray(response.data.permissions) ? response.data.permissions : []
         }
       });
       return { success: true, user: response.data.user };

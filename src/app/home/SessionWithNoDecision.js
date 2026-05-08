@@ -12,7 +12,7 @@ function SessionWithNoDecision() {
   const { t } = useTranslations()
   const { data, error, isLoading } = useSWR('sessions-no-decision', getSessionsNoDecision, SWR_OPTIONS)
 
-  const sessions = data?.success ? data.data : []
+  const sessions = data?.success && Array.isArray(data.data) ? data.data : []
 
   return (
     <DashboardWidgetCard

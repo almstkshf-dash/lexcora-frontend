@@ -12,7 +12,7 @@ function CasePetitions() {
   const { t } = useTranslations()
   const { data, error, isLoading } = useSWR('case-petitions', casePetitions, SWR_OPTIONS)
 
-  const petitions = data?.success ? data.data : []
+  const petitions = data?.success && Array.isArray(data.data) ? data.data : []
 
   return (
     <DashboardWidgetCard

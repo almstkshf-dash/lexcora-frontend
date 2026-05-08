@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useMemo } from 'react'
 import useSWR from 'swr'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next-intl/client'
 import { getPartyCases } from '@/app/services/api/parties'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -232,7 +232,7 @@ function Cases({ partyId }) {
     )
   }
 
-  const cases = data?.data || []
+  const cases = Array.isArray(data?.data) ? data.data : []
 
   return (
     <>
@@ -352,12 +352,12 @@ function Cases({ partyId }) {
                           </div>
                         ) : (
                           <div className="space-y-1">
-                            {case_.clientParties?.map((party, index) => (
+                            {Array.isArray(case_.clientParties) && case_.clientParties.length > 0 ? case_.clientParties.map((party, index) => (
                               <div key={index} className="flex items-center gap-2">
                                 <User className="h-4 w-4 text-blue-600" />
                                 <span className="text-sm">{party}</span>
                               </div>
-                            )) || (
+                            )) : (
                               <div className="flex items-center gap-2 text-muted-foreground">
                                 <User className="h-4 w-4" />
                                 <span className="text-sm">-</span>
@@ -374,12 +374,12 @@ function Cases({ partyId }) {
                           </div>
                         ) : (
                           <div className="space-y-1">
-                            {case_.opponentParties?.map((party, index) => (
+                            {Array.isArray(case_.opponentParties) && case_.opponentParties.length > 0 ? case_.opponentParties.map((party, index) => (
                               <div key={index} className="flex items-center gap-2">
                                 <User className="h-4 w-4 text-red-600" />
                                 <span className="text-sm">{party}</span>
                               </div>
-                            )) || (
+                            )) : (
                               <div className="flex items-center gap-2 text-muted-foreground">
                                 <User className="h-4 w-4" />
                                 <span className="text-sm">-</span>

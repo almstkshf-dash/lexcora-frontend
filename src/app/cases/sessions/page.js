@@ -609,7 +609,7 @@ export default function SessionsPage() {
                             {/* Clients Column */}
                             <TableCell>
                               <div className="space-y-2 max-w-xs">
-                                {session.clientParties?.length > 0 ? (
+                                {Array.isArray(session.clientParties) && session.clientParties.length > 0 ? (
                                   <div className="flex flex-col gap-1">
                                     {session.clientParties.map((client, index) => (
                                       <Badge
@@ -631,7 +631,7 @@ export default function SessionsPage() {
                             {/* Opponents Column */}
                             <TableCell>
                               <div className="space-y-2 max-w-xs">
-                                {session.opponentParties?.length > 0 ? (
+                                {Array.isArray(session.opponentParties) && session.opponentParties.length > 0 ? (
                                   <div className="flex flex-col gap-1">
                                     {session.opponentParties.map((opponent, index) => (
                                       <Badge

@@ -262,7 +262,7 @@ export default function PettyCashPage() {
             </CardHeader>
             <CardContent className="p-2">
               <div className="space-y-1">
-                {funds.map((fund) => (
+                {Array.isArray(funds) && funds.map((fund) => (
                   <button
                     key={fund.id}
                     onClick={() => {
@@ -328,7 +328,7 @@ export default function PettyCashPage() {
                           </TableCell>
                         </TableRow>
                       ) : (
-                        transactions.map((tx) => (
+                        Array.isArray(transactions) && transactions.map((tx) => (
                           <TableRow key={tx.id}>
                             <TableCell>{formatDate(tx.date)}</TableCell>
                             <TableCell>

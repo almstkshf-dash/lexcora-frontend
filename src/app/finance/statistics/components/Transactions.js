@@ -65,8 +65,13 @@ export default function Transactions() {
         })
         
         if (data.success) {
-          setChartData(data.data.chart_data)
-          setSummary(data.data.summary)
+          setChartData(Array.isArray(data.data?.chart_data) ? data.data.chart_data : [])
+          setSummary(data.data?.summary || {
+            total_credit: 0,
+            total_debit: 0,
+            total_credit_count: 0,
+            total_debit_count: 0
+          })
         }
       } catch {
         // silently ignore

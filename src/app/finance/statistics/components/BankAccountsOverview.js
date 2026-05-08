@@ -21,7 +21,7 @@ const BankAccountsOverview = () => {
   );
 
   const accounts = React.useMemo(() => {
-    if (!accountsData?.success || !accountsData?.data) return [];
+    if (!accountsData?.success || !Array.isArray(accountsData?.data)) return [];
     return accountsData.data;
   }, [accountsData]);
 
@@ -71,7 +71,7 @@ const BankAccountsOverview = () => {
 
             {/* Accounts Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {accounts.map((account) => (
+              {Array.isArray(accounts) && accounts.map((account) => (
                 <div
                   key={account.id}
                   className="p-4 border rounded-sg hover:shadow-md transition-shadow"

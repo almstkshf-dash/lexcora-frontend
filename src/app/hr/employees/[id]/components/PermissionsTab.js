@@ -52,18 +52,20 @@ const PermissionsTab = ({ employeeId }) => {
   // Group permissions by permission_parent_name, then by permission_group_name
   const groupedPermissions = useMemo(() => {
     const parents = {};
-    permissions.forEach((permission) => {
-      const parentName = permission.permission_parent_name;
-      const groupName = permission.permission_group_name;
-      
-      if (!parents[parentName]) {
-        parents[parentName] = {};
-      }
-      if (!parents[parentName][groupName]) {
-        parents[parentName][groupName] = [];
-      }
-      parents[parentName][groupName].push(permission);
-    });
+    if (Array.isArray(permissions)) {
+      permissions.forEach((permission) => {
+        const parentName = permission.permission_parent_name;
+        const groupName = permission.permission_group_name;
+        
+        if (!parents[parentName]) {
+          parents[parentName] = {};
+        }
+        if (!parents[parentName][groupName]) {
+          parents[parentName][groupName] = [];
+        }
+        parents[parentName][groupName].push(permission);
+      });
+    }
     return parents;
   }, [permissions]);
 
@@ -138,11 +140,13 @@ const PermissionsTab = ({ employeeId }) => {
 
   const handleTogglePermission = (permissionId) => {
     setLocalPermissions((prev) =>
-      prev.map((permission) =>
-        permission.id === permissionId
-          ? { ...permission, isPermissionForThisUser: permission.isPermissionForThisUser === 1 ? 0 : 1 }
-          : permission
-      )
+      Array.isArray(prev)
+        ? prev.map((permission) =>
+            permission.id === permissionId
+              ? { ...permission, isPermissionForThisUser: permission.isPermissionForThisUser === 1 ? 0 : 1 }
+              : permission
+          )
+        : []
     );
   };
 
@@ -150,9 +154,11 @@ const PermissionsTab = ({ employeeId }) => {
     if (isSaving) return; // Prevent multiple submissions
     
     // Get only the IDs of permissions that are set to true (checked)
-    const updatedPermissions = localPermissions
-      .filter(permission => permission.isPermissionForThisUser === 1)
-      .map(permission => permission.id);
+    const updatedPermissions = Array.isArray(localPermissions)
+      ? localPermissions
+          .filter(permission => permission.isPermissionForThisUser === 1)
+          .map(permission => permission.id)
+      : [];
     
     setIsSaving(true);
     
@@ -271,8 +277,8 @@ const PermissionsTab = ({ employeeId }) => {
                         
                         {/* Permissions Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                          {groupPermissions.map((permission) => {
-                            const localPermission = localPermissions.find(p => p.id === permission.id);
+                          {Array.isArray(groupPermissions) && groupPermissions.map((permission) => {
+                            const localPermission = Array.isArray(localPermissions) ? localPermissions.find(p => p.id === permission.id) : null;
                             return (
                               <label
                                 key={permission.id}

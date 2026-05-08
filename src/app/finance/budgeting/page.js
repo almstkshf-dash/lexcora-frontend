@@ -56,7 +56,7 @@ const AccountBudgetRow = ({ account, level, fiscalYear, isRTL, accT, commonT }) 
     }
   };
 
-  const isCategory = account.children && account.children.length > 0;
+  const isCategory = Array.isArray(account.children) && account.children.length > 0;
 
   return (
     <>
@@ -115,7 +115,7 @@ const AccountBudgetRow = ({ account, level, fiscalYear, isRTL, accT, commonT }) 
           )}
         </TableCell>
       </TableRow>
-      {account.children && account.children.map(child => (
+      {Array.isArray(account.children) && account.children.map(child => (
         <AccountBudgetRow 
           key={child.id} 
           account={child} 

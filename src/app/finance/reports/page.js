@@ -55,7 +55,7 @@ import { Button } from '@/components/ui/button';
 
 const HierarchicalRow = ({ node, level = 0, isRTL, accT }) => {
   const [isOpen, setIsOpen] = useState(level < 1); // Expand first level by default
-  const hasChildren = node.children && node.children.length > 0;
+  const hasChildren = Array.isArray(node.children) && node.children.length > 0;
   
   return (
     <>
@@ -87,7 +87,7 @@ const HierarchicalRow = ({ node, level = 0, isRTL, accT }) => {
           </span>
         </TableCell>
       </TableRow>
-      {hasChildren && isOpen && node.children.map(child => (
+      {hasChildren && isOpen && Array.isArray(node.children) && node.children.map(child => (
         <HierarchicalRow key={child.account_id} node={child} level={level + 1} isRTL={isRTL} accT={accT} />
       ))}
     </>
@@ -104,7 +104,7 @@ const HierarchicalTable = ({ data, isRTL, commonT, accT }) => (
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map(node => (
+        {Array.isArray(data) && data.map(node => (
           <HierarchicalRow key={node.account_id} node={node} isRTL={isRTL} accT={accT} />
         ))}
         {data.length === 0 && (
@@ -173,7 +173,7 @@ const CashFlowSection = ({ title, data, type, isRTL, accT, commonT }) => (
     <div className="rounded-xl border border-border/40 bg-card/30 overflow-hidden">
       <Table>
         <TableBody>
-          {data.map(acc => (
+          {Array.isArray(data) && data.map(acc => (
             <TableRow key={acc.account_id} className="hover:bg-muted/30 transition-colors">
               <TableCell className="py-3">
                 <p className="font-medium text-sm">{isRTL ? acc.name_ar : acc.name_en}</p>
@@ -458,7 +458,7 @@ export default function ReportsPage() {
                 {accT('agedReceivables')}
              </h3>
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {arData?.success && arData.data.map((party, idx) => (
+                 {arData?.success && Array.isArray(arData.data) && arData.data.map((party, idx) => (
                   <AgingCard key={idx} party={party} isRTL={isRTL} commonT={commonT} />
                 ))}
              </div>
@@ -470,7 +470,7 @@ export default function ReportsPage() {
                 {accT('agedPayables')}
              </h3>
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {apData?.success && apData.data.map((party, idx) => (
+                 {apData?.success && Array.isArray(apData.data) && apData.data.map((party, idx) => (
                   <AgingCard key={idx} party={party} isRTL={isRTL} commonT={commonT} />
                 ))}
              </div>
@@ -660,7 +660,7 @@ const AssetsRegister = ({ data, isRTL, commonT, accT }) => (
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map(asset => (
+        {Array.isArray(data) && data.map(asset => (
           <TableRow key={asset.id} className="hover:bg-muted/30 transition-colors">
             <TableCell>
               <p className="font-medium">{asset.name}</p>
@@ -781,7 +781,7 @@ const VatReturnView = ({ data, isRTL, commonT, accT, vatT, formatCurrency }) => 
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.outputTax?.standardRatedSupplies?.map((row, i) => (
+            {Array.isArray(data?.outputTax?.standardRatedSupplies) && data.outputTax.standardRatedSupplies.map((row, i) => (
               <TableRow key={i}>
                 <TableCell className="font-medium">{row.emirate}</TableCell>
                 <TableCell className="text-end font-mono">{formatCurrency(row.amount)}</TableCell>

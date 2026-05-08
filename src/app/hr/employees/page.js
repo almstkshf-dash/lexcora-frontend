@@ -267,7 +267,7 @@ export default function EmployeeTablePage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all" className="cursor-pointer">{t('employees.allRoles')}</SelectItem>
-                    {!rolesLoading && !rolesError && roles.map((role) => (
+                    {!rolesLoading && !rolesError && Array.isArray(roles) && roles.map((role) => (
                       <SelectItem 
                         key={role.id} 
                         value={isArabic ? role.role_ar : role.role_en} 
@@ -349,7 +349,7 @@ export default function EmployeeTablePage() {
                   </tr>
                 </thead>
                 <tbody className="bg-card divide-y divide-border">
-                  {filteredAndSortedData.map((employee) => (
+                  {Array.isArray(filteredAndSortedData) && filteredAndSortedData.map((employee) => (
                     <EmployeeTableRow 
                       key={employee.id} 
                       employee={employee} 

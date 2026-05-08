@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useMemo } from 'react'
 import useSWR from 'swr'
-import { useRouter } from 'next-intl/client'
+import { useRouter } from 'next/navigation'
 import { getPartyCases } from '@/app/services/api/parties'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

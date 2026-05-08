@@ -102,7 +102,7 @@ function DocumentsTab({ employeeId }) {
     try {
       // Optimistic update - remove from cache immediately
       await mutate(
-        documents.filter(doc => doc.id !== documentToDelete.id),
+        Array.isArray(documents) ? documents.filter(doc => doc.id !== documentToDelete.id) : [],
         false // Don't revalidate yet
       )
 
@@ -126,7 +126,7 @@ function DocumentsTab({ employeeId }) {
   }
 
   const getDocumentsByType = (type) => {
-    return documents.filter(doc => doc.document_type === type)
+    return Array.isArray(documents) ? documents.filter(doc => doc.document_type === type) : []
   }
 
   const getIconComponent = (type) => {
@@ -162,7 +162,7 @@ function DocumentsTab({ employeeId }) {
 
       {/* File Type Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {fileTypes.map((type) => {
+        {Array.isArray(fileTypes) && fileTypes.map((type) => {
           const Icon = type.icon
           const typeDocs = getDocumentsByType(type.value)
           
@@ -193,7 +193,7 @@ function DocumentsTab({ employeeId }) {
       </div>
 
       {/* Documents List */}
-      {documents.length > 0 && (
+      {Array.isArray(documents) && documents.length > 0 && (
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-4">{t('employees.documents.uploadedDocuments')}</h3>
           <div className="grid gap-3">

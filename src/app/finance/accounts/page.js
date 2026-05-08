@@ -20,7 +20,7 @@ const AccountRow = ({ account, level = 0 }) => {
   const accT = useTranslations('Accounting');
   const commonT = useTranslations('common');
   
-  const hasChildren = account.children && account.children.length > 0;
+  const hasChildren = Array.isArray(account.children) && account.children.length > 0;
 
   return (
     <>
@@ -69,7 +69,7 @@ const AccountRow = ({ account, level = 0 }) => {
         </TableCell>
       </TableRow>
       {hasChildren && isOpen && (
-        account.children.map(child => (
+        Array.isArray(account.children) && account.children.map(child => (
           <AccountRow key={child.id} account={child} level={level + 1} />
         ))
       )}

@@ -215,7 +215,7 @@ function Attendance({ employeeId }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {attendanceData.map((record) => (
+              {Array.isArray(attendanceData) && attendanceData.map((record) => (
                 <TableRow key={record.id}>
                   <TableCell className="font-medium">
                     {language === "ar" ? record.name : 'not available'}

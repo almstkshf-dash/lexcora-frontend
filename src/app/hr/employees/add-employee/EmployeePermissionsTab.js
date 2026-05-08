@@ -16,13 +16,15 @@ export default function EmployeePermissionsTab({ form, setForm }) {
   // Group permissions by permission_group_name
   const groupedPermissions = useMemo(() => {
     const groups = {};
-    permissions.forEach((permission) => {
-      const groupName = permission.permission_group_name;
-      if (!groups[groupName]) {
-        groups[groupName] = [];
-      }
-      groups[groupName].push(permission);
-    });
+    if (Array.isArray(permissions)) {
+      permissions.forEach((permission) => {
+        const groupName = permission.permission_group_name;
+        if (!groups[groupName]) {
+          groups[groupName] = [];
+        }
+        groups[groupName].push(permission);
+      });
+    }
     return groups;
   }, [permissions]);
 
@@ -67,9 +69,11 @@ export default function EmployeePermissionsTab({ form, setForm }) {
   const handleTogglePermission = (permissionId) => {
     setForm((prev) => ({
       ...prev,
-      permissions: prev.permissions.includes(permissionId)
-        ? prev.permissions.filter((p) => p !== permissionId)
-        : [...prev.permissions, permissionId]
+      permissions: Array.isArray(prev.permissions)
+        ? prev.permissions.includes(permissionId)
+          ? prev.permissions.filter((p) => p !== permissionId)
+          : [...prev.permissions, permissionId]
+        : [permissionId]
     }));
   };
 
@@ -103,17 +107,17 @@ export default function EmployeePermissionsTab({ form, setForm }) {
       <div className="mb-4 p-3 rounded-sg border border-border">
         <label className="flex items-center gap-2 cursor-pointer font-medium">
           <Checkbox
-            checked={form.permissions.length === permissions.length}
+            checked={Array.isArray(form.permissions) && Array.isArray(permissions) && form.permissions.length === permissions.length}
             onCheckedChange={(checked) => {
               if (checked) {
-                setForm(prev => ({ ...prev, permissions: permissions.map(p => p.id) }));
+                setForm(prev => ({ ...prev, permissions: Array.isArray(permissions) ? permissions.map(p => p.id) : [] }));
               } else {
                 setForm(prev => ({ ...prev, permissions: [] }));
               }
             }}
             id="select-all"
           />
-          <span className="text-foreground">{t('employees.selectAll')} ({form.permissions.length}/{permissions.length})</span>
+          <span className="text-foreground">{t('employees.selectAll')} ({Array.isArray(form.permissions) ? form.permissions.length : 0}/{Array.isArray(permissions) ? permissions.length : 0})</span>
         </label>
       </div>
 
@@ -134,7 +138,7 @@ export default function EmployeePermissionsTab({ form, setForm }) {
                   className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 p-2 rounded transition-colors"
                 >
                   <Checkbox
-                    checked={form.permissions.includes(permission.id)}
+                    checked={Array.isArray(form.permissions) && form.permissions.includes(permission.id)}
                     onCheckedChange={() => handleTogglePermission(permission.id)}
                     id={`permission-${permission.id}`}
                   />

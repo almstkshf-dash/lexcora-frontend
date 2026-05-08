@@ -218,7 +218,7 @@ function InvoicesPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {invoices.map((invoice) => (
+                    {Array.isArray(invoices) && invoices.map((invoice) => (
                       <TableRow key={invoice.id}>
                         <TableCell className="font-medium font-mono">
                           {invoice.invoice_number}

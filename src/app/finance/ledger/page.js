@@ -75,7 +75,7 @@ export default function LedgerPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {ledgerEntries.map((entry) => (
+                    {Array.isArray(ledgerEntries) && ledgerEntries.map((entry) => (
                       <TableRow key={entry.id}>
                         <TableCell>{formatDate(entry.entry_date)}</TableCell>
                         <TableCell>{entry.description || entry.reference_number || '-'}</TableCell>

@@ -157,7 +157,7 @@ export default function ActivityLogModal({ trigger, employee }) {
             </div>
           ) : (
             <div className="space-y-3">
-              {filteredLogs.map((log) => (
+              {Array.isArray(filteredLogs) && filteredLogs.map((log) => (
                 <div key={log.id} className="bg-muted/30 rounded-sg p-4 border border-border hover:bg-muted/50 transition-colors">
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">

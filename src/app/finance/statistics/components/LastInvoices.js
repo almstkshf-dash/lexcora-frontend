@@ -21,9 +21,9 @@ const LastInvoices = () => {
   );
 
   const invoices = React.useMemo(() => {
-    if (!invoicesData?.success || !invoicesData?.data) return [];
+    if (!invoicesData?.success || !Array.isArray(invoicesData?.data)) return [];
     // Get last 5 invoices
-    return invoicesData.data
+    return [...invoicesData.data]
       .sort((a, b) => new Date(b.invoice_date) - new Date(a.invoice_date))
       .slice(0, 5);
   }, [invoicesData]);
@@ -97,7 +97,7 @@ const LastInvoices = () => {
                 </tr>
               </thead>
               <tbody>
-                {invoices.map((invoice) => (
+                {Array.isArray(invoices) && invoices.map((invoice) => (
                   <tr 
                     key={invoice.id}
                     className="border-b hover:bg-gray-50 transition-colors"

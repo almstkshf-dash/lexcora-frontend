@@ -177,7 +177,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
                 ) : rolesError ? (
                   <div className="p-2 text-center text-red-500">{t('common.error')}</div>
                 ) : (
-                  roles
+                  Array.isArray(roles) && roles
                     .filter((role) => role.role_en?.toLowerCase() !== 'admin' && role.role_ar?.toLowerCase() !== 'admin')
                     .map((role) => (
                       <SelectItem key={role.id} value={role.id} className="cursor-pointer">
@@ -200,7 +200,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
                 ) : departmentsError ? (
                   <div className="p-2 text-center text-red-500">{t('common.error')}</div>
                 ) : (
-                  departments.map((department) => (
+                  Array.isArray(departments) && departments.map((department) => (
                     <SelectItem key={department.id} value={department.id} className="cursor-pointer">
                       {language === 'ar' ? department.name_ar : department.name_en}
                     </SelectItem>
@@ -221,7 +221,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
                 ) : branchesError ? (
                   <div className="p-2 text-center text-red-500">{t('common.error')}</div>
                 ) : (
-                  branches.map((branch) => (
+                  Array.isArray(branches) && branches.map((branch) => (
                     <SelectItem key={branch.id} value={branch.id} className="cursor-pointer">
                       {language === 'ar' ? branch.name_ar : branch.name_en}
                     </SelectItem>
@@ -242,7 +242,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
                 ) : employeesError ? (
                   <div className="p-2 text-center text-red-500">{t('common.error')}</div>
                 ) : (
-                  employees.map((employee) => (
+                  Array.isArray(employees) && employees.map((employee) => (
                     <SelectItem key={employee.id} value={employee.id} className="cursor-pointer">
                       {employee.name}
                     </SelectItem>

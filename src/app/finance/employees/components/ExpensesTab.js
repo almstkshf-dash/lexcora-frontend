@@ -282,7 +282,7 @@ const ExpensesTab = () => {
   const handleExportToExcel = useCallback(() => {
     try {
       // Prepare data for export
-      const exportData = expenses.map((expense, index) => ({
+      const exportData = (Array.isArray(expenses) ? expenses : []).map((expense, index) => ({
         '#': index + 1,
         [t('colEmployeeName')]: expense.employee_name || '-',
         [t('colPhone')]: expense.employee_phone || '-',
@@ -403,7 +403,7 @@ const ExpensesTab = () => {
                   </TableRow>
                 </TableHeader>
                   <TableBody>
-                    {expenses.map((expense, index) => (
+                    {Array.isArray(expenses) && expenses.map((expense, index) => (
                       <ExpenseRow
                         key={expense.id}
                         expense={expense}
@@ -440,7 +440,7 @@ const ExpensesTab = () => {
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                     <div className="flex items-center gap-1">
-                      {pageNumbers.map(page => (
+                      {Array.isArray(pageNumbers) && pageNumbers.map(page => (
                         <ExpensePageButton
                           key={page}
                           page={page}

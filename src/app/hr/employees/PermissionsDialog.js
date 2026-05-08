@@ -34,13 +34,15 @@ export default function PermissionsModal({ trigger,id }) {
     // Group permissions by permission_group_name
     const groupedPermissions = useMemo(() => {
         const groups = {};
-        permissions.forEach((permission) => {
-            const groupName = permission.permission_group_name;
-            if (!groups[groupName]) {
-                groups[groupName] = [];
-            }
-            groups[groupName].push(permission);
-        });
+        if (Array.isArray(permissions)) {
+            permissions.forEach((permission) => {
+                const groupName = permission.permission_group_name;
+                if (!groups[groupName]) {
+                    groups[groupName] = [];
+                }
+                groups[groupName].push(permission);
+            });
+        }
         return groups;
     }, [permissions]);
 
@@ -104,11 +106,13 @@ export default function PermissionsModal({ trigger,id }) {
 
     const handleTogglePermission = (permissionId) => {
         setLocalPermissions((prev) =>
-            prev.map((permission) =>
-                permission.id === permissionId
-                    ? { ...permission, isPermissionForThisUser: permission.isPermissionForThisUser === 1 ? 0 : 1 }
-                    : permission
-            )
+            Array.isArray(prev) 
+                ? prev.map((permission) =>
+                    permission.id === permissionId
+                        ? { ...permission, isPermissionForThisUser: permission.isPermissionForThisUser === 1 ? 0 : 1 }
+                        : permission
+                )
+                : []
         );
     };
 
@@ -121,9 +125,11 @@ export default function PermissionsModal({ trigger,id }) {
         if (isSaving) return; // Prevent multiple submissions
         
         // Get only the IDs of permissions that are set to true (checked)
-        const updatedPermissions = localPermissions
-            .filter(permission => permission.isPermissionForThisUser === 1)
-            .map(permission => permission.id);
+        const updatedPermissions = Array.isArray(localPermissions)
+            ? localPermissions
+                .filter(permission => permission.isPermissionForThisUser === 1)
+                .map(permission => permission.id)
+            : [];
         
         setIsSaving(true);
         
@@ -213,8 +219,8 @@ export default function PermissionsModal({ trigger,id }) {
                                     
                                     {/* Permissions Grid */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                        {groupPermissions.map((permission) => {
-                                            const localPermission = localPermissions.find(p => p.id === permission.id);
+                                        {Array.isArray(groupPermissions) && groupPermissions.map((permission) => {
+                                            const localPermission = Array.isArray(localPermissions) ? localPermissions.find(p => p.id === permission.id) : null;
                                             return (
                                                 <label
                                                     key={permission.id}

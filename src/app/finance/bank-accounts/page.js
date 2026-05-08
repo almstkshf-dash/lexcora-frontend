@@ -159,7 +159,7 @@ function BankAccountsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {bankAccounts.map((account) => (
+                  {Array.isArray(bankAccounts) && bankAccounts.map((account) => (
                     <TableRow key={account.id}>
                       <TableCell className="font-medium">
                         {account.bank_name}

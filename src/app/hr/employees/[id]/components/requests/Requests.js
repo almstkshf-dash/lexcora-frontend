@@ -129,7 +129,7 @@ function Requests({ employeeId }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {requests.map((request, index) => (
+                  {Array.isArray(requests) && requests.map((request, index) => (
                     <TableRow key={request.id}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>

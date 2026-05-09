@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Edit } from 'lucide-react';
 import { updateManagerApproval, updateHrApproval } from '@/app/services/api/employeeRequests';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import { toast } from 'react-toastify';
 import {
   Table,
@@ -36,6 +37,8 @@ import ExportButtons from '@/components/ui/export-buttons';
 
 function AdminRequestsView({ requests, onUpdate }) {
   const { isRTL, language } = useLanguage();
+  const t = useTranslations('employeesRequests');
+  const tCommon = useTranslations('common');
 
   // Modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -47,9 +50,14 @@ function AdminRequestsView({ requests, onUpdate }) {
   // Get status badge
   const getStatusBadge = (status) => {
     const config = getStatusBadgeConfig(status, language);
+    // Use standard translations if available, otherwise fallback to config label
+    const label = status === 'approved' ? tCommon('approved') : 
+                  status === 'rejected' ? tCommon('rejected') : 
+                  status === 'pending' ? tCommon('pending') : config.label;
+    
     return (
       <Badge className={config.className}>
-        {config.label}
+        {label}
       </Badge>
     );
   };
@@ -65,7 +73,7 @@ function AdminRequestsView({ requests, onUpdate }) {
   // Handle approval update
   const handleApprovalUpdate = async () => {
     if (!selectedRequest || !approvalStatus) {
-      toast.error(language === 'ar' ? 'الرجاء اختيار الحالة' : 'Please select a status');
+      toast.error(t('pleaseSelectStatus'));
       return;
     }
 
@@ -78,7 +86,7 @@ function AdminRequestsView({ requests, onUpdate }) {
         await updateHrApproval(selectedRequest.id, approvalStatus);
       }
 
-      toast.success(language === 'ar' ? 'تم تحديث حالة الموافقة بنجاح' : 'Approval status updated successfully');
+      toast.success(t('approvalStatusUpdated'));
 
       // Refresh data
       if (onUpdate) onUpdate();
@@ -87,7 +95,7 @@ function AdminRequestsView({ requests, onUpdate }) {
       setSelectedRequest(null);
       setApprovalStatus('');
     } catch (error) {
-      toast.error(language === 'ar' ? 'حدث خطأ أثناء تحديث الحالة' : 'Error updating status');
+      toast.error(t('errorUpdating'));
     } finally {
       setIsSubmitting(false);
     }
@@ -98,7 +106,7 @@ function AdminRequestsView({ requests, onUpdate }) {
       <Card>
         <CardContent className="p-6">
           <p className="text-center text-muted-foreground py-8">
-            {language === 'ar' ? 'لا توجد طلبات تحتاج للموافقة' : 'No requests pending approval'}
+            {t('noRequests')}
           </p>
         </CardContent>
       </Card>
@@ -110,16 +118,19 @@ function AdminRequestsView({ requests, onUpdate }) {
     employee_name: {
       en: 'Employee Name',
       ar: 'اسم الموظف',
+      label: t('employeeName'),
       dataKey: 'employee_name'
     },
     type: {
       en: 'Request Type',
       ar: 'نوع الطلب',
+      label: t('requestType'),
       dataKey: 'type'
     },
     date: {
       en: 'Request Date',
       ar: 'التاريخ',
+      label: t('date'),
       dataKey: 'date',
       type: 'date'
     },
@@ -138,6 +149,7 @@ function AdminRequestsView({ requests, onUpdate }) {
     manager_approval: {
       en: 'Manager Approval',
       ar: 'موافقة المدير',
+      label: t('managerApproval'),
       dataKey: 'manager_approval',
       formatter: (value, item, lang) => {
         if (value === 'approved') return lang === 'ar' ? 'موافق' : 'Approved';
@@ -149,6 +161,7 @@ function AdminRequestsView({ requests, onUpdate }) {
     hr_approval: {
       en: 'HR Approval',
       ar: 'موافقة الموارد البشرية',
+      label: t('hrApproval'),
       dataKey: 'hr_approval',
       formatter: (value, item, lang) => {
         if (value === 'approved') return lang === 'ar' ? 'موافق' : 'Approved';
@@ -166,20 +179,18 @@ function AdminRequestsView({ requests, onUpdate }) {
           <div className="flex flex-col gap-4">
             <div>
               <CardTitle>
-                {language === 'ar' ? 'طلبات الموظفين - عرض المدير' : 'Employee Requests - Admin View'}
+                {t('adminTitle')}
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                {language === 'ar'
-                  ? 'يمكنك الموافقة على الطلبات أو رفضها من جانب الإدارة والموارد البشرية'
-                  : 'You can approve or reject requests from both management and HR side'}
+                {t('adminSubtitle')}
               </p>
             </div>
             <ExportButtons
               data={requests}
               columnConfig={exportColumnConfig}
               language={language}
-              exportName={language === 'ar' ? 'طلبات_الموظفين_المدير' : 'employee_requests_admin'}
-              sheetName={language === 'ar' ? 'الطلبات' : 'Requests'}
+              exportName={t('exportName')}
+              sheetName={t('sheetName')}
             />
           </div>
         </CardHeader>
@@ -188,22 +199,22 @@ function AdminRequestsView({ requests, onUpdate }) {
             <TableHeader>
               <TableRow>
                 <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                  {language === 'ar' ? 'اسم الموظف' : 'Employee Name'}
+                  {t('employeeName')}
                 </TableHead>
                 <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                  {language === 'ar' ? 'نوع الطلب' : 'Request Type'}
+                  {t('requestType')}
                 </TableHead>
                 <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                  {language === 'ar' ? 'التاريخ' : 'Date'}
+                  {t('date')}
                 </TableHead>
                 <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                  {language === 'ar' ? 'موافقة المدير' : 'Manager Approval'}
+                  {t('managerApproval')}
                 </TableHead>
                 <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                  {language === 'ar' ? 'موافقة الموارد البشرية' : 'HR Approval'}
+                  {t('hrApproval')}
                 </TableHead>
                 <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                  {language === 'ar' ? 'الإجراءات' : 'Actions'}
+                  {t('actions')}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -221,19 +232,19 @@ function AdminRequestsView({ requests, onUpdate }) {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleEditClick(request, 'manager')}
-                        title={language === 'ar' ? 'تعديل موافقة المدير' : 'Edit Manager Approval'}
+                        title={t('editManager')}
                       >
                         <Edit className="h-4 w-4 mr-1" />
-                        {language === 'ar' ? 'مدير' : 'Mgr'}
+                        {t('mgr')}
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleEditClick(request, 'hr')}
-                        title={language === 'ar' ? 'تعديل موافقة الموارد البشرية' : 'Edit HR Approval'}
+                        title={t('editHR')}
                       >
                         <Edit className="h-4 w-4 mr-1" />
-                        {language === 'ar' ? 'م.ب' : 'HR'}
+                        {t('hr')}
                       </Button>
                     </div>
                   </TableCell>
@@ -249,16 +260,10 @@ function AdminRequestsView({ requests, onUpdate }) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editType === 'manager'
-                ? (language === 'ar' ? 'موافقة المدير' : 'Manager Approval')
-                : (language === 'ar' ? 'موافقة الموارد البشرية' : 'HR Approval')
-              }
+              {editType === 'manager' ? t('managerApproval') : t('hrApproval')}
             </DialogTitle>
             <DialogDescription>
-              {language === 'ar'
-                ? 'اختر حالة الموافقة للطلب'
-                : 'Select approval status for the request'
-              }
+              {t('modalDescription')}
             </DialogDescription>
           </DialogHeader>
 
@@ -266,33 +271,33 @@ function AdminRequestsView({ requests, onUpdate }) {
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  {language === 'ar' ? 'الموظف:' : 'Employee:'} {selectedRequest.employee_name}
+                  {t('employee')}: {selectedRequest.employee_name}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {language === 'ar' ? 'النوع:' : 'Type:'} {selectedRequest.type}
+                  {t('type')}: {selectedRequest.type}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {language === 'ar' ? 'التاريخ:' : 'Date:'} {formatDate(selectedRequest.date, language)}
+                  {t('date')}: {formatDate(selectedRequest.date, language)}
                 </p>
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">
-                  {language === 'ar' ? 'الحالة' : 'Status'}
+                  {t('status')}
                 </label>
                 <Select value={approvalStatus} onValueChange={setApprovalStatus}>
                   <SelectTrigger>
-                    <SelectValue placeholder={language === 'ar' ? 'اختر الحالة' : 'Select status'} />
+                    <SelectValue placeholder={t('selectStatusPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="approved">
-                      {language === 'ar' ? 'موافق' : 'Approved'}
+                      {tCommon('approved')}
                     </SelectItem>
                     <SelectItem value="rejected">
-                      {language === 'ar' ? 'مرفوض' : 'Rejected'}
+                      {tCommon('rejected')}
                     </SelectItem>
                     <SelectItem value="pending">
-                      {language === 'ar' ? 'قيد الانتظار' : 'Pending'}
+                      {tCommon('pending')}
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -310,16 +315,13 @@ function AdminRequestsView({ requests, onUpdate }) {
               }}
               disabled={isSubmitting}
             >
-              {language === 'ar' ? 'إلغاء' : 'Cancel'}
+              {tCommon('cancel')}
             </Button>
             <Button
               onClick={handleApprovalUpdate}
               disabled={isSubmitting || !approvalStatus}
             >
-              {isSubmitting
-                ? (language === 'ar' ? 'جاري الحفظ...' : 'Saving...')
-                : (language === 'ar' ? 'حفظ' : 'Save')
-              }
+              {isSubmitting ? tCommon('saving') : tCommon('save')}
             </Button>
           </DialogFooter>
         </DialogContent>

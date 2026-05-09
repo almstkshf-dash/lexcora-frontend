@@ -27,26 +27,26 @@ export const isAdminRole = (role) => {
  */
 export const isHRRole = (department, language = 'en') => {
   if (!department) return false;
-  const hrDept = language === 'ar' ? 'الموارد البشرية' : 'Human Resources';
-  return department === hrDept;
+  const dept = department.toLowerCase();
+  return dept === 'human resources' || dept === 'الموارد البشرية' || dept === 'hr';
 };
 
 /**
  * Get status badge configuration
  */
-export const getStatusBadgeConfig = (status, language = 'en') => {
+export const getStatusBadgeConfig = (status) => {
   const configs = {
     approved: {
       className: 'bg-green-500',
-      label: language === 'ar' ? 'موافق' : 'Approved'
+      label: 'Approved'
     },
     rejected: {
       className: 'bg-red-500',
-      label: language === 'ar' ? 'مرفوض' : 'Rejected'
+      label: 'Rejected'
     },
     pending: {
       className: 'bg-yellow-500',
-      label: language === 'ar' ? 'قيد الانتظار' : 'Pending'
+      label: 'Pending'
     }
   };
   

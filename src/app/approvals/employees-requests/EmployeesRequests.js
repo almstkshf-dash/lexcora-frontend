@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import useSWR from 'swr';
 import { getEmployeeRequests } from '@/app/services/api/employeeRequests';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   isAdminRole, 
@@ -19,6 +20,8 @@ import EmployeeRequestsView from './EmployeeRequestsView';
 
 function EmployeesRequests() {
   const { language } = useLanguage();
+  const t = useTranslations('employeesRequests');
+  const tCommon = useTranslations('common');
   
   // Get user information from Redux
   const employeeRole = useSelector((state) => state.auth.roleEn);
@@ -62,7 +65,7 @@ function EmployeesRequests() {
     return (
       <Card className="w-full">
         <CardContent className="p-6">
-          <p className="text-center">{language === 'ar' ? 'جاري التحميل...' : 'Loading...'}</p>
+          <p className="text-center">{tCommon('loading')}</p>
         </CardContent>
       </Card>
     );
@@ -72,10 +75,8 @@ function EmployeesRequests() {
   if (error) {
     return (
       <Card className="w-full">
-        <CardContent className="p-6">
-          <p className="text-center text-red-500">
-            {language === 'ar' ? 'حدث خطأ أثناء تحميل البيانات' : 'Error loading data'}
-          </p>
+        <CardContent className="p-6 text-center">
+          {t('notAuthorized')}
         </CardContent>
       </Card>
     );

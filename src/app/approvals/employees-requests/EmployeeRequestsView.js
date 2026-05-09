@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import {
   Table,
   TableBody,
@@ -20,14 +21,19 @@ import ExportButtons from '@/components/ui/export-buttons';
 
 function EmployeeRequestsView({ requests, onUpdate }) {
   const { isRTL, language } = useLanguage();
+  const t = useTranslations('employeesRequests');
+  const tCommon = useTranslations('common');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   // Get status badge
   const getStatusBadge = (status) => {
     const config = getStatusBadgeConfig(status, language);
+    const label = status === 'approved' ? tCommon('approved') : 
+                  status === 'rejected' ? tCommon('rejected') : 
+                  status === 'pending' ? tCommon('pending') : config.label;
     return (
       <Badge className={config.className}>
-        {config.label}
+        {label}
       </Badge>
     );
   };
@@ -55,29 +61,34 @@ function EmployeeRequestsView({ requests, onUpdate }) {
     type: {
       en: 'Request Type',
       ar: 'نوع الطلب',
+      label: t('requestType'),
       dataKey: 'type'
     },
     date: {
       en: 'Request Date',
       ar: 'التاريخ',
+      label: t('date'),
       dataKey: 'date',
       type: 'date'
     },
     from_date: {
       en: 'From Date',
       ar: 'من تاريخ',
+      label: t('fromDate'),
       dataKey: 'from_date',
       type: 'date'
     },
     to_date: {
       en: 'To Date',
       ar: 'إلى تاريخ',
+      label: t('toDate'),
       dataKey: 'to_date',
       type: 'date'
     },
     manager_approval: {
       en: 'Manager Approval',
       ar: 'موافقة المدير',
+      label: t('managerApproval'),
       dataKey: 'manager_approval',
       formatter: (value, item, lang) => {
         if (value === 'approved') return lang === 'ar' ? 'موافق' : 'Approved';
@@ -89,6 +100,7 @@ function EmployeeRequestsView({ requests, onUpdate }) {
     hr_approval: {
       en: 'HR Approval',
       ar: 'موافقة الموارد البشرية',
+      label: t('hrApproval'),
       dataKey: 'hr_approval',
       formatter: (value, item, lang) => {
         if (value === 'approved') return lang === 'ar' ? 'موافق' : 'Approved';
@@ -100,6 +112,7 @@ function EmployeeRequestsView({ requests, onUpdate }) {
     overall_status: {
       en: 'Overall Status',
       ar: 'الحالة',
+      label: t('status'),
       formatter: (value, item, lang) => {
         // Calculate overall status
         if (item.manager_approval === 'approved' && item.hr_approval === 'approved') {
@@ -121,17 +134,15 @@ function EmployeeRequestsView({ requests, onUpdate }) {
             <div className="flex justify-between items-center">
               <div>
                 <CardTitle>
-                  {language === 'ar' ? 'طلباتي' : 'My Requests'}
+                  {t('myRequests')}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {language === 'ar' 
-                    ? 'يمكنك عرض جميع طلباتك وإنشاء طلبات جديدة' 
-                    : 'View all your requests and create new ones'}
+                  {t('myRequestsSubtitle')}
                 </p>
               </div>
               <Button onClick={() => setIsCreateDialogOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                {language === 'ar' ? 'طلب جديد' : 'New Request'}
+                {t('newRequest')}
               </Button>
             </div>
             {requests && requests.length > 0 && (
@@ -139,8 +150,8 @@ function EmployeeRequestsView({ requests, onUpdate }) {
                 data={requests}
                 columnConfig={exportColumnConfig}
                 language={language}
-                exportName={language === 'ar' ? 'طلباتي' : 'my_requests'}
-                sheetName={language === 'ar' ? 'طلباتي' : 'My Requests'}
+                exportName={t('myRequestsExportName')}
+                sheetName={t('myRequests')}
               />
             )}
           </div>
@@ -149,11 +160,11 @@ function EmployeeRequestsView({ requests, onUpdate }) {
           {!requests || requests.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground mb-4">
-                {language === 'ar' ? 'لا توجد طلبات حتى الآن' : 'No requests yet'}
+                {t('noRequestsYet')}
               </p>
               <Button onClick={() => setIsCreateDialogOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                {language === 'ar' ? 'إنشاء أول طلب' : 'Create Your First Request'}
+                {t('createFirstRequest')}
               </Button>
             </div>
           ) : (
@@ -161,25 +172,25 @@ function EmployeeRequestsView({ requests, onUpdate }) {
               <TableHeader>
                 <TableRow>
                   <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                    {language === 'ar' ? 'نوع الطلب' : 'Request Type'}
+                    {t('requestType')}
                   </TableHead>
                   <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                    {language === 'ar' ? 'التاريخ' : 'Date'}
+                    {t('date')}
                   </TableHead>
                   <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                    {language === 'ar' ? 'من تاريخ' : 'From Date'}
+                    {t('fromDate')}
                   </TableHead>
                   <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                    {language === 'ar' ? 'إلى تاريخ' : 'To Date'}
+                    {t('toDate')}
                   </TableHead>
                   <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                    {language === 'ar' ? 'موافقة المدير' : 'Manager Approval'}
+                    {t('managerApproval')}
                   </TableHead>
                   <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                    {language === 'ar' ? 'موافقة الموارد البشرية' : 'HR Approval'}
+                    {t('hrApproval')}
                   </TableHead>
                   <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                    {language === 'ar' ? 'الحالة' : 'Status'}
+                    {t('status')}
                   </TableHead>
                 </TableRow>
               </TableHeader>

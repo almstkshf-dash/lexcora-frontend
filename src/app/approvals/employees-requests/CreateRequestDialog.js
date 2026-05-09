@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { createEmployeeRequest } from '@/app/services/api/employeeRequests';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +27,8 @@ import { Label } from '@/components/ui/label';
 
 function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
   const { language } = useLanguage();
+  const t = useTranslations('employeesRequests');
+  const tCommon = useTranslations('common');
   const user = useSelector((state) => state.auth.user);
   const employeeId = user?.id;
   
@@ -40,57 +43,57 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
   const requestTypes = [
     { 
       value: 'اجازة سنوية', 
-      label: language === 'ar' ? 'اجازة سنوية' : 'Annual Leave',
+      label: t('types.annualLeave'),
       isLeave: true 
     },
     { 
       value: 'اجازة مرضية', 
-      label: language === 'ar' ? 'اجازة مرضية' : 'Sick Leave',
+      label: t('types.sickLeave'),
       isLeave: true 
     },
     { 
       value: 'اجازة الوضع', 
-      label: language === 'ar' ? 'اجازة الوضع' : 'Paternity Leave',
+      label: t('types.paternityLeave'),
       isLeave: true 
     },
     { 
       value: 'اجازة الحداد', 
-      label: language === 'ar' ? 'اجازة الحداد' : 'Mourning Leave',
+      label: t('types.mourningLeave'),
       isLeave: true 
     },
     { 
       value: 'اجازة التفرغ لإداء الخدمة الوطنية', 
-      label: language === 'ar' ? 'اجازة التفرغ لإداء الخدمة الوطنية' : 'National Service Leave',
+      label: t('types.nationalService'),
       isLeave: true 
     },
     { 
       value: 'اجازة الحج والعمرة', 
-      label: language === 'ar' ? 'اجازة الحج والعمرة' : 'Hajj and Umrah Leave',
+      label: t('types.hajjUmrah'),
       isLeave: true 
     },
     { 
       value: 'شهادة راتب', 
-      label: language === 'ar' ? 'شهادة راتب' : 'Salary Certificate',
+      label: t('types.salaryCertificate'),
       isLeave: false 
     },
     { 
       value: 'شهادة خبرة', 
-      label: language === 'ar' ? 'شهادة خبرة' : 'Experience Certificate',
+      label: t('types.experienceCertificate'),
       isLeave: false 
     },
     { 
       value: 'شهادة لا مانع', 
-      label: language === 'ar' ? 'شهادة لا مانع' : 'No Objection Certificate',
+      label: t('types.noc'),
       isLeave: false 
     },
     { 
       value: 'بدل اجازة سنوية', 
-      label: language === 'ar' ? 'بدل اجازة سنوية' : 'Annual Leave Allowance',
+      label: t('types.annualLeaveAllowance'),
       isLeave: false 
     },
     { 
       value: 'اخرى', 
-      label: language === 'ar' ? 'اخرى' : 'Other',
+      label: t('types.other'),
       isLeave: false 
     }
   ];
@@ -117,18 +120,18 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
   const handleSubmit = async () => {
     // Validation
     if (!formData.type) {
-      toast.error(language === 'ar' ? 'الرجاء اختيار نوع الطلب' : 'Please select request type');
+      toast.error(t('selectRequestType'));
       return;
     }
 
     // Validate dates for leave types only
     if (isLeaveType) {
       if (!formData.from_date) {
-        toast.error(language === 'ar' ? 'الرجاء اختيار تاريخ البداية' : 'Please select from date');
+        toast.error(t('pleaseSelectFromDate'));
         return;
       }
       if (!formData.to_date) {
-        toast.error(language === 'ar' ? 'الرجاء اختيار تاريخ النهاية' : 'Please select to date');
+        toast.error(t('pleaseSelectToDate'));
         return;
       }
     }
@@ -145,7 +148,7 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
 
       await createEmployeeRequest(requestData);
       
-      toast.success(language === 'ar' ? 'تم إنشاء الطلب بنجاح' : 'Request created successfully');
+      toast.success(t('requestCreated'));
       
       // Reset form
       setFormData({
@@ -157,7 +160,7 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
       if (onSuccess) onSuccess();
       if (onClose) onClose();
     } catch (error) {
-      toast.error(language === 'ar' ? 'حدث خطأ أثناء إنشاء الطلب' : 'Error creating request');
+      toast.error(t('errorCreating'));
     } finally {
       setIsSubmitting(false);
     }
@@ -168,13 +171,10 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
-            {language === 'ar' ? 'طلب جديد' : 'New Request'}
+            {t('newRequest')}
           </DialogTitle>
           <DialogDescription>
-            {language === 'ar' 
-              ? 'املأ البيانات التالية لإنشاء طلب جديد'
-              : 'Fill in the details to create a new request'
-            }
+            {t('createRequestSubtitle')}
           </DialogDescription>
         </DialogHeader>
         
@@ -182,7 +182,7 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
           {/* Request Type */}
           <div className="space-y-2">
             <Label htmlFor="type">
-              {language === 'ar' ? 'نوع الطلب' : 'Request Type'}
+              {t('requestType')}
               <span className="text-red-500 ml-1">*</span>
             </Label>
             <Select 
@@ -190,7 +190,7 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
               onValueChange={(value) => handleInputChange('type', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder={language === 'ar' ? 'اختر نوع الطلب' : 'Select request type'} />
+                <SelectValue placeholder={t('selectRequestType')} />
               </SelectTrigger>
               <SelectContent>
                 {requestTypes.map((type) => (
@@ -202,14 +202,7 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
             </Select>
             {formData.type && (
               <p className="text-xs text-muted-foreground">
-                {isLeaveType 
-                  ? (language === 'ar' 
-                      ? 'يتطلب هذا النوع تحديد تواريخ البداية والنهاية' 
-                      : 'This type requires start and end dates')
-                  : (language === 'ar' 
-                      ? 'لا يتطلب هذا النوع تحديد تواريخ' 
-                      : 'This type does not require dates')
-                }
+                {isLeaveType ? t('requiresDates') : t('noDatesRequired')}
               </p>
             )}
           </div>
@@ -218,7 +211,7 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
           {isLeaveType && (
             <div className="space-y-2">
               <Label htmlFor="from_date">
-                {language === 'ar' ? 'من تاريخ' : 'From Date'}
+                {t('fromDate')}
                 <span className="text-red-500 ml-1">*</span>
               </Label>
               <Input
@@ -235,7 +228,7 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
           {isLeaveType && (
             <div className="space-y-2">
               <Label htmlFor="to_date">
-                {language === 'ar' ? 'إلى تاريخ' : 'To Date'}
+                {t('toDate')}
                 <span className="text-red-500 ml-1">*</span>
               </Label>
               <Input
@@ -255,16 +248,13 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
             onClick={onClose}
             disabled={isSubmitting}
           >
-            {language === 'ar' ? 'إلغاء' : 'Cancel'}
+            {tCommon('cancel')}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
           >
-            {isSubmitting 
-              ? (language === 'ar' ? 'جاري الإنشاء...' : 'Creating...')
-              : (language === 'ar' ? 'إنشاء' : 'Create')
-            }
+            {isSubmitting ? t('creating') : t('create')}
           </Button>
         </DialogFooter>
       </DialogContent>

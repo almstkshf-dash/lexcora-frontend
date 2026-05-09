@@ -45,7 +45,29 @@ api.interceptors.request.use(
 
 // Response interceptor to handle auth errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Architectural Guard: Normalize response structure
+    if (response.data && typeof response.data === 'object') {
+      const body = response.data;
+      
+      // If 'data' is missing but 'results' or 'items' exists, normalize it
+      if (body.data === undefined || body.data === null) {
+        if (Array.isArray(body.results)) body.data = body.results;
+        else if (Array.isArray(body.items)) body.data = body.items;
+        else if (Array.isArray(body.employees)) body.data = body.employees;
+        else if (Array.isArray(body.sessions)) body.data = body.sessions;
+        else if (Array.isArray(body.tasks)) body.data = body.tasks;
+      }
+
+      // Final safety check: if we're at a collection endpoint, ensure data is an array
+      const url = response.config?.url || "";
+      const isCollection = !/\/\d+$/.test(url.split('?')[0]); 
+      if (isCollection && body.success && (body.data === undefined || body.data === null)) {
+        body.data = [];
+      }
+    }
+    return response;
+  },
   (error) => {
     // If we get a 401 unauthorized error
     if (error.response && error.response.status === 401) {

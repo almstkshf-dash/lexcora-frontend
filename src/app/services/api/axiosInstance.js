@@ -25,17 +25,17 @@ const getCookie = (name) => {
 api.interceptors.request.use(
   (config) => {
     let token = getCookie('authToken');
-    
+
     // Fallback to localStorage if cookie doesn't exist
     if (!token && typeof window !== 'undefined') {
       token = localStorage.getItem('authToken');
     }
-    
+
     // Add token to Authorization header if it exists
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
+
     return config;
   },
   (error) => {
@@ -46,24 +46,25 @@ api.interceptors.request.use(
 // Response interceptor to handle auth errors
 api.interceptors.response.use(
   (response) => {
-    // Architectural Guard: Normalize response structure
+    // Architectural Guard: Strict Normalization
     if (response.data && typeof response.data === 'object') {
       const body = response.data;
-      
-      // If 'data' is missing but 'results' or 'items' exists, normalize it
+
+      // 1. Map known alternative keys to 'data'
       if (body.data === undefined || body.data === null) {
-        if (Array.isArray(body.results)) body.data = body.results;
-        else if (Array.isArray(body.items)) body.data = body.items;
-        else if (Array.isArray(body.employees)) body.data = body.employees;
-        else if (Array.isArray(body.sessions)) body.data = body.sessions;
-        else if (Array.isArray(body.tasks)) body.data = body.tasks;
+        body.data = Array.isArray(body.results) ? body.results :
+          Array.isArray(body.items) ? body.items :
+            Array.isArray(body.employees) ? body.employees :
+              Array.isArray(body.sessions) ? body.sessions :
+                Array.isArray(body.tasks) ? body.tasks :
+                  body.data;
       }
 
-      // Final safety check: if we're at a collection endpoint, ensure data is an array
+      // 2. Force 'data' to be an array for collection endpoints
       const url = response.config?.url || "";
-      const isCollection = !/\/\d+$/.test(url.split('?')[0]); 
-      if (isCollection && body.success && (body.data === undefined || body.data === null)) {
-        body.data = [];
+      const isCollection = !/\/\d+$/.test(url.split('?')[0]);
+      if (isCollection) {
+        body.data = Array.isArray(body.data) ? body.data : [];
       }
     }
     return response;
@@ -72,14 +73,14 @@ api.interceptors.response.use(
     // If we get a 401 unauthorized error
     if (error.response && error.response.status === 401) {
       const token = getCookie('authToken') || (typeof window !== 'undefined' ? localStorage.getItem('authToken') : null);
-      
+
       // Only redirect if:
       // 1. There's no token at all (user is not logged in)
       // 2. Or it's an authentication endpoint failing (token refresh, login, etc.)
-      const isAuthEndpoint = error.config.url?.includes('/auth/') || 
-                            error.config.url?.includes('/login') ||
-                            error.config.url?.includes('/verify');
-      
+      const isAuthEndpoint = error.config.url?.includes('/auth/') ||
+        error.config.url?.includes('/login') ||
+        error.config.url?.includes('/verify');
+
       if (!token || isAuthEndpoint) {
         // Clear auth data
         if (typeof document !== 'undefined') {

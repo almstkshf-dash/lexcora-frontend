@@ -82,4 +82,7 @@ export const filterEmployeeRequests = (requests, employeeId) => {
   return requests.filter(req => req.employee_id === employeeId);
 };
 
-
+/**
+ * Ensure the input is always an array
+ */
+export const safeArray = (data) => Array.isArray(data) ? data : [];

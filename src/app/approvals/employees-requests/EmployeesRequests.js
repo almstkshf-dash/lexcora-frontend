@@ -47,7 +47,7 @@ function EmployeesRequests() {
   
   // Filter requests based on role
   const getFilteredRequests = () => {
-    const allRequests = data?.data || [];
+    const allRequests = Array.isArray(data?.data) ? data.data : [];
     
     if (isAdmin) {
       return filterAdminRequests(allRequests);

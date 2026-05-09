@@ -92,7 +92,7 @@ function HRRequestsView({ requests, onUpdate }) {
     }
   };
 
-  if (!requests || requests.length === 0) {
+  if (!requests || !Array.isArray(requests) || requests.length === 0) {
     return (
       <Card>
         <CardContent className="p-6">

@@ -71,9 +71,9 @@ export default function EmployeeTransactions() {
 
       if (response.success && response.data) {
         // Filter pending transactions on the client side
-        const pendingTransactions = response.data.filter(
+        const pendingTransactions = Array.isArray(response.data) ? response.data.filter(
           transaction => transaction.status === 'pending' || !transaction.status
-        );
+        ) : [];
         setTransactions(pendingTransactions);
       }
     } catch (error) {

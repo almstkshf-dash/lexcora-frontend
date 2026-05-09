@@ -157,7 +157,7 @@ function EmployeeRequestsView({ requests, onUpdate }) {
           </div>
         </CardHeader>
         <CardContent>
-          {!requests || requests.length === 0 ? (
+          {!requests || !Array.isArray(requests) || requests.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground mb-4">
                 {t('noRequestsYet')}

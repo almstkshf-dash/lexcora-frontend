@@ -28,7 +28,7 @@ function Requests({ employeeId }) {
     () => getRequestsByEmployeeId(employeeId)
   )
 
-  const requests = requestsData?.data || []
+  const requests = Array.isArray(requestsData?.data) ? requestsData.data : []
 
   const handleAddRequest = () => {
     setSelectedRequest(null)
@@ -83,6 +83,7 @@ function Requests({ employeeId }) {
       )
     }
   }
+
 
   if (isLoading) {
     return (

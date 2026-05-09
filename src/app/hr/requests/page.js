@@ -255,7 +255,7 @@ function RequestsPage() {
     () => getEmployeeRequests(queryParams)
   )
 
-  const requests = requestsData?.data || []
+  const requests = Array.isArray(requestsData?.data) ? requestsData.data : []
   const pagination = requestsData?.pagination || { total: 0, page: 1, totalPages: 1 }
 
   // Filter requests by type (leaves vs other requests)
@@ -637,7 +637,7 @@ function RequestsPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {leaveRequests.map((request, index) => (
+                      {Array.isArray(leaveRequests) && leaveRequests.map((request, index) => (
                         <TableRow key={request.id}>
                           <TableCell className="font-medium">
                             {index + 1}
@@ -792,7 +792,7 @@ function RequestsPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {otherRequests.map((request, index) => (
+                      {Array.isArray(otherRequests) && otherRequests.map((request, index) => (
                         <TableRow key={request.id}>
                           <TableCell className="font-medium">
                             {index + 1}

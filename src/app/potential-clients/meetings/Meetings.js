@@ -310,7 +310,7 @@ function Meetings({ headerAction }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.data.map((meeting) => (
+                  {Array.isArray(data?.data) && data.data.map((meeting) => (
                     <TableRow key={meeting.id}>
                       <TableCell className="font-medium">{meeting.id}</TableCell>
                       <TableCell>

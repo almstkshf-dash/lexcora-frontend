@@ -18,18 +18,18 @@ export const useParties = (branchId = 1) => {
   );
 
   return {
-    parties: data?.success ? data.data : [],
+    parties: (data?.success && Array.isArray(data.data)) ? data.data : [],
     isLoading: !data && !error,
     error,
     mutate,
     // Helper methods
     getPartiesByType: (type) => {
-      const parties = data?.success ? data.data : [];
+      const parties = (data?.success && Array.isArray(data.data)) ? data.data : [];
       return parties
     //   return parties.filter(party => party.party_type === type);
     },
     getPartyById: (id) => {
-      const parties = data?.success ? data.data : [];
+      const parties = (data?.success && Array.isArray(data.data)) ? data.data : [];
       return parties.find(party => party.id === parseInt(id));
     }
   };

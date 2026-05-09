@@ -55,7 +55,7 @@ function EmployeeDocuments({ caseId }) {
   );
 
   // Extract documents data from API response
-  const documents = documentsResponse?.success ? documentsResponse.data : [];
+  const documents = (documentsResponse?.success && Array.isArray(documentsResponse.data)) ? documentsResponse.data : [];
 
   // Format date for display
   const formatDate = (dateString) => {

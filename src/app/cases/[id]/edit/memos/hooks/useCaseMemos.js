@@ -18,7 +18,7 @@ export const useCaseMemos = (caseId) => {
   );
 
   return {
-    memos: data?.success ? data.data : [],
+    memos: (data?.success && Array.isArray(data.data)) ? data.data : [],
     isLoading: !data && !error,
     error,
     mutate,

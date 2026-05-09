@@ -310,7 +310,7 @@ function PotentialClients() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.data.map((client) => (
+                  {Array.isArray(data?.data) && data.data.map((client) => (
                     <TableRow key={client.id}>
                       <TableCell className="font-medium">{client.id}</TableCell>
                       <TableCell>

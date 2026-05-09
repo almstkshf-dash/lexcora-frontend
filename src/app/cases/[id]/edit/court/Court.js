@@ -178,12 +178,16 @@ function Court({ caseId }) {
                     <SelectItem value="error" disabled>
                       {isArabic ? 'خطأ في التحميل' : 'Loading error'}
                     </SelectItem>
-                  ) : (
-                    policeStations?.data?.map((station) => (
+                  ) : Array.isArray(policeStations?.data) ? (
+                    policeStations.data.map((station) => (
                       <SelectItem key={station.id} value={station.id.toString()}>
                         {isArabic ? station.name_ar : station.name_en}
                       </SelectItem>
                     ))
+                  ) : (
+                    <SelectItem value="no-data" disabled>
+                      {isArabic ? 'لا توجد بيانات' : 'No data available'}
+                    </SelectItem>
                   )}
                 </SelectContent>
               </Select>
@@ -230,22 +234,15 @@ function Court({ caseId }) {
                     <SelectItem value="error" disabled>
                       {isArabic ? 'خطأ في التحميل' : 'Loading error'}
                     </SelectItem>
-                  ) : publicProsecutions ? (
-                    // Try different data access patterns
-                    (publicProsecutions.data || publicProsecutions)?.length > 0 ? (
-                      (publicProsecutions.data || publicProsecutions).map((prosecution) => (
-                        <SelectItem key={prosecution.id} value={prosecution.id.toString()}>
-                          {isArabic ? prosecution.name_ar : prosecution.name_en}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem value="no-data" disabled>
-                        {isArabic ? 'لا توجد بيانات' : 'No data available'}
+                  ) : Array.isArray(publicProsecutions?.data || publicProsecutions) ? (
+                    (publicProsecutions.data || publicProsecutions).map((prosecution) => (
+                      <SelectItem key={prosecution.id} value={prosecution.id.toString()}>
+                        {isArabic ? prosecution.name_ar : prosecution.name_en}
                       </SelectItem>
-                    )
+                    ))
                   ) : (
-                    <SelectItem value="no-response" disabled>
-                      {isArabic ? 'لا يوجد استجابة' : 'No response'}
+                    <SelectItem value="no-data" disabled>
+                      {isArabic ? 'لا توجد بيانات' : 'No data available'}
                     </SelectItem>
                   )}
                 </SelectContent>
@@ -293,12 +290,16 @@ function Court({ caseId }) {
                     <SelectItem value="error" disabled>
                       {isArabic ? 'خطأ في التحميل' : 'Loading error'}
                     </SelectItem>
-                  ) : (
-                    courts?.data?.map((court) => (
+                  ) : Array.isArray(courts?.data) ? (
+                    courts.data.map((court) => (
                       <SelectItem key={court.id} value={court.id.toString()}>
                         {isArabic ? court.court_ar : court.court_en}
                       </SelectItem>
                     ))
+                  ) : (
+                    <SelectItem value="no-data" disabled>
+                      {isArabic ? 'لا توجد بيانات' : 'No data available'}
+                    </SelectItem>
                   )}
                 </SelectContent>
               </Select>

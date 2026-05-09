@@ -77,7 +77,7 @@ function EditTaskModal({
   )
 
   // Extract employees data from API response
-  const employees = employeesResponse?.success ? employeesResponse.data : []
+  const employees = (employeesResponse?.success && Array.isArray(employeesResponse.data)) ? employeesResponse.data : []
 
   // Populate form when task data is loaded
   useEffect(() => {

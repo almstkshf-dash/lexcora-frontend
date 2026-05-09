@@ -241,7 +241,7 @@ const AddTaskModal = ({ isOpen, onClose, caseId, onTaskAdded }) => {
   ];
 
   // Process employees data
-  const employees = employeesData?.success ? employeesData.data : [];
+  const employees = (employeesData?.success && Array.isArray(employeesData.data)) ? employeesData.data : [];
 
   if (!isOpen) return null;
 

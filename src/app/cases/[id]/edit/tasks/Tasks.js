@@ -46,7 +46,7 @@ function Tasks({ caseId }) {
   )
 
   // Extract employees data from API response
-  const employees = employeesResponse?.success ? employeesResponse.data : []
+  const employees = (employeesResponse?.success && Array.isArray(employeesResponse.data)) ? employeesResponse.data : []
 
 
 

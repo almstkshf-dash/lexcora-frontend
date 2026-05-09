@@ -130,7 +130,7 @@ function Executions({ caseId }) {
     )
   }
 
-  const executions = executionsData?.data || []
+  const executions = Array.isArray(executionsData?.data) ? executionsData.data : []
 
   if (executions.length === 0) {
     return (

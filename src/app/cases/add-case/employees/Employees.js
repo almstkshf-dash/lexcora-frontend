@@ -58,7 +58,7 @@ function Employees() {
   });
 
   const employees = useMemo(
-    () => (employeesResponse?.success ? employeesResponse.data : []),
+    () => (employeesResponse?.success ? (Array.isArray(employeesResponse.data) ? employeesResponse.data : []) : []),
     [employeesResponse]
   );
 

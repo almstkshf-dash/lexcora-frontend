@@ -92,7 +92,7 @@ function Orders({ partyId }) {
     )
   }
 
-  const orders = data || []
+  const orders = data?.success && Array.isArray(data.data) ? data.data : (Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []))
 
   const formatDate = (dateString) => {
     if (!dateString) return '-'

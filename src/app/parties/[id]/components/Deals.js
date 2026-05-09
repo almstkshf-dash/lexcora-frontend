@@ -133,7 +133,7 @@ function Deals({ partyId }) {
     )
   }
 
-  const deals = data?.data || []
+  const deals = data?.success && Array.isArray(data.data) ? data.data : (Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []))
 
   const formatDate = (dateString) => {
     if (!dateString) return '-'

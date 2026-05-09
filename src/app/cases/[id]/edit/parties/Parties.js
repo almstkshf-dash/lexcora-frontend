@@ -36,7 +36,7 @@ function Parties({ caseId }) {
     () => getCaseParties(caseId)
   )
 
-  const parties = partiesResponse?.data || []
+  const parties = Array.isArray(partiesResponse?.data) ? partiesResponse.data : []
 
   // Function to translate party type using the translation system
   const translatePartyType = (type) => {

@@ -157,15 +157,15 @@ function CaseDetailsPage({ params }) {
     </Badge>
   );
 
-  const casePartyRows = parties || [];
-  const sessionRows = sessions || [];
-  const taskRows = tasks || [];
-  const executionRows = executions || [];
-  const judicialRows = judicial || [];
-  const degreeRows = degrees || [];
-  const petitionRows = petition || [];
-  const relatedFileRows = relatedFiles || [];
-  const relatedCaseRows = relatedCases || [];
+  const casePartyRows = Array.isArray(parties) ? parties : [];
+  const sessionRows = Array.isArray(sessions) ? sessions : [];
+  const taskRows = Array.isArray(tasks) ? tasks : [];
+  const executionRows = Array.isArray(executions) ? executions : [];
+  const judicialRows = Array.isArray(judicial) ? judicial : [];
+  const degreeRows = Array.isArray(degrees) ? degrees : [];
+  const petitionRows = Array.isArray(petition) ? petition : [];
+  const relatedFileRows = Array.isArray(relatedFiles) ? relatedFiles : [];
+  const relatedCaseRows = Array.isArray(relatedCases) ? relatedCases : [];
 
   return (
     <div className="min-h-screen bg-white p-8 print:p-6 print:min-h-0 print:h-auto print-container print-full-width" dir={direction}>

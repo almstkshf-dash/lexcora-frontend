@@ -48,7 +48,7 @@ function RelatedCases() {
     try {
       setLoading(true);
       const response = await searchCasesForAddNewCasePage(term);
-      if (response.success) {
+      if (response.success && Array.isArray(response.data)) {
         setAvailableCases(response.data);
       } else {
         setAvailableCases([]);

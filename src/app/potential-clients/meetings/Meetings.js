@@ -289,7 +289,7 @@ function Meetings({ headerAction }) {
               <div className="flex items-center justify-center py-12 text-destructive">
                 <p>{t("meetings.messages.error")}</p>
               </div>
-            ) : !data?.data || data.data.length === 0 ? (
+            ) : !Array.isArray(data?.data) || data.data.length === 0 ? (
               <div className="flex items-center justify-center py-12 text-muted-foreground">
                 <p>{t("meetings.messages.noResults")}</p>
               </div>

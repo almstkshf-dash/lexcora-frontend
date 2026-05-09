@@ -33,7 +33,7 @@ function Petitions({ caseId }) {
     () => getCasePetitionsByCaseId(caseId)
   )
 
-  const petitions = petitionsResponse?.data || []
+  const petitions = Array.isArray(petitionsResponse?.data) ? petitionsResponse.data : []
 
   const handleSubmit = async (formData) => {
     try {

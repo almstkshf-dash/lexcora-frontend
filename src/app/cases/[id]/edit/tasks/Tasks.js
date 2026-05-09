@@ -312,7 +312,7 @@ function Tasks({ caseId }) {
         </div>
       </CardHeader>
       <CardContent>
-        {(!tasks || tasks.length === 0) ? (
+        {(!Array.isArray(tasks) || tasks.length === 0) ? (
           <div className="flex justify-center items-center py-8">
             <div className="text-muted-foreground">
               {t('tasks.noTasks') || 'No tasks found for this case'}

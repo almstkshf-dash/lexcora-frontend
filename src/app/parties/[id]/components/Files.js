@@ -182,7 +182,7 @@ function Files({ partyId }) {
     )
   }
 
-  const documents = data?.data || []
+  const documents = data?.success && Array.isArray(data.data) ? data.data : (Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []))
 
   return (
     <>

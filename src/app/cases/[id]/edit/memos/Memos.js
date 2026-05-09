@@ -127,7 +127,7 @@ function Memos({ caseId }) {
           </div>
         </CardHeader>
         <CardContent>
-          {memos.length === 0 ? (
+          {(!Array.isArray(memos) || memos.length === 0) ? (
             <div className="text-center py-8 text-muted-foreground">
               {t('memos.noMemos')}
             </div>

@@ -36,7 +36,7 @@ import ExportButtons from '@/components/ui/export-buttons';
 
 function AdminRequestsView({ requests, onUpdate }) {
   const { isRTL, language } = useLanguage();
-  
+
   // Modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -68,21 +68,21 @@ function AdminRequestsView({ requests, onUpdate }) {
       toast.error(language === 'ar' ? 'الرجاء اختيار الحالة' : 'Please select a status');
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       if (editType === 'manager') {
         await updateManagerApproval(selectedRequest.id, approvalStatus);
       } else {
         await updateHrApproval(selectedRequest.id, approvalStatus);
       }
-      
+
       toast.success(language === 'ar' ? 'تم تحديث حالة الموافقة بنجاح' : 'Approval status updated successfully');
-      
+
       // Refresh data
       if (onUpdate) onUpdate();
-      
+
       setIsEditModalOpen(false);
       setSelectedRequest(null);
       setApprovalStatus('');
@@ -93,7 +93,7 @@ function AdminRequestsView({ requests, onUpdate }) {
     }
   };
 
-  if (!requests || requests.length === 0) {
+  if (!requests || !Array.isArray(requests) || requests.length === 0) {
     return (
       <Card>
         <CardContent className="p-6">
@@ -169,8 +169,8 @@ function AdminRequestsView({ requests, onUpdate }) {
                 {language === 'ar' ? 'طلبات الموظفين - عرض المدير' : 'Employee Requests - Admin View'}
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                {language === 'ar' 
-                  ? 'يمكنك الموافقة على الطلبات أو رفضها من جانب الإدارة والموارد البشرية' 
+                {language === 'ar'
+                  ? 'يمكنك الموافقة على الطلبات أو رفضها من جانب الإدارة والموارد البشرية'
                   : 'You can approve or reject requests from both management and HR side'}
               </p>
             </div>
@@ -243,7 +243,7 @@ function AdminRequestsView({ requests, onUpdate }) {
           </Table>
         </CardContent>
       </Card>
-      
+
       {/* Edit Approval Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent>
@@ -255,13 +255,13 @@ function AdminRequestsView({ requests, onUpdate }) {
               }
             </DialogTitle>
             <DialogDescription>
-              {language === 'ar' 
+              {language === 'ar'
                 ? 'اختر حالة الموافقة للطلب'
                 : 'Select approval status for the request'
               }
             </DialogDescription>
           </DialogHeader>
-          
+
           {selectedRequest && (
             <div className="space-y-4">
               <div>
@@ -275,7 +275,7 @@ function AdminRequestsView({ requests, onUpdate }) {
                   {language === 'ar' ? 'التاريخ:' : 'Date:'} {formatDate(selectedRequest.date, language)}
                 </p>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">
                   {language === 'ar' ? 'الحالة' : 'Status'}
@@ -299,7 +299,7 @@ function AdminRequestsView({ requests, onUpdate }) {
               </div>
             </div>
           )}
-          
+
           <DialogFooter>
             <Button
               variant="outline"
@@ -316,7 +316,7 @@ function AdminRequestsView({ requests, onUpdate }) {
               onClick={handleApprovalUpdate}
               disabled={isSubmitting || !approvalStatus}
             >
-              {isSubmitting 
+              {isSubmitting
                 ? (language === 'ar' ? 'جاري الحفظ...' : 'Saving...')
                 : (language === 'ar' ? 'حفظ' : 'Save')
               }

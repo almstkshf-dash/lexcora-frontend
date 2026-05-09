@@ -115,7 +115,7 @@ function Notifications({ caseId }) {
 
   // Process orders data
   const orders = React.useMemo(() => {
-    if (!ordersData?.success || !ordersData?.data) return [];
+    if (!ordersData?.success || !Array.isArray(ordersData?.data)) return [];
     return ordersData.data;
   }, [ordersData]);
 

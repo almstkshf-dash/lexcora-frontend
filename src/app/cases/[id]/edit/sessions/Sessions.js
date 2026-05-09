@@ -34,7 +34,7 @@ function Sessions({ caseId }) {
     () => getCaseSessions(caseId)
   )
 
-  const sessions = sessionsResponse?.data || []
+  const sessions = Array.isArray(sessionsResponse?.data) ? sessionsResponse.data : []
 
   const formatDate = (dateString) => {
     if (!dateString) return '-'

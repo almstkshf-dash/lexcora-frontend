@@ -54,7 +54,7 @@ function Stages({ caseId }) {
 
   // Handle edit action
   const handleEdit = (degreeId) => {
-    const degrees = data?.data || []
+    const degrees = Array.isArray(data?.data) ? data.data : []
     const degree = degrees.find(d => d.id === degreeId)
     if (degree) {
       setSelectedDegree(degree)
@@ -64,7 +64,7 @@ function Stages({ caseId }) {
 
   // Handle delete action
   const handleDelete = (degreeId) => {
-    const degrees = data?.data || []
+    const degrees = Array.isArray(data?.data) ? data.data : []
     const degree = degrees.find(d => d.id === degreeId)
     if (degree) {
       setDegreeToDelete(degree)
@@ -131,7 +131,7 @@ function Stages({ caseId }) {
     )
   }
 
-  const degrees = data?.data || []
+  const degrees = Array.isArray(data?.data) ? data.data : []
 
   return (
     <div className="space-y-4">

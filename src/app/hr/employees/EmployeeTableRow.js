@@ -36,8 +36,8 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
         toast.error(response.message || (isArabic ? 'حدث خطأ أثناء حذف الموظف' : 'Error deleting employee'));
       }
     } catch (error) {
-
-      toast.error(isArabic ? 'حدث خطأ أثناء حذف الموظف' : 'Error deleting employee');
+      const errorMessage = error.message || (isArabic ? 'حدث خطأ أثناء حذف الموظف' : 'Error deleting employee');
+      toast.error(errorMessage);
     } finally {
       setIsDeleting(false);
     }

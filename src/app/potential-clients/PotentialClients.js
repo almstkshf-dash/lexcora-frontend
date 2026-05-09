@@ -289,7 +289,7 @@ function PotentialClients() {
               <div className="flex items-center justify-center py-12 text-destructive">
                 <p>{t("potentialClientsPage.messages.error")}</p>
               </div>
-            ) : !data?.data || data.data.length === 0 ? (
+            ) : !Array.isArray(data?.data) || data.data.length === 0 ? (
               <div className="flex items-center justify-center py-12 text-muted-foreground">
                 <p>{t("potentialClientsPage.messages.noResults")}</p>
               </div>

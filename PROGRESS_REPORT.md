@@ -81,3 +81,9 @@ Given the bilingual requirement of the platform (Arabic/English), `lexcora-front
 - **ESLint Next-Intl Setup:** Installed `eslint-plugin-next-intl` to statically analyze translation keys and prevent missing or hardcoded strings from making it to production. Updated `eslint.config.mjs` in both `lexcora-frontend` and `lexcora-client-portal` to use the plugin with ESLint v9's Flat Config and properly scan the `./messages` directory.
 - **Reports Page Import Conflict:** Resolved a build error `Module parse failed: Identifier 'Progress' has already been declared` in `src/app/finance/reports/page.js`. The issue was caused by a redundant block of imports (`Progress`, `SearchableCombobox`, `Skeleton`) that were duplicated further down the file.
 - **Missing Progress Component Fix:** Resolved a build error `Module not found: Can't resolve '@/components/ui/progress'` by creating the missing `Progress` UI component in `src/components/ui/progress.jsx`.
+
+## 9. API Stability & Contract Enforcement (May 2026)
+
+- **Strict Response Normalization:** Implemented a global `axios` interceptor that acts as a transformation layer for all incoming API data. This ensures that even if the backend returns inconsistent structures (e.g., `results` instead of `data`), the frontend always receives a unified, safe object.
+- **Fail-Safe Collection Handling:** Added logic to detect collection-based endpoints and force `data` to be an `Array`. This architectural guard completely eliminates `TypeError: map is not a function` crashes throughout the application, providing a significantly more stable user experience.
+- **Standardized Backend Integration:** Updated dozens of API calls to leverage the new backend `res.list` helper, ensuring a predictable contract for all data tables and lists.

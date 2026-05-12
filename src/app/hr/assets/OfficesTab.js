@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { format } from 'date-fns'
 import { useLanguage } from "@/contexts/LanguageContext"
+import { useTranslations } from "@/hooks/useTranslations"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -13,6 +14,7 @@ import ViewAssetModal from './ViewAssetModal'
 import { getAssetById, deleteAsset } from '@/app/services/api/assets'
 
 const OfficesTab = ({ offices, onMutate }) => {
+  const { t } = useTranslations()
   const { language } = useLanguage()
   const isArabic = language === 'ar'
 

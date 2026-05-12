@@ -10,8 +10,8 @@ export default function ConfirmDeleteDialog({ trigger, onConfirm }) {
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent dir="rtl">
         <DialogHeader>
-          <DialogTitle asChild>
-            <span className="text-lg text-center font-bold">{t('admins.confirmDelete')}</span>
+          <DialogTitle className="text-lg text-center font-bold">
+            {t('admins.confirmDelete')}
           </DialogTitle>
         </DialogHeader>
         <div className="py-4 text-end">{t('admins.confirmDeleteMessage')}</div>

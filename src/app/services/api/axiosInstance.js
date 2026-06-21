@@ -62,9 +62,14 @@ api.interceptors.response.use(
 
       // 2. Force 'data' to be an array for collection endpoints
       const url = response.config?.url || "";
-      const isCollection = !/\/\d+$/.test(url.split('?')[0]);
+      const method = response.config?.method?.toLowerCase() || "";
+      const isCollection = method === 'get' && !/\/\d+$/.test(url.split('?')[0]);
       if (isCollection) {
-        body.data = Array.isArray(body.data) ? body.data : [];
+        const isAuthRoute = /\/(auth|login|logout)/i.test(url);
+        const isSingleResource = /\/(settings|profile|summary|stats|config|details)/i.test(url);
+        if (!isAuthRoute && !isSingleResource) {
+          body.data = Array.isArray(body.data) ? body.data : [];
+        }
       }
     }
     return response;

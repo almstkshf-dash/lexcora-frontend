@@ -87,3 +87,7 @@ Given the bilingual requirement of the platform (Arabic/English), `lexcora-front
 - **Strict Response Normalization:** Implemented a global `axios` interceptor that acts as a transformation layer for all incoming API data. This ensures that even if the backend returns inconsistent structures (e.g., `results` instead of `data`), the frontend always receives a unified, safe object.
 - **Fail-Safe Collection Handling:** Added logic to detect collection-based endpoints and force `data` to be an `Array`. This architectural guard completely eliminates `TypeError: map is not a function` crashes throughout the application, providing a significantly more stable user experience.
 - **Standardized Backend Integration:** Updated dozens of API calls to leverage the new backend `res.list` helper, ensuring a predictable contract for all data tables and lists.
+
+## 10. Bug Fixes & Interceptor Refinements (June 2026)
+
+- **Refined Response Normalization:** Resolved an issue where the axios response interceptor was overly aggressive, converting non-collection GET requests (such as `/auth/me` and settings endpoints) and non-GET requests (like `/auth/login`) into empty arrays because they did not end with a numeric ID. The interceptor was refined to only force collection array normalization for GET requests that do not target authentication, settings, or other single-resource endpoints. This restores functionality to the login, user profile check, and tasks list loading screens.

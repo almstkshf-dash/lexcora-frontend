@@ -68,7 +68,7 @@ const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen || !isClient) return null;
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-40 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -77,7 +77,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 
       {/* Modal Content */}
       <div
-        className="relative z-10 bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto w-full max-w-4xl border border-border"
+        className="relative z-50 bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto w-full max-w-4xl border border-border"
         onClick={(e) => e.stopPropagation()}
       >
         {children}
@@ -112,7 +112,7 @@ const CredentialsDisplayModal = ({ isOpen, onClose, username, password }) => {
           {t('employees.newCredentials') || 'بيانات الدخول للموظف'}
         </h3>
         <p className="text-sm text-muted-foreground mb-4">
-          {t('employees.credentialsSaveWarning') || 'تم حفظ بيانات الموظف بنجاح. يرجى حفظ اسم المستخدم وكلمة المرور أدناه لاستخدامها في تسجيل الدخول:'}
+          {t('employees.credentialsSaveWarning') || 'تم حفظ بيانات الموظف بنجاح. يرجى حفظ اسم المستخدم وكلمة المرور أدناه لاستخدامهما في تسجيل الدخول.'}
         </p>
         
         <div className="space-y-3 bg-muted p-4 rounded-lg mb-6 border border-border">

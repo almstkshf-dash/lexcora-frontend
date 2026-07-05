@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { createEmployeeRequest } from '@/app/services/api/employeeRequests';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useResolvedUser } from '@/hooks/useResolvedUser';
 import { useTranslations } from '@/hooks/useTranslations';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
@@ -29,8 +30,7 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
   const { language } = useLanguage();
   const t = useTranslations('employeesRequests');
   const tCommon = useTranslations('common');
-  const user = useSelector((state) => state.auth.user);
-  const employeeId = user?.id;
+  const { userId: employeeId } = useResolvedUser();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({

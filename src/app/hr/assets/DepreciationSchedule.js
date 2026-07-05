@@ -36,15 +36,19 @@ const DepreciationSchedule = ({ schedule }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {schedule.map((row) => (
-            <TableRow key={row.period}>
-              <TableCell>{row.period}</TableCell>
-              <TableCell>{format(new Date(row.date), 'yyyy-MM-dd')}</TableCell>
-              <TableCell>{row.depreciation.toLocaleString(undefined, { minimumFractionDigits: 2 })}</TableCell>
-              <TableCell>{row.totalDepreciation.toLocaleString(undefined, { minimumFractionDigits: 2 })}</TableCell>
-              <TableCell>{row.bookValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</TableCell>
-            </TableRow>
-          ))}
+          {schedule.map((row) => {
+            const dateObj = row.date ? new Date(row.date) : null;
+            const isValidDate = dateObj && !isNaN(dateObj.getTime());
+            return (
+              <TableRow key={row.period}>
+                <TableCell>{row.period}</TableCell>
+                <TableCell>{isValidDate ? format(dateObj, 'yyyy-MM-dd') : '-'}</TableCell>
+                <TableCell>{row.depreciation.toLocaleString(undefined, { minimumFractionDigits: 2 })}</TableCell>
+                <TableCell>{row.totalDepreciation.toLocaleString(undefined, { minimumFractionDigits: 2 })}</TableCell>
+                <TableCell>{row.bookValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>

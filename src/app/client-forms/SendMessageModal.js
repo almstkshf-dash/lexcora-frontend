@@ -44,9 +44,11 @@ export default function SendMessageModal({ config, template, isArabic, onClose }
     setUploading(true)
     try {
       const result = await uploadFile(file, 'client-messages')
-      if (result?.document_url) {
-        setAttachments(prev => [...prev, { name: file.name, url: result.document_url }])
+      if (result?.success && result?.file?.document_url) {
+        setAttachments(prev => [...prev, { name: file.name, url: result.file.document_url }])
         toast.success(t('clientMessages.uploadSuccess') || 'File uploaded')
+      } else {
+        toast.error(result?.error || (t('clientMessages.uploadError') || 'Upload failed'))
       }
     } catch { toast.error(t('clientMessages.uploadError') || 'Upload failed') }
     finally { setUploading(false) }

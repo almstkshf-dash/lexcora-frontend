@@ -12,9 +12,11 @@ import { ar } from "date-fns/locale";
 import { useTranslations } from "@/hooks/useTranslations";
 import { DEFAULT_CURRENCY, CURRENCY_NAMES } from '@/app/finance/constants';
 import { getGlobalSettings } from "@/app/services/api/settings";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
   const t = useTranslations('invoices');
+  const { isRTL, language } = useLanguage();
   const [invoice, setInvoice] = useState(null);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -185,6 +187,8 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
   const getCurrencyName = (currency) => {
     return CURRENCY_NAMES[currency] || { ar: currency, en: currency };
   };
+
+
 
   const loadData = async () => {
     try {
@@ -467,7 +471,24 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
   const formatDate = (dateString) => {
     if (!dateString) return '-';
     try {
-      return format(parseISO(dateString), "dd/MM/yyyy");
+      const date = new Date(dateString);
+      const isAr = language === 'ar';
+      
+      const year = date.getFullYear();
+      let month = '' + (date.getMonth() + 1);
+      let day = '' + date.getDate();
+      let hours = date.getHours();
+      let minutes = '' + date.getMinutes();
+      
+      const ampm = hours >= 12 ? (isAr ? 'م' : 'PM') : (isAr ? 'ص' : 'AM');
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+      if (minutes.length < 2) minutes = '0' + minutes;
+      
+      return `${day}/${month}/${year} - ${hours}:${minutes} ${ampm}`;
     } catch {
       return dateString;
     }

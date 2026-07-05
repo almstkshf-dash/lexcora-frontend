@@ -49,7 +49,9 @@ const AddPartyModal = ({ onPartyAdded, children, initialPartyType = "" }) => {
     branch_id: 1,
     consultation_type: "",
     passport: "",
-    is_vip: false
+    is_vip: false,
+    username: "",
+    password: ""
   });
 
   // Fetch branches
@@ -139,7 +141,9 @@ const AddPartyModal = ({ onPartyAdded, children, initialPartyType = "" }) => {
       branch_id: 1,
       consultation_type: "",
       passport: "",
-      is_vip: false
+      is_vip: false,
+      username: "",
+      password: ""
     });
     setPartyFiles([]);
   };
@@ -207,19 +211,22 @@ const AddPartyModal = ({ onPartyAdded, children, initialPartyType = "" }) => {
 
       const response = await createParty(partyDataWithFiles);
       
-      if (response.success) {
-        toast.success(t('parties.partyAddedSuccess') || "تم إضافة الطرف بنجاح");
-        resetForm();
-        setOpen(false);
-        if (onPartyAdded) {
-          // Pass the new party data with the returned ID
-          onPartyAdded({
-            ...formData,
-            id: response.data?.id ?? response.id
-          });
-        }
-      } else {
-        toast.error(t('parties.partyAddError') || "حدث خطأ أثناء إضافة الطرف");
+      // Check if response indicates failure
+      if (response?.success === false) {
+        toast.error(response?.message || t('parties.partyAddError') || "حدث خطأ أثناء إضافة الطرف");
+        return;
+      }
+      
+      // Success
+      toast.success(t('parties.partyAddedSuccess') || "تم إضافة الطرف بنجاح");
+      resetForm();
+      setOpen(false);
+      if (onPartyAdded) {
+        // Pass the new party data with the returned ID
+        onPartyAdded({
+          ...formData,
+          id: response.data?.id ?? response.id
+        });
       }
     } catch (error) {
       console.error('Error adding party:', error);
@@ -355,6 +362,29 @@ const AddPartyModal = ({ onPartyAdded, children, initialPartyType = "" }) => {
               value={formData.nationality}
               onChange={(e) => handleInputChange("nationality", e.target.value)}
               placeholder={t('parties.nationalityExample') || 'مثال: الإمارات العربية المتحدة'}
+            />
+          </div>
+
+          {/* Username */}
+          <div className="space-y-2">
+            <Label htmlFor="edit-case-party-username">{t('parties.username') || 'اسم المستخدم'}</Label>
+            <Input
+              id="edit-case-party-username"
+              value={formData.username}
+              onChange={(e) => handleInputChange("username", e.target.value)}
+              placeholder={t('parties.usernamePlaceholder') || 'اسم المستخدم للدخول'}
+            />
+          </div>
+
+          {/* Password */}
+          <div className="space-y-2">
+            <Label htmlFor="edit-case-party-password">{t('parties.password') || 'كلمة المرور'}</Label>
+            <Input
+              id="edit-case-party-password"
+              type="password"
+              value={formData.password}
+              onChange={(e) => handleInputChange("password", e.target.value)}
+              placeholder={t('parties.passwordPlaceholder') || 'كلمة المرور'}
             />
           </div>
 

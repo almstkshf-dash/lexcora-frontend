@@ -9,16 +9,18 @@ export function useTaskUtils() {
   const { t } = useTranslations();
 
   const PRIORITY_COLORS = {
-    urgent: 'destructive',
-    high: 'destructive',
-    normal: 'secondary'
+    low: 'bg-green-100 text-green-800 border-green-200 hover:bg-green-100',
+    medium: 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100',
+    normal: 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100',
+    high: 'bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-100',
+    urgent: 'bg-red-100 text-red-800 border-red-200 hover:bg-red-100'
   };
 
   const STATUS_COLORS = {
-    completed: 'default',
-    in_progress: 'secondary',
-    pending: 'outline',
-    cancelled: 'destructive'
+    completed: 'bg-green-100 text-green-800 border-green-200 hover:bg-green-100',
+    in_progress: 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100',
+    pending: 'bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-100',
+    cancelled: 'bg-red-100 text-red-800 border-red-200 hover:bg-red-100'
   };
 
   const PRIORITY_LABELS = {

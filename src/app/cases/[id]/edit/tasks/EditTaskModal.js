@@ -82,7 +82,7 @@ function EditTaskModal({
   // Populate form when task data is loaded
   useEffect(() => {
     if (isOpen && taskData) {
-      const task = taskData
+      const task = taskData.data || taskData
       setFormData({
         title: task.title || "",
         description: task.description || "",
@@ -150,7 +150,7 @@ function EditTaskModal({
           due_date: formData.dueDate ? format(formData.dueDate, "yyyy-MM-dd") : null,
           priority: formData.priority,
           status: formData.status,
-          case_id: taskData.case_id, // Get case_id from loaded task data
+          case_id: (taskData.data || taskData).case_id, // Get case_id from loaded task data
           files: formData.attachedFiles || [],
         }
         

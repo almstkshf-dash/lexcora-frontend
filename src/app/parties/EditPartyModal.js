@@ -213,6 +213,8 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
       status: "active",
       nationality: "",
       branch_id: 1,
+      consultation_type: "",
+      passport: "",
       is_vip: false,
       username: "",
       password: ""

@@ -35,7 +35,44 @@ export default function RootLayout({ children }) {
     className={`${notoSansArabic.className} ${notoSansArabic.variable}`}
     data-scroll-behavior="smooth"
     >
-      <head />
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const savedFont = localStorage.getItem('selectedFont');
+                if (savedFont) {
+                  const fonts = {
+                    cairo: 'Cairo, sans-serif',
+                    tajawal: 'Tajawal, sans-serif',
+                    amiri: 'Amiri, serif',
+                    'noto-sans-arabic': 'Noto Sans Arabic, sans-serif',
+                    inter: 'Inter, sans-serif'
+                  };
+                  const fontFamily = fonts[savedFont];
+                  if (fontFamily) {
+                    const fontUrls = {
+                      tajawal: 'https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700&display=swap',
+                      amiri: 'https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap',
+                      'noto-sans-arabic': 'https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap',
+                      inter: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
+                    };
+                    const url = fontUrls[savedFont];
+                    if (url) {
+                      const link = document.createElement('link');
+                      link.id = 'google-font-' + savedFont;
+                      link.rel = 'stylesheet';
+                      link.href = url;
+                      document.head.appendChild(link);
+                    }
+                    document.documentElement.style.setProperty('--font-arabic-system', fontFamily + ", 'Arial Unicode MS', 'Tahoma', 'Microsoft Sans Serif', 'Segoe UI', Arial, sans-serif");
+                  }
+                }
+              } catch (e) {}
+            `
+          }}
+        />
+      </head>
       <body
         className="font-system-arabic antialiased"
       >

@@ -70,7 +70,7 @@ const RequestModal = ({
 
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
-    employee_id: '', type: '',
+    employee_id: '', type: '', date: '',
     from_date: null, to_date: null,
     reason: '', notes: '',
     manager_approval: 'pending',
@@ -99,6 +99,7 @@ const RequestModal = ({
       setFormData({
         employee_id:       request.employee_id,
         type:              request.type,
+        date:              request.date ? new Date(request.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
         from_date:         request.from_date ? new Date(request.from_date) : null,
         to_date:           request.to_date   ? new Date(request.to_date)   : null,
         reason:            request.reason    || '',
@@ -116,7 +117,7 @@ const RequestModal = ({
       })
     } else {
       setFormData({
-        employee_id: '', type: '',
+        employee_id: '', type: '', date: new Date().toISOString().split('T')[0],
         from_date: null, to_date: null,
         reason: '', notes: '',
         manager_approval: 'pending', hr_approval: 'pending',
@@ -163,7 +164,8 @@ const RequestModal = ({
     try {
       const base = {
         employee_id: formData.employee_id,
-        type: formData.type,
+        type: formData.type || request?.type || '',
+        date: formData.date ? new Date(formData.date).toISOString().split('T')[0] : (request?.date ? new Date(request.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
         from_date: isLeaveType && formData.from_date ? format(formData.from_date, 'yyyy-MM-dd') : null,
         to_date:   isLeaveType && formData.to_date   ? format(formData.to_date,   'yyyy-MM-dd') : null,
         reason: formData.reason || null,

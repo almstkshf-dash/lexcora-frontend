@@ -21,7 +21,7 @@ function AiButton() {
       >
         <span className="sr-only">{isRTL ? "راصد" : "Rased Assistant"}</span>
         <div className="relative h-14 w-14 rounded-full overflow-hidden border border-primary/20 shadow-md bg-background shrink-0">
-          <Image src="/images/rased-icon.jpg" alt="Rased" width={56} height={56} className="h-full w-full object-cover" />
+          <Image src="/images/rased-icon.jpg" alt="Rased" fill className="object-cover" />
         </div>
         <span className="text-base font-bold hidden md:inline px-3 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
           {isRTL ? 'اسأل راصد' : 'Ask Rased'}

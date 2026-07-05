@@ -258,3 +258,10 @@ Given the bilingual requirement of the platform (Arabic/English), `lexcora-front
     4. [EditAccountModal.js](file:///c:/projects/lexcora-frontend/src/app/finance/bank-accounts/components/EditAccountModal.js) (bank name, account name, account number, and current balance inputs).
   - This unifies form validation visuals globally so that all inputs across HR, Finance, and Accounts modules instantly display inline red borders next to their error text.
 
+## 22. Uploads, Fonts, and React/Next Warnings Resolved (July 2026)
+
+- **Local Dev Upload 500 Fix**: Configured the Express backend to load environment variables from both `.env.local` and `.env` in `api/index.js`, ensuring `BLOB_READ_WRITE_TOKEN` is available to the `@vercel/blob` storage client locally.
+- **Frontend uploadFile Return Check**: Fixed `EditTemplateModal.js` and `SendMessageModal.js` which were checking `result?.document_url` instead of `result?.success && result?.file?.document_url` when using the single-file upload helper.
+- **pdfExporter Font Lookup Warning Fix**: Registered separate virtual file keys (`NotoSansArabic-Regular.ttf` and `NotoSansArabic-Bold.ttf`) for normal and bold font weights in `pdfExporter.js` to resolve mapping lookup issues in jsPDF without console warnings.
+- **EditPartyModal Controlled Input Fix**: Added missing `consultation_type` and `passport` default empty strings to the form state reset object inside `resetForm()` in `EditPartyModal.js`, preventing the fields from becoming `undefined` and triggering React controlled-to-uncontrolled input warnings.
+- **Next.js Image size Warning Fix**: Changed `AiButton.js`'s Rased assistant image to use the `fill` property inside its relative container to fix the console warning about mismatched width/height parameters.

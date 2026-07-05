@@ -228,12 +228,12 @@ const AssignedToTasks = () => {
                           ) : '-'}
                         </TableCell>
                         <TableCell>
-                          <Badge variant={getPriorityBadgeColor(task.priority)} className="capitalize">
+                          <Badge variant="outline" className={`capitalize font-semibold border ${getPriorityBadgeColor(task.priority)}`}>
                             {getPriorityLabel(task.priority)}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={getStatusBadgeColor(task.status)} className="capitalize">
+                          <Badge variant="outline" className={`capitalize font-semibold border ${getStatusBadgeColor(task.status)}`}>
                             {getStatusLabel(task.status)}
                           </Badge>
                         </TableCell>

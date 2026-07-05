@@ -34,9 +34,11 @@ export default function EditTemplateModal({ config, template, isArabic, onClose,
     setUploading(true)
     try {
       const result = await uploadFile(file, 'client-messages')
-      if (result?.document_url) {
-        setForm(f => ({ ...f, image_url: result.document_url }))
+      if (result?.success && result?.file?.document_url) {
+        setForm(f => ({ ...f, image_url: result.file.document_url }))
         toast.success(isArabic ? 'تم رفع الصورة' : 'Image uploaded')
+      } else {
+        toast.error(result?.error || (isArabic ? 'فشل رفع الصورة' : 'Image upload failed'))
       }
     } catch {
       toast.error(isArabic ? 'فشل رفع الصورة' : 'Image upload failed')

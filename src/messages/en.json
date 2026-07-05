@@ -719,7 +719,9 @@
     "createFailed": "Could not create case. Please try again."
   },
   "employees": {
-    "permissions": "Permissions"
+    "permissions": "Permissions",
+    "hourlyRate": "Hourly Rate",
+    "hourlyRatePlaceholder": "Enter hourly rate"
   },
   "caseTypes": {
     "pleaseFillBothNames": "Please fill in both Arabic and English names.",

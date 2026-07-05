@@ -27,7 +27,18 @@
     "loadingSettings": "جاري تحميل الإعدادات...",
     "errorFetchingSettings": "خطأ في تحميل الإعدادات",
     "errorUpdatingSettings": "خطأ في تحديث الإعدادات",
-    "settingsUpdatedSuccessfully": "تم تحديث الإعدادات بنجاح"
+    "settingsUpdatedSuccessfully": "تم تحديث الإعدادات بنجاح",
+    "appearanceDescription": "اضبط اللغة، السمة، ساعات العمل والخط.",
+    "resetToDefaults": "إعادة الإعدادات الافتراضية",
+    "theme": "السمة",
+    "themeDescription": "اختر لوحة الألوان. السمات المحيطة تضيف تدرجات خفيفة وحركة بطيئة لساعات العمل الطويلة.",
+    "currentTheme": "السمة الحالية",
+    "ambientThemeHint": "سمات هادئ وتركيز وحيوي تتضمن تدرجات ناعمة وتغيرات ألوان تدريجية مع الوقت.",
+    "readerMode": "وضع القراءة",
+    "readerModeDescription": "تكبير بسيط للنصوص، مسافة أسطر أوسع، ولون أهدأ للشاشات الممتلئة بالبيانات.",
+    "readerModeHint": "مناسب للقراءة الطويلة أو مراجعة الجداول، ويتفعيل فوراً.",
+    "readerModeOn": "وضع القراءة مفعّل",
+    "readerModeOff": "وضع القراءة مطفَأ"
   },
   "language": {
     "switch": "تغيير اللغة",
@@ -100,19 +111,7 @@
     "pettyCash": "العهد النقدية",
     "cashFlow": "التدفق النقدي"
   },
-  "settings": {
-    "appearanceDescription": "اضبط اللغة، السمة، ساعات العمل والخط.",
-    "resetToDefaults": "إعادة الإعدادات الافتراضية",
-    "theme": "السمة",
-    "themeDescription": "اختر لوحة الألوان. السمات المحيطة تضيف تدرجات خفيفة وحركة بطيئة لساعات العمل الطويلة.",
-    "currentTheme": "السمة الحالية",
-    "ambientThemeHint": "سمات هادئ وتركيز وحيوي تتضمن تدرجات ناعمة وتغيرات ألوان تدريجية مع الوقت.",
-    "readerMode": "وضع القراءة",
-    "readerModeDescription": "تكبير بسيط للنصوص، مسافة أسطر أوسع، ولون أهدأ للشاشات الممتلئة بالبيانات.",
-    "readerModeHint": "مناسب للقراءة الطويلة أو مراجعة الجداول، ويتفعيل فوراً.",
-    "readerModeOn": "وضع القراءة مفعّل",
-    "readerModeOff": "وضع القراءة مطفَأ"
-  },
+
   "buttons": {
     "add": "إضافة",
     "save": "حفظ",
@@ -738,7 +737,9 @@
     "createFailed": "لم يتم إنشاء القضية. يرجى المحاولة مجدداً."
   },
   "employees": {
-    "permissions": "الصلاحيات"
+    "permissions": "الصلاحيات",
+    "hourlyRate": "أجر الساعة",
+    "hourlyRatePlaceholder": "أدخل أجر الساعة"
   },
   "caseTypes": {
     "pleaseFillBothNames": "يرجى ملء الاسم باللغتين العربية والإنجليزية.",

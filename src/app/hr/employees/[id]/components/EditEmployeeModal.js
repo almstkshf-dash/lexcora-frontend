@@ -100,15 +100,15 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
         username: employee.username || "",
         email: employee.email || "",
         password: employee.password || "",
-        roleId: employee.role_id || "",
-        departmentId: employee.department_id || "",
-        branchId: employee.branch_id || "",
+        roleId: employee.role_id ? String(employee.role_id) : "",
+        departmentId: employee.department_id ? String(employee.department_id) : "",
+        branchId: employee.branch_id ? String(employee.branch_id) : "",
         status: employee.status || 'active',
         identityNumber: employee.eId || "",
         passportNumber: employee.passport || "",
         employeeNumber: employee.job_id || "",
         basicSalary: employee.basic_salary || "",
-        directManagerId: employee.direct_manager_id || "",
+        directManagerId: employee.direct_manager_id ? String(employee.direct_manager_id) : "",
         phoneNumber: employee.phone || "",
         identityExpiryDate: formatDateForInput(employee.id_end_date),
         passportExpiryDate: formatDateForInput(employee.passport_end_date),
@@ -127,7 +127,8 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
         accountNumber: employee.account_number || "",
         bankName: employee.bank_name || "",
         contractType: employee.contract_type || "",
-        registrationExpirationDate: formatDateForInput(employee.registration_expiration_date)
+        registrationExpirationDate: formatDateForInput(employee.registration_expiration_date),
+        hourlyRate: employee.hourly_rate || ""
       });
     }
   }, [data]);

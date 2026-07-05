@@ -13,12 +13,12 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  Building, 
-  IdCard, 
+import {
+  User,
+  Mail,
+  Phone,
+  Building,
+  IdCard,
   Calendar,
   MapPin,
   DollarSign,
@@ -123,13 +123,13 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
   const modalContent = (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm"
         onClick={() => setOpen(false)}
       />
-      
+
       {/* Modal Content */}
-      <div 
+      <div
         className="relative bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col border border-border"
         dir={isRTL ? 'rtl' : 'ltr'}
         onClick={(e) => e.stopPropagation()}
@@ -200,10 +200,10 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
                     <InfoRow label={t('employees.employeeId')} value={employee.eId} icon={IdCard} />
                     <InfoRow label={t('employees.passportNumber')} value={employee.passport} icon={FileText} />
                     <InfoRow label={t('employees.manager')} value={employee.managerName} icon={User} />
-                    <InfoRow 
-                      label={t('employees.role')} 
-                      value={language === 'ar' ? employee.role_ar : employee.role_en} 
-                      icon={Building} 
+                    <InfoRow
+                      label={t('employees.role')}
+                      value={language === 'ar' ? employee.role_ar : employee.role_en}
+                      icon={Building}
                     />
                   </div>
                 </InfoCard>
@@ -220,10 +220,10 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
                 {/* Work Information */}
                 <InfoCard title={t('employees.workInfo')} icon={Building}>
                   <div className="space-y-1">
-                    <InfoRow 
-                      label={t('employees.department')} 
-                      value={language === 'ar' ? employee.department_ar : employee.department_en} 
-                      icon={Building} 
+                    <InfoRow
+                      label={t('employees.department')}
+                      value={language === 'ar' ? employee.department_ar : employee.department_en}
+                      icon={Building}
                     />
                     <InfoRow label={t('employees.status')} value={getStatusBadge(employee.status)} />
                     <InfoRow label={t('employees.contractType')} value={employee.contract_type} icon={FileText} />
@@ -257,35 +257,35 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
                 {/* Documents Information */}
                 <InfoCard title={t('employees.documentsInfo')} icon={FileText}>
                   <div className="space-y-1">
-                    <InfoRow 
-                      label={t('employees.residenceEndDate')} 
-                      value={formatDate(employee.residence_end_date)} 
-                      icon={Calendar} 
+                    <InfoRow
+                      label={t('employees.residenceEndDate')}
+                      value={formatDate(employee.residence_end_date)}
+                      icon={Calendar}
                     />
-                    <InfoRow 
-                      label={t('employees.idEndDate')} 
-                      value={formatDate(employee.id_end_date)} 
-                      icon={Calendar} 
+                    <InfoRow
+                      label={t('employees.idEndDate')}
+                      value={formatDate(employee.id_end_date)}
+                      icon={Calendar}
                     />
-                    <InfoRow 
-                      label={t('employees.passportEndDate')} 
-                      value={formatDate(employee.passport_end_date)} 
-                      icon={Calendar} 
+                    <InfoRow
+                      label={t('employees.passportEndDate')}
+                      value={formatDate(employee.passport_end_date)}
+                      icon={Calendar}
                     />
-                    <InfoRow 
-                      label={t('employees.laborCardEndDate')} 
-                      value={formatDate(employee.labor_card_end_date)} 
-                      icon={Calendar} 
+                    <InfoRow
+                      label={t('employees.laborCardEndDate')}
+                      value={formatDate(employee.labor_card_end_date)}
+                      icon={Calendar}
                     />
-                    <InfoRow 
-                      label={t('employees.healthInsuranceEndDate')} 
-                      value={formatDate(employee.health_insurance_end_date)} 
-                      icon={Calendar} 
+                    <InfoRow
+                      label={t('employees.healthInsuranceEndDate')}
+                      value={formatDate(employee.health_insurance_end_date)}
+                      icon={Calendar}
                     />
-                    <InfoRow 
-                      label={t('employees.contractEndDate')} 
-                      value={formatDate(employee.contract_end_date)} 
-                      icon={Calendar} 
+                    <InfoRow
+                      label={t('employees.contractEndDate')}
+                      value={formatDate(employee.contract_end_date)}
+                      icon={Calendar}
                     />
                   </div>
                 </InfoCard>

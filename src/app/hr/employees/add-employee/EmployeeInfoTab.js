@@ -167,7 +167,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.organizationalInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormField label={t('employees.selectRole')} required htmlFor="roleId">
-            <Select dir={isRTL ? "rtl" : "ltr"} value={form.roleId} onValueChange={value => setForm(f => ({ ...f, roleId: value }))}>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.roleId ? String(form.roleId) : ''} onValueChange={value => setForm(f => ({ ...f, roleId: value }))}>
               <SelectTrigger id="roleId" className="w-full">
                 <SelectValue placeholder={t('employees.selectRole')} />
               </SelectTrigger>
@@ -180,7 +180,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
                   Array.isArray(roles) && roles
                     .filter((role) => role.role_en?.toLowerCase() !== 'admin' && role.role_ar?.toLowerCase() !== 'admin')
                     .map((role) => (
-                      <SelectItem key={role.id} value={role.id} className="cursor-pointer">
+                      <SelectItem key={role.id} value={String(role.id)} className="cursor-pointer">
                         {language === 'ar' ? role.role_ar : role.role_en}
                       </SelectItem>
                     ))
@@ -190,7 +190,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           </FormField>
           
           <FormField label={t('employees.selectDepartment')} required htmlFor="departmentId">
-            <Select dir={isRTL ? "rtl" : "ltr"} value={form.departmentId} onValueChange={value => setForm(f => ({ ...f, departmentId: value }))}>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.departmentId ? String(form.departmentId) : ''} onValueChange={value => setForm(f => ({ ...f, departmentId: value }))}>
               <SelectTrigger id="departmentId" className="w-full">
                 <SelectValue placeholder={t('employees.selectDepartment')} />
               </SelectTrigger>
@@ -201,7 +201,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
                   <div className="p-2 text-center text-red-500">{t('common.error')}</div>
                 ) : (
                   Array.isArray(departments) && departments.map((department) => (
-                    <SelectItem key={department.id} value={department.id} className="cursor-pointer">
+                    <SelectItem key={department.id} value={String(department.id)} className="cursor-pointer">
                       {language === 'ar' ? department.name_ar : department.name_en}
                     </SelectItem>
                   ))
@@ -211,7 +211,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           </FormField>
           
           <FormField label={t('employees.selectBranch')} required htmlFor="branchId">
-            <Select dir={isRTL ? "rtl" : "ltr"} value={form.branchId} onValueChange={value => setForm(f => ({ ...f, branchId: value }))}>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.branchId ? String(form.branchId) : ''} onValueChange={value => setForm(f => ({ ...f, branchId: value }))}>
               <SelectTrigger id="branchId" className="w-full">
                 <SelectValue placeholder={t('employees.selectBranch')} />
               </SelectTrigger>
@@ -222,7 +222,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
                   <div className="p-2 text-center text-red-500">{t('common.error')}</div>
                 ) : (
                   Array.isArray(branches) && branches.map((branch) => (
-                    <SelectItem key={branch.id} value={branch.id} className="cursor-pointer">
+                    <SelectItem key={branch.id} value={String(branch.id)} className="cursor-pointer">
                       {language === 'ar' ? branch.name_ar : branch.name_en}
                     </SelectItem>
                   ))
@@ -232,7 +232,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           </FormField>
           
           <FormField label={t('employees.selectDirectManager')} htmlFor="directManagerId">
-            <Select dir={isRTL ? "rtl" : "ltr"} value={form.directManagerId} onValueChange={value => setForm(f => ({ ...f, directManagerId: value }))}>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.directManagerId ? String(form.directManagerId) : ''} onValueChange={value => setForm(f => ({ ...f, directManagerId: value }))}>
               <SelectTrigger id="directManagerId" className="w-full">
                 <SelectValue placeholder={t('employees.selectDirectManager')} />
               </SelectTrigger>
@@ -243,7 +243,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
                   <div className="p-2 text-center text-red-500">{t('common.error')}</div>
                 ) : (
                   Array.isArray(employees) && employees.map((employee) => (
-                    <SelectItem key={employee.id} value={employee.id} className="cursor-pointer">
+                    <SelectItem key={employee.id} value={String(employee.id)} className="cursor-pointer">
                       {employee.name}
                     </SelectItem>
                   ))

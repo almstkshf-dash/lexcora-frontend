@@ -68,13 +68,14 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
     accountNumber: "",
     bankName: "",
     contractType: "",
-    registrationExpirationDate: ""
+    registrationExpirationDate: "",
+    hourlyRate: ""
   });
 
   // Fetch employee data when modal opens
   const { data, error, isLoading } = useSWR(
-    isOpen && employeeId ? `/employees/${employeeId}` : null,
-    () => getEmployeeById(employeeId),
+    isOpen && employeeId ? [`/employees/`, employeeId] : null,
+    ([, id]) => getEmployeeById(id),
     {
       revalidateOnFocus: false,
     }
@@ -117,11 +118,11 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
         contractExpiryDate: formatDateForInput(employee.contract_end_date),
         workPermitExpiryDate: formatDateForInput(employee.labor_card_end_date),
         accountCloseDate: formatDateForInput(employee.account_close_date),
-        anotherAllowance: employee.another_allownce || "",
+        anotherAllowance: employee.another_allowance || "",
         accountActivationDate: formatDateForInput(employee.account_activation_date),
-        firstDayOfWork: formatDateForInput(employee.fisrt_day_of_work),
+        firstDayOfWork: formatDateForInput(employee.first_day_of_work),
         housingAllowance: employee.housing_allowance || "",
-        transportationAllowance: employee.trnsportation_allownce || "",
+        transportationAllowance: employee.transportation_allowance || "",
         payType: employee.pay_type || "",
         iban: employee.iban || "",
         accountNumber: employee.account_number || "",
@@ -242,7 +243,7 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
           {isLoading && (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <span className="mr-2">{t('common.loading')}</span>
+              <span className="me-2">{t('common.loading')}</span>
             </div>
           )}
 
@@ -275,7 +276,7 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
             disabled={isSaving || isLoading}
             className="px-6"
           >
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
             {isSaving ? t('common.saving') : t('common.save')}
           </Button>
         </div>

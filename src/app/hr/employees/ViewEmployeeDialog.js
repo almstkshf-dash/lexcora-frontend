@@ -36,14 +36,11 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
 
   // Fetch employee data using SWR
   const { data, error, isLoading } = useSWR(
-    open && employeeId ? `/employees/${employeeId}` : null,
-    () => getEmployeeById(employeeId),
+    open && employeeId ? [`/employees/`, employeeId] : null,
+    ([, id]) => getEmployeeById(id),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
-      onError: (error) => {
-
-      }
     }
   );
 
@@ -111,15 +108,6 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
 
   const isClient = useIsClient();
 
-  if (!open || !isClient) return (
-    <div onClick={() => {
-      if (!employeeId) return;
-      setOpen(true);
-    }}>
-      {trigger}
-    </div>
-  );
-
   const modalContent = (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -181,7 +169,7 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
           {employeeId && employee && (
             <div className="space-y-6">
               {/* Header with name and status */}
-              <div className="flex items-center justify-between p-4 bg-muted rounded-sg">
+              <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                 <div>
                   <h3 className="text-xl font-semibold">{employee.name || t('common.notSpecified')}</h3>
                   <p className="text-muted-foreground">
@@ -227,7 +215,7 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
                     />
                     <InfoRow label={t('employees.status')} value={getStatusBadge(employee.status)} />
                     <InfoRow label={t('employees.contractType')} value={employee.contract_type} icon={FileText} />
-                    <InfoRow label={t('employees.firstDayOfWork')} value={formatDate(employee.fisrt_day_of_work)} icon={Calendar} />
+                    <InfoRow label={t('employees.firstDayOfWork')} value={formatDate(employee.first_day_of_work)} icon={Calendar} />
                     <InfoRow label={t('employees.lastLogin')} value={formatDate(employee.last_login)} icon={Calendar} />
                     <InfoRow label={t('employees.accountActivationDate')} value={formatDate(employee.account_activation_date)} icon={Calendar} />
                     <InfoRow label={t('employees.accountCloseDate')} value={formatDate(employee.account_close_date)} icon={Calendar} />
@@ -239,8 +227,8 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
                   <div className="space-y-1">
                     <InfoRow label={t('employees.basicSalary')} value={employee.basic_salary ? `${employee.basic_salary} AED` : null} icon={DollarSign} />
                     <InfoRow label={t('employees.housingAllowance')} value={employee.housing_allowance ? `${employee.housing_allowance} AED` : null} icon={DollarSign} />
-                    <InfoRow label={t('employees.transportationAllowance')} value={employee.trnsportation_allownce ? `${employee.trnsportation_allownce} AED` : null} icon={DollarSign} />
-                    <InfoRow label={t('employees.anotherAllowance')} value={employee.another_allownce ? `${employee.another_allownce} AED` : null} icon={DollarSign} />
+                    <InfoRow label={t('employees.transportationAllowance')} value={employee.transportation_allowance ? `${employee.transportation_allowance} AED` : null} icon={DollarSign} />
+                    <InfoRow label={t('employees.anotherAllowance')} value={employee.another_allowance ? `${employee.another_allowance} AED` : null} icon={DollarSign} />
                   </div>
                 </InfoCard>
 
@@ -308,13 +296,16 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
 
   return (
     <>
+      {/* Trigger — always rendered so React tree stays stable */}
       <div onClick={() => {
         if (!employeeId) return;
         setOpen(true);
       }}>
         {trigger}
       </div>
-      {createPortal(modalContent, document.body)}
+
+      {/* Portal — only mounted on the client and when the dialog is open */}
+      {open && isClient && createPortal(modalContent, document.body)}
     </>
   );
 };

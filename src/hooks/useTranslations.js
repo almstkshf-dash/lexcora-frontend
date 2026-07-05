@@ -5,8 +5,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 function getMessages() {
   return {
-    ar: require("../../messages/ar.json"),
-    en: require("../../messages/en.json"),
+    ar: require("../messages/ar.json"),
+    en: require("../messages/en.json"),
   };
 }
 

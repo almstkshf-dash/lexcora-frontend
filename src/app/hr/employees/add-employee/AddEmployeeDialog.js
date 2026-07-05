@@ -12,10 +12,48 @@ import EmployeeInfoTab from './EmployeeInfoTab';
 import EmployeePermissionsTab from './EmployeePermissionsTab';
 import EmployeeDocumentsTab from './EmployeeDocumentsTab';
 
+// ─── Initial Form State ─────────────────────────────────────────────────────
+const INITIAL_FORM = {
+  name: "",
+  username: "",
+  email: "",
+  password: "",
+  roleId: "",
+  departmentId: "",
+  branchId: "",
+  status: 'active',
+  permissions: [],
+  identityNumber: "",
+  passportNumber: "",
+  employeeNumber: "",
+  basicSalary: "",
+  directManagerId: "",
+  phoneNumber: "",
+  identityExpiryDate: "",
+  passportExpiryDate: "",
+  residenceExpiryDate: "",
+  insuranceExpiryDate: "",
+  contractExpiryDate: "",
+  workPermitExpiryDate: "",
+  accountCloseDate: "",
+  anotherAllowance: "",
+  accountActivationDate: "",
+  firstDayOfWork: "",
+  housingAllowance: "",
+  transportationAllowance: "",
+  payType: "",
+  iban: "",
+  accountNumber: "",
+  bankName: "",
+  contractType: "",
+  registrationExpirationDate: "",
+  hourlyRate: ""
+};
+
 // Custom Modal Component
 const Modal = ({ isOpen, onClose, children }) => {
   const isClient = useIsClient();
-  
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -32,13 +70,13 @@ const Modal = ({ isOpen, onClose, children }) => {
   const modalContent = (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      
+
       {/* Modal Content */}
-      <div 
+      <div
         className="relative z-10 bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto w-full max-w-4xl border border-border"
         onClick={(e) => e.stopPropagation()}
       >
@@ -57,51 +95,16 @@ export default function AddEmployeeModal({ onAdd }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [tab, setTab] = useState("info");
-  const [form, setForm] = useState({
-    name: "",
-    username: "",
-    email: "",
-    password: "",
-    roleId: "",
-    departmentId: "",
-    branchId: "",
-    status: 'active',
-    permissions: [],
-    identityNumber: "",
-    passportNumber: "",
-    employeeNumber: "",
-    basicSalary: "",
-    directManagerId: "",
-    phoneNumber: "",
-    identityExpiryDate: "",
-    passportExpiryDate: "",
-    residenceExpiryDate: "",
-    insuranceExpiryDate: "",
-    contractExpiryDate: "",
-    workPermitExpiryDate: "",
-    accountCloseDate: "",
-    anotherAllowance: "",
-    accountActivationDate: "",
-    firstDayOfWork: "",
-    housingAllowance: "",
-    transportationAllowance: "",
-    payType: "",
-    iban: "",
-    accountNumber: "",
-    bankName: "",
-    contractType: "",
-    registrationExpirationDate: "",
-    hourlyRate: ""
-  });
+  const [form, setForm] = useState(INITIAL_FORM);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    // If employeeNumber changes, update username as well
+
+    // If employeeNumber changes, sync username as well (functional update avoids stale closure)
     if (name === 'employeeNumber') {
-      setForm({ ...form, [name]: value, username: value });
+      setForm(prev => ({ ...prev, [name]: value, username: value }));
     } else {
-      setForm({ ...form, [name]: value });
+      setForm(prev => ({ ...prev, [name]: value }));
     }
   };
 
@@ -135,22 +138,22 @@ export default function AddEmployeeModal({ onAdd }) {
 
   const handleSubmit = async () => {
     if (isSaving) return; // Prevent multiple submissions
-    
+
     // Validate form before submission
     if (!validateForm()) {
       return;
     }
-    
+
     setIsSaving(true);
-    
+
     try {
       // Check for duplicates
       const duplicateCheck = await checkDuplicateEmployee(form.name, form.phoneNumber, form.email);
-      
+
       if (duplicateCheck.success && duplicateCheck.isDuplicate) {
         const duplicate = duplicateCheck.duplicate;
         let duplicateMessage;
-        
+
         if (duplicate.name === form.name && duplicate.phone === form.phoneNumber) {
           duplicateMessage = t('employees.duplicateEmployeeExists');
         } else if (duplicate.name === form.name) {
@@ -160,57 +163,22 @@ export default function AddEmployeeModal({ onAdd }) {
         } else if (duplicate.email === form.email) {
           duplicateMessage = t('employees.duplicateEmailExists');
         }
-        
+
         toast.error(duplicateMessage);
         setIsSaving(false);
         return;
       }
 
       const response = await createEmployee(form);
-      
+
       if (response.success) {
         toast.success(response.message || t('messages.employeeCreatedSuccessfully') || 'Employee created successfully!');
-        
+
         if (onAdd) onAdd(response);
-        
+
         // Close modal and reset form on success
         setIsOpen(false);
-        setForm({
-          name: "",
-          username: "",
-          email: "",
-          password: "",
-          roleId: "",
-          departmentId: "",
-          branchId: "",
-          status: 'active',
-          permissions: [],
-          identityNumber: "",
-          passportNumber: "",
-          employeeNumber: "",
-          basicSalary: "",
-          directManagerId: "",
-          phoneNumber: "",
-          identityExpiryDate: "",
-          passportExpiryDate: "",
-          residenceExpiryDate: "",
-          insuranceExpiryDate: "",
-          contractExpiryDate: "",
-          workPermitExpiryDate: "",
-          accountCloseDate: "",
-          anotherAllowance: "",
-          accountActivationDate: "",
-          firstDayOfWork: "",
-          housingAllowance: "",
-          transportationAllowance: "",
-          payType: "",
-          iban: "",
-          accountNumber: "",
-          bankName: "",
-          contractType: "",
-          registrationExpirationDate: "",
-          hourlyRate: ""
-        });
+        setForm(INITIAL_FORM);
         setTab("info");
       } else {
 
@@ -230,7 +198,7 @@ export default function AddEmployeeModal({ onAdd }) {
   return (
     <>
       {/* Trigger Button */}
-      <Button 
+      <Button
         onClick={() => setIsOpen(true)}
       >
         <Plus className="w-4 h-4" />
@@ -242,7 +210,7 @@ export default function AddEmployeeModal({ onAdd }) {
         {/* Modal Header */}
         <div className="flex items-center justify-between p-6 border-b " >
           <h2 className="text-xl font-semibold">{t('employees.addNewTitle')}</h2>
-          <button 
+          <button
             onClick={handleClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
@@ -258,22 +226,22 @@ export default function AddEmployeeModal({ onAdd }) {
               <TabsTrigger value="permissions" className="cursor-pointer">{t('employees.permissions')}</TabsTrigger>
               {/* <TabsTrigger value="documents" className="cursor-pointer">{t('employees.documents') || '???????'}</TabsTrigger> */}
             </TabsList>
-            
+
             <TabsContent value="info">
-              <EmployeeInfoTab 
-                form={form} 
-                handleChange={handleChange} 
-                setForm={setForm} 
+              <EmployeeInfoTab
+                form={form}
+                handleChange={handleChange}
+                setForm={setForm}
               />
             </TabsContent>
-            
+
             <TabsContent value="permissions">
-              <EmployeePermissionsTab 
-                form={form} 
-                setForm={setForm} 
+              <EmployeePermissionsTab
+                form={form}
+                setForm={setForm}
               />
             </TabsContent>
-            
+
             {/* <TabsContent value="documents">
               <EmployeeDocumentsTab />
             </TabsContent> */}
@@ -282,14 +250,14 @@ export default function AddEmployeeModal({ onAdd }) {
 
         {/* Modal Footer */}
         <div className="flex justify-end gap-3 p-6 border-t" >
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={handleClose}
             className="px-6"
           >
             {t('buttons.cancel')}
           </Button>
-          <Button 
+          <Button
             onClick={handleSubmit}
             disabled={isSaving}
             className="px-6"

@@ -159,7 +159,7 @@ const BasicInfoTab = ({ employeeId }) => {
             <InfoRow label={t('employees.department')} value={isRTL ? employee.department_ar : employee.department_en} />
             <InfoRow label={t('employees.status')} value={getStatusBadge(employee.status)} />
             <InfoRow label={t('employees.contractType')} value={employee.contract_type} />
-            <InfoRow label={t('employees.firstDayOfWork')} value={formatDate(employee.fisrt_day_of_work)} />
+            <InfoRow label={t('employees.firstDayOfWork')} value={formatDate(employee.first_day_of_work)} />
             <InfoRow label={t('employees.lastLogin')} value={formatDate(employee.last_login)} />
             <InfoRow label={t('employees.accountActivationDate')} value={formatDate(employee.account_activation_date)} />
             <InfoRow label={t('employees.accountCloseDate')} value={formatDate(employee.account_close_date)} />
@@ -177,8 +177,8 @@ const BasicInfoTab = ({ employeeId }) => {
           <CardContent className="pt-0">
             <InfoRow label={t('employees.basicSalary')} value={employee.basic_salary ? `${employee.basic_salary} AED` : null} />
             <InfoRow label={t('employees.housingAllowance')} value={employee.housing_allowance ? `${employee.housing_allowance} AED` : null} />
-            <InfoRow label={t('employees.transportationAllowance')} value={employee.trnsportation_allownce ? `${employee.trnsportation_allownce} AED` : null} />
-            <InfoRow label={t('employees.anotherAllowance')} value={employee.another_allownce ? `${employee.another_allownce} AED` : null} />
+            <InfoRow label={t('employees.transportationAllowance')} value={employee.transportation_allowance ? `${employee.transportation_allowance} AED` : null} />
+            <InfoRow label={t('employees.anotherAllowance')} value={employee.another_allowance ? `${employee.another_allowance} AED` : null} />
           </CardContent>
         </Card>
 

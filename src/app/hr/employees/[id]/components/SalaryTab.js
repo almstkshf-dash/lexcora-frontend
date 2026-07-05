@@ -59,8 +59,8 @@ const SalaryTab = ({ employeeId }) => {
   const totalSalary = 
     (parseFloat(employee.basic_salary) || 0) +
     (parseFloat(employee.housing_allowance) || 0) +
-    (parseFloat(employee.trnsportation_allownce) || 0) +
-    (parseFloat(employee.another_allownce) || 0);
+    (parseFloat(employee.transportation_allowance) || 0) +
+    (parseFloat(employee.another_allowance) || 0);
 
   return (
     <div className="space-y-4">
@@ -74,8 +74,8 @@ const SalaryTab = ({ employeeId }) => {
         <CardContent className="pt-0">
           <InfoRow label="الراتب الأساسي" value={formatCurrency(employee.basic_salary)} />
           <InfoRow label="بدل السكن" value={formatCurrency(employee.housing_allowance)} />
-          <InfoRow label="بدل المواصلات" value={formatCurrency(employee.trnsportation_allownce)} />
-          <InfoRow label="بدل آخر" value={formatCurrency(employee.another_allownce)} />
+          <InfoRow label="بدل المواصلات" value={formatCurrency(employee.transportation_allowance)} />
+          <InfoRow label="بدل آخر" value={formatCurrency(employee.another_allowance)} />
           <div className="flex justify-between py-3 font-bold text-lg">
             <span>إجمالي الراتب</span>
             <span className="text-primary">{formatCurrency(totalSalary)}</span>

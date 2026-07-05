@@ -170,42 +170,65 @@ export default function AddEmployeeModal({ onAdd }) {
   const [isSaving, setIsSaving] = useState(false);
   const [tab, setTab] = useState("info");
   const [form, setForm] = useState(INITIAL_FORM);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    // Clear error for this field
+    if (errors && errors[name]) {
+      setErrors(prev => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
+
     // If employeeNumber changes, sync username as well (functional update avoids stale closure)
     if (name === 'employeeNumber') {
       setForm(prev => ({ ...prev, [name]: value, username: value }));
+      if (errors && errors['username']) {
+        setErrors(prev => {
+          const next = { ...prev };
+          delete next['username'];
+          return next;
+        });
+      }
     } else {
       setForm(prev => ({ ...prev, [name]: value }));
     }
   };
 
   const validateForm = () => {
+    const newErrors = {};
     const requiredFields = [
-      { field: 'name', message: t('validation.nameRequired') || 'Name is required' },
-      { field: 'username', message: t('validation.usernameRequired') || 'Username is required' },
-      // { field: 'email', message: t('validation.emailRequired') || 'Email is required' },
-      { field: 'roleId', message: t('validation.roleRequired') || 'Role is required' },
-      { field: 'departmentId', message: t('validation.departmentRequired') || 'Department is required' },
-      { field: 'branchId', message: t('validation.branchRequired') || 'Branch is required' },
-      { field: 'phoneNumber', message: t('validation.phoneRequired') || 'Phone number is required' }
+      { field: 'name', message: t('validation.nameRequired') || 'الاسم مطلوب' },
+      { field: 'username', message: t('validation.usernameRequired') || 'اسم المستخدم مطلوب' },
+      // { field: 'email', message: t('validation.emailRequired') || 'البريد الإلكتروني مطلوب' },
+      { field: 'roleId', message: t('validation.roleRequired') || 'المنصب مطلوب' },
+      { field: 'departmentId', message: t('validation.departmentRequired') || 'القسم مطلوب' },
+      { field: 'branchId', message: t('validation.branchRequired') || 'الفرع مطلوب' },
+      { field: 'phoneNumber', message: t('validation.phoneRequired') || 'رقم الهاتف مطلوب' }
     ];
 
     for (const { field, message } of requiredFields) {
       if (!form[field] || form[field].toString().trim() === '') {
-        toast.error(message);
-        return false;
+        newErrors[field] = message;
       }
     }
 
-    // // Email validation
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // if (!emailRegex.test(form.email)) {
-    //   toast.error(t('validation.emailInvalid') || 'Please enter a valid email address');
-    //   return false;
-    // }
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      // Switch back to "info" tab if any field inside "info" is missing
+      const infoFields = ['name', 'username', 'roleId', 'departmentId', 'branchId', 'phoneNumber'];
+      const hasInfoErrors = infoFields.some(f => newErrors[f]);
+      if (hasInfoErrors) {
+        setTab("info");
+      }
+      toast.error(t('validation.pleaseCheckRequiredFields') || 'يرجى ملء الحقول المطلوبة', { autoClose: 10000 });
+      return false;
+    }
 
     return true;
   };
@@ -222,23 +245,35 @@ export default function AddEmployeeModal({ onAdd }) {
 
     try {
       // Check for duplicates
-      const duplicateCheck = await checkDuplicateEmployee(form.name, form.phoneNumber, form.email);
+      const duplicateCheck = await checkDuplicateEmployee(
+        form.name,
+        form.phoneNumber,
+        form.email,
+        form.username,
+        form.employeeNumber
+      );
 
-      if (duplicateCheck.success && duplicateCheck.isDuplicate) {
-        const duplicate = duplicateCheck.duplicate;
+      if (duplicateCheck.success && duplicateCheck.data?.isDuplicate) {
+        const duplicate = duplicateCheck.data.duplicate;
         let duplicateMessage;
 
         if (duplicate.name === form.name && duplicate.phone === form.phoneNumber) {
-          duplicateMessage = t('employees.duplicateEmployeeExists');
+          duplicateMessage = t('employees.duplicateEmployeeExists') || 'يوجد موظف بنفس الاسم ورقم الهاتف بالفعل';
         } else if (duplicate.name === form.name) {
-          duplicateMessage = t('employees.duplicateNameExists');
+          duplicateMessage = t('employees.duplicateNameExists') || 'يوجد موظف بنفس الاسم بالفعل';
         } else if (duplicate.phone === form.phoneNumber) {
-          duplicateMessage = t('employees.duplicatePhoneExists');
+          duplicateMessage = t('employees.duplicatePhoneExists') || 'يوجد موظف بنفس رقم الهاتف بالفعل';
         } else if (duplicate.email === form.email) {
-          duplicateMessage = t('employees.duplicateEmailExists');
+          duplicateMessage = t('employees.duplicateEmailExists') || 'يوجد موظف بنفس البريد الإلكتروني بالفعل';
+        } else if (duplicate.username === form.username) {
+          duplicateMessage = t('employees.duplicateUsernameExists') || 'يوجد موظف بنفس اسم المستخدم بالفعل';
+        } else if (duplicate.employeeNumber === form.employeeNumber) {
+          duplicateMessage = t('employees.duplicateEmployeeNumberExists') || 'يوجد موظف بنفس رقم الموظف بالفعل';
+        } else {
+          duplicateMessage = t('employees.duplicateGenericExists') || 'بيانات مكررة لموظف آخر';
         }
 
-        toast.error(duplicateMessage);
+        toast.error(duplicateMessage, { autoClose: 10000 });
         setIsSaving(false);
         return;
       }
@@ -246,7 +281,7 @@ export default function AddEmployeeModal({ onAdd }) {
       const response = await createEmployee(form);
 
       if (response.success) {
-        toast.success(response.message || t('messages.employeeCreatedSuccessfully') || 'Employee created successfully!');
+        toast.success(response.message || t('messages.employeeCreatedSuccessfully') || 'تم إنشاء الموظف بنجاح!');
 
         if (onAdd) onAdd(response);
 
@@ -261,20 +296,53 @@ export default function AddEmployeeModal({ onAdd }) {
           setIsOpen(false);
           setForm(INITIAL_FORM);
           setTab("info");
+          setErrors({});
         }
       } else {
-
-        toast.error(t('messages.errorCreatingEmployee') || 'Error creating employee. Please try again.');
+        // Show the real backend message (non-throw path)
+        const msg = response.message || t('messages.errorCreatingEmployee') || 'خطأ في إنشاء الموظف. يرجى المحاولة مرة أخرى.';
+        toast.error(msg, { autoClose: 10000 });
       }
     } catch (error) {
-      toast.error(error.message || t('messages.errorCreatingEmployee') || 'Error creating employee. Please try again.');
+      // error.message is enriched by axios interceptor with backend's message
+      const backendMsg = error.message || '';
+
+      // Map backend duplicate errors to inline field errors
+      const newErrors = {};
+      if (backendMsg.includes('same name') || backendMsg.includes('نفس الاسم')) {
+        newErrors.name = t('validation.nameTaken') || 'هذا الاسم مستخدم بالفعل لموظف آخر';
+      }
+      if (backendMsg.includes('same phone') || backendMsg.includes('نفس رقم الهاتف')) {
+        newErrors.phoneNumber = t('validation.phoneTaken') || 'رقم الهاتف مستخدم بالفعل لموظف آخر';
+      }
+      if (backendMsg.includes('same email') || backendMsg.includes('نفس البريد')) {
+        newErrors.email = t('validation.emailTaken') || 'البريد الإلكتروني مستخدم بالفعل لموظف آخر';
+      }
+      if (backendMsg.includes('same username') || backendMsg.includes('نفس اسم المستخدم')) {
+        newErrors.username = t('validation.usernameTaken') || 'اسم المستخدم مستخدم بالفعل لموظف آخر';
+      }
+      if (backendMsg.includes('same employee number') || backendMsg.includes('نفس رقم الموظف')) {
+        newErrors.employeeNumber = t('validation.employeeNumberTaken') || 'رقم الموظف مستخدم بالفعل';
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        setTab("info");
+        toast.error(t('validation.duplicateDataFound') || 'توجد بيانات مكررة — يرجى مراجعة الحقول المميزة باللون الأحمر', { autoClose: 10000 });
+      } else {
+        // Show the actual backend error message
+        const displayMsg = backendMsg.replace(/^Failed to add employee:\s*/i, '').replace(/^خطأ في إضافة الموظف:\s*/i, '');
+        toast.error(displayMsg || t('messages.errorCreatingEmployee') || 'خطأ في إنشاء الموظف. يرجى المحاولة مرة أخرى.', { autoClose: 10000 });
+      }
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleClose = () => {
+    if (isSaving) return;
     setIsOpen(false);
+    setErrors({});
   };
 
   const handleCredentialsClose = () => {
@@ -282,6 +350,7 @@ export default function AddEmployeeModal({ onAdd }) {
     setIsOpen(false);
     setForm(INITIAL_FORM);
     setTab("info");
+    setErrors({});
   };
 
   return (
@@ -296,12 +365,21 @@ export default function AddEmployeeModal({ onAdd }) {
 
       {/* Modal */}
       <Modal isOpen={isOpen} onClose={handleClose}>
+        {isSaving && (
+          <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs z-50 flex flex-col items-center justify-center gap-4">
+            <Loader2 className="w-10 h-10 animate-spin text-primary" />
+            <span className="text-lg font-medium text-foreground">
+              {t('employees.savingEmployee') || 'جاري حفظ بيانات الموظف...'}
+            </span>
+          </div>
+        )}
         {/* Modal Header */}
         <div className="flex items-center justify-between p-6 border-b " >
           <h2 className="text-xl font-semibold">{t('employees.addNewTitle')}</h2>
           <button
             onClick={handleClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            disabled={isSaving}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50"
           >
             <CircleX className="w-5 h-5" />
           </button>
@@ -321,6 +399,7 @@ export default function AddEmployeeModal({ onAdd }) {
                 form={form}
                 handleChange={handleChange}
                 setForm={setForm}
+                errors={errors}
               />
             </TabsContent>
 
@@ -328,7 +407,7 @@ export default function AddEmployeeModal({ onAdd }) {
               <EmployeePermissionsTab
                 form={form}
                 setForm={setForm}
-              />
+                />
             </TabsContent>
 
             {/* <TabsContent value="documents">
@@ -342,6 +421,7 @@ export default function AddEmployeeModal({ onAdd }) {
           <Button
             variant="outline"
             onClick={handleClose}
+            disabled={isSaving}
             className="px-6"
           >
             {t('buttons.cancel')}

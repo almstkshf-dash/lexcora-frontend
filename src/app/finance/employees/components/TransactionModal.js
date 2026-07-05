@@ -19,6 +19,21 @@ import { toast } from 'react-toastify';
 import { X, Upload } from 'lucide-react';
 import { DEFAULT_CURRENCY, LOCALE, ACCOUNT_STATUS, TRANSACTION_TYPE } from '@/app/finance/constants';
 
+// Static schemas defined outside component to avoid recreation on every render
+const addValidationSchema = Yup.object({
+  employee_id: Yup.number().required(),
+  amount: Yup.number().min(0.01).required(),
+  bank_account_id: Yup.number().optional(),
+  description: Yup.string().optional()
+});
+
+const editValidationSchema = Yup.object({
+  employee_id: Yup.number().notRequired(),
+  amount: Yup.number().min(0.01).required(),
+  bank_account_id: Yup.number().optional(),
+  description: Yup.string().optional()
+});
+
 const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, transactionData = null }) => {
   const { isRTL } = useLanguage();
   const t = useTranslations('employeeFinance.modal');
@@ -71,12 +86,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
     }
   }, [transactionData, isEditMode]);
 
-  const validationSchema = Yup.object({
-    employee_id: !isEditMode ? Yup.number().required(t('employeeRequired')) : Yup.number().notRequired(),
-    amount: Yup.number().min(0.01, t('amountMinError')).required(t('amountRequired')),
-    bank_account_id: Yup.number().optional(),
-    description: Yup.string().optional()
-  });
+  const validationSchema = isEditMode ? editValidationSchema : addValidationSchema;
 
   const formik = useFormik({
     initialValues: {
@@ -167,7 +177,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
                 value={formik.values.employee_id} 
                 onValueChange={(value) => formik.setFieldValue('employee_id', value)}
               >
-                <SelectTrigger className={formik.touched.employee_id && formik.errors.employee_id ? 'border-eed-500' : ''}>
+                <SelectTrigger className={formik.touched.employee_id && formik.errors.employee_id ? 'border-red-500' : ''}>
                   <SelectValue placeholder={t('selectEmployee')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -195,7 +205,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
               value={formik.values.amount}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.amount && formik.errors.amount ? 'border-eed-500' : ''}
+              className={formik.touched.amount && formik.errors.amount ? 'border-red-500' : ''}
               placeholder={t('amountPlaceholder')}
             />
             {formik.touched.amount && formik.errors.amount && (
@@ -213,7 +223,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
                 value={formik.values.bank_account_id} 
                 onValueChange={(value) => formik.setFieldValue('bank_account_id', value)}
               >
-                <SelectTrigger className={formik.touched.bank_account_id && formik.errors.bank_account_id ? 'border-eed-500' : ''}>
+                <SelectTrigger className={formik.touched.bank_account_id && formik.errors.bank_account_id ? 'border-red-500' : ''}>
                   <SelectValue placeholder={t('selectBankAccount')} />
                 </SelectTrigger>
                 <SelectContent>

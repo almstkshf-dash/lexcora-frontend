@@ -1,11 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable experimental features
-  // experimental: {},
+  // Transpile packages that ship old-style React.createElement (legacy JSX transform)
+  // react-big-calendar depends on `uncontrollable` which triggers the warning.
+  transpilePackages: ['react-big-calendar', 'uncontrollable'],
 
   // Skip ESLint during production builds
   eslint: {
     ignoreDuringBuilds: true,
+  },
+
+  // Optimize barrel imports for common libraries — reduces per-click JS evaluation
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
 
   // Add font optimization

@@ -20,6 +20,7 @@ const ContactInfoTab = ({ formData, handleInputChange }) => {
         placeholder={placeholder}
         className="w-full"
         required={required}
+        autoComplete={type === 'password' ? 'new-password' : 'off'}
       />
     </div>
   );
@@ -33,27 +34,27 @@ const ContactInfoTab = ({ formData, handleInputChange }) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 flex flex-wrap gap-4">
-        <FormField 
-          label={t('employees.email')} 
-          name="email" 
+        <FormField
+          label={t('employees.email')}
+          name="email"
           type="email"
           value={formData.email}
-          required 
+          required
         />
-        <FormField 
-          label={t('employees.phoneNumber')} 
-          name="phone" 
+        <FormField
+          label={t('employees.phoneNumber')}
+          name="phone"
           value={formData.phone}
         />
-        <FormField 
-          label={t('employees.username')} 
-          name="username" 
+        <FormField
+          label={t('employees.username')}
+          name="username"
           value={formData.username}
-          required 
+          required
         />
-        <FormField 
-          label={t('employees.password')} 
-          name="password" 
+        <FormField
+          label={t('employees.password')}
+          name="password"
           type="password"
           value={formData.password}
           placeholder={t('employees.leaveEmptyToKeepCurrent')}

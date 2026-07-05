@@ -15,6 +15,17 @@ import { getBranches } from '@/app/services/api/branches';
 import { ACCOUNT_STATUS } from '@/app/finance/constants';
 import { toast } from 'react-toastify';
 
+// Defined outside component to avoid recreation on every render
+const validationSchema = Yup.object({
+  bank_name: Yup.string().required(),
+  account_name: Yup.string().required(),
+  account_number: Yup.string().required(),
+  iban: Yup.string().optional(),
+  branch_id: Yup.number().nullable(),
+  current_balance: Yup.number().min(0).default(0),
+  status: Yup.string().oneOf([ACCOUNT_STATUS.ACTIVE, ACCOUNT_STATUS.INACTIVE]).default(ACCOUNT_STATUS.ACTIVE)
+});
+
 const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
   const { isRTL } = useLanguage();
   const t = useTranslations('AddBankAccount');
@@ -29,24 +40,14 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
         const data = Array.isArray(response) ? response : response?.data;
         if (Array.isArray(data)) setBranches(data);
       } catch (error) {
-
+        // silently ignore
       }
     };
-    
+
     if (isOpen) {
       fetchBranches();
     }
   }, [isOpen]);
-
-  const validationSchema = Yup.object({
-    bank_name: Yup.string().required(t('bankNameRequired')),
-    account_name: Yup.string().required(t('accountNameRequired')),
-    account_number: Yup.string().required(t('accountNumberRequired')),
-    iban: Yup.string().optional(),
-    branch_id: Yup.number().nullable(),
-    current_balance: Yup.number().min(0, t('balanceNegativeError')).default(0),
-    status: Yup.string().oneOf([ACCOUNT_STATUS.ACTIVE, ACCOUNT_STATUS.INACTIVE]).default(ACCOUNT_STATUS.ACTIVE)
-  });
 
   const formik = useFormik({
     initialValues: {
@@ -58,6 +59,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
       current_balance: 0,
       status: ACCOUNT_STATUS.ACTIVE
     },
+    validationSchema,
     onSubmit: async (values) => {
       setIsLoading(true);
       try {
@@ -67,9 +69,9 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
           initial_balance: parseFloat(values.current_balance) || 0
         };
         delete accountData.current_balance;
-        
+
         const response = await createBankAccount(accountData);
-        
+
         if (response.success) {
           toast.success(t('accountAddedSuccess'));
           formik.resetForm();
@@ -100,7 +102,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
             {t('title')}
           </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={formik.handleSubmit} className="space-y-4">
           {/* Bank Name */}
           <div className="space-y-2">
@@ -111,7 +113,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               value={formik.values.bank_name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.bank_name && formik.errors.bank_name ? 'border-eed-500' : ''}
+              className={formik.touched.bank_name && formik.errors.bank_name ? 'border-red-500' : ''}
               placeholder={t('bankNamePlaceholder')}
             />
             {formik.touched.bank_name && formik.errors.bank_name && (
@@ -128,7 +130,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               value={formik.values.account_name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.account_name && formik.errors.account_name ? 'border-eed-500' : ''}
+              className={formik.touched.account_name && formik.errors.account_name ? 'border-red-500' : ''}
               placeholder={t('accountNamePlaceholder')}
             />
             {formik.touched.account_name && formik.errors.account_name && (
@@ -145,7 +147,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               value={formik.values.account_number}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.account_number && formik.errors.account_number ? 'border-eed-500' : ''}
+              className={formik.touched.account_number && formik.errors.account_number ? 'border-red-500' : ''}
               placeholder={t('accountNumberPlaceholder')}
             />
             {formik.touched.account_number && formik.errors.account_number && (
@@ -169,8 +171,8 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
           {/* Branch */}
           <div className="space-y-2">
             <Label htmlFor="branch_id">{t('branch')}</Label>
-            <Select 
-              value={formik.values.branch_id} 
+            <Select
+              value={formik.values.branch_id}
               onValueChange={(value) => formik.setFieldValue('branch_id', value === "none" ? "" : value)}
             >
               <SelectTrigger id="branch_id">
@@ -198,7 +200,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               value={formik.values.current_balance}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.current_balance && formik.errors.current_balance ? 'border-eed-500' : ''}
+              className={formik.touched.current_balance && formik.errors.current_balance ? 'border-red-500' : ''}
               placeholder={t('balancePlaceholder')}
             />
             {formik.touched.current_balance && formik.errors.current_balance && (
@@ -209,8 +211,8 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
           {/* Status */}
           <div className="space-y-2">
             <Label htmlFor="status">{t('status')}</Label>
-            <Select 
-              value={formik.values.status} 
+            <Select
+              value={formik.values.status}
               onValueChange={(value) => formik.setFieldValue('status', value)}
             >
               <SelectTrigger id="status">
@@ -225,16 +227,16 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
 
           {/* Action Buttons */}
           <div className="flex gap-2 pt-4">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={handleClose}
               className="flex-1"
             >
               {t('cancel')}
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isLoading || !formik.isValid}
               className="flex-1"
             >
@@ -248,4 +250,3 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
 };
 
 export default AddAccountModal;
-

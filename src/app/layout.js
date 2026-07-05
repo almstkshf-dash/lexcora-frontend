@@ -53,8 +53,8 @@ export default function RootLayout({ children }) {
                   </RouteGuard>
                 </AuthProvider>
                 <ToastContainer
-                  position="top-right"
-                  autoClose={3000}
+                  position="top-center"
+                  autoClose={6000}
                   hideProgressBar={false}
                   newestOnTop={false}
                   closeOnClick
@@ -63,7 +63,7 @@ export default function RootLayout({ children }) {
                   draggable
                   pauseOnHover
                   theme="colored"
-                  style={{ zIndex: 9999 }}
+                  style={{ zIndex: 999999 }}
                 />
               </ReduxProvider>
             </SWRProvider>

@@ -63,6 +63,8 @@ const DatePickerField = ({ name, placeholder, value, onChange, isRTL }) => {
           mode="single"
           selected={selectedDate}
           captionLayout="dropdown"
+          startMonth={new Date(1930, 0)}
+          endMonth={new Date(2060, 11)}
           onSelect={handleDateSelect}
         />
       </PopoverContent>
@@ -71,19 +73,24 @@ const DatePickerField = ({ name, placeholder, value, onChange, isRTL }) => {
 };
 
 // FormField Component with Label
-const FormField = ({ label, children, required = false, htmlFor }) => (
+const FormField = ({ label, children, required = false, htmlFor, error }) => (
   <div className="space-y-2">
     {label && (
-      <Label htmlFor={htmlFor} className="text-sm font-medium">
+      <Label htmlFor={htmlFor} className={cn("text-sm font-medium", error && "text-red-500 dark:text-red-400")}>
         {label}
         {required && <span className="text-red-500 me-1">*</span>}
       </Label>
     )}
     {children}
+    {error && (
+      <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+        {error}
+      </p>
+    )}
   </div>
 );
 
-export default function EmployeeInfoTab({ form, handleChange, setForm }) {
+export default function EmployeeInfoTab({ form, handleChange, setForm, errors = {} }) {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
   const [showPassword, setShowPassword] = useState(false);
@@ -114,7 +121,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
       <div>
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.basicInformationSection')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          <FormField label={t('employees.name')} required htmlFor="name">
+          <FormField label={t('employees.name')} required htmlFor="name" error={errors.name}>
             <Input 
               id="name"
               name="name" 
@@ -122,23 +129,22 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
               placeholder={t('employees.namePlaceholder')} 
               value={form.name} 
               onChange={handleChange} 
+              className={cn(errors.name && "border-red-500 focus-visible:ring-red-500")}
             />
           </FormField>
           
-          <FormField label={t('employees.employeeNumber')} required htmlFor="employeeNumber">
+          <FormField label={t('employees.employeeNumber')} required htmlFor="employeeNumber" error={errors.employeeNumber}>
             <Input 
               id="employeeNumber"
               name="employeeNumber" 
               placeholder={t('employees.employeeNumberPlaceholder')} 
               value={form.employeeNumber} 
               onChange={handleChange} 
-              
+              className={cn(errors.employeeNumber && "border-red-500 focus-visible:ring-red-500")}
             />
           </FormField>
 
-        
-        
-          <FormField label={t('employees.email')} htmlFor="email">
+          <FormField label={t('employees.email')} htmlFor="email" error={errors.email}>
             <Input 
               id="email"
               name="email" 
@@ -146,10 +152,11 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
               placeholder={t('employees.emailPlaceholder')} 
               value={form.email} 
               onChange={handleChange} 
+              className={cn(errors.email && "border-red-500 focus-visible:ring-red-500")}
             />
           </FormField>
           
-          <FormField label={t('employees.phoneNumber')} required htmlFor="phoneNumber">
+          <FormField label={t('employees.phoneNumber')} required htmlFor="phoneNumber" error={errors.phoneNumber}>
             <Input 
               id="phoneNumber"
               name="phoneNumber" 
@@ -158,6 +165,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
               type="tel"
               value={form.phoneNumber} 
               onChange={handleChange} 
+              className={cn(errors.phoneNumber && "border-red-500 focus-visible:ring-red-500")}
             />
           </FormField>
 
@@ -188,9 +196,12 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
       <div>
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.organizationalInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          <FormField label={t('employees.selectRole')} required htmlFor="roleId">
-            <Select dir={isRTL ? "rtl" : "ltr"} value={form.roleId ? String(form.roleId) : ''} onValueChange={value => setForm(f => ({ ...f, roleId: value }))}>
-              <SelectTrigger id="roleId" className="w-full">
+          <FormField label={t('employees.selectRole')} required htmlFor="roleId" error={errors.roleId}>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.roleId ? String(form.roleId) : ''} onValueChange={value => {
+              setForm(f => ({ ...f, roleId: value }));
+              handleChange({ target: { name: 'roleId', value } });
+            }}>
+              <SelectTrigger id="roleId" className={cn("w-full", errors.roleId && "border-red-500 focus-visible:ring-red-500")}>
                 <SelectValue placeholder={t('employees.selectRole')} />
               </SelectTrigger>
               <SelectContent>
@@ -211,9 +222,12 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             </Select>
           </FormField>
           
-          <FormField label={t('employees.selectDepartment')} required htmlFor="departmentId">
-            <Select dir={isRTL ? "rtl" : "ltr"} value={form.departmentId ? String(form.departmentId) : ''} onValueChange={value => setForm(f => ({ ...f, departmentId: value }))}>
-              <SelectTrigger id="departmentId" className="w-full">
+          <FormField label={t('employees.selectDepartment')} required htmlFor="departmentId" error={errors.departmentId}>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.departmentId ? String(form.departmentId) : ''} onValueChange={value => {
+              setForm(f => ({ ...f, departmentId: value }));
+              handleChange({ target: { name: 'departmentId', value } });
+            }}>
+              <SelectTrigger id="departmentId" className={cn("w-full", errors.departmentId && "border-red-500 focus-visible:ring-red-500")}>
                 <SelectValue placeholder={t('employees.selectDepartment')} />
               </SelectTrigger>
               <SelectContent>
@@ -232,9 +246,12 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             </Select>
           </FormField>
           
-          <FormField label={t('employees.selectBranch')} required htmlFor="branchId">
-            <Select dir={isRTL ? "rtl" : "ltr"} value={form.branchId ? String(form.branchId) : ''} onValueChange={value => setForm(f => ({ ...f, branchId: value }))}>
-              <SelectTrigger id="branchId" className="w-full">
+          <FormField label={t('employees.selectBranch')} required htmlFor="branchId" error={errors.branchId}>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.branchId ? String(form.branchId) : ''} onValueChange={value => {
+              setForm(f => ({ ...f, branchId: value }));
+              handleChange({ target: { name: 'branchId', value } });
+            }}>
+              <SelectTrigger id="branchId" className={cn("w-full", errors.branchId && "border-red-500 focus-visible:ring-red-500")}>
                 <SelectValue placeholder={t('employees.selectBranch')} />
               </SelectTrigger>
               <SelectContent>

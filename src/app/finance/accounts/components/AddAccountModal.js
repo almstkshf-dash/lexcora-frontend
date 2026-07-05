@@ -15,6 +15,16 @@ import { createAccount } from '@/app/services/api/accounting';
 import { getBranches } from '@/app/services/api/branches';
 import { toast } from 'react-toastify';
 
+const validationSchema = Yup.object({
+  code: Yup.string().required(),
+  name_ar: Yup.string().required(),
+  name_en: Yup.string().required(),
+  type: Yup.string().required(),
+  branch_id: Yup.number().nullable(),
+  is_reconcilable: Yup.boolean(),
+  allow_manual_posting: Yup.boolean()
+});
+
 const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
   const { isRTL } = useLanguage();
   const t = useTranslations('Accounting');
@@ -29,23 +39,13 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
         if (response.success) {
           setBranches(Array.isArray(response.data) ? response.data : []);
         }
-      } catch (error) {}
+      } catch (error) { }
     };
-    
+
     if (isOpen) {
       fetchBranches();
     }
   }, [isOpen]);
-
-  const validationSchema = Yup.object({
-    code: Yup.string().required(commonT('required')),
-    name_ar: Yup.string().required(commonT('required')),
-    name_en: Yup.string().required(commonT('required')),
-    type: Yup.string().required(commonT('required')),
-    branch_id: Yup.number().nullable(),
-    is_reconcilable: Yup.boolean(),
-    allow_manual_posting: Yup.boolean()
-  });
 
   const formik = useFormik({
     initialValues: {
@@ -66,9 +66,9 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
           branch_id: values.branch_id || null,
           parent_id: parentId || null
         };
-        
+
         const response = await createAccount(accountData);
-        
+
         if (response.success || response.id || response.data) {
           toast.success(commonT('success'));
           formik.resetForm();
@@ -98,7 +98,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
             {t('addAccount')}
           </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={formik.handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="code">{t('code')} *</Label>
@@ -108,7 +108,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
               value={formik.values.code}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.code && formik.errors.code ? 'border-eed-500' : ''}
+              className={formik.touched.code && formik.errors.code ? 'border-red-500' : ''}
             />
           </div>
 
@@ -120,7 +120,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
               value={formik.values.name_ar}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.name_ar && formik.errors.name_ar ? 'border-eed-500' : ''}
+              className={formik.touched.name_ar && formik.errors.name_ar ? 'border-red-500' : ''}
             />
           </div>
 
@@ -132,14 +132,14 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
               value={formik.values.name_en}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.name_en && formik.errors.name_en ? 'border-eed-500' : ''}
+              className={formik.touched.name_en && formik.errors.name_en ? 'border-red-500' : ''}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="type">{commonT('type')} *</Label>
-            <Select 
-              value={formik.values.type} 
+            <Select
+              value={formik.values.type}
               onValueChange={(value) => formik.setFieldValue('type', value)}
             >
               <SelectTrigger>
@@ -157,8 +157,8 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
 
           <div className="space-y-2">
             <Label htmlFor="branch_id">{commonT('branch')}</Label>
-            <Select 
-              value={formik.values.branch_id} 
+            <Select
+              value={formik.values.branch_id}
               onValueChange={(value) => formik.setFieldValue('branch_id', value === "none" ? "" : value)}
             >
               <SelectTrigger>
@@ -176,8 +176,8 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
           </div>
 
           <div className="flex items-center space-x-2 space-x-reverse pt-2">
-            <Checkbox 
-              id="is_reconcilable" 
+            <Checkbox
+              id="is_reconcilable"
               checked={formik.values.is_reconcilable}
               onCheckedChange={(checked) => formik.setFieldValue('is_reconcilable', checked)}
             />
@@ -185,8 +185,8 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
           </div>
 
           <div className="flex items-center space-x-2 space-x-reverse pt-2">
-            <Checkbox 
-              id="allow_manual_posting" 
+            <Checkbox
+              id="allow_manual_posting"
               checked={formik.values.allow_manual_posting}
               onCheckedChange={(checked) => formik.setFieldValue('allow_manual_posting', checked)}
             />
@@ -194,16 +194,16 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess, parentId = null }) => {
           </div>
 
           <div className="flex gap-2 pt-4">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={handleClose}
               className="flex-1"
             >
               {commonT('cancel')}
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isLoading || !formik.isValid}
               className="flex-1"
             >

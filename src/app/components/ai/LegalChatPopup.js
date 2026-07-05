@@ -526,7 +526,7 @@ const LegalChatPopup = ({ isOpen, onClose, context = null, contextLabel, isConte
         <div className={`bg-gradient-to-r from-background to-muted/30 border-b p-4 ${isRTL ? 'pl-12' : 'pr-12'}`}>
           <div className="flex items-center gap-3">
             <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border border-primary/20 shadow-sm bg-background">
-              <Image src="/images/rased-icon.jpg" alt="Rased" fill className="object-cover" />
+              <Image src="/images/rased-icon.jpg" alt="Rased" fill sizes="40px" className="object-cover" />
             </div>
             <div className="flex flex-col">
               <h2 className="text-lg font-bold text-foreground tracking-tight">{isRTL ? 'راصد' : 'Rased'}</h2>

@@ -1973,6 +1973,8 @@
     "duplicateNameExists": "يوجد موظف بنفس الاسم بالفعل",
     "duplicatePhoneExists": "يوجد موظف بنفس رقم الهاتف بالفعل",
     "duplicateEmailExists": "يوجد موظف بنفس البريد الإلكتروني بالفعل",
+    "duplicateUsernameExists": "يوجد موظف بنفس اسم المستخدم بالفعل",
+    "duplicateEmployeeNumberExists": "يوجد موظف بنفس رقم الموظف بالفعل",
     "bankInfo": "المعلومات البنكية",
     "bankName": "اسم البنك",
     "accountNumber": "رقم الحساب",

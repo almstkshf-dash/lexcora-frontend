@@ -73,12 +73,14 @@ export const deleteEmployeeDocument = async (documentId) => {
   return response.data;
 };
 
-export const checkDuplicateEmployee = async (name, phone, email, excludeId = null) => {
+export const checkDuplicateEmployee = async (name, phone, email, username = null, employeeNumber = null, excludeId = null) => {
   try {
     const params = new URLSearchParams();
     if (name) params.append('name', name);
     if (phone) params.append('phone', phone);
     if (email) params.append('email', email);
+    if (username) params.append('username', username);
+    if (employeeNumber) params.append('employeeNumber', employeeNumber);
     if (excludeId) params.append('excludeId', excludeId);
     
     const response = await api.get(`/employees/check-duplicate?${params.toString()}`);

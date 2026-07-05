@@ -145,6 +145,7 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
     registrationExpirationDate: "",
     hourlyRate: ""
   });
+  const [errors, setErrors] = useState({});
 
   // Fetch employee data when modal opens
   const { data, error, isLoading } = useSWR(
@@ -211,15 +212,32 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     
+    // Clear error for this field
+    if (errors && errors[name]) {
+      setErrors(prev => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
+    
     // If employeeNumber changes, update username as well
     if (name === 'employeeNumber') {
       setForm({ ...form, [name]: value, username: value });
+      if (errors && errors['username']) {
+        setErrors(prev => {
+          const next = { ...prev };
+          delete next['username'];
+          return next;
+        });
+      }
     } else {
       setForm({ ...form, [name]: value });
     }
   };
 
   const validateForm = () => {
+    const newErrors = {};
     const requiredFields = [
       { field: 'name', message: t('validation.nameRequired') || 'Name is required' },
       { field: 'username', message: t('validation.usernameRequired') || 'Username is required' },
@@ -232,15 +250,20 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
 
     for (const { field, message } of requiredFields) {
       if (!form[field] || form[field].toString().trim() === '') {
-        toast.error(message);
-        return false;
+        newErrors[field] = message;
       }
     }
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(form.email)) {
-      toast.error(t('validation.emailInvalid') || 'Please enter a valid email address');
+    if (form.email && !emailRegex.test(form.email)) {
+      newErrors.email = t('validation.emailInvalid') || 'Please enter a valid email address';
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      toast.error(t('validation.pleaseCheckRequiredFields') || 'Please check the required fields', { autoClose: 10000 });
       return false;
     }
 
@@ -250,6 +273,7 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
   const handleCredentialsClose = () => {
     setShowCredentials(false);
     setIsOpen(false);
+    setErrors({});
   };
 
   const handleSubmit = async () => {
@@ -282,19 +306,52 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
           setShowCredentials(true);
         } else {
           setIsOpen(false);
+          setErrors({});
         }
       } else {
-        toast.error(t('messages.errorUpdatingEmployee') || 'Error updating employee. Please try again.');
+        const msg = response.message || t('messages.errorUpdatingEmployee') || 'خطأ في تحديث بيانات الموظف. يرجى المحاولة مرة أخرى.';
+        toast.error(msg, { autoClose: 10000 });
       }
     } catch (error) {
-      toast.error(t('messages.errorUpdatingEmployee') || 'Error updating employee. Please try again.');
+      const backendMsg = error.message || '';
+
+      // Map backend duplicate errors to inline field errors
+      const newErrors = {};
+      if (backendMsg.includes('same name') || backendMsg.includes('نفس الاسم')) {
+        newErrors.name = t('validation.nameTaken') || 'هذا الاسم مستخدم بالفعل لموظف آخر';
+      }
+      if (backendMsg.includes('same phone') || backendMsg.includes('نفس رقم الهاتف')) {
+        newErrors.phoneNumber = t('validation.phoneTaken') || 'رقم الهاتف مستخدم بالفعل لموظف آخر';
+      }
+      if (backendMsg.includes('same email') || backendMsg.includes('نفس البريد')) {
+        newErrors.email = t('validation.emailTaken') || 'البريد الإلكتروني مستخدم بالفعل لموظف آخر';
+      }
+      if (backendMsg.includes('same username') || backendMsg.includes('نفس اسم المستخدم')) {
+        newErrors.username = t('validation.usernameTaken') || 'اسم المستخدم مستخدم بالفعل لموظف آخر';
+      }
+      if (backendMsg.includes('same employee number') || backendMsg.includes('نفس رقم الموظف')) {
+        newErrors.employeeNumber = t('validation.employeeNumberTaken') || 'رقم الموظف مستخدم بالفعل';
+      }
+      if (backendMsg.includes('مكررة') || backendMsg.includes('duplicate')) {
+        newErrors.name = t('validation.duplicateData') || 'بيانات مكررة';
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        toast.error(t('validation.duplicateDataFound') || 'توجد بيانات مكررة — يرجى مراجعة الحقول المميزة باللون الأحمر', { autoClose: 10000 });
+      } else {
+        const displayMsg = backendMsg.replace(/^Failed to update employee:\s*/i, '').replace(/^خطأ في تحديث الموظف:\s*/i, '');
+        toast.error(displayMsg || t('messages.errorUpdatingEmployee') || 'خطأ في تحديث بيانات الموظف. يرجى المحاولة مرة أخرى.', { autoClose: 10000 });
+      }
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleClose = () => {
+    if (isSaving) return;
     setIsOpen(false);
+    setErrors({});
   };
 
   const handleOpen = () => {
@@ -314,12 +371,21 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
 
       {/* Modal */}
       <Modal isOpen={isOpen} onClose={handleClose}>
+        {isSaving && (
+          <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs z-50 flex flex-col items-center justify-center gap-4">
+            <Loader2 className="w-10 h-10 animate-spin text-primary" />
+            <span className="text-lg font-medium text-foreground">
+              {t('employees.savingEmployee') || 'جاري حفظ بيانات الموظف...'}
+            </span>
+          </div>
+        )}
         {/* Modal Header */}
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-semibold">{t('employees.editEmployee')}</h2>
           <button 
             onClick={handleClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            disabled={isSaving}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50"
           >
             <CircleX className="w-5 h-5" />
           </button>
@@ -345,6 +411,7 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
               form={form} 
               handleChange={handleChange} 
               setForm={setForm} 
+              errors={errors}
             />
           )}
         </div>
@@ -354,6 +421,7 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
           <Button 
             variant="outline" 
             onClick={handleClose}
+            disabled={isSaving}
             className="px-6"
           >
             {t('buttons.cancel')}

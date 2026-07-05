@@ -2732,6 +2732,8 @@
     "duplicatePhoneExists": "An employee with the same phone number already exists",
     "duplicateEmailExists": "An employee with the same email already exists",
     "duplicateEmployeeExists": "An employee with the same name, phone number, or email already exists",
+    "duplicateUsernameExists": "An employee with the same username already exists",
+    "duplicateEmployeeNumberExists": "An employee with the same employee number already exists",
     "permissionsList": {
       "addCar": "Add Car",
       "editCar": "Edit Car",

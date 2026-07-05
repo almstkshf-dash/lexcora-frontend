@@ -3,12 +3,11 @@
 import { useCallback, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-function getMessages() {
-  return {
-    ar: require("../messages/ar.json"),
-    en: require("../messages/en.json"),
-  };
-}
+// Load messages once at module level to avoid re-requiring on every render
+const messages = {
+  ar: require("../messages/ar.json"),
+  en: require("../messages/en.json"),
+};
 
 const hardcodedFallbacks = {
   en: {
@@ -32,7 +31,7 @@ export const useTranslations = (namespace = null) => {
       return '';
     }
     const keys = key.split('.');
-    const msgs = getMessages();
+    const msgs = messages;
     let translation = msgs[language];
 
     // Navigate through nested keys
@@ -41,7 +40,7 @@ export const useTranslations = (namespace = null) => {
         translation = translation[k];
       } else {
         // Fallback to English if key not found in current language
-        translation = msgs['en'];
+        translation = messages['en'];
         for (const fallbackKey of keys) {
           if (translation && typeof translation === 'object' && fallbackKey in translation) {
             translation = translation[fallbackKey];

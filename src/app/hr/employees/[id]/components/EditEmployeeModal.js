@@ -30,11 +30,85 @@ const Modal = ({ isOpen, onClose, children }) => {
   );
 };
 
+// Credentials Display Modal
+const CredentialsDisplayModal = ({ isOpen, onClose, username, password }) => {
+  const { isRTL, language } = useLanguage();
+  const { t } = useTranslations();
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* Modal Content */}
+      <div 
+        className="relative z-10 bg-white dark:bg-slate-900 border border-border rounded-xl shadow-2xl w-full max-w-md p-6" 
+        dir={isRTL ? "rtl" : "ltr"}
+      >
+        <h3 className="text-lg font-bold text-foreground mb-4">
+          {t('employees.newCredentials') || 'بيانات الدخول للموظف'}
+        </h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          {t('employees.credentialsSaveWarning') || 'تم حفظ بيانات الموظف بنجاح. يرجى حفظ اسم المستخدم وكلمة المرور أدناه لاستخدامها في تسجيل الدخول:'}
+        </p>
+        
+        <div className="space-y-3 bg-muted p-4 rounded-lg mb-6 border border-border">
+          <div>
+            <span className="text-xs text-muted-foreground block">{t('employees.username') || 'اسم المستخدم'}</span>
+            <div className="flex justify-between items-center mt-1">
+              <span className="font-mono text-sm font-semibold text-foreground select-all">{username}</span>
+              <button 
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(username);
+                  toast.success(t('common.copied') || 'تم النسخ بنجاح');
+                }}
+                className="text-xs text-primary hover:underline"
+              >
+                {t('common.copy') || 'نسخ'}
+              </button>
+            </div>
+          </div>
+          <div className="border-t border-border pt-2">
+            <span className="text-xs text-muted-foreground block">{t('employees.password') || 'كلمة المرور'}</span>
+            <div className="flex justify-between items-center mt-1">
+              <span className="font-mono text-sm font-semibold text-foreground select-all">{password}</span>
+              <button 
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(password);
+                  toast.success(t('common.copied') || 'تم النسخ بنجاح');
+                }}
+                className="text-xs text-primary hover:underline"
+              >
+                {t('common.copy') || 'نسخ'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button onClick={onClose} className="px-6">
+            {t('buttons.close') || t('common.close') || 'إغلاق'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function EditEmployeeModal({ employeeId, onUpdate }) {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [credentials, setCredentials] = useState(null);
+  const [showCredentials, setShowCredentials] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -101,35 +175,35 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
         username: employee.username || "",
         email: employee.email || "",
         password: employee.password || "",
-        roleId: employee.role_id ? String(employee.role_id) : "",
-        departmentId: employee.department_id ? String(employee.department_id) : "",
-        branchId: employee.branch_id ? String(employee.branch_id) : "",
+        roleId: employee.roleId ? String(employee.roleId) : (employee.role_id ? String(employee.role_id) : ""),
+        departmentId: employee.departmentId ? String(employee.departmentId) : (employee.department_id ? String(employee.department_id) : ""),
+        branchId: employee.branchId ? String(employee.branchId) : (employee.branch_id ? String(employee.branch_id) : ""),
         status: employee.status || 'active',
-        identityNumber: employee.eId || "",
-        passportNumber: employee.passport || "",
-        employeeNumber: employee.job_id || "",
-        basicSalary: employee.basic_salary || "",
-        directManagerId: employee.direct_manager_id ? String(employee.direct_manager_id) : "",
-        phoneNumber: employee.phone || "",
-        identityExpiryDate: formatDateForInput(employee.id_end_date),
-        passportExpiryDate: formatDateForInput(employee.passport_end_date),
-        residenceExpiryDate: formatDateForInput(employee.residence_end_date),
-        insuranceExpiryDate: formatDateForInput(employee.health_insurance_end_date),
-        contractExpiryDate: formatDateForInput(employee.contract_end_date),
-        workPermitExpiryDate: formatDateForInput(employee.labor_card_end_date),
-        accountCloseDate: formatDateForInput(employee.account_close_date),
-        anotherAllowance: employee.another_allowance || "",
-        accountActivationDate: formatDateForInput(employee.account_activation_date),
-        firstDayOfWork: formatDateForInput(employee.first_day_of_work),
-        housingAllowance: employee.housing_allowance || "",
-        transportationAllowance: employee.transportation_allowance || "",
-        payType: employee.pay_type || "",
+        identityNumber: employee.identityNumber || employee.eId || "",
+        passportNumber: employee.passportNumber || employee.passport || "",
+        employeeNumber: employee.employeeNumber || employee.job_id || "",
+        basicSalary: employee.basicSalary || employee.basic_salary || "",
+        directManagerId: employee.directManagerId ? String(employee.directManagerId) : (employee.direct_manager_id ? String(employee.direct_manager_id) : ""),
+        phoneNumber: employee.phoneNumber || employee.phone || "",
+        identityExpiryDate: formatDateForInput(employee.identityExpiryDate || employee.id_end_date),
+        passportExpiryDate: formatDateForInput(employee.passportExpiryDate || employee.passport_end_date),
+        residenceExpiryDate: formatDateForInput(employee.residenceExpiryDate || employee.residence_end_date),
+        insuranceExpiryDate: formatDateForInput(employee.insuranceExpiryDate || employee.health_insurance_end_date),
+        contractExpiryDate: formatDateForInput(employee.contractExpiryDate || employee.contract_end_date),
+        workPermitExpiryDate: formatDateForInput(employee.workPermitExpiryDate || employee.labor_card_end_date),
+        accountCloseDate: formatDateForInput(employee.accountCloseDate || employee.account_close_date),
+        anotherAllowance: employee.anotherAllowance || employee.another_allowance || "",
+        accountActivationDate: formatDateForInput(employee.accountActivationDate || employee.account_activation_date),
+        firstDayOfWork: formatDateForInput(employee.firstDayOfWork || employee.first_day_of_work),
+        housingAllowance: employee.housingAllowance || employee.housing_allowance || "",
+        transportationAllowance: employee.transportationAllowance || employee.transportation_allowance || "",
+        payType: employee.payType || employee.pay_type || "",
         iban: employee.iban || "",
-        accountNumber: employee.account_number || "",
-        bankName: employee.bank_name || "",
-        contractType: employee.contract_type || "",
-        registrationExpirationDate: formatDateForInput(employee.registration_expiration_date),
-        hourlyRate: employee.hourly_rate || ""
+        accountNumber: employee.accountNumber || employee.account_number || "",
+        bankName: employee.bankName || employee.bank_name || "",
+        contractType: employee.contractType || employee.contract_type || "",
+        registrationExpirationDate: formatDateForInput(employee.registrationExpirationDate || employee.registration_expiration_date),
+        hourlyRate: employee.hourlyRate || employee.hourly_rate || ""
       });
     }
   }, [data]);
@@ -173,6 +247,11 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
     return true;
   };
 
+  const handleCredentialsClose = () => {
+    setShowCredentials(false);
+    setIsOpen(false);
+  };
+
   const handleSubmit = async () => {
     if (isSaving) return; // Prevent multiple submissions
     
@@ -194,8 +273,16 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
         
         if (onUpdate) onUpdate(response);
         
-        // Close modal on success
-        setIsOpen(false);
+        // If a new password was set, show the credential modal
+        if (response.data?.plainPassword) {
+          setCredentials({
+            username: response.data.username || form.username,
+            password: response.data.plainPassword
+          });
+          setShowCredentials(true);
+        } else {
+          setIsOpen(false);
+        }
       } else {
         toast.error(t('messages.errorUpdatingEmployee') || 'Error updating employee. Please try again.');
       }
@@ -281,6 +368,15 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
           </Button>
         </div>
       </Modal>
+
+      {credentials && (
+        <CredentialsDisplayModal
+          isOpen={showCredentials}
+          onClose={handleCredentialsClose}
+          username={credentials.username}
+          password={credentials.password}
+        />
+      )}
     </>
   );
 }

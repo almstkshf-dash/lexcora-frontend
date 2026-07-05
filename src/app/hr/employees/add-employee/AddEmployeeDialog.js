@@ -88,11 +88,85 @@ const Modal = ({ isOpen, onClose, children }) => {
   return createPortal(modalContent, document.body);
 };
 
+// Credentials Display Modal
+const CredentialsDisplayModal = ({ isOpen, onClose, username, password }) => {
+  const { isRTL, language } = useLanguage();
+  const { t } = useTranslations();
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* Modal Content */}
+      <div 
+        className="relative z-10 bg-white dark:bg-slate-900 border border-border rounded-xl shadow-2xl w-full max-w-md p-6" 
+        dir={isRTL ? "rtl" : "ltr"}
+      >
+        <h3 className="text-lg font-bold text-foreground mb-4">
+          {t('employees.newCredentials') || 'بيانات الدخول للموظف'}
+        </h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          {t('employees.credentialsSaveWarning') || 'تم حفظ بيانات الموظف بنجاح. يرجى حفظ اسم المستخدم وكلمة المرور أدناه لاستخدامها في تسجيل الدخول:'}
+        </p>
+        
+        <div className="space-y-3 bg-muted p-4 rounded-lg mb-6 border border-border">
+          <div>
+            <span className="text-xs text-muted-foreground block">{t('employees.username') || 'اسم المستخدم'}</span>
+            <div className="flex justify-between items-center mt-1">
+              <span className="font-mono text-sm font-semibold text-foreground select-all">{username}</span>
+              <button 
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(username);
+                  toast.success(t('common.copied') || 'تم النسخ بنجاح');
+                }}
+                className="text-xs text-primary hover:underline"
+              >
+                {t('common.copy') || 'نسخ'}
+              </button>
+            </div>
+          </div>
+          <div className="border-t border-border pt-2">
+            <span className="text-xs text-muted-foreground block">{t('employees.password') || 'كلمة المرور'}</span>
+            <div className="flex justify-between items-center mt-1">
+              <span className="font-mono text-sm font-semibold text-foreground select-all">{password}</span>
+              <button 
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(password);
+                  toast.success(t('common.copied') || 'تم النسخ بنجاح');
+                }}
+                className="text-xs text-primary hover:underline"
+              >
+                {t('common.copy') || 'نسخ'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button onClick={onClose} className="px-6">
+            {t('buttons.close') || t('common.close') || 'إغلاق'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function AddEmployeeModal({ onAdd }) {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [credentials, setCredentials] = useState(null);
+  const [showCredentials, setShowCredentials] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [tab, setTab] = useState("info");
   const [form, setForm] = useState(INITIAL_FORM);
@@ -176,10 +250,18 @@ export default function AddEmployeeModal({ onAdd }) {
 
         if (onAdd) onAdd(response);
 
-        // Close modal and reset form on success
-        setIsOpen(false);
-        setForm(INITIAL_FORM);
-        setTab("info");
+        const createdEmp = response.data;
+        if (createdEmp?.password && createdEmp?.password !== '********') {
+          setCredentials({
+            username: createdEmp.username,
+            password: createdEmp.password
+          });
+          setShowCredentials(true);
+        } else {
+          setIsOpen(false);
+          setForm(INITIAL_FORM);
+          setTab("info");
+        }
       } else {
 
         toast.error(t('messages.errorCreatingEmployee') || 'Error creating employee. Please try again.');
@@ -193,6 +275,13 @@ export default function AddEmployeeModal({ onAdd }) {
 
   const handleClose = () => {
     setIsOpen(false);
+  };
+
+  const handleCredentialsClose = () => {
+    setShowCredentials(false);
+    setIsOpen(false);
+    setForm(INITIAL_FORM);
+    setTab("info");
   };
 
   return (
@@ -267,6 +356,15 @@ export default function AddEmployeeModal({ onAdd }) {
           </Button>
         </div>
       </Modal>
+
+      {credentials && (
+        <CredentialsDisplayModal
+          isOpen={showCredentials}
+          onClose={handleCredentialsClose}
+          username={credentials.username}
+          password={credentials.password}
+        />
+      )}
     </>
   );
 }

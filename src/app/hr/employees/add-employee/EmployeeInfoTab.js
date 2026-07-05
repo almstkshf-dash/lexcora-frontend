@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
-import { CalendarIcon, ChevronDownIcon } from "lucide-react";
+import { CalendarIcon, ChevronDownIcon, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/hooks/useTranslations";
 import { format } from "date-fns";
@@ -86,6 +86,7 @@ const FormField = ({ label, children, required = false, htmlFor }) => (
 export default function EmployeeInfoTab({ form, handleChange, setForm }) {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
+  const [showPassword, setShowPassword] = useState(false);
 
   // Get employee role from Redux to check if user is admin
   const employeeRole = useSelector((state) => state.auth.roleEn);
@@ -158,6 +159,27 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
               value={form.phoneNumber} 
               onChange={handleChange} 
             />
+          </FormField>
+
+          <FormField label={t('employees.password') || 'كلمة المرور'} htmlFor="password">
+            <div className="relative">
+              <Input 
+                id="password"
+                name="password" 
+                type={showPassword ? "text" : "password"}
+                placeholder={t('employees.passwordPlaceholder') || 'كلمة المرور (اتركه فارغاً للاحتفاظ بالحالية)'} 
+                value={form.password || ''} 
+                onChange={handleChange} 
+                className="pe-10 text-left ltr:text-left rtl:text-right"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 end-0 px-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </FormField>
         </div>
       </div>

@@ -49,7 +49,9 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
     branch_id: 1,
     consultation_type: "",
     passport: "",
-    is_vip: false
+    is_vip: false,
+    username: "",
+    password: ""
   });
 
   // Fetch branches
@@ -129,7 +131,9 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
       branch_id: 1,
       consultation_type: "",
       passport: "",
-      is_vip: false
+      is_vip: false,
+      username: "",
+      password: ""
     });
     setPartyFiles([]);
   };
@@ -205,17 +209,16 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
         return;
       }
       
-      if (response.success) {
-        toast.success(t('parties.partyAddedSuccess') || "تم إضافة الطرف بنجاح");
-        resetForm();
-        setOpen(false);
-        if (onPartyAdded) {
-          // Pass the new party data with the returned ID
-          onPartyAdded({
-            ...formData,
-            id: response.id
-          });
-        }
+      // Success
+      toast.success(t('parties.partyAddedSuccess') || "تم إضافة الطرف بنجاح");
+      resetForm();
+      setOpen(false);
+      if (onPartyAdded) {
+        // Pass the new party data with the returned ID
+        onPartyAdded({
+          ...formData,
+          id: response.id
+        });
       }
     } catch (error) {
       // Check if it's a permission error (403)
@@ -451,6 +454,29 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
                 }
               </Label>
             </div>
+          </div>
+
+          {/* Username */}
+          <div className="space-y-2">
+            <Label htmlFor="username">{t('parties.username') || 'اسم المستخدم'}</Label>
+            <Input
+              id="username"
+              value={formData.username}
+              onChange={(e) => handleInputChange("username", e.target.value)}
+              placeholder={t('parties.usernamePlaceholder') || 'اسم المستخدم للدخول'}
+            />
+          </div>
+
+          {/* Password */}
+          <div className="space-y-2">
+            <Label htmlFor="password">{t('parties.password') || 'كلمة المرور'}</Label>
+            <Input
+              id="password"
+              type="password"
+              value={formData.password}
+              onChange={(e) => handleInputChange("password", e.target.value)}
+              placeholder={t('parties.passwordPlaceholder') || 'كلمة المرور'}
+            />
           </div>
 
           {/* Address */}

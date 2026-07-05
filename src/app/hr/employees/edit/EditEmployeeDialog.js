@@ -184,37 +184,10 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
           </button>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 bg-card">
-          {!employeeId && (
-            <div className="flex items-center justify-center py-8 text-destructive">
-              <AlertCircle className="w-6 h-6 me-2" />
-              {t('employees.missingEmployeeId')}
-            </div>
-          )}
-
-          {employeeId && isLoading && (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            </div>
-          )}
-
-          {employeeId && error && (
-            <div className="flex items-center justify-center py-8 text-destructive">
-              <AlertCircle className="w-6 h-6 me-2" />
-              {t('employees.errorLoadingDetails')}
-            </div>
-          )}
-
-          {employeeId && !isLoading && !error && !employee && open && (
-            <div className="flex items-center justify-center py-8 text-muted-foreground">
-              <AlertCircle className="w-6 h-6 me-2" />
-              {t('employees.noEmployeeFound')}
-            </div>
-          )}
-
-          {employeeId && employee && (
-            <form onSubmit={handleSubmit} className="space-y-6">
+        {employeeId && employee && !isLoading && !error ? (
+          <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="flex-1 flex flex-col overflow-hidden">
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6 bg-card">
               {submitError && (
                 <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-sg">
                   <div className="flex items-center gap-2 text-destructive">
@@ -277,34 +250,60 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
                   />
                 </TabsContent>
               </Tabs>
-            </form>
-          )}
-        </div>
+            </div>
 
-        {/* Footer */}
-        {employeeId && employee && (
-          <div className="flex justify-end gap-3 p-6 border-t border-border bg-muted/30">
-            <Button 
-              type="button"
-              variant="outline" 
-              onClick={() => setOpen(false)}
-              disabled={isSubmitting}
-            >
-              {t('common.cancel')}
-            </Button>
-            <Button 
-              type="button"
-              onClick={handleSubmit}
-              disabled={isSubmitting || rolesLoading || departmentsLoading || branchesLoading || managersLoading}
-              className="flex items-center gap-2 min-w-[100px]"
-            >
-              {isSubmitting ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Save className="w-4 h-4" />
-              )}
-              {isSubmitting ? t('common.saving') : t('common.save')}
-            </Button>
+            {/* Footer */}
+            <div className="flex justify-end gap-3 p-6 border-t border-border bg-muted/30">
+              <Button 
+                type="button"
+                variant="outline" 
+                onClick={() => setOpen(false)}
+                disabled={isSubmitting}
+              >
+                {t('common.cancel')}
+              </Button>
+              <Button 
+                type="submit"
+                disabled={isSubmitting || rolesLoading || departmentsLoading || branchesLoading || managersLoading}
+                className="flex items-center gap-2 min-w-[100px]"
+              >
+                {isSubmitting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+                {isSubmitting ? t('common.saving') : t('common.save')}
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <div className="flex-1 overflow-y-auto p-6 bg-card">
+            {!employeeId && (
+              <div className="flex items-center justify-center py-8 text-destructive">
+                <AlertCircle className="w-6 h-6 me-2" />
+                {t('employees.missingEmployeeId')}
+              </div>
+            )}
+
+            {employeeId && isLoading && (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            )}
+
+            {employeeId && error && (
+              <div className="flex items-center justify-center py-8 text-destructive">
+                <AlertCircle className="w-6 h-6 me-2" />
+                {t('employees.errorLoadingDetails')}
+              </div>
+            )}
+
+            {employeeId && !isLoading && !error && !employee && open && (
+              <div className="flex items-center justify-center py-8 text-muted-foreground">
+                <AlertCircle className="w-6 h-6 me-2" />
+                {t('employees.noEmployeeFound')}
+              </div>
+            )}
           </div>
         )}
       </div>

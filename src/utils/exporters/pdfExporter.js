@@ -24,9 +24,10 @@ export const exportTableToPDF = async ({
     format: 'a4'
   });
 
-  // Register Arabic-capable font and switch when language is Arabic
+  // Register Arabic-capable font (both normal + bold) so autoTable headStyles don't fall back to helvetica
   doc.addFileToVFS('NotoSansArabic-Regular.ttf', NOTO_SANS_ARABIC_REGULAR);
   doc.addFont('NotoSansArabic-Regular.ttf', 'NotoSansArabic', 'normal');
+  doc.addFont('NotoSansArabic-Regular.ttf', 'NotoSansArabic', 'bold');
   if (language === 'ar') {
     doc.setFont('NotoSansArabic', 'normal');
   }

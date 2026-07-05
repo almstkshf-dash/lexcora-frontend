@@ -1,11 +1,11 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   ArrowRight,
-  Shield, 
-  Lock, 
+  Shield,
+  Lock,
   Key,
   Eye,
   EyeOff,
@@ -29,10 +29,10 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const SecuritySettingsPage = () => {
-  const {t} = useTranslations();
+  const { t } = useTranslations();
   const { isRTL } = useLanguage();
   const router = useRouter();
-  
+
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -106,14 +106,14 @@ const SecuritySettingsPage = () => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // Clear form
       setPasswordData({
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       });
-      
+
       alert(t('settings.passwordChanged'));
     } catch (error) {
 
@@ -165,99 +165,101 @@ const SecuritySettingsPage = () => {
               {t('settings.changePasswordDescription')}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="currentPassword">{t('settings.currentPassword')}</Label>
-              <div className="relative">
-                <Input
-                  id="currentPassword"
-                  name="currentPassword"
-                  autoComplete="current-password"
-                  type={showCurrentPassword ? 'text' : 'password'}
-                  value={passwordData.currentPassword}
-                  onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
-                  placeholder={t('settings.enterCurrentPassword')}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute inset-inline-end-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                >
-                  {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="newPassword">{t('settings.newPassword')}</Label>
-              <div className="relative">
-                <Input
-                  id="newPassword"
-                  name="newPassword"
-                  autoComplete="new-password"
-                  type={showNewPassword ? 'text' : 'password'}
-                  value={passwordData.newPassword}
-                  onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
-                  placeholder={t('settings.enterNewPassword')}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute inset-inline-end-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                >
-                  {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-              {passwordData.newPassword && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full transition-all ${passwordStrength.color}`}
-                        style={{ width: `${(passwordStrength.strength / 3) * 100}%` }}
-                      />
-                    </div>
-                    <span className="text-sm text-muted-foreground">{passwordStrength.label}</span>
-                  </div>
+          <CardContent>
+            <form onSubmit={(e) => { e.preventDefault(); handleChangePassword(); }} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="currentPassword">{t('settings.currentPassword')}</Label>
+                <div className="relative">
+                  <Input
+                    id="currentPassword"
+                    name="currentPassword"
+                    autoComplete="current-password"
+                    type={showCurrentPassword ? 'text' : 'password'}
+                    value={passwordData.currentPassword}
+                    onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
+                    placeholder={t('settings.enterCurrentPassword')}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute inset-inline-end-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  >
+                    {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
                 </div>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{t('settings.confirmPassword')}</Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  autoComplete="new-password"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  value={passwordData.confirmPassword}
-                  onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
-                  placeholder={t('settings.confirmNewPassword')}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute inset-inline-end-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
               </div>
-            </div>
 
-            <Button 
-              onClick={handleChangePassword}
-              disabled={!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword || isChangingPassword}
-              className="w-full"
-            >
-              {isChangingPassword ? t('common.loading') : t('settings.changePassword')}
-            </Button>
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">{t('settings.newPassword')}</Label>
+                <div className="relative">
+                  <Input
+                    id="newPassword"
+                    name="newPassword"
+                    autoComplete="new-password"
+                    type={showNewPassword ? 'text' : 'password'}
+                    value={passwordData.newPassword}
+                    onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+                    placeholder={t('settings.enterNewPassword')}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute inset-inline-end-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                  >
+                    {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+                {passwordData.newPassword && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-gray-200 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full transition-all ${passwordStrength.color}`}
+                          style={{ width: `${(passwordStrength.strength / 3) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-sm text-muted-foreground">{passwordStrength.label}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">{t('settings.confirmPassword')}</Label>
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    autoComplete="new-password"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={passwordData.confirmPassword}
+                    onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+                    placeholder={t('settings.confirmNewPassword')}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute inset-inline-end-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword || isChangingPassword}
+                className="w-full"
+              >
+                {isChangingPassword ? t('common.loading') : t('settings.changePassword')}
+              </Button>
+            </form>
           </CardContent>
         </Card>
 
@@ -280,7 +282,7 @@ const SecuritySettingsPage = () => {
                   {t('settings.enableTwoFactorDescription')}
                 </p>
               </div>
-              <Switch 
+              <Switch
                 checked={securitySettings.twoFactorAuth}
                 onCheckedChange={(checked) => handleSecuritySettingChange('twoFactorAuth', checked)}
               />

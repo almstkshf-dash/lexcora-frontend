@@ -21,7 +21,7 @@ import { getBranches } from '@/app/services/api/branches';
 // DatePickerField Component
 const DatePickerField = ({ name, placeholder, value, onChange, isRTL }) => {
   const [open, setOpen] = useState(false);
-  
+
   const handleDateSelect = (date) => {
     if (date) {
       const formattedDate = format(date, "yyyy-MM-dd");
@@ -90,7 +90,7 @@ const FormField = ({ label, children, required = false, htmlFor, error }) => (
   </div>
 );
 
-export default function EmployeeInfoTab({ form, handleChange, setForm, errors = {} }) {
+export default function EmployeeInfoTab({ form, handleChange, setForm, errors = {}, isEdit = false }) {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
   const [showPassword, setShowPassword] = useState(false);
@@ -122,62 +122,68 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.basicInformationSection')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormField label={t('employees.name')} required htmlFor="name" error={errors.name}>
-            <Input 
+            <Input
               id="name"
-              name="name" 
+              name="name"
               autoComplete="name"
-              placeholder={t('employees.namePlaceholder')} 
-              value={form.name} 
-              onChange={handleChange} 
+              placeholder={t('employees.namePlaceholder')}
+              value={form.name}
+              onChange={handleChange}
               className={cn(errors.name && "border-red-500 focus-visible:ring-red-500")}
             />
           </FormField>
-          
+
           <FormField label={t('employees.employeeNumber')} required htmlFor="employeeNumber" error={errors.employeeNumber}>
-            <Input 
+            <Input
               id="employeeNumber"
-              name="employeeNumber" 
-              placeholder={t('employees.employeeNumberPlaceholder')} 
-              value={form.employeeNumber} 
-              onChange={handleChange} 
+              name="employeeNumber"
+              placeholder={t('employees.employeeNumberPlaceholder')}
+              value={form.employeeNumber}
+              onChange={handleChange}
               className={cn(errors.employeeNumber && "border-red-500 focus-visible:ring-red-500")}
             />
           </FormField>
 
           <FormField label={t('employees.email')} htmlFor="email" error={errors.email}>
-            <Input 
+            <Input
               id="email"
-              name="email" 
+              name="email"
               autoComplete="email"
-              placeholder={t('employees.emailPlaceholder')} 
-              value={form.email} 
-              onChange={handleChange} 
+              placeholder={t('employees.emailPlaceholder')}
+              value={form.email}
+              onChange={handleChange}
               className={cn(errors.email && "border-red-500 focus-visible:ring-red-500")}
             />
           </FormField>
-          
+
           <FormField label={t('employees.phoneNumber')} required htmlFor="phoneNumber" error={errors.phoneNumber}>
-            <Input 
+            <Input
               id="phoneNumber"
-              name="phoneNumber" 
+              name="phoneNumber"
               autoComplete="tel"
-              placeholder={t('employees.phonePlaceholder')} 
+              placeholder={t('employees.phonePlaceholder')}
               type="tel"
-              value={form.phoneNumber} 
-              onChange={handleChange} 
+              value={form.phoneNumber}
+              onChange={handleChange}
               className={cn(errors.phoneNumber && "border-red-500 focus-visible:ring-red-500")}
             />
           </FormField>
 
-          <FormField label={t('employees.password') || 'كلمة المرور'} htmlFor="password">
+          <FormField
+            label={t('employees.password') || 'كلمة المرور'}
+            required={!isEdit}
+            htmlFor="password"
+            error={errors.password}
+          >
             <div className="relative">
-              <Input 
+              <Input
                 id="password"
-                name="password" 
+                name="password"
                 type={showPassword ? "text" : "password"}
-                placeholder={t('employees.passwordPlaceholder') || 'كلمة المرور (اتركه فارغاً للاحتفاظ بالحالية)'} 
-                value={form.password || ''} 
-                onChange={handleChange} 
+                autoComplete="new-password"
+                placeholder={isEdit ? (t('employees.passwordPlaceholder') || 'اتركه فارغًا إذا لم ترغب في التغيير') : (t('auth.passwordPlaceholder') || 'أدخل كلمة المرور')}
+                value={form.password || ''}
+                onChange={handleChange}
                 className="pe-10 text-left ltr:text-left rtl:text-right"
               />
               <button
@@ -221,7 +227,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
               </SelectContent>
             </Select>
           </FormField>
-          
+
           <FormField label={t('employees.selectDepartment')} required htmlFor="departmentId" error={errors.departmentId}>
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.departmentId ? String(form.departmentId) : ''} onValueChange={value => {
               setForm(f => ({ ...f, departmentId: value }));
@@ -245,7 +251,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
               </SelectContent>
             </Select>
           </FormField>
-          
+
           <FormField label={t('employees.selectBranch')} required htmlFor="branchId" error={errors.branchId}>
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.branchId ? String(form.branchId) : ''} onValueChange={value => {
               setForm(f => ({ ...f, branchId: value }));
@@ -269,7 +275,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
               </SelectContent>
             </Select>
           </FormField>
-          
+
           <FormField label={t('employees.selectDirectManager')} htmlFor="directManagerId">
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.directManagerId ? String(form.directManagerId) : ''} onValueChange={value => setForm(f => ({ ...f, directManagerId: value }))}>
               <SelectTrigger id="directManagerId" className="w-full">
@@ -308,7 +314,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
               </SelectContent>
             </Select>
           </FormField>
-          
+
           <FormField label={t('employees.payType') || 'طريقة الدفع'} htmlFor="payType">
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.payType} onValueChange={value => setForm(f => ({ ...f, payType: value }))}>
               <SelectTrigger id="payType" className="w-full">
@@ -322,7 +328,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
               </SelectContent>
             </Select>
           </FormField>
-          
+
           <FormField label={t('employees.firstDayOfWork') || 'أول يوم عمل'}>
             <DatePickerField
               name="firstDayOfWork"
@@ -332,7 +338,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
               isRTL={isRTL}
             />
           </FormField>
-          
+
           <FormField label={t('employees.accountActivationDate') || 'تاريخ تفعيل الحساب'}>
             <DatePickerField
               name="accountActivationDate"
@@ -342,7 +348,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
               isRTL={isRTL}
             />
           </FormField>
-          
+
           <FormField label={t('employees.accountCloseDate') || 'تاريخ إغلاق الحساب'}>
             <DatePickerField
               name="accountCloseDate"
@@ -375,57 +381,57 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.financialInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormField label={t('employees.basicSalary')} htmlFor="basicSalary">
-            <Input 
+            <Input
               id="basicSalary"
-              name="basicSalary" 
-              placeholder={t('employees.basicSalaryPlaceholder')} 
+              name="basicSalary"
+              placeholder={t('employees.basicSalaryPlaceholder')}
               type="number"
-              value={form.basicSalary} 
-              onChange={handleChange} 
+              value={form.basicSalary}
+              onChange={handleChange}
             />
           </FormField>
-          
+
           <FormField label={t('employees.housingAllowance') || 'بدل السكن'} htmlFor="housingAllowance">
-            <Input 
+            <Input
               id="housingAllowance"
-              name="housingAllowance" 
-              placeholder={t('employees.allowancePlaceholder')} 
+              name="housingAllowance"
+              placeholder={t('employees.allowancePlaceholder')}
               type="number"
-              value={form.housingAllowance} 
-              onChange={handleChange} 
+              value={form.housingAllowance}
+              onChange={handleChange}
             />
           </FormField>
-          
+
           <FormField label={t('employees.transportationAllowance') || 'بدل المواصلات'} htmlFor="transportationAllowance">
-            <Input 
+            <Input
               id="transportationAllowance"
-              name="transportationAllowance" 
-              placeholder={t('employees.allowancePlaceholder')} 
+              name="transportationAllowance"
+              placeholder={t('employees.allowancePlaceholder')}
               type="number"
-              value={form.transportationAllowance} 
-              onChange={handleChange} 
+              value={form.transportationAllowance}
+              onChange={handleChange}
             />
           </FormField>
-          
+
           <FormField label={t('employees.anotherAllowance') || 'بدل آخر'} htmlFor="anotherAllowance">
-            <Input 
+            <Input
               id="anotherAllowance"
-              name="anotherAllowance" 
-              placeholder={t('employees.allowancePlaceholder')} 
+              name="anotherAllowance"
+              placeholder={t('employees.allowancePlaceholder')}
               type="number"
-              value={form.anotherAllowance} 
-              onChange={handleChange} 
+              value={form.anotherAllowance}
+              onChange={handleChange}
             />
           </FormField>
 
           <FormField label={t('employees.hourlyRate') || 'أجر الساعة'} htmlFor="hourlyRate">
-            <Input 
+            <Input
               id="hourlyRate"
-              name="hourlyRate" 
-              placeholder={t('employees.hourlyRatePlaceholder') || 'أدخل أجر الساعة'} 
+              name="hourlyRate"
+              placeholder={t('employees.hourlyRatePlaceholder') || 'أدخل أجر الساعة'}
               type="number"
-              value={form.hourlyRate} 
-              onChange={handleChange} 
+              value={form.hourlyRate}
+              onChange={handleChange}
             />
           </FormField>
         </div>
@@ -436,32 +442,32 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.bankInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormField label={t('employees.bankName') || 'اسم البنك'} htmlFor="bankName">
-            <Input 
+            <Input
               id="bankName"
-              name="bankName" 
-              placeholder={t('employees.bankNamePlaceholder')} 
-              value={form.bankName} 
-              onChange={handleChange} 
+              name="bankName"
+              placeholder={t('employees.bankNamePlaceholder')}
+              value={form.bankName}
+              onChange={handleChange}
             />
           </FormField>
-          
+
           <FormField label={t('employees.accountNumber') || 'رقم الحساب'} htmlFor="accountNumber">
-            <Input 
+            <Input
               id="accountNumber"
-              name="accountNumber" 
-              placeholder={t('employees.accountNumberPlaceholder')} 
-              value={form.accountNumber} 
-              onChange={handleChange} 
+              name="accountNumber"
+              placeholder={t('employees.accountNumberPlaceholder')}
+              value={form.accountNumber}
+              onChange={handleChange}
             />
           </FormField>
-          
+
           <FormField label={t('employees.iban') || 'رقم الآيبان'} htmlFor="iban">
-            <Input 
+            <Input
               id="iban"
-              name="iban" 
-              placeholder={t('employees.ibanPlaceholder')} 
-              value={form.iban} 
-              onChange={handleChange} 
+              name="iban"
+              placeholder={t('employees.ibanPlaceholder')}
+              value={form.iban}
+              onChange={handleChange}
             />
           </FormField>
         </div>
@@ -472,22 +478,22 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
         <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.documentsInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormField label={t('employees.identityNumber')} htmlFor="identityNumber">
-            <Input 
+            <Input
               id="identityNumber"
-              name="identityNumber" 
-              placeholder={t('employees.identityNumberPlaceholder')} 
-              value={form.identityNumber} 
-              onChange={handleChange} 
+              name="identityNumber"
+              placeholder={t('employees.identityNumberPlaceholder')}
+              value={form.identityNumber}
+              onChange={handleChange}
             />
           </FormField>
-          
+
           <FormField label={t('employees.passportNumber')} htmlFor="passportNumber">
-            <Input 
+            <Input
               id="passportNumber"
-              name="passportNumber" 
-              placeholder={t('employees.passportNumberPlaceholder')} 
-              value={form.passportNumber} 
-              onChange={handleChange} 
+              name="passportNumber"
+              placeholder={t('employees.passportNumberPlaceholder')}
+              value={form.passportNumber}
+              onChange={handleChange}
             />
           </FormField>
         </div>
@@ -506,7 +512,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
               isRTL={isRTL}
             />
           </FormField>
-          
+
           <FormField label={t('employees.passportExpiryDate')}>
             <DatePickerField
               name="passportExpiryDate"
@@ -516,7 +522,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
               isRTL={isRTL}
             />
           </FormField>
-          
+
           <FormField label={t('employees.residenceExpiryDate')}>
             <DatePickerField
               name="residenceExpiryDate"
@@ -526,7 +532,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
               isRTL={isRTL}
             />
           </FormField>
-          
+
           <FormField label={t('employees.insuranceExpiryDate')}>
             <DatePickerField
               name="insuranceExpiryDate"
@@ -536,7 +542,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
               isRTL={isRTL}
             />
           </FormField>
-          
+
           <FormField label={t('employees.contractExpiryDate')}>
             <DatePickerField
               name="contractExpiryDate"
@@ -546,7 +552,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm, errors = 
               isRTL={isRTL}
             />
           </FormField>
-          
+
           <FormField label={t('employees.workPermitExpiryDate')}>
             <DatePickerField
               name="workPermitExpiryDate"

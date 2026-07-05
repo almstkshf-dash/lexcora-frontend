@@ -215,7 +215,7 @@ const AddPartyModal = ({ onPartyAdded, children, initialPartyType = "" }) => {
           // Pass the new party data with the returned ID
           onPartyAdded({
             ...formData,
-            id: response.id
+            id: response.data?.id ?? response.id
           });
         }
       } else {

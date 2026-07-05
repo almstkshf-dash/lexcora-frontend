@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import useSWR from "swr";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
   DialogDescription,
   DialogFooter
@@ -26,12 +26,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import { Edit, Save, Loader2, Upload, X, FileText, Image as ImageIcon, FileIcon, Trash2 } from "lucide-react";
 import { getPartyById, updateParty, checkDuplicateParty } from "@/app/services/api/parties";
@@ -66,7 +66,9 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
     branch_id: 1,
     consultation_type: "",
     passport: "",
-    is_vip: false
+    is_vip: false,
+    username: "",
+    password: ""
   });
 
   // Fetch branches using SWR
@@ -98,9 +100,11 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
         branch_id: partyData.branch_id || 1,
         consultation_type: partyData.consultation_type || "",
         passport: partyData.passport || "",
-        is_vip: partyData.is_vip === 1 || partyData.is_vip === true || false
+        is_vip: partyData.is_vip === 1 || partyData.is_vip === true || false,
+        username: partyData.username || "",
+        password: partyData.password || ""
       });
-      
+
       // Set existing documents if available
       if (partyData.documents && Array.isArray(partyData.documents)) {
         setExistingDocuments(partyData.documents);
@@ -168,10 +172,10 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
     try {
       setDeletingDocId(documentToDelete.id);
       await deletePartyDocument(documentToDelete.id);
-      
+
       // Remove document from the existing documents list
       setExistingDocuments(prev => prev.filter(doc => doc.id !== documentToDelete.id));
-      
+
       toast.success(t('files.documentDeleted') || 'تم حذف المستند بنجاح');
       setDeleteDialogOpen(false);
       setDocumentToDelete(null);
@@ -209,7 +213,9 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
       status: "active",
       nationality: "",
       branch_id: 1,
-      is_vip: false
+      is_vip: false,
+      username: "",
+      password: ""
     });
     setPartyFiles([]);
     setExistingDocuments([]);
@@ -218,7 +224,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
   const handleUpdate = async () => {
     try {
       setLoading(true);
-      
+
       // Basic validation - name, party_type, and branch_id are required
       if (!formData.name || !formData.party_type) {
         toast.error(t('parties.fillRequiredFields') || "يرجى ملء الحقول المطلوبة");
@@ -233,34 +239,34 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
 
       // Check for duplicates - excluding current party
       const duplicateCheck = await checkDuplicateParty(
-        formData.name, 
-        formData.phone, 
+        formData.name,
+        formData.phone,
         formData.email || null,
         partyId // Exclude current party from duplicate check
       );
-      
+
       if (duplicateCheck.success && duplicateCheck.isDuplicate) {
         const { duplicates } = duplicateCheck;
         const errorMessages = [];
-        
+
         if (duplicates.name) {
-          errorMessages.push(t('parties.duplicateNameExists') || (isRTL 
+          errorMessages.push(t('parties.duplicateNameExists') || (isRTL
             ? 'طرف آخر بنفس الاسم موجود بالفعل'
             : 'Another party with the same name already exists'));
         }
-        
+
         if (duplicates.phone) {
-          errorMessages.push(t('parties.duplicatePhoneExists') || (isRTL 
+          errorMessages.push(t('parties.duplicatePhoneExists') || (isRTL
             ? 'طرف آخر بنفس رقم الهاتف موجود بالفعل'
             : 'Another party with the same phone number already exists'));
         }
-        
+
         if (duplicates.email) {
-          errorMessages.push(t('parties.duplicateEmailExists') || (isRTL 
+          errorMessages.push(t('parties.duplicateEmailExists') || (isRTL
             ? 'طرف آخر بنفس البريد الإلكتروني موجود بالفعل'
             : 'Another party with the same email already exists'));
         }
-        
+
         // Display all error messages
         errorMessages.forEach(msg => toast.error(msg));
         return;
@@ -273,31 +279,30 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
       };
 
       const response = await updateParty(partyId, partyDataWithFiles);
-      
+
       // Check if response indicates failure (permission or other errors)
       if (response?.success === false) {
         toast.error(response?.message || t('parties.partyUpdateError') || "حدث خطأ أثناء تحديث الطرف");
         return;
       }
-      
-      if (response) {
-        toast.success(t('parties.partyUpdatedSuccess') || "تم تحديث الطرف بنجاح");
-        resetForm();
-        setOpen(false);
-        if (onPartyUpdated) {
-          onPartyUpdated({
-            ...formData,
-            id: partyId
-          });
-        }
+
+      // Success
+      toast.success(t('parties.partyUpdatedSuccess') || "تم تحديث الطرف بنجاح");
+      resetForm();
+      setOpen(false);
+      if (onPartyUpdated) {
+        onPartyUpdated({
+          ...formData,
+          id: partyId
+        });
       }
     } catch (error) {
       // Check if it's a permission error (403)
       const isPermissionError = error?.response?.status === 403;
-      const errorMessage = isPermissionError 
+      const errorMessage = isPermissionError
         ? (error?.response?.data?.message || (isRTL ? 'ليس لديك صلاحية لتحديث الطرف' : 'You do not have permission to update this party'))
         : (error?.response?.data?.message || t('parties.partyUpdateError') || "حدث خطأ أثناء تحديث الطرف");
-      
+
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -317,7 +322,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
         <DialogHeader>
           <DialogTitle>{t('parties.editParty') || 'تعديل الطرف'}</DialogTitle>
         </DialogHeader>
-        
+
         {fetchingParty ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -372,9 +377,9 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
               {/* Party Type */}
               <div className="space-y-2">
                 <Label>{t('parties.partyType') || 'نوع الطرف'} *</Label>
-                <Select 
+                <Select
                   dir={isRTL ? "rtl" : "ltr"}
-                  value={formData.party_type} 
+                  value={formData.party_type}
                   onValueChange={(value) => handleInputChange("party_type", value)}
                 >
                   <SelectTrigger>
@@ -390,9 +395,9 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
               {/* Category */}
               <div className="space-y-2">
                 <Label>{t('parties.category') || 'الفئة'}</Label>
-                <Select 
+                <Select
                   dir={isRTL ? "rtl" : "ltr"}
-                  value={formData.category} 
+                  value={formData.category}
                   onValueChange={(value) => handleInputChange("category", value)}
                 >
                   <SelectTrigger>
@@ -460,9 +465,9 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
               {/* Branch */}
               <div className="space-y-2">
                 <Label>{t('parties.branch') || 'الفرع'} *</Label>
-                <Select 
+                <Select
                   dir={isRTL ? "rtl" : "ltr"}
-                  value={formData.branch_id?.toString()} 
+                  value={formData.branch_id?.toString()}
                   onValueChange={(value) => handleInputChange("branch_id", parseInt(value))}
                 >
                   <SelectTrigger>
@@ -484,27 +489,26 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                 </Select>
               </div>
 
-              {/* Username - Read Only */}
+              {/* Username */}
               <div className="space-y-2">
                 <Label htmlFor="username">{t('parties.username') || 'اسم المستخدم'}</Label>
                 <Input
                   id="username"
-                  value={partyData?.username || ""}
-                  readOnly
-                  disabled
-                  className="bg-gray-100 cursor-not-allowed"
+                  value={formData.username}
+                  onChange={(e) => handleInputChange("username", e.target.value)}
+                  placeholder={t('parties.usernamePlaceholder') || 'اسم المستخدم للدخول'}
                 />
               </div>
 
-              {/* Password - Read Only */}
+              {/* Password */}
               <div className="space-y-2">
                 <Label htmlFor="password">{t('parties.password') || 'كلمة المرور'}</Label>
                 <Input
                   id="password"
-                  value={partyData?.password || ""}
-                  readOnly
-                  disabled
-                  className="bg-gray-100 cursor-not-allowed"
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  placeholder={t('parties.passwordPlaceholder') || 'كلمة المرور'}
                 />
               </div>
 
@@ -515,12 +519,12 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                   <Switch
                     id="status"
                     checked={formData.status === "active"}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked) =>
                       handleInputChange("status", checked ? "active" : "inactive")
                     }
                   />
                   <Label htmlFor="status" className="cursor-pointer">
-                    {formData.status === "active" 
+                    {formData.status === "active"
                       ? (t('parties.active') || 'نشط')
                       : (t('parties.inactive') || 'غير نشط')
                     }
@@ -535,12 +539,12 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                   <Switch
                     id="is_vip"
                     checked={formData.is_vip}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked) =>
                       handleInputChange("is_vip", checked)
                     }
                   />
                   <Label htmlFor="is_vip" className="cursor-pointer">
-                    {formData.is_vip 
+                    {formData.is_vip
                       ? (t('parties.vip') || 'VIP')
                       : (t('parties.regular') || 'عادي')
                     }
@@ -622,7 +626,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
               {/* File Upload Section */}
               <div className="space-y-2 md:col-span-2">
                 <Label>{t('files.uploadFiles') || 'رفع ملفات جديدة'}</Label>
-                
+
                 {/* Drop Zone */}
                 <div
                   className={cn(
@@ -690,14 +694,14 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
             </div>
 
             <div className="flex justify-end space-x-2 space-x-reverse mt-6">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setOpen(false)}
                 disabled={loading}
               >
                 {t('parties.cancel') || 'إلغاء'}
               </Button>
-              <Button 
+              <Button
                 onClick={handleUpdate}
                 disabled={loading}
               >

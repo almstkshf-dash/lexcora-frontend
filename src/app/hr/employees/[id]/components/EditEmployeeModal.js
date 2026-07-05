@@ -297,6 +297,9 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
         
         if (onUpdate) onUpdate(response);
         
+        // Close the edit modal immediately so the background is clean
+        setIsOpen(false);
+        
         // If a new password was set, show the credential modal
         if (response.data?.plainPassword) {
           setCredentials({
@@ -305,7 +308,6 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
           });
           setShowCredentials(true);
         } else {
-          setIsOpen(false);
           setErrors({});
         }
       } else {
@@ -313,7 +315,11 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
         toast.error(msg, { autoClose: 10000 });
       }
     } catch (error) {
-      const backendMsg = error.message || '';
+      // Safely ensure backendMsg is a string to prevent includes() crash on object type messages
+      const rawMsg = error.message;
+      const backendMsg = typeof rawMsg === 'string' 
+        ? rawMsg 
+        : (rawMsg ? JSON.stringify(rawMsg) : '');
 
       // Map backend duplicate errors to inline field errors
       const newErrors = {};
@@ -371,70 +377,75 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
 
       {/* Modal */}
       <Modal isOpen={isOpen} onClose={handleClose}>
-        {isSaving && (
-          <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs z-50 flex flex-col items-center justify-center gap-4">
-            <Loader2 className="w-10 h-10 animate-spin text-primary" />
-            <span className="text-lg font-medium text-foreground">
-              {t('employees.savingEmployee') || 'جاري حفظ بيانات الموظف...'}
-            </span>
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="flex flex-col h-full">
+          {isSaving && (
+            <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs z-50 flex flex-col items-center justify-center gap-4">
+              <Loader2 className="w-10 h-10 animate-spin text-primary" />
+              <span className="text-lg font-medium text-foreground">
+                {t('employees.savingEmployee') || 'جاري حفظ بيانات الموظف...'}
+              </span>
+            </div>
+          )}
+          {/* Modal Header */}
+          <div className="flex items-center justify-between p-6 border-b">
+            <h2 className="text-xl font-semibold">{t('employees.editEmployee')}</h2>
+            <button 
+              type="button"
+              onClick={handleClose}
+              disabled={isSaving}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50"
+            >
+              <CircleX className="w-5 h-5" />
+            </button>
           </div>
-        )}
-        {/* Modal Header */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold">{t('employees.editEmployee')}</h2>
-          <button 
-            onClick={handleClose}
-            disabled={isSaving}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50"
-          >
-            <CircleX className="w-5 h-5" />
-          </button>
-        </div>
 
-        {/* Modal Body */}
-        <div className="p-6">
-          {isLoading && (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <span className="me-2">{t('common.loading')}</span>
-            </div>
-          )}
+          {/* Modal Body */}
+          <div className="p-6">
+            {isLoading && (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <span className="me-2">{t('common.loading')}</span>
+              </div>
+            )}
 
-          {error && (
-            <div className="flex items-center justify-center py-8 text-destructive">
-              <p>{t('common.errorLoading')}</p>
-            </div>
-          )}
+            {error && (
+              <div className="flex items-center justify-center py-8 text-destructive">
+                <p>{t('common.errorLoading')}</p>
+              </div>
+            )}
 
-          {!isLoading && !error && (
-            <EmployeeInfoTab 
-              form={form} 
-              handleChange={handleChange} 
-              setForm={setForm} 
-              errors={errors}
-            />
-          )}
-        </div>
+            {!isLoading && !error && (
+              <EmployeeInfoTab 
+                form={form} 
+                handleChange={handleChange} 
+                setForm={setForm} 
+                errors={errors}
+                isEdit={true}
+              />
+            )}
+          </div>
 
-        {/* Modal Footer */}
-        <div className="flex justify-end gap-3 p-6 border-t">
-          <Button 
-            variant="outline" 
-            onClick={handleClose}
-            disabled={isSaving}
-            className="px-6"
-          >
-            {t('buttons.cancel')}
-          </Button>
-          <Button 
-            onClick={handleSubmit}
-            disabled={isSaving || isLoading}
-            className="px-6"
-          >
-            {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
-            {isSaving ? t('common.saving') : t('common.save')}
-          </Button>
-        </div>
+          {/* Modal Footer */}
+          <div className="flex justify-end gap-3 p-6 border-t">
+            <Button 
+              type="button"
+              variant="outline" 
+              onClick={handleClose}
+              disabled={isSaving}
+              className="px-6"
+            >
+              {t('buttons.cancel')}
+            </Button>
+            <Button 
+              type="submit"
+              disabled={isSaving || isLoading}
+              className="px-6"
+            >
+              {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+              {isSaving ? t('common.saving') : t('common.save')}
+            </Button>
+          </div>
+        </form>
       </Modal>
 
       {credentials && (

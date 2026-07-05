@@ -151,6 +151,7 @@ export default function Page() {
                     id="email"
                     name="email"
                     type="text"
+                    autoComplete="username"
                     placeholder={t('auth.usernamePlaceholder')}
                     value={formData.email}
                     onChange={handleInputChange}
@@ -172,6 +173,7 @@ export default function Page() {
                       id="password"
                       name="password"
                       type={showPassword ? 'text' : 'password'}
+                      autoComplete="current-password"
                       placeholder={t('auth.passwordPlaceholder')}
                       value={formData.password}
                       onChange={handleInputChange}

@@ -208,7 +208,8 @@ export default function AddEmployeeModal({ onAdd }) {
       { field: 'roleId', message: t('validation.roleRequired') || 'المنصب مطلوب' },
       { field: 'departmentId', message: t('validation.departmentRequired') || 'القسم مطلوب' },
       { field: 'branchId', message: t('validation.branchRequired') || 'الفرع مطلوب' },
-      { field: 'phoneNumber', message: t('validation.phoneRequired') || 'رقم الهاتف مطلوب' }
+      { field: 'phoneNumber', message: t('validation.phoneRequired') || 'رقم الهاتف مطلوب' },
+      { field: 'password', message: t('validation.passwordRequired') || 'كلمة المرور مطلوبة' }
     ];
 
     for (const { field, message } of requiredFields) {
@@ -221,7 +222,7 @@ export default function AddEmployeeModal({ onAdd }) {
 
     if (Object.keys(newErrors).length > 0) {
       // Switch back to "info" tab if any field inside "info" is missing
-      const infoFields = ['name', 'username', 'roleId', 'departmentId', 'branchId', 'phoneNumber'];
+      const infoFields = ['name', 'username', 'roleId', 'departmentId', 'branchId', 'phoneNumber', 'password'];
       const hasInfoErrors = infoFields.some(f => newErrors[f]);
       if (hasInfoErrors) {
         setTab("info");
@@ -285,6 +286,9 @@ export default function AddEmployeeModal({ onAdd }) {
 
         if (onAdd) onAdd(response);
 
+        // Close the add modal immediately so the background is clean
+        setIsOpen(false);
+
         const createdEmp = response.data;
         if (createdEmp?.password && createdEmp?.password !== '********') {
           setCredentials({
@@ -293,7 +297,6 @@ export default function AddEmployeeModal({ onAdd }) {
           });
           setShowCredentials(true);
         } else {
-          setIsOpen(false);
           setForm(INITIAL_FORM);
           setTab("info");
           setErrors({});
@@ -304,8 +307,11 @@ export default function AddEmployeeModal({ onAdd }) {
         toast.error(msg, { autoClose: 10000 });
       }
     } catch (error) {
-      // error.message is enriched by axios interceptor with backend's message
-      const backendMsg = error.message || '';
+      // Safely ensure backendMsg is a string to prevent includes() crash on object type messages
+      const rawMsg = error.message;
+      const backendMsg = typeof rawMsg === 'string' 
+        ? rawMsg 
+        : (rawMsg ? JSON.stringify(rawMsg) : '');
 
       // Map backend duplicate errors to inline field errors
       const newErrors = {};
@@ -347,7 +353,6 @@ export default function AddEmployeeModal({ onAdd }) {
 
   const handleCredentialsClose = () => {
     setShowCredentials(false);
-    setIsOpen(false);
     setForm(INITIAL_FORM);
     setTab("info");
     setErrors({});
@@ -365,76 +370,81 @@ export default function AddEmployeeModal({ onAdd }) {
 
       {/* Modal */}
       <Modal isOpen={isOpen} onClose={handleClose}>
-        {isSaving && (
-          <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs z-50 flex flex-col items-center justify-center gap-4">
-            <Loader2 className="w-10 h-10 animate-spin text-primary" />
-            <span className="text-lg font-medium text-foreground">
-              {t('employees.savingEmployee') || 'جاري حفظ بيانات الموظف...'}
-            </span>
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="flex flex-col h-full">
+          {isSaving && (
+            <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs z-50 flex flex-col items-center justify-center gap-4">
+              <Loader2 className="w-10 h-10 animate-spin text-primary" />
+              <span className="text-lg font-medium text-foreground">
+                {t('employees.savingEmployee') || 'جاري حفظ بيانات الموظف...'}
+              </span>
+            </div>
+          )}
+          {/* Modal Header */}
+          <div className="flex items-center justify-between p-6 border-b " >
+            <h2 className="text-xl font-semibold">{t('employees.addNewTitle')}</h2>
+            <button
+              type="button"
+              onClick={handleClose}
+              disabled={isSaving}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50"
+            >
+              <CircleX className="w-5 h-5" />
+            </button>
           </div>
-        )}
-        {/* Modal Header */}
-        <div className="flex items-center justify-between p-6 border-b " >
-          <h2 className="text-xl font-semibold">{t('employees.addNewTitle')}</h2>
-          <button
-            onClick={handleClose}
-            disabled={isSaving}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50"
-          >
-            <CircleX className="w-5 h-5" />
-          </button>
-        </div>
 
-        {/* Modal Body */}
-        <div className="p-6" >
-          <Tabs dir={isRTL ? "rtl" : "ltr"} value={tab} onValueChange={setTab} >
-            <TabsList className="mb-4 flex gap-2" >
-              <TabsTrigger value="info" className="cursor-pointer">{t('employees.information')}</TabsTrigger>
-              <TabsTrigger value="permissions" className="cursor-pointer">{t('employees.permissions')}</TabsTrigger>
-              {/* <TabsTrigger value="documents" className="cursor-pointer">{t('employees.documents') || '???????'}</TabsTrigger> */}
-            </TabsList>
+          {/* Modal Body */}
+          <div className="p-6" >
+            <Tabs dir={isRTL ? "rtl" : "ltr"} value={tab} onValueChange={setTab} >
+              <TabsList className="mb-4 flex gap-2" >
+                <TabsTrigger value="info" className="cursor-pointer">{t('employees.information')}</TabsTrigger>
+                <TabsTrigger value="permissions" className="cursor-pointer">{t('employees.permissions')}</TabsTrigger>
+                {/* <TabsTrigger value="documents" className="cursor-pointer">{t('employees.documents') || '???????'}</TabsTrigger> */}
+              </TabsList>
 
-            <TabsContent value="info">
-              <EmployeeInfoTab
-                form={form}
-                handleChange={handleChange}
-                setForm={setForm}
-                errors={errors}
-              />
-            </TabsContent>
-
-            <TabsContent value="permissions">
-              <EmployeePermissionsTab
-                form={form}
-                setForm={setForm}
+              <TabsContent value="info">
+                <EmployeeInfoTab
+                  form={form}
+                  handleChange={handleChange}
+                  setForm={setForm}
+                  errors={errors}
+                  isEdit={false}
                 />
-            </TabsContent>
+              </TabsContent>
 
-            {/* <TabsContent value="documents">
-              <EmployeeDocumentsTab />
-            </TabsContent> */}
-          </Tabs>
-        </div>
+              <TabsContent value="permissions">
+                <EmployeePermissionsTab
+                  form={form}
+                  setForm={setForm}
+                  />
+              </TabsContent>
 
-        {/* Modal Footer */}
-        <div className="flex justify-end gap-3 p-6 border-t" >
-          <Button
-            variant="outline"
-            onClick={handleClose}
-            disabled={isSaving}
-            className="px-6"
-          >
-            {t('buttons.cancel')}
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={isSaving}
-            className="px-6"
-          >
-            {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
-            {isSaving ? (t('buttons.saving') || 'Saving...') : t('buttons.save')}
-          </Button>
-        </div>
+              {/* <TabsContent value="documents">
+                <EmployeeDocumentsTab />
+              </TabsContent> */}
+            </Tabs>
+          </div>
+
+          {/* Modal Footer */}
+          <div className="flex justify-end gap-3 p-6 border-t" >
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleClose}
+              disabled={isSaving}
+              className="px-6"
+            >
+              {t('buttons.cancel')}
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSaving}
+              className="px-6"
+            >
+              {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+              {isSaving ? (t('buttons.saving') || 'Saving...') : t('buttons.save')}
+            </Button>
+          </div>
+        </form>
       </Modal>
 
       {credentials && (

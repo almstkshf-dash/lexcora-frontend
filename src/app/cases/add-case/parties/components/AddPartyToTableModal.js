@@ -144,7 +144,7 @@ const AddPartyToTableModal = ({ children, selectedParties = [] }) => {
   const handleNewPartyCreated = (newParty) => {
     // No need to refresh parties list - search will handle it
     // Optionally, auto-select the newly created party
-    if (newParty.party_type === selectedPartyType) {
+    if (newParty.party_type === selectedPartyType && newParty.id != null) {
       setSelectedParty(newParty.id.toString());
       setSelectedPartyData(newParty);
     }

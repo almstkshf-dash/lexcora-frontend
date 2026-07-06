@@ -31,7 +31,7 @@ export const useNotify = () => {
 
   const showError = (message, options = {}) => {
     const msg = message || defaultError
-    toast.error(msg, { autoClose: 10000, ...options })
+    toast.error(msg, { autoClose: 5000, ...options })
     return msg
   }
 

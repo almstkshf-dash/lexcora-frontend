@@ -227,7 +227,7 @@ export default function AddEmployeeModal({ onAdd }) {
       if (hasInfoErrors) {
         setTab("info");
       }
-      toast.error(t('validation.pleaseCheckRequiredFields') || 'يرجى ملء الحقول المطلوبة', { autoClose: 10000 });
+      toast.error(t('validation.pleaseCheckRequiredFields') || 'يرجى ملء الحقول المطلوبة', { autoClose: 5000 });
       return false;
     }
 
@@ -274,7 +274,7 @@ export default function AddEmployeeModal({ onAdd }) {
           duplicateMessage = t('employees.duplicateGenericExists') || 'بيانات مكررة لموظف آخر';
         }
 
-        toast.error(duplicateMessage, { autoClose: 10000 });
+        toast.error(duplicateMessage, { autoClose: 5000 });
         setIsSaving(false);
         return;
       }
@@ -304,7 +304,7 @@ export default function AddEmployeeModal({ onAdd }) {
       } else {
         // Show the real backend message (non-throw path)
         const msg = response.message || t('messages.errorCreatingEmployee') || 'خطأ في إنشاء الموظف. يرجى المحاولة مرة أخرى.';
-        toast.error(msg, { autoClose: 10000 });
+        toast.error(msg, { autoClose: 5000 });
       }
     } catch (error) {
       // Safely ensure backendMsg is a string to prevent includes() crash on object type messages
@@ -334,11 +334,11 @@ export default function AddEmployeeModal({ onAdd }) {
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         setTab("info");
-        toast.error(t('validation.duplicateDataFound') || 'توجد بيانات مكررة — يرجى مراجعة الحقول المميزة باللون الأحمر', { autoClose: 10000 });
+        toast.error(t('validation.duplicateDataFound') || 'توجد بيانات مكررة — يرجى مراجعة الحقول المميزة باللون الأحمر', { autoClose: 5000 });
       } else {
         // Show the actual backend error message
         const displayMsg = backendMsg.replace(/^Failed to add employee:\s*/i, '').replace(/^خطأ في إضافة الموظف:\s*/i, '');
-        toast.error(displayMsg || t('messages.errorCreatingEmployee') || 'خطأ في إنشاء الموظف. يرجى المحاولة مرة أخرى.', { autoClose: 10000 });
+        toast.error(displayMsg || t('messages.errorCreatingEmployee') || 'خطأ في إنشاء الموظف. يرجى المحاولة مرة أخرى.', { autoClose: 5000 });
       }
     } finally {
       setIsSaving(false);

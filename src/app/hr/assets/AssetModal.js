@@ -281,6 +281,9 @@ const AssetModal = ({
       }
 
       // Prepare data
+      const hasDepreciation = (formData.depreciation_rate !== '' && Number(formData.depreciation_rate) > 0) || 
+                              (formData.useful_life !== '' && Number(formData.useful_life) > 0);
+
       const assetData = {
         name: formData.name,
         type: formData.type,
@@ -296,13 +299,13 @@ const AssetModal = ({
         purchase_cost: Number(formData.purchase_cost) || 0,
         purchase_date: formData.purchase_date ? format(formData.purchase_date, 'yyyy-MM-dd') : null,
         account_id: formData.account_id || null,
-        depreciation_method: formData.depreciation_method || 'straight_line',
-        depreciation_rate: Number(formData.depreciation_rate) || 0,
-        useful_life: formData.useful_life !== '' ? Number(formData.useful_life) : null,
+        depreciation_method: hasDepreciation ? (formData.depreciation_method || 'straight_line') : null,
+        depreciation_rate: hasDepreciation ? (Number(formData.depreciation_rate) || 0) : 0,
+        useful_life: hasDepreciation ? (formData.useful_life !== '' ? Number(formData.useful_life) : null) : null,
         salvage_value: Number(formData.salvage_value) || 0,
         current_value: formData.current_value !== '' ? Number(formData.current_value) : null,
-        documents: uploadedDocuments,
-        record_type: recordType
+        record_type: recordType,
+        ...(uploadedDocuments.length > 0 && { documents: uploadedDocuments })
       }
 
       // Create or update

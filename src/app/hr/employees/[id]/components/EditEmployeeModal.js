@@ -263,7 +263,7 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
-      toast.error(t('validation.pleaseCheckRequiredFields') || 'Please check the required fields', { autoClose: 10000 });
+      toast.error(t('validation.pleaseCheckRequiredFields') || 'Please check the required fields', { autoClose: 5000 });
       return false;
     }
 
@@ -312,7 +312,7 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
         }
       } else {
         const msg = response.message || t('messages.errorUpdatingEmployee') || 'خطأ في تحديث بيانات الموظف. يرجى المحاولة مرة أخرى.';
-        toast.error(msg, { autoClose: 10000 });
+        toast.error(msg, { autoClose: 5000 });
       }
     } catch (error) {
       // Safely ensure backendMsg is a string to prevent includes() crash on object type messages
@@ -344,10 +344,10 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
 
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
-        toast.error(t('validation.duplicateDataFound') || 'توجد بيانات مكررة — يرجى مراجعة الحقول المميزة باللون الأحمر', { autoClose: 10000 });
+        toast.error(t('validation.duplicateDataFound') || 'توجد بيانات مكررة — يرجى مراجعة الحقول المميزة باللون الأحمر', { autoClose: 5000 });
       } else {
         const displayMsg = backendMsg.replace(/^Failed to update employee:\s*/i, '').replace(/^خطأ في تحديث الموظف:\s*/i, '');
-        toast.error(displayMsg || t('messages.errorUpdatingEmployee') || 'خطأ في تحديث بيانات الموظف. يرجى المحاولة مرة أخرى.', { autoClose: 10000 });
+        toast.error(displayMsg || t('messages.errorUpdatingEmployee') || 'خطأ في تحديث بيانات الموظف. يرجى المحاولة مرة أخرى.', { autoClose: 5000 });
       }
     } finally {
       setIsSaving(false);

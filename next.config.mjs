@@ -29,11 +29,8 @@ const nextConfig = {
     ],
   },
 
-  // Webpack: source maps in dev only; no changes needed for production.
-  webpack: (config, { dev }) => {
-    if (dev) {
-      config.devtool = 'source-map';
-    }
+  // Webpack configuration.
+  webpack: (config) => {
     return config;
   },
 };

@@ -265,3 +265,51 @@ Given the bilingual requirement of the platform (Arabic/English), `lexcora-front
 - **pdfExporter Font Lookup Warning Fix**: Registered separate virtual file keys (`NotoSansArabic-Regular.ttf` and `NotoSansArabic-Bold.ttf`) for normal and bold font weights in `pdfExporter.js` to resolve mapping lookup issues in jsPDF without console warnings.
 - **EditPartyModal Controlled Input Fix**: Added missing `consultation_type` and `passport` default empty strings to the form state reset object inside `resetForm()` in `EditPartyModal.js`, preventing the fields from becoming `undefined` and triggering React controlled-to-uncontrolled input warnings.
 - **Next.js Image size Warning Fix**: Changed `AiButton.js`'s Rased assistant image to use the `fill` property inside its relative container to fix the console warning about mismatched width/height parameters.
+
+## 23. HMR Latency Fix (July 2026)
+
+- **Problem:** Hot Module Replacement (HMR) latency in development mode was extremely high (ranging from 5 to 22 seconds) for single module changes due to an override that forced Webpack to generate full, separate source maps (`'source-map'`).
+- **Solution:** Removed the custom devtool override in [next.config.mjs](file:///c:/projects/lexcora-frontend/next.config.mjs) entirely. This allows Next.js to use its built-in optimized defaults, avoiding performance warnings and ensuring fast HMR rebuilds.
+
+## 24. Chart Dimension Warnings Elimination (July 2026)
+
+- **Problem:** In [Transactions.js](file:///c:/projects/lexcora-frontend/src/app/finance/statistics/components/Transactions.js), `<ChartContainer>` was using `aspect-auto`, which caused Recharts' `ResponsiveContainer` to measure a negative/zero dimension on initial render, resulting in browser warnings.
+- **Solution:** Replaced `aspect-auto` with `min-w-0` in [Transactions.js](file:///c:/projects/lexcora-frontend/src/app/finance/statistics/components/Transactions.js)'s `ChartContainer` className, ensuring the container does not collapse and preventing layout calculation warnings.
+
+## 25. Asset Creation Validation Fix (July 2026)
+
+- **Problem:** Submitting the asset form via `POST /api/assets` was triggering a `400 Bad Request` validator error. This happened because the backend requires either a rate or useful life value when straight-line depreciation is active, but the frontend was unconditionally sending `depreciation_method: 'straight_line'` even for non-depreciated assets (with rate `0` and null useful life). Additionally, the backend could reject empty `documents` array shapes.
+- **Solution:** Modified [AssetModal.js](file:///c:/projects/lexcora-frontend/src/app/hr/assets/AssetModal.js) to:
+  - Check if depreciation is actually configured (either rate or useful life > 0). If not configured, set `depreciation_method` to `null` to bypass the validation checks for straight-line depreciation.
+  - Conditionally omit the `documents` field from the request payload when no documents are uploaded, aligning it with the API payload expectations.
+
+## 26. Financial Statistics Print Optimization (July 2026)
+
+- **Problem:** Printing the "Financial Statistics" page resulted in a poor output:
+  1. The page layout was printed in dark mode (dark background and white text/cards), which wasted ink and made text hard to read.
+  2. The Pomodoro Focus bar ("تركيز"), page navigation links, action buttons ("طباعة" and "تصدير"), and the floating AI assistant ("اسأل راصد") were printed on the page.
+  3. The transaction statistics chart area was printed as an empty black box because the global print styles collapsed all `div` elements via `height: auto !important`, which reduced Recharts responsive container's dimensions to 0.
+- **Solution:**
+  1. Updated [globals.css](file:///c:/projects/lexcora-frontend/src/app/globals.css)'s `@media print` rules to override all theme variables (`:root` and `.dark`) to their light mode values, forcing white backgrounds and dark text on print globally.
+  2. Exempted charts (`[data-slot="chart"]`, Recharts elements) from the auto-collapsing `div { height: auto !important }` print style, and set an explicit fixed height of `280px` for printing.
+  3. Added the `print-hide` utility class to the Focus bar wrapper in [Header.js](file:///c:/projects/lexcora-frontend/src/app/components/Header.js), the QuickActionsBar wrapper in [QuickActionsBar.js](file:///c:/projects/lexcora-frontend/src/app/components/QuickActionsBar.js), the floating AI Button in [AiButton.js](file:///c:/projects/lexcora-frontend/src/app/components/ai/AiButton.js), and the print/export action buttons in [page.js](file:///c:/projects/lexcora-frontend/src/app/finance/statistics/page.js).
+  4. Added the `print-container` class to the statistics page container in [page.js](file:///c:/projects/lexcora-frontend/src/app/finance/statistics/page.js) to ensure full-width, clean scaling when printed.
+
+## 27. Financial Reports Print Layout Optimization (July 2026)
+
+- **Problem:** Printing the "Financial Reports" page (`/finance/reports`) had several layout issues:
+  1. Multi-column layouts (like Cash Flow, Profit & Loss, Balance Sheet, and Aging columns) tried to fit side-by-side on A4 paper width, causing extreme horizontal squishing and clipping content on the left side in Arabic RTL view (e.g. cutting off parts of numbers like `currency 5,000.00-`).
+  2. The navigation tab list (`TabsList`), header Print and Export buttons, sub-tabs under profitability, search comboboxes (filters), and the VAT declaration download button were all printed, wasting space and cluttering the printed documents.
+- **Solution:**
+  1. Added `print-container` and `print-full-width` classes to the outer page wrapper in [page.js](file:///c:/projects/lexcora-frontend/src/app/finance/reports/page.js) to override layout margins/paddings and align print scaling.
+  2. Added the `print-hide` utility class to all non-printable components: page action buttons, the main reports `<TabsList>`, the profitability sub-tabs, case/department search card containers, and the VAT return download button.
+  3. Added `print:grid-cols-1` and `print:divide-y` to the grid containers for all report tabs (Cash Flow, Profit & Loss, Balance Sheet, Aging, and Profitability views) to force sections to stack vertically when printed, giving each report component the full A4 page width and preventing number truncation.
+
+## 28. FTA VAT Return PDF Export Hookup (July 2026)
+
+- **Problem:** The "Download FTA Declaration" (تحميل إقرار FTA) button in the VAT Return tab of the Financial Reports page did not respond or download any document because it lacked a click event handler and PDF generation logic.
+- **Solution:**
+  1. Implemented a dedicated `exportVatReturnToPDF` function in [pdfExporter.js](file:///c:/projects/lexcora-frontend/src/utils/exporters/pdfExporter.js) to format and render standard supplies per emirate (Output Tax table), recoverable expenses (Input Tax table), and a Net VAT payable summary card on A4 portrait canvas.
+  2. Registered virtual keys for the `NotoSansArabic` font to support Arabic text characters in jsPDF exports without console warnings.
+  3. Integrated column and text direction mirroring for the PDF table headers and values when the application is loaded in Arabic (`ar`) mode.
+  4. Imported `exportVatReturnToPDF` in [page.js](file:///c:/projects/lexcora-frontend/src/app/finance/reports/page.js) and bound it to the button's `onClick` event, passing pre-translated labels and active VAT declaration API data.

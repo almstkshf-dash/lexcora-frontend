@@ -7,8 +7,7 @@ import ResponsiveLayout from "@/components/ResponsiveLayout";
 import SWRProvider from "@/providers/SWRProvider";
 import ReduxProvider from "@/redux/ReduxProvider";
 import AuthProvider from "@/providers/AuthProvider";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import ToastProvider from '@/providers/ToastProvider';
 import { Noto_Sans_Arabic } from 'next/font/google';
 import RouteGuard from "@/components/RouteGuard";
 import CelebrationOverlay from "@/components/CelebrationOverlay";
@@ -90,19 +89,7 @@ export default function RootLayout({ children }) {
                     </DynamicLayout>
                   </RouteGuard>
                 </AuthProvider>
-                <ToastContainer
-                  position="top-center"
-                  autoClose={6000}
-                  hideProgressBar={false}
-                  newestOnTop={false}
-                  closeOnClick
-                  rtl={true}
-                  pauseOnFocusLoss
-                  draggable
-                  pauseOnHover
-                  theme="colored"
-                  style={{ zIndex: 999999 }}
-                />
+                <ToastProvider />
               </ReduxProvider>
             </SWRProvider>
           </ThemeProvider>

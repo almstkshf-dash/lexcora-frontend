@@ -62,7 +62,7 @@ export const useSessionForm = ({ isOpen, caseId, isRtl, onClose, onSessionAdded 
     if (file.size > maxSize) {
       toast.error(
         isRtl ? `الملف "${file.name}" كبير جداً. الحد الأقصى 10MB` : `File "${file.name}" is too large. Maximum size is 10MB`,
-        { position: "top-right", autoClose: 3000 }
+        { autoClose: 3000 }
       );
       return false;
     }
@@ -70,7 +70,7 @@ export const useSessionForm = ({ isOpen, caseId, isRtl, onClose, onSessionAdded 
     if (!allowedTypes.includes(file.type)) {
       toast.error(
         isRtl ? `نوع الملف "${file.name}" غير مدعوم` : `File type of "${file.name}" is not supported`,
-        { position: "top-right", autoClose: 3000 }
+        { autoClose: 3000 }
       );
       return false;
     }
@@ -173,12 +173,12 @@ export const useSessionForm = ({ isOpen, caseId, isRtl, onClose, onSessionAdded 
             setSelectedFiles([]);
             toast.success(
               isRtl ? `تم رفع ${uploadedFiles.length} ملف بنجاح` : `Successfully uploaded ${uploadedFiles.length} files`,
-              { position: "top-right", autoClose: 2000 }
+              { autoClose: 2000 }
             );
           } catch (uploadError) {
             toast.error(
               isRtl ? "فشل في رفع الملفات" : "Failed to upload files",
-              { position: "top-right", autoClose: 3000 }
+              { autoClose: 3000 }
             );
             setIsLoading(false);
             setIsUploading(false);
@@ -213,7 +213,7 @@ export const useSessionForm = ({ isOpen, caseId, isRtl, onClose, onSessionAdded 
         if (response?.success === false) {
           toast.error(
             response?.message || (isRtl ? "فشل في إضافة الجلسة" : "Failed to add session"),
-            { position: "top-right", autoClose: 3000 }
+            { autoClose: 3000 }
           );
           return;
         }
@@ -222,7 +222,6 @@ export const useSessionForm = ({ isOpen, caseId, isRtl, onClose, onSessionAdded 
           toast.success(
             isRtl ? "تم إضافة الجلسة بنجاح" : "Session added successfully",
             {
-              position: "top-right",
               autoClose: 3000,
               hideProgressBar: false,
               closeOnClick: true,
@@ -249,7 +248,6 @@ export const useSessionForm = ({ isOpen, caseId, isRtl, onClose, onSessionAdded 
           : (error?.response?.data?.message || (isRtl ? "فشل في إضافة الجلسة" : "Failed to add session"));
         
         toast.error(errorMessage, {
-          position: "top-right",
           autoClose: 3000,
         });
         isSubmittingRef.current = false;

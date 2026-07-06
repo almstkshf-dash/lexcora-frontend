@@ -101,7 +101,6 @@ const EditSessionModal = ({
       await deleteSessionDocument(sessionId, documentId);
       
       toast.success(t('sessions.documentDeletedSuccess'), {
-        position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -113,7 +112,6 @@ const EditSessionModal = ({
       refreshSession();
     } catch (error) {
       toast.error(t('sessions.documentDeleteFailed'), {
-        position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -133,7 +131,6 @@ const EditSessionModal = ({
     
     if (file.size > maxSize) {
       toast.error(t('sessions.fileTooLarge', { name: file.name }), {
-        position: "top-right",
         autoClose: 3000
       });
       return false;
@@ -141,7 +138,6 @@ const EditSessionModal = ({
     
     if (!allowedTypes.includes(file.type)) {
       toast.error(t('sessions.fileTypeNotSupported', { name: file.name }), {
-        position: "top-right",
         autoClose: 3000
       });
       return false;
@@ -264,12 +260,10 @@ const EditSessionModal = ({
           try {
             uploadedFiles = await uploadFiles(selectedFiles, 'sessions');
             toast.success(t('sessions.filesUploadedCount', { count: uploadedFiles.length }), {
-              position: "top-right",
               autoClose: 2000
             });
           } catch (uploadError) {
             toast.error(t('sessions.failedToUploadFiles'), {
-              position: "top-right",
               autoClose: 3000
             });
 
@@ -301,7 +295,6 @@ const EditSessionModal = ({
         await updateSession(sessionId, updateData);
         
         toast.success(t('sessions.sessionUpdatedSuccess'), {
-          position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -326,9 +319,8 @@ const EditSessionModal = ({
         const isPermissionError = error?.response?.status === 403;
         
         if (isPermissionError) {
-          const permissionMessage = error?.response?.data?.message || (language === 'ar' ? '??? ???? ?????? ?????? ??????' : 'You do not have permission to update this session');
+          const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك الصلاحية لتحديث هذه الجلسة' : 'You do not have permission to update this session');
           toast.error(permissionMessage, {
-            position: "top-right",
             autoClose: 3000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -338,7 +330,6 @@ const EditSessionModal = ({
         } else {
           const generalMessage = error?.response?.data?.message || t('sessions.sessionUpdateFailed');
           toast.error(generalMessage, {
-            position: "top-right",
             autoClose: 3000,
             hideProgressBar: false,
             closeOnClick: true,

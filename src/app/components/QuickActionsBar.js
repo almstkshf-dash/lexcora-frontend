@@ -72,7 +72,7 @@ function QuickActionsBar() {
   );
 
   return (
-    <div className="relative bg-gradient-to-br from-sidebar-accent/30 via-transparent to-transparent border-b border-sidebar-border/50">
+    <div className="relative bg-gradient-to-br from-sidebar-accent/30 via-transparent to-transparent border-b border-sidebar-border/50 print-hide">
       {/* Decorative elements — hidden from a11y tree */}
       <div className="absolute inset-0 bg-grid-pattern opacity-5" aria-hidden="true" />
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl" aria-hidden="true" />

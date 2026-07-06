@@ -85,7 +85,7 @@ function Header() {
         />
       </header>
 
-      <div className="px-6 pt-2 pb-2 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/50">
+      <div className="px-6 pt-2 pb-2 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/50 print-hide">
         <FocusCycleBar />
       </div>
 

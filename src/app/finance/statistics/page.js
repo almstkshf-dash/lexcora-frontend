@@ -17,7 +17,7 @@ const FinanceStatisticsPage = () => {
   const commonT = useTranslations('common');
 
   return (
-    <div className="container mx-auto py-6 space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="container mx-auto py-6 space-y-6 print-container" dir={isRTL ? 'rtl' : 'ltr'}>
       <PageHeader
         title={t('title')}
         description={t('description')}
@@ -28,7 +28,7 @@ const FinanceStatisticsPage = () => {
           { label: navT('statistics') }
         ]}
         actions={
-          <div className="flex gap-2">
+          <div className="flex gap-2 print-hide">
             <Button variant="outline" onClick={() => window.print()} className="gap-2">
               <Printer className="h-4 w-4" /> {commonT('print')}
             </Button>

@@ -136,7 +136,7 @@ export default function Transactions() {
       <CardContent className="px-2 sm:p-6">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-[250px] w-full"
+          className="h-[250px] w-full min-w-0"
         >
           <BarChart
             accessibilityLayer

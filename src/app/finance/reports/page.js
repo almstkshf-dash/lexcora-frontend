@@ -50,6 +50,7 @@ import { getDepartments } from '@/app/services/api/departments';
 import { searchCases } from '@/app/services/api/cases';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { exportVatReturnToPDF } from '@/utils/exporters/pdfExporter';
 
 // --- Components ---
 
@@ -238,7 +239,7 @@ export default function ReportsPage() {
   const formatCurrency = (val) => (val || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
   return (
-    <div className="p-6 space-y-8 animate-in fade-in duration-700 print:p-0 print:space-y-4" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="p-6 space-y-8 animate-in fade-in duration-700 print-container print-full-width" dir={isRTL ? 'rtl' : 'ltr'}>
       <PageHeader
         title={navT('reports')}
         icon={FileBarChart}
@@ -248,7 +249,7 @@ export default function ReportsPage() {
           { label: navT('reports') }
         ]}
         actions={
-          <div className="flex gap-2">
+          <div className="flex gap-2 print-hide">
             <Button variant="outline" onClick={() => window.print()} className="gap-2">
               <Printer className="h-4 w-4" /> {commonT('print')}
             </Button>
@@ -260,7 +261,7 @@ export default function ReportsPage() {
       />
 
       <Tabs defaultValue="pl" className="w-full" dir={isRTL ? 'rtl' : 'ltr'}>
-        <TabsList className="flex w-full overflow-x-auto bg-muted/20 p-1 mb-8 rounded-xl border border-border/50 justify-start">
+        <TabsList className="flex w-full overflow-x-auto bg-muted/20 p-1 mb-8 rounded-xl border border-border/50 justify-start print-hide">
           <TabsTrigger value="pl" className="flex-1 gap-2 rounded-sg data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <TrendingUp className="h-4 w-4" /> {accT('profitLoss')}
           </TabsTrigger>
@@ -310,7 +311,7 @@ export default function ReportsPage() {
 
         {/* Profit & Loss */}
         <TabsContent value="pl" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-1 gap-8">
             <div className="space-y-4">
               <h3 className="text-lg font-bold flex items-center gap-2 px-1">
                 <span className="w-1 h-5 bg-green-500 rounded-full" />
@@ -354,7 +355,7 @@ export default function ReportsPage() {
 
         {/* Balance Sheet */}
         <TabsContent value="bs" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-1 gap-8">
             <div className="space-y-4">
               <h3 className="text-lg font-bold flex items-center gap-2 px-1">
                 <span className="w-1 h-5 bg-blue-500 rounded-full" />
@@ -380,7 +381,7 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 print:grid-cols-1 gap-6">
             <Card className="bg-card/40 backdrop-blur-sm border-none shadow-md">
               <CardContent className="p-6">
                 <p className="text-xs text-muted-foreground mb-1">{accT('totalAssets')}</p>
@@ -457,7 +458,7 @@ export default function ReportsPage() {
                 <ArrowDownRight className="h-6 w-6 text-green-500" />
                 {accT('agedReceivables')}
              </h3>
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 print:grid-cols-1 gap-6">
                  {arData?.success && Array.isArray(arData.data) && arData.data.map((party, idx) => (
                   <AgingCard key={idx} party={party} isRTL={isRTL} commonT={commonT} />
                 ))}
@@ -469,7 +470,7 @@ export default function ReportsPage() {
                 <ArrowUpRight className="h-6 w-6 text-red-500" />
                 {accT('agedPayables')}
              </h3>
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 print:grid-cols-1 gap-6">
                  {apData?.success && Array.isArray(apData.data) && apData.data.map((party, idx) => (
                   <AgingCard key={idx} party={party} isRTL={isRTL} commonT={commonT} />
                 ))}
@@ -522,7 +523,7 @@ export default function ReportsPage() {
 
         {/* Cash Flow Statement */}
         <TabsContent value="cf" className="space-y-8">
-           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+           <div className="grid grid-cols-1 lg:grid-cols-3 print:grid-cols-1 gap-8">
               <CashFlowSection title={accT('operating')} data={cfData?.data?.operating || []} type="operating" isRTL={isRTL} accT={accT} commonT={commonT} />
               <CashFlowSection title={accT('investing')} data={cfData?.data?.investing || []} type="investing" isRTL={isRTL} accT={accT} commonT={commonT} />
               <CashFlowSection title={accT('financing')} data={cfData?.data?.financing || []} type="financing" isRTL={isRTL} accT={accT} commonT={commonT} />
@@ -588,13 +589,13 @@ export default function ReportsPage() {
         {/* Profitability Analysis */}
         <TabsContent value="profitability" className="space-y-12">
            <Tabs defaultValue="case-p" className="w-full" dir={isRTL ? 'rtl' : 'ltr'}>
-              <TabsList className="flex w-full bg-muted/30 p-1 rounded-sg mb-8 justify-start">
+              <TabsList className="flex w-full bg-muted/30 p-1 rounded-sg mb-8 justify-start print-hide">
                  <TabsTrigger value="case-p" className="px-8">{accT('caseProfitability')}</TabsTrigger>
                  <TabsTrigger value="dept-p" className="px-8">{accT('costCenterProfitability')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="case-p" className="space-y-8">
-                 <div className="max-w-xl mx-auto">
+                 <div className="max-w-xl mx-auto print-hide">
                     <Card className="border-none shadow-lg bg-card/80 backdrop-blur-xl">
                        <CardHeader className="text-start">
                           <CardTitle>{accT('selectCase')}</CardTitle>
@@ -620,7 +621,7 @@ export default function ReportsPage() {
               </TabsContent>
 
               <TabsContent value="dept-p" className="space-y-8">
-                 <div className="max-w-xl mx-auto">
+                 <div className="max-w-xl mx-auto print-hide">
                     <Card className="border-none shadow-lg bg-card/80 backdrop-blur-xl">
                        <CardHeader className="text-start rtl:text-right">
                           <CardTitle>{accT('selectDepartment')}</CardTitle>
@@ -708,7 +709,7 @@ const ProfitabilityView = ({ title, subtitle, data, accT, formatCurrency, isRTL 
         </CardHeader>
         <CardContent className="p-0">
            <div className={cn(
-             "grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x border-b",
+             "grid grid-cols-1 md:grid-cols-3 print:grid-cols-1 divide-y md:divide-y-0 md:divide-x print:divide-y border-b",
              isRTL && "md:divide-x-reverse"
            )}>
               <div className="p-8 text-center group transition-colors hover:bg-green-50/30">
@@ -728,10 +729,10 @@ const ProfitabilityView = ({ title, subtitle, data, accT, formatCurrency, isRTL 
               </div>
            </div>
            
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 bg-muted/20">
+           <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-1 gap-8 p-8 bg-muted/20">
               <div className="space-y-4">
                  <h4 className="font-bold flex items-center gap-2"><DollarSign className="h-4 w-4" /> {accT('outstandingBalance')}</h4>
-                 <div className="grid grid-cols-2 gap-4">
+                 <div className="grid grid-cols-2 print:grid-cols-1 gap-4">
                     <div className="bg-card p-4 rounded-xl border border-border/50">
                        <p className="text-xs text-muted-foreground mb-1">{accT('receivable')}</p>
                        <p className="text-xl font-bold text-blue-600">{formatCurrency(data?.receivable)}</p>
@@ -860,8 +861,39 @@ const VatReturnView = ({ data, isRTL, commonT, accT, vatT, formatCurrency }) => 
             {data?.netVat >= 0 ? vatT('payableToFta') : vatT('creditBalance')}
           </p>
         </div>
-        <div className="flex gap-4">
-           <Button className="h-12 px-8 rounded-full shadow-lg hover:shadow-primary/20 transition-all gap-2">
+        <div className="flex gap-4 print-hide">
+           <Button 
+             onClick={() => exportVatReturnToPDF({
+               data: data,
+               language: isRTL ? 'ar' : 'en',
+               translations: {
+                 reportTitle: vatT('reportTitle'),
+                 reportSubtitle: vatT('reportSubtitle'),
+                 taxPeriod: vatT('taxPeriod'),
+                 outputTax: vatT('outputTax'),
+                 descriptionEmirates: vatT('descriptionEmirates'),
+                 taxableAmount: vatT('taxableAmount'),
+                 vatAmount: vatT('vatAmount'),
+                 adjustments: vatT('adjustments'),
+                 zeroRatedSupplies: vatT('zeroRatedSupplies'),
+                 exemptSupplies: vatT('exemptSupplies'),
+                 totalOutputTax: vatT('totalOutputTax'),
+                 inputTax: vatT('inputTax'),
+                 description: vatT('description'),
+                 recoverableVat: vatT('recoverableVat'),
+                 standardRatedExpenses: vatT('standardRatedExpenses'),
+                 totalInputTax: vatT('totalInputTax'),
+                 netVatPayable: vatT('netVatPayable'),
+                 payableToFta: vatT('payableToFta'),
+                 creditBalance: vatT('creditBalance'),
+                 currencySymbol: commonT('currencySymbol') || 'AED',
+                 exportDate: isRTL ? 'تاريخ التصدير' : 'Export Date',
+                 page: isRTL ? 'صفحة' : 'Page',
+                 of: isRTL ? 'من' : 'of'
+               }
+             })}
+             className="h-12 px-8 rounded-full shadow-lg hover:shadow-primary/20 transition-all gap-2"
+           >
               <Download className="h-5 w-5" /> {vatT('downloadDeclaration')}
            </Button>
         </div>

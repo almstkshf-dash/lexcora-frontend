@@ -1410,6 +1410,39 @@ code, pre, .font-mono {
     size: A4;
   }
   
+  /* Force light theme variables in print regardless of .dark class */
+  :root, .dark {
+    --background: oklch(1 0 0) !important;
+    --foreground: oklch(0.145 0 0) !important;
+    --card: oklch(1 0 0) !important;
+    --card-foreground: oklch(0.145 0 0) !important;
+    --popover: oklch(1 0 0) !important;
+    --popover-foreground: oklch(0.145 0 0) !important;
+    --primary: oklch(0.205 0 0) !important;
+    --primary-foreground: oklch(0.985 0 0) !important;
+    --secondary: oklch(0.97 0 0) !important;
+    --secondary-foreground: oklch(0.16 0.03 240) !important;
+    --muted: oklch(0.97 0 0) !important;
+    --muted-foreground: oklch(0.32 0.04 240) !important;
+    --accent: oklch(0.97 0 0) !important;
+    --accent-foreground: oklch(0.16 0.03 240) !important;
+    --border: oklch(0.922 0 0) !important;
+    --input: oklch(0.922 0 0) !important;
+    --ring: oklch(0.708 0 0) !important;
+    
+    --chart-1: oklch(0.646 0.222 41.116) !important;
+    --chart-2: oklch(0.6 0.118 184.704) !important;
+    --chart-3: oklch(0.398 0.07 227.392) !important;
+    --chart-4: oklch(0.828 0.189 84.429) !important;
+    --chart-5: oklch(0.769 0.188 70.08) !important;
+  }
+  
+  html, body {
+    background-color: white !important;
+    background-image: none !important;
+    color: black !important;
+  }
+  
   [role="navigation"], aside, header, nav, .sidebar, .navigation, .print-hide {
     display: none !important;
   }
@@ -1432,10 +1465,23 @@ code, pre, .font-mono {
     padding: 1rem !important;
   }
   
-  div {
+  /* Exclude chart container divs from auto height collapse */
+  div:not([data-slot="chart"]):not(.recharts-responsive-container):not(.recharts-wrapper) {
     overflow: visible !important;
     max-height: none !important;
     height: auto !important;
+  }
+  
+  /* Ensure chart svgs have print dimensions */
+  [data-slot="chart"],
+  .recharts-responsive-container,
+  .recharts-wrapper,
+  .recharts-surface {
+    height: 280px !important;
+    width: 100% !important;
+    min-height: 280px !important;
+    display: block !important;
+    overflow: visible !important;
   }
   
   * {

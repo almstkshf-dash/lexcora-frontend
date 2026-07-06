@@ -327,10 +327,12 @@ function PotentialClients() {
                           className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
                             client.party_type === "Qualified"
                               ? "bg-green-50 text-green-700 ring-green-600/20"
-                              : client.party_type === "new"
+                              : client.party_type === "New"
                               ? "bg-blue-50 text-blue-700 ring-blue-600/20"
-                              : client.party_type === "contacted"
+                              : client.party_type === "Contacted"
                               ? "bg-yellow-50 text-yellow-700 ring-yellow-600/20"
+                              : client.party_type === "Unqualified"
+                              ? "bg-red-50 text-red-700 ring-red-600/20"
                               : "bg-gray-50 text-gray-600 ring-gray-500/10"
                           }`}
                         >

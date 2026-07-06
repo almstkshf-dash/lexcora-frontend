@@ -34,21 +34,9 @@ function Tasks() {
     assignedTo: "",
     dueDate: null,
     priority: "",
-    attachedFiles: [] // Will store base64 files like parties/petitions
+    attachedFiles: [] // Raw File objects — uploaded by createCaseWithRelations before the batch POST
   })
 
-
-  // Helper function to convert file to base64
-  const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
-  
 
 
   // Fetch employees using SWR
@@ -100,39 +88,22 @@ function Tasks() {
     }))
   }
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = (e) => {
     const files = Array.from(e.target.files)
     if (files.length > 0) {
-      await handleFileSelect(files)
+      handleFileSelect(files)
     }
     // Clear the input so the same file can be selected again
     e.target.value = ''
   }
 
-  // Handle file selection with base64 conversion
-  const handleFileSelect = useCallback(async (selectedFiles) => {
+  // Store raw File objects so the batch upload service can call uploadFiles() on them
+  const handleFileSelect = useCallback((selectedFiles) => {
     const filesArray = Array.from(selectedFiles);
-    
-    for (const file of filesArray) {
-      try {
-        const base64 = await fileToBase64(file);
-        
-        const newFile = {
-          file: base64,
-          fileName: file.name,
-          fileType: file.type || 'application/octet-stream',
-          fileSize: file.size,
-          id: Date.now() + Math.random()
-        };
-
-        setFormData(prev => ({
-          ...prev,
-          attachedFiles: [...prev.attachedFiles, newFile]
-        }));
-      } catch (error) {
-
-      }
-    }
+    setFormData(prev => ({
+      ...prev,
+      attachedFiles: [...prev.attachedFiles, ...filesArray]
+    }));
   }, []);
 
   // Handle drag events
@@ -148,6 +119,7 @@ function Tasks() {
 
   const handleDrop = useCallback((e) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragOver(false);
     const droppedFiles = e.dataTransfer.files;
     handleFileSelect(droppedFiles);
@@ -300,7 +272,9 @@ function Tasks() {
                       </div>
                     </TableCell>
                     <TableCell className="text-center">
-                      {task.dueDate ? format(task.dueDate, "PPP", { locale: ar }) : t('tasks.notSpecified')}
+                      {task.dueDate
+                        ? format(typeof task.dueDate === 'string' ? new Date(task.dueDate) : task.dueDate, "PPP", { locale: ar })
+                        : t('tasks.notSpecified')}
                     </TableCell>
                     <TableCell className="text-center">
                       <span className={cn(

@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/hooks/useTranslations";
 import { toast } from "react-toastify";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
+import { toUTCISOString } from "@/utils/dateUtils";
 import { Label } from "@/components/ui/label";
 import { createAttendance } from "@/app/services/api/attendance";
 
@@ -118,8 +119,8 @@ export default function AddAttendanceModal({
     try {
       const data = await createAttendance({
         employee_id: employeeId,
-        checkin: checkinDate.toISOString(),
-        checkout: checkoutDate ? checkoutDate.toISOString() : null,
+        checkin: toUTCISOString(checkinDate),
+        checkout: toUTCISOString(checkoutDate),
       });
 
       if (data.success) {

@@ -101,6 +101,24 @@ export const getPartiesByBranch = async (branchId) => {
   return response.data;
 };
 
+/**
+ * Fetch a single party record by ID.
+ *
+ * Response contract
+ * -----------------
+ * The server returns the record directly (no { success, data } envelope):
+ *   {
+ *     id, name, phone, email, address, e_id, passport, nationality,
+ *     party_type (may also arrive as Party_type — always read both),
+ *     status, category, consultation_type, source, branch_id,
+ *     is_vip (0 | 1 | boolean), documents: Array, ...
+ *   }
+ *
+ * Callers should access fields directly off the returned object, e.g.:
+ *   const party = await getPartyById(id);
+ *   party.name   // ✅
+ *   party.data   // ❌ — there is no envelope wrapper
+ */
 export const getPartyById = async (partyId) => {
   try {
     const response = await api.get(`/parties/${partyId}`);
@@ -110,6 +128,14 @@ export const getPartyById = async (partyId) => {
   }
 };
 
+/**
+ * Update a party record.
+ *
+ * Response contract
+ * -----------------
+ * Returns the updated record (same shape as getPartyById) or
+ * { success: true, message: string } on some backend versions.
+ */
 export const updateParty = async (partyId, partyData) => {
   const files = partyData.files && partyData.files.length > 0
     ? await uploadFiles(partyData.files)
@@ -120,6 +146,16 @@ export const updateParty = async (partyId, partyData) => {
     delete partyData.files;
   }
   const response = await api.put(`/parties/${partyId}`, partyData);
+  return response.data;
+};
+
+/**
+ * Reset a party's password.
+ * Sends a new plaintext password to the backend; the backend is responsible
+ * for hashing it before storage. Never send an existing hash here.
+ */
+export const resetPartyPassword = async (partyId, newPassword) => {
+  const response = await api.put(`/parties/${partyId}/reset-password`, { password: newPassword });
   return response.data;
 };
 

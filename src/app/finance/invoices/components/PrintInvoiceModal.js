@@ -522,7 +522,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
           <>
             <CustomModalBody>
               {/* Print Area */}
-              <style jsx>{`
+              <style dangerouslySetInnerHTML={{ __html: `
                 .invoice-container {
                   max-width: 210mm;
                   margin: 0 auto;
@@ -727,7 +727,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                   font-size: 12px;
                   color: #6b7280;
                 }
-              `}</style>
+              ` }} />
               <div id="invoice-print-area" ref={printRef} className="invoice-container">
                 {/* Header Section */}
                 <div className="header-section">

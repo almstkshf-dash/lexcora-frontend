@@ -1,29 +1,65 @@
 'use client'
 import React, { useState } from 'react'
 import useSWR from 'swr'
-import { getPartyById } from '@/app/services/api/parties'
+import { getPartyById, resetPartyPassword } from '@/app/services/api/parties'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { useTranslations } from '@/hooks/useTranslations'
-import { User, Phone, Mail, MapPin, Calendar, FileText, Building, Globe, Crown, Edit } from 'lucide-react'
+import { User, Phone, Mail, MapPin, Calendar, FileText, Building, Globe, Crown, Edit, KeyRound, Eye, EyeOff, Loader2 } from 'lucide-react'
 import EditPartyModal from '@/app/parties/EditPartyModal'
-import { is } from 'date-fns/locale'
+import { toast } from 'react-toastify'
 
 function Info({ partyId }) {
   const { t } = useTranslations()
+  const [resetDialogOpen, setResetDialogOpen] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [resetting, setResetting] = useState(false)
   
-  const { data, error, isLoading, mutate } = useSWR(
-    partyId ? [`/parties/${partyId}`] : null,
+  const { data: rawData, error, isLoading, mutate } = useSWR(
+    partyId ? `/parties/${partyId}` : null,
     () => getPartyById(partyId),
     {
       revalidateOnFocus: false,
     }
   )
 
+  // Unwrap server envelope { success, data: {...} } if present; fall back to bare object.
+  const rawUnwrapped = rawData?.data ?? rawData ?? null;
+  const data = rawUnwrapped && Object.keys(rawUnwrapped).length > 0 ? rawUnwrapped : null;
+
   const handlePartyUpdated = () => {
-    // Refresh the party data after update
     mutate()
+  }
+
+  const handleResetPassword = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      toast.error(t('parties.resetPassword.minLength') || 'كلمة المرور يجب أن تكون 6 أحرف على الأقل')
+      return
+    }
+    setResetting(true)
+    try {
+      await resetPartyPassword(partyId, newPassword)
+      toast.success(t('parties.resetPassword.success') || 'تم تغيير كلمة المرور بنجاح')
+      setResetDialogOpen(false)
+      setNewPassword('')
+      setShowNewPassword(false)
+    } catch {
+      toast.error(t('parties.resetPassword.error') || 'فشل تغيير كلمة المرور')
+    } finally {
+      setResetting(false)
+    }
   }
 
   if (isLoading) {
@@ -111,6 +147,14 @@ function Info({ partyId }) {
               {t('partyTabs.basicInfo') || 'المعلومات الأساسية'}
             </CardTitle>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => { setNewPassword(''); setShowNewPassword(false); setResetDialogOpen(true) }}
+              >
+                <KeyRound className="h-4 w-4 mr-1" />
+                {t('parties.resetPassword.button') || 'تغيير كلمة المرور'}
+              </Button>
               <EditPartyModal partyId={partyId} onPartyUpdated={handlePartyUpdated}>
                 <Button variant="outline" size="sm">
                   <Edit className="h-4 w-4 mr-1" />
@@ -169,16 +213,12 @@ function Info({ partyId }) {
               label={t('parties.branch') || 'الفرع'} 
               value={ party.branch_name_ar} 
             />
-            <InfoItem 
-              icon={User} 
-              label={t('parties.username') || 'اسم المستخدم'} 
-              value={party.username} 
+            <InfoItem
+              icon={User}
+              label={t('parties.username') || 'اسم المستخدم'}
+              value={party.username}
             />
-            <InfoItem 
-              icon={FileText} 
-              label={t('parties.password') || 'كلمة المرور'} 
-              value={party.password} 
-            />
+            {/* Password hash is never displayed — use "Reset Password" button above instead */}
             <InfoItem 
               icon={Building} 
               label={t('parties.consultationType') || 'نوع الاستشارة'} 
@@ -213,7 +253,56 @@ function Info({ partyId }) {
         </CardContent>
       </Card>
 
-      
+      {/* Reset Password Dialog */}
+      <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <KeyRound className="h-5 w-5" />
+              {t('parties.resetPassword.title') || 'تغيير كلمة المرور'}
+            </DialogTitle>
+            <DialogDescription>
+              {t('parties.resetPassword.description') || 'أدخل كلمة المرور الجديدة. سيتم تشفيرها وحفظها تلقائياً.'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <Label htmlFor="reset-password">
+              {t('parties.resetPassword.newPasswordLabel') || 'كلمة المرور الجديدة'}
+            </Label>
+            <div className="relative">
+              <Input
+                id="reset-password"
+                type={showNewPassword ? 'text' : 'password'}
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                placeholder={t('parties.resetPassword.placeholder') || 'أدخل كلمة المرور الجديدة'}
+                className="pr-10"
+                onKeyDown={e => e.key === 'Enter' && handleResetPassword()}
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(v => !v)}
+                className="absolute inset-y-0 right-0 px-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+              >
+                {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setResetDialogOpen(false)} disabled={resetting}>
+              {t('parties.cancel') || 'إلغاء'}
+            </Button>
+            <Button onClick={handleResetPassword} disabled={resetting || !newPassword}>
+              {resetting
+                ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t('parties.resetPassword.saving') || 'جاري الحفظ...'}</>
+                : t('parties.resetPassword.confirm') || 'تأكيد التغيير'
+              }
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

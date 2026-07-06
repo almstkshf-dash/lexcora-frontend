@@ -38,7 +38,7 @@
 
 .ProseMirror ul,
 .ProseMirror ol {
-  padding-right: 1.5rem;
+  padding-inline-start: 1.5rem;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
@@ -56,8 +56,8 @@
 }
 
 .ProseMirror blockquote {
-  border-right: 3px solid #e2e8f0;
-  padding-right: 1rem;
+  border-inline-start: 3px solid #e2e8f0;
+  padding-inline-start: 1rem;
   margin: 1rem 0;
   color: #64748b;
 }
@@ -99,16 +99,4 @@
   text-decoration: line-through;
 }
 
-/* RTL Support */
-.ProseMirror[dir="rtl"] ul,
-.ProseMirror[dir="rtl"] ol {
-  padding-right: 1.5rem;
-  padding-left: 0;
-}
-
-.ProseMirror[dir="rtl"] blockquote {
-  border-right: 3px solid #e2e8f0;
-  border-left: none;
-  padding-right: 1rem;
-  padding-left: 0;
-}
+/* RTL/LTR overrides are no longer needed — logical properties handle both directions. */

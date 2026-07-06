@@ -34,6 +34,7 @@ export default function RootLayout({ children }) {
     <html 
     className={`${notoSansArabic.className} ${notoSansArabic.variable}`}
     data-scroll-behavior="smooth"
+    suppressHydrationWarning
     >
       <head>
         <script

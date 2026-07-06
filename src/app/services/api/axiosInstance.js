@@ -1,8 +1,23 @@
 import axios from "axios";
-const baseURL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:8080/api";
+
+// NEXT_PUBLIC_API_BASE_URL must be defined in every environment.
+// Fail loudly at boot time so the problem is never silent in production.
+//
+// Local dev  : add to .env.local → NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api
+//              then STOP and RESTART the dev server (hot-reload does not re-read .env files).
+// Production : Vercel → Project Settings → Environment Variables → add NEXT_PUBLIC_API_BASE_URL
+//              then trigger a new deployment to pick up the change.
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+if (!baseURL) {
+  throw new Error(
+    "[axiosInstance] NEXT_PUBLIC_API_BASE_URL is not defined.\n" +
+    "  • Local dev  : add NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api to .env.local\n" +
+    "                 then stop and restart the dev server (hot-reload does not re-read .env files).\n" +
+    "  • Production : add NEXT_PUBLIC_API_BASE_URL in Vercel → Project Settings → Environment Variables\n" +
+    "                 and trigger a new deployment."
+  );
+}
+
 const api = axios.create({
   baseURL,
   withCredentials: true,
@@ -45,35 +60,7 @@ api.interceptors.request.use(
 
 // Response interceptor to handle auth errors
 api.interceptors.response.use(
-  (response) => {
-    // Architectural Guard: Strict Normalization
-    if (response.data && typeof response.data === 'object') {
-      const body = response.data;
-
-      // 1. Map known alternative keys to 'data'
-      if (body.data === undefined || body.data === null) {
-        body.data = Array.isArray(body.results) ? body.results :
-          Array.isArray(body.items) ? body.items :
-            Array.isArray(body.employees) ? body.employees :
-              Array.isArray(body.sessions) ? body.sessions :
-                Array.isArray(body.tasks) ? body.tasks :
-                  body.data;
-      }
-
-      // 2. Force 'data' to be an array for collection endpoints
-      const url = response.config?.url || "";
-      const method = response.config?.method?.toLowerCase() || "";
-      const isCollection = method === 'get' && !/\/\d+$/.test(url.split('?')[0]);
-      if (isCollection) {
-        const isAuthRoute = /\/(auth|login|logout)/i.test(url);
-        const isSingleResource = /\/(settings|profile|summary|stats|config|details)/i.test(url);
-        if (!isAuthRoute && !isSingleResource) {
-          body.data = Array.isArray(body.data) ? body.data : [];
-        }
-      }
-    }
-    return response;
-  },
+  (response) => response,
   (error) => {
     // If we get a 401 unauthorized error
     if (error.response && error.response.status === 401) {

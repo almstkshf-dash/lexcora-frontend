@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/hooks/useTranslations";
 import { toast } from "react-toastify";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
+import { parseUTCDate, toUTCISOString } from "@/utils/dateUtils";
 import { Label } from "@/components/ui/label";
 import { updateAttendance } from "@/app/services/api/attendance";
 
@@ -46,8 +47,8 @@ export default function UpdateAttendanceModal({
   // Initialize form with existing data when modal opens
   useEffect(() => {
     if (isOpen && attendanceRecord) {
-      setCheckinDate(attendanceRecord.checkin ? new Date(attendanceRecord.checkin) : null);
-      setCheckoutDate(attendanceRecord.checkout ? new Date(attendanceRecord.checkout) : null);
+      setCheckinDate(attendanceRecord.checkin ? parseUTCDate(attendanceRecord.checkin) : null);
+      setCheckoutDate(attendanceRecord.checkout ? parseUTCDate(attendanceRecord.checkout) : null);
     }
   }, [isOpen, attendanceRecord]);
 
@@ -105,26 +106,12 @@ export default function UpdateAttendanceModal({
     );
   };
 
-  // Helper function to format date to local ISO string (without UTC conversion)
-  const toLocalISOString = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    
-    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const checkinString = toLocalISOString(checkinDate);
-    const checkoutString = checkoutDate ? toLocalISOString(checkoutDate) : null;
-    
-    if (checkoutDate) {
-    }
+
+    const checkinString = toUTCISOString(checkinDate);
+    const checkoutString = toUTCISOString(checkoutDate);
+
     
     if (!checkinDate) {
       toast.error(t("attendance.checkInRequired"));

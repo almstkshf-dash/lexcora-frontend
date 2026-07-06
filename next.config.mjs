@@ -9,17 +9,27 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
+  // Disable browser source maps in production — reduces bundle size and avoids
+  // leaking source to end-users on Vercel.
+  productionBrowserSourceMaps: false,
+
   // Optimize barrel imports for common libraries — reduces per-click JS evaluation
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
 
-  // Add font optimization
+  // Replace legacy `domains` array with the modern `remotePatterns` API.
+  // fonts.gstatic.com / fonts.googleapis.com are only needed for <Image> src usage;
+  // the actual Google Fonts stylesheet is injected via next/font so no remote
+  // image optimisation is required — keep the list intentionally minimal.
   images: {
-    domains: ['fonts.gstatic.com', 'fonts.googleapis.com'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'fonts.gstatic.com' },
+      { protocol: 'https', hostname: 'fonts.googleapis.com' },
+    ],
   },
 
-  // Configure favicon and enable source maps for debugging
+  // Webpack: source maps in dev only; no changes needed for production.
   webpack: (config, { dev }) => {
     if (dev) {
       config.devtool = 'source-map';

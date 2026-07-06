@@ -33,7 +33,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { Edit, Save, Loader2, Upload, X, FileText, Image as ImageIcon, FileIcon, Trash2 } from "lucide-react";
+import { Edit, Save, Loader2, Upload, X, FileText, Image as ImageIcon, FileIcon, Trash2, Eye, EyeOff } from "lucide-react";
 import { getPartyById, updateParty, checkDuplicateParty } from "@/app/services/api/parties";
 import { getBranches } from "@/app/services/api/branches";
 import { deletePartyDocument } from "@/app/services/api/partiesDocuments";
@@ -45,6 +45,7 @@ import { cn } from "@/lib/utils";
 const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
   const [partyFiles, setPartyFiles] = useState([]);
@@ -79,10 +80,14 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
 
   const branches = branchesData?.data || [];
 
-  const { data: partyData, error: partyError, isLoading: fetchingParty } = useSWR(
-    open && partyId ? `/party/${partyId}` : null,
+  const { data: rawPartyData, error: partyError, isLoading: fetchingParty } = useSWR(
+    open && partyId ? `/parties/${partyId}` : null,
     () => getPartyById(partyId)
   );
+
+  // Unwrap server envelope { success, data: {...} } if present; fall back to bare object.
+  const rawPartyUnwrapped = rawPartyData?.data ?? rawPartyData ?? null;
+  const partyData = rawPartyUnwrapped && Object.keys(rawPartyUnwrapped).length > 0 ? rawPartyUnwrapped : null;
 
   // Update form data when party data is fetched
   useEffect(() => {
@@ -102,7 +107,9 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
         passport: partyData.passport || "",
         is_vip: partyData.is_vip === 1 || partyData.is_vip === true || false,
         username: partyData.username || "",
-        password: partyData.password || ""
+        // Never pre-fill the password field with a stored hash.
+        // Leave it blank; only send a new value if the user types one.
+        password: ""
       });
 
       // Set existing documents if available
@@ -274,11 +281,16 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
         return;
       }
 
-      // Add files to formData if any new files were added
+      // Add files to formData if any new files were added.
+      // Strip password from the payload when the user left the field blank —
+      // sending an empty string would overwrite the stored hash with nothing.
       const partyDataWithFiles = {
         ...formData,
         ...(partyFiles.length > 0 && { files: partyFiles })
       };
+      if (!partyDataWithFiles.password) {
+        delete partyDataWithFiles.password;
+      }
 
       const response = await updateParty(partyId, partyDataWithFiles);
 
@@ -502,16 +514,27 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                 />
               </div>
 
-              {/* Password */}
+              {/* New Password — blank by default; only sent to backend if user types a value */}
               <div className="space-y-2">
-                <Label htmlFor="password">{t('parties.password') || 'كلمة المرور'}</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
-                  placeholder={t('parties.passwordPlaceholder') || 'كلمة المرور'}
-                />
+                <Label htmlFor="password">{t('parties.resetPassword.newPasswordLabel') || 'كلمة المرور الجديدة'}</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    placeholder={t('parties.resetPassword.placeholder') || 'اتركه فارغاً للإبقاء على كلمة المرور الحالية'}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(v => !v)}
+                    className="absolute inset-y-0 right-0 px-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
 
               {/* Status Switch */}

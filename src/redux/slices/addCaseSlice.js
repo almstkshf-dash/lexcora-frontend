@@ -1,5 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+/**
+ * addCaseSlice — legacy Redux slice for the add-case form.
+ *
+ * NOTE (Stage 2 – Data Model Alignment):
+ * The add-case form is now driven entirely by Formik (page.js).
+ * The fields below that track files (caseFiles, partiesFiles, employeeFiles,
+ * courtFiles) and sub-entities (parties, sessions, executions, JudicialNotices,
+ * petition, litigationStages, tasks) are NO LONGER DISPATCHED from the form;
+ * Formik's `values` object is the single source of truth at submission time.
+ *
+ * These Redux actions and initial-state fields are kept to avoid breaking any
+ * code that may still read from the store (e.g. case-detail pages), but they
+ * should not be written to from the add-case form.
+ *
+ * @deprecated Write path — use Formik setFieldValue instead of Redux dispatch
+ *             for the add-case form. Remove this slice's file/sub-entity
+ *             reducers in a future cleanup pass.
+ */
+
 // Helper function to ensure deep copy of file objects
 const cloneFileObject = (fileObj) => {
 	if (!fileObj) return { files: [], filesNames: [] };

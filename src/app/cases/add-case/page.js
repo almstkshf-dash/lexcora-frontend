@@ -118,7 +118,8 @@ function AddCasePage() {
     const loadingToast = toast.loading('جاري انشاء قضية...');
     
     try {
-      // Prepare case data
+      // Prepare case data — field names must match the backend INSERT in casesService.createCaseWithRelations.
+      // Boolean flags are cast to 0/1 to satisfy the tinyint(1) column type.
       const caseData = {
         case_number: values.caseNumber || null,
         police_station_id: values.policeStationId || null,
@@ -131,16 +132,19 @@ function AddCasePage() {
         legal_advisor_id: values.legalAdvisorId || null,
         legal_researcher_id: values.legalResearcherId || null,
         counter_case_id: values.counterCaseId || null,
-        fees: values.fees || 0,
+        fees: values.fees ? Number(values.fees) : 0,
         additional_note: values.additionalNote || null,
         topic: values.topic || null,
         branch_id: values.branchId || null,
-        is_important: values.is_important || 0,
-        is_secret: values.is_secret || 0,
-        is_archived: values.is_archived || 0,
-        is_pending: values.is_pending || 0,
-        related_cases: values.related_cases ? values.related_cases.map(c => c.id) : [],
-        files: values.caseFiles || [],
+        // Cast booleans to 0/1 — backend column type is tinyint(1)
+        is_important: values.is_important ? 1 : 0,
+        is_secret: values.is_secret ? 1 : 0,
+        is_archived: values.is_archived ? 1 : 0,
+        is_pending: values.is_pending ? 1 : 0,
+        // related_cases: backend accepts array of ids or objects with .id
+        related_cases: Array.isArray(values.related_cases) ? values.related_cases : [],
+        // File arrays hold raw File objects; createCaseWithRelations uploads them before the POST
+        files: values.caseFiles?.files || [],
         employeesFiles: values.employeeFiles || [],
         courtFiles: values.courtFiles || [],
         relatedFiles: values.relatedFiles || []

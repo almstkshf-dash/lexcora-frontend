@@ -41,29 +41,34 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
   const { data: branchesData } = useSWR(isOpen ? 'branches' : null, getBranches);
   const branches = branchesData?.data || [];
 
-  // SWR fetcher function
-  const fetcher = () => {
-    if (!clientId) return null;
-    return getPartyById(clientId);
-  };
-
-  // Use SWR for data fetching
-  const { data, error, isLoading } = useSWR(
-    clientId ? [`/parties/${clientId}`] : null,
-    fetcher,
+  // Use SWR for data fetching.
+  // Key is gated on isOpen so closing the modal does not null-out the cache key
+  // mid-fetch (which would make rawData=undefined and blank the form on next open).
+  // keepPreviousData ensures stale data stays visible while the next fetch is in flight.
+  const { data: rawData, error, isLoading } = useSWR(
+    isOpen && clientId ? `/parties/${clientId}` : null,
+    () => getPartyById(clientId),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
+      keepPreviousData: true,
     }
   );
+
+  // Unwrap the server envelope if present: { success, data: {...} }
+  // Falls through to rawData itself when the server returns the record bare.
+  // Guard against empty-object placeholders from SWR cache (e.g. {}) which
+  // would pass the `if (data)` check but have no keys — treat those as null.
+  const rawUnwrapped = rawData?.data ?? rawData ?? null;
+  const data = rawUnwrapped && Object.keys(rawUnwrapped).length > 0 ? rawUnwrapped : null;
 
   // Validation schema
   const validationSchema = Yup.object({
     name: Yup.string()
       .required(t("potentialClientsPage.validation.nameRequired")),
     phone: Yup.string(),
-    status: Yup.string()
-      .required(t("potentialClientsPage.validation.statusRequired")),
+    // status is pre-populated from the DB record; not required to be changed by the user
+    status: Yup.string(),
     party_type: Yup.string()
       .required("Party type is required"),
     branch_id: Yup.number()
@@ -75,15 +80,19 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
     e_id: Yup.string(),
   });
 
-  // Initial values for Formik
+  // Initial values for Formik.
+  // Only populate from server data when the record has actually loaded (has a name
+  // key at minimum). This prevents a blank-form flash when SWR returns an empty
+  // cache placeholder before the real fetch resolves.
   const getInitialValues = () => {
-    if (data) {
+    if (data && data.name !== undefined) {
       const client = data;
       return {
         name: client.name || "",
         phone: client.phone || "",
-        status: client.status || "",
-        party_type: client.party_type || "New",
+        // Preserve whatever status the DB has stored ("active" / "inactive")
+        status: client.status || "active",
+        party_type: client.party_type || client.Party_type || "New",
         category: client.category || "",
         nationality: client.nationality || "",
         address: client.address || "",
@@ -99,7 +108,7 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
     return {
       name: "",
       phone: "",
-      status: "",
+      status: "active",
       party_type: "New",
       category: "",
       nationality: "",
@@ -162,7 +171,7 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
       
       // Mutate SWR cache to refresh data
       mutate([`/parties/potential-clients`, 1, "", undefined]);
-      mutate([`/parties/${clientId}`]);
+      mutate(`/parties/${clientId}`);
       
       toast.success(t("potentialClientsPage.messages.updateSuccess"));
       
@@ -336,17 +345,18 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                   </div>
 
 <div className="flex gap-4 flex-wrap">
-                  {/* Status Field */}
-                  {/* <div className="space-y-2">
+                  {/* Status Field — active / inactive account state */}
+                  <div className="space-y-2">
                     <Label htmlFor="status">
-                      {t("potentialClientsPage.table.status")} *
+                      {t("potentialClientsPage.table.status")}
                     </Label>
                     <Select
-                      value={values.status || ""}
+                      dir={isRTL ? "rtl" : "ltr"}
+                      value={values.status || "active"}
                       onValueChange={(value) => setFieldValue("status", value)}
                       disabled={isSubmitting}
                     >
-                      <SelectTrigger className={errors.status && touched.status ? "border-red-500" : ""}>
+                      <SelectTrigger>
                         <SelectValue placeholder={t("potentialClientsPage.editModal.selectStatus")} />
                       </SelectTrigger>
                       <SelectContent>
@@ -357,10 +367,7 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.status && touched.status && (
-                      <p className="text-sm text-red-500">{errors.status}</p>
-                    )}
-                  </div> */}
+                  </div>
 
                   {/* Party Type Field */}
                   <div className="space-y-2">
@@ -654,7 +661,7 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                   </Button>
                   <Button
                     type="submit"
-                    disabled={isSubmitting || isUploading || !values.name?.trim() || !values.status || !values.party_type || !values.category}
+                    disabled={isSubmitting || isUploading || !values.name?.trim() || !values.party_type || !values.category}
                   >
                     {isSubmitting || isUploading ? (
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />

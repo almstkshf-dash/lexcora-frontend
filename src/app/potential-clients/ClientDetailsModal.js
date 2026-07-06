@@ -34,21 +34,22 @@ export function ClientDetailsModal({ clientId, isOpen, onClose }) {
   const [fileToDelete, setFileToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // SWR fetcher function
-  const fetcher = () => {
-    if (!clientId) return null;
-    return getPartyById(clientId);
-  };
-
-  // Use SWR for data fetching
-  const { data, error, isLoading } = useSWR(
-    clientId ? [`/parties/${clientId}`] : null,
-    fetcher,
+  // Use SWR for data fetching.
+  // Key is a plain string (not array) so mutate() can match it.
+  // Gated on isOpen so closing the modal does not null-out the cache mid-fetch.
+  const { data: rawData, error, isLoading } = useSWR(
+    isOpen && clientId ? `/parties/${clientId}` : null,
+    () => getPartyById(clientId),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
+      keepPreviousData: true,
     }
   );
+  // Unwrap the server envelope if present: { success, data: {...} }
+  // Falls through to rawData itself when the server returns the record bare.
+  const rawUnwrapped = rawData?.data ?? rawData ?? null;
+  const data = rawUnwrapped && Object.keys(rawUnwrapped).length > 0 ? rawUnwrapped : null;
 
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -61,25 +62,33 @@ export function ClientDetailsModal({ clientId, isOpen, onClose }) {
     });
   };
 
+  // Translates the account status field ("active" / "inactive") stored in the DB.
   const getTranslatedStatus = (status) => {
     if (!status) return "-";
     const statusMap = {
-      "جديد": t("potentialClientsPage.status.new"),
-      "تم التواصل": t("potentialClientsPage.status.contacted"),
-      "مؤهل": t("potentialClientsPage.status.qualified"),
-      "غير مؤهل": t("potentialClientsPage.status.notQualified"),
-      "تحويل موكل": t("potentialClientsPage.status.convertToClient"),
-      // Keep backward compatibility
-      "New": t("potentialClientsPage.status.new"),
-      "Contacted": t("potentialClientsPage.status.contacted"),
-      "Converted": t("potentialClientsPage.status.qualified"),
-      "Rejected": t("potentialClientsPage.status.notQualified"),
+      // Account state values (stored by AddClientModal / EditClientModal)
+      "active":   t("potentialClientsPage.status.active")   || "نشط",
+      "inactive": t("potentialClientsPage.status.inactive") || "غير نشط",
+      // Legacy pipeline-stage strings kept for backward compatibility
+      "جديد":         t("potentialClientsPage.status.new"),
+      "تم التواصل":   t("potentialClientsPage.status.contacted"),
+      "مؤهل":         t("potentialClientsPage.status.qualified"),
+      "غير مؤهل":     t("potentialClientsPage.status.notQualified"),
+      "تحويل موكل":   t("potentialClientsPage.status.convertToClient"),
+      "New":          t("potentialClientsPage.status.new"),
+      "Contacted":    t("potentialClientsPage.status.contacted"),
+      "Converted":    t("potentialClientsPage.status.qualified"),
+      "Rejected":     t("potentialClientsPage.status.notQualified"),
     };
     return statusMap[status] || status;
   };
 
   const getStatusColor = (status) => {
-    if (status === "جديد" || status === "New") {
+    if (status === "active") {
+      return "bg-green-100 text-green-800 border-green-200";
+    } else if (status === "inactive") {
+      return "bg-red-100 text-red-800 border-red-200";
+    } else if (status === "جديد" || status === "New") {
       return "bg-green-100 text-green-800 border-green-200";
     } else if (status === "تم التواصل" || status === "Contacted") {
       return "bg-yellow-100 text-yellow-800 border-yellow-200";
@@ -106,7 +115,7 @@ export function ClientDetailsModal({ clientId, isOpen, onClose }) {
       await deletePartyDocument(fileToDelete.id);
       
       // Refresh the data
-      mutate([`/parties/${clientId}`]);
+      mutate(`/parties/${clientId}`);
       
       toast.success(t("potentialClientsPage.files.deleteSuccess") || "تم حذف الملف بنجاح");
       setDeleteDialogOpen(false);
@@ -119,6 +128,7 @@ export function ClientDetailsModal({ clientId, isOpen, onClose }) {
     }
   };
 
+  // `data` is already unwrapped above (envelope-safe)
   const client = data;
 
   return (

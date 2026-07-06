@@ -25,8 +25,10 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useTranslations } from '@/hooks/useTranslations'
+import { useLanguage } from '@/contexts/LanguageContext'
 
-const MenuBar = ({ editor, onPrint }) => {
+const MenuBar = ({ editor, onPrint, t }) => {
   if (!editor) {
     return null
   }
@@ -34,7 +36,6 @@ const MenuBar = ({ editor, onPrint }) => {
   const buttonClass = "h-8 w-8 p-0"
 
   return (
-
     <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-2 flex flex-wrap gap-1 rounded-t-md">
       {/* Print & Download */}
       <Button
@@ -43,7 +44,7 @@ const MenuBar = ({ editor, onPrint }) => {
         size="sm"
         onClick={onPrint}
         className={buttonClass}
-        title="طباعة"
+        title={t('print')}
       >
         <Printer className="h-4 w-4" />
       </Button>
@@ -58,7 +59,7 @@ const MenuBar = ({ editor, onPrint }) => {
         onClick={() => editor.chain().focus().undo().run()}
         disabled={!editor.can().undo()}
         className={buttonClass}
-        title="تراجع"
+        title={t('undo')}
       >
         <Undo className="h-4 w-4" />
       </Button>
@@ -69,7 +70,7 @@ const MenuBar = ({ editor, onPrint }) => {
         onClick={() => editor.chain().focus().redo().run()}
         disabled={!editor.can().redo()}
         className={buttonClass}
-        title="إعادة"
+        title={t('redo')}
       >
         <Redo className="h-4 w-4" />
       </Button>
@@ -86,7 +87,7 @@ const MenuBar = ({ editor, onPrint }) => {
           buttonClass,
           editor.isActive('bold') && 'bg-gray-200 dark:bg-gray-700'
         )}
-        title="غامق"
+        title={t('bold')}
       >
         <Bold className="h-4 w-4" />
       </Button>
@@ -99,7 +100,7 @@ const MenuBar = ({ editor, onPrint }) => {
           buttonClass,
           editor.isActive('italic') && 'bg-gray-200 dark:bg-gray-700'
         )}
-        title="مائل"
+        title={t('italic')}
       >
         <Italic className="h-4 w-4" />
       </Button>
@@ -112,7 +113,7 @@ const MenuBar = ({ editor, onPrint }) => {
           buttonClass,
           editor.isActive('underline') && 'bg-gray-200 dark:bg-gray-700'
         )}
-        title="تسطير"
+        title={t('underline')}
       >
         <UnderlineIcon className="h-4 w-4" />
       </Button>
@@ -124,7 +125,7 @@ const MenuBar = ({ editor, onPrint }) => {
         onChange={(e) => editor.chain().focus().setFontSize(e.target.value).run()}
         value={editor.getAttributes('textStyle').fontSize || '16px'}
         className="h-8 px-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-        title="حجم الخط"
+        title={t('fontSize')}
       >
         <option value="12px">12</option>
         <option value="14px">14</option>
@@ -150,7 +151,7 @@ const MenuBar = ({ editor, onPrint }) => {
           buttonClass,
           editor.isActive('bulletList') && 'bg-gray-200 dark:bg-gray-700'
         )}
-        title="قائمة نقطية"
+        title={t('bulletList')}
       >
         <List className="h-4 w-4" />
       </Button>
@@ -163,7 +164,7 @@ const MenuBar = ({ editor, onPrint }) => {
           buttonClass,
           editor.isActive('orderedList') && 'bg-gray-200 dark:bg-gray-700'
         )}
-        title="قائمة مرقمة"
+        title={t('orderedList')}
       >
         <ListOrdered className="h-4 w-4" />
       </Button>
@@ -180,7 +181,7 @@ const MenuBar = ({ editor, onPrint }) => {
           buttonClass,
           editor.isActive({ textAlign: 'left' }) && 'bg-gray-200 dark:bg-gray-700'
         )}
-        title="محاذاة لليسار"
+        title={t('alignLeft')}
       >
         <AlignLeft className="h-4 w-4" />
       </Button>
@@ -193,7 +194,7 @@ const MenuBar = ({ editor, onPrint }) => {
           buttonClass,
           editor.isActive({ textAlign: 'center' }) && 'bg-gray-200 dark:bg-gray-700'
         )}
-        title="محاذاة للوسط"
+        title={t('alignCenter')}
       >
         <AlignCenter className="h-4 w-4" />
       </Button>
@@ -206,7 +207,7 @@ const MenuBar = ({ editor, onPrint }) => {
           buttonClass,
           editor.isActive({ textAlign: 'right' }) && 'bg-gray-200 dark:bg-gray-700'
         )}
-        title="محاذاة لليمين"
+        title={t('alignRight')}
       >
         <AlignRight className="h-4 w-4" />
       </Button>
@@ -219,7 +220,7 @@ const MenuBar = ({ editor, onPrint }) => {
           buttonClass,
           editor.isActive({ textAlign: 'justify' }) && 'bg-gray-200 dark:bg-gray-700'
         )}
-        title="ضبط"
+        title={t('justify')}
       >
         <AlignJustify className="h-4 w-4" />
       </Button>
@@ -228,6 +229,9 @@ const MenuBar = ({ editor, onPrint }) => {
 }
 
 export default function RichTextEditor({ value, onChange, placeholder, disabled }) {
+  const t = useTranslations('richText')
+  const { isRTL, language } = useLanguage()
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -262,20 +266,21 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled 
     }
   }, [editor, disabled])
 
-  // Print function
+  // Print function — respects active language direction
   const handlePrint = () => {
+    const dir = isRTL ? 'rtl' : 'ltr'
     const printWindow = window.open('', '', 'width=800,height=600')
     printWindow.document.write(`
       <!DOCTYPE html>
-      <html dir="rtl">
+      <html dir="${dir}" lang="${language}">
       <head>
-        <title>طباعة</title>
+        <title>${t('printTitle')}</title>
         <style>
           body {
             font-family: Arial, sans-serif;
             padding: 20px;
-            direction: rtl;
-            text-align: right;
+            direction: ${dir};
+            text-align: ${isRTL ? 'right' : 'left'};
           }
           @media print {
             body { margin: 0; }
@@ -300,7 +305,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled 
       "border border-gray-300 dark:border-gray-700 rounded-md overflow-hidden bg-white dark:bg-gray-900",
       disabled && "opacity-60 cursor-not-allowed"
     )}>
-      <MenuBar editor={editor} onPrint={handlePrint} />
+      <MenuBar editor={editor} onPrint={handlePrint} t={t} />
       <EditorContent 
         editor={editor} 
         className={cn(

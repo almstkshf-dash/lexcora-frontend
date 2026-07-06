@@ -85,30 +85,6 @@ const EditExecutionModal = ({
     { value: "cancelled", label: t('cancelled') },
   ]
 
-  // Fetch execution data when modal opens
-  useEffect(() => {
-    if (isOpen && executionId) {
-      fetchExecutionData()
-    }
-  }, [isOpen, executionId, fetchExecutionData])
-
-  // Reset form when modal closes
-  useEffect(() => {
-    if (!isOpen) {
-      setFormData({
-        date: null,
-        type: "",
-        status: "",
-        amount: "",
-        number: "",
-        attachedFiles: [],
-        existingDocuments: []
-      })
-      setIsLoading(false)
-      setIsSubmitting(false)
-    }
-  }, [isOpen])
-
   const fetchExecutionData = useCallback(async () => {
     if (!executionId) return
     
@@ -132,6 +108,30 @@ const EditExecutionModal = ({
       setIsLoading(false)
     }
   }, [executionId, tc])
+
+  // Fetch execution data when modal opens
+  useEffect(() => {
+    if (isOpen && executionId) {
+      fetchExecutionData()
+    }
+  }, [isOpen, executionId, fetchExecutionData])
+
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData({
+        date: null,
+        type: "",
+        status: "",
+        amount: "",
+        number: "",
+        attachedFiles: [],
+        existingDocuments: []
+      })
+      setIsLoading(false)
+      setIsSubmitting(false)
+    }
+  }, [isOpen])
 
   const handleInputChange = useCallback((field, value) => {
     setFormData(prev => ({

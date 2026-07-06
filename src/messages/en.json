@@ -642,6 +642,8 @@
     "vip": "VIP",
     "regular": "Regular",
     "status": {
+      "active": "Active",
+      "inactive": "Inactive",
       "new": "New",
       "contacted": "Contacted",
       "qualified": "Qualified",
@@ -2911,7 +2913,19 @@
     "delete": "Delete",
     "openMenu": "Open menu",
     "eId": "ID Number",
-    "source": "Source"
+    "source": "Source",
+    "resetPassword": {
+      "button": "Reset Password",
+      "title": "Reset Password",
+      "description": "Enter a new password. It will be hashed and saved automatically.",
+      "newPasswordLabel": "New Password",
+      "placeholder": "Leave empty to keep current password",
+      "confirm": "Confirm Change",
+      "saving": "Saving...",
+      "minLength": "Password must be at least 6 characters",
+      "success": "Password changed successfully",
+      "error": "Failed to change password"
+    }
   },
   "partyTabs": {
     "info": "Information",
@@ -4237,5 +4251,21 @@
     "downloadDeclaration": "Download FTA Declaration",
     "outputTaxDesc": "VAT collected on sales and standard-rated supplies",
     "inputTaxDesc": "VAT paid on purchases and recoverable expenses"
+  },
+  "richText": {
+    "print": "Print",
+    "undo": "Undo",
+    "redo": "Redo",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "fontSize": "Font size",
+    "bulletList": "Bullet list",
+    "orderedList": "Numbered list",
+    "alignLeft": "Align left",
+    "alignCenter": "Align center",
+    "alignRight": "Align right",
+    "justify": "Justify",
+    "printTitle": "Print"
   }
 }
